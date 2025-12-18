@@ -2,13 +2,18 @@ import {
   AbstractCommandHandler,
   type ICommandContext,
 } from '@zero/application-core';
-import { CreateUserCommand } from './create-user-command.ts';
 import type { IUserRepository } from '@ports';
 import { injectable } from 'inversify';
 import { inject } from '@core';
+import type { AuthCommands } from './auth-commands.ts';
 
 @injectable()
-export class CreateUserCommandHandler extends AbstractCommandHandler<CreateUserCommand> {
+export class CreateUserCommandHandler extends AbstractCommandHandler<
+  AuthCommands,
+  'CreateUserCommand'
+> {
+  public override readonly name = 'CreateUserCommand';
+
   public constructor(
     @inject('UserRepository')
     private readonly userRepo: IUserRepository
@@ -16,9 +21,7 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<CreateUserC
     super();
   }
 
-  public override canHandle(thing: unknown): thing is CreateUserCommand {
-    return thing instanceof CreateUserCommand;
-  }
-
-  public override async handle(_context: ICommandContext<CreateUserCommand>) {}
+  public override async handle(
+    _context: ICommandContext<AuthCommands, 'CreateUserCommand'>
+  ) {}
 }

@@ -1,11 +1,7 @@
 import type { TypedContainer } from '@inversifyjs/strongly-typed';
 import type { Factory } from 'inversify';
 
-import {
-  AbstractCommandHandler,
-  AbstractCommand,
-  AbstractQueryHandler,
-} from '@core';
+import { AbstractCommandHandler, AbstractQueryHandler } from '@core';
 import type {
   IDomainEventBuffer,
   IDomainEventStore,
@@ -16,18 +12,19 @@ import type {
   IUnitOfWork,
   IObjectStorage,
   IStringHasher,
-  ICurrentUserSetter,
   IQueryBus,
+  ICurrentUserCache,
 } from '@ports';
 
 import type { User } from '@zero/domain';
-import type { IQuery } from './i-query.ts';
+import type { ICommand } from './i-command.ts';
+import type { IQuery } from '@types';
 
 export interface IApplicationTypes {
   EventBus: IEventBus;
-  CurrentUserSetter: ICurrentUserSetter;
-  CommandHandler: AbstractCommandHandler<AbstractCommand<string>>;
-  QueryHandler: AbstractQueryHandler<IQuery<unknown>>;
+  CommandHandler: AbstractCommandHandler<ICommand<string>, string>;
+  CurrentUserCache: ICurrentUserCache;
+  QueryHandler: AbstractQueryHandler<IQuery<string>, string>;
   RootCommandBus: ICommandBus;
   CommandBus: ICommandBus;
   QueryBus: IQueryBus;

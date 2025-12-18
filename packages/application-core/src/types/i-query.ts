@@ -1,6 +1,7 @@
-import type { AbstractQuery } from '@core';
-
-export interface IQuery<TResponse> {
-  query: AbstractQuery<string>;
-  response: TResponse;
+export interface IQuery<TKey> {
+  query: {
+    key: TKey;
+    params: unknown;
+  };
+  response: unknown;
 }

@@ -30,7 +30,7 @@ export const applicationCoreModule = module<IApplicationTypes>(
         const parentEventBus = await container.getAsync('EventBus');
 
         requestContainer
-          .bind('CurrentUserSetter')
+          .bind('CurrentUserCache')
           .to(SessionStorage)
           .inRequestScope();
 

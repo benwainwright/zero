@@ -7,5 +7,5 @@ export { type ICommandBus } from './i-command-bus.ts';
 export { type IUnitOfWork } from './i-unit-of-work.ts';
 export { type IObjectStorage } from './i-object-storage.ts';
 export { type IStringHasher } from './i-string-hasher.ts';
-export { type ICurrentUserSetter } from './i-current-user-setter.ts';
 export { type IQueryBus } from './i-query-bus.ts';
+export { type ICurrentUserCache } from './i-current-user-cache.ts';

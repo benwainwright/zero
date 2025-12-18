@@ -5,11 +5,11 @@ import {
 } from '@ports';
 
 import { mock } from 'vitest-mock-extended';
-import { TransactionalServiceBus } from './transactional-command-bus.ts';
+import { TransactionalCommandBus } from './transactional-command-bus.ts';
 import { type ILogger } from '@zero/bootstrap';
 import { when } from 'vitest-when';
-import type { AbstractCommand } from './abstract-command.ts';
 import type { CommandBus } from './command-bus.ts';
+import type { ICommand } from '@types';
 
 describe('transactional service bus', () => {
   it('passes the command to the parent command bus', async () => {
@@ -19,14 +19,14 @@ describe('transactional service bus', () => {
     const logger = mock<ILogger>();
     const domainEventEmitter = mock<IDomainEventStore>();
 
-    const bus = new TransactionalServiceBus(
+    const bus = new TransactionalCommandBus(
       parent,
       unit,
       domainEventEmitter,
       logger
     );
 
-    const mockCommand = mock<AbstractCommand<string>>();
+    const mockCommand = mock<ICommand<string>>();
 
     await bus.execute(mockCommand);
 
@@ -40,14 +40,14 @@ describe('transactional service bus', () => {
     const logger = mock<ILogger>();
     const domainEventEmitter = mock<IDomainEventStore>();
 
-    const bus = new TransactionalServiceBus(
+    const bus = new TransactionalCommandBus(
       parent,
       unit,
       domainEventEmitter,
       logger
     );
 
-    const mockCommand = mock<AbstractCommand<string>>();
+    const mockCommand = mock<ICommand<string>>();
 
     await bus.execute(mockCommand);
 
@@ -64,14 +64,14 @@ describe('transactional service bus', () => {
 
     const domainEventEmitter = mock<IDomainEventStore>();
 
-    const bus = new TransactionalServiceBus(
+    const bus = new TransactionalCommandBus(
       parent,
       unit,
       domainEventEmitter,
       logger
     );
 
-    const mockCommand = mock<AbstractCommand<string>>();
+    const mockCommand = mock<ICommand<string>>();
 
     when(unit.commit).calledWith().thenReject(new Error());
 
@@ -87,9 +87,9 @@ describe('transactional service bus', () => {
     const events = mock<IDomainEventStore>();
     const logger = mock<ILogger>();
 
-    const bus = new TransactionalServiceBus(parent, unit, events, logger);
+    const bus = new TransactionalCommandBus(parent, unit, events, logger);
 
-    const mockCommand = mock<AbstractCommand<string>>();
+    const mockCommand = mock<ICommand<string>>();
 
     when(parent.execute).calledWith(mockCommand).thenReject(new Error());
 
@@ -105,9 +105,9 @@ describe('transactional service bus', () => {
     const events = mock<IDomainEventStore>();
     const logger = mock<ILogger>();
 
-    const bus = new TransactionalServiceBus(parent, unit, events, logger);
+    const bus = new TransactionalCommandBus(parent, unit, events, logger);
 
-    const mockCommand = mock<AbstractCommand<string>>();
+    const mockCommand = mock<ICommand<string>>();
 
     when(parent.execute).calledWith(mockCommand).thenReject();
 

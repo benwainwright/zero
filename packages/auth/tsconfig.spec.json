@@ -2,6 +2,12 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/vitest",
+    "paths": {
+      "@services": ["./src/services/index.ts"],
+      "@ports": ["./src/ports/index.ts"],
+      "@test-helpers": ["./src/test-helpers/index.ts"],
+      "@core": ["./src/core/index.ts"]
+    },
     "types": [
       "vitest/globals",
       "vitest/importMeta",
@@ -13,6 +19,7 @@
     "importHelpers": true
   },
   "include": [
+    "./src/global.test.d.ts",
     "vite.config.ts",
     "vite.config.mts",
     "vitest.config.ts",

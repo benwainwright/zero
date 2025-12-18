@@ -2,12 +2,12 @@ import type { ICommandBus, IDomainEventStore, IUnitOfWork } from '@ports';
 import { injectable } from 'inversify';
 import { inject } from './typed-inject.ts';
 import type { ILogger } from '@zero/bootstrap';
-import type { AbstractCommand } from './abstract-command.ts';
+import type { ICommand } from '@types';
 
 const LOG_CONTEXT = { context: 'transactional-service-bus' };
 
 @injectable()
-export class TransactionalServiceBus implements ICommandBus {
+export class TransactionalCommandBus implements ICommandBus {
   public constructor(
     @inject('RootCommandBus')
     private rootBus: ICommandBus,
@@ -22,7 +22,7 @@ export class TransactionalServiceBus implements ICommandBus {
     private logger: ILogger
   ) {}
 
-  public async execute(command: AbstractCommand<string>) {
+  public async execute(command: ICommand<string>) {
     try {
       this.logger.silly(
         `Transactional service bus beginning execution`,

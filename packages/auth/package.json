@@ -13,6 +13,11 @@
     },
     "./package.json": "./package.json"
   },
+  "devDependencies": {
+    "@suites/unit": "catalog:",
+    "@suites/doubles.vitest": "catalog:",
+    "vitest-when": "catalog:"
+  },
   "dependencies": {
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",

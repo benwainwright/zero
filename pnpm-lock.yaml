@@ -9,6 +9,12 @@ catalogs:
     '@inversifyjs/strongly-typed':
       specifier: 2.2.0
       version: 2.2.0
+    '@suites/doubles.vitest':
+      specifier: 3.0.1
+      version: 3.0.1
+    '@suites/unit':
+      specifier: 3.0.1
+      version: 3.0.1
     inversify:
       specifier: 7.10.7
       version: 7.10.7
@@ -141,6 +147,16 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 4.2.1
+    devDependencies:
+      '@suites/doubles.vitest':
+        specifier: 'catalog:'
+        version: 3.0.1(@vitest/spy@4.0.16)(vitest@4.0.16(@types/node@20.19.9)(yaml@2.8.2))
+      '@suites/unit':
+        specifier: 'catalog:'
+        version: 3.0.1
+      vitest-when:
+        specifier: 'catalog:'
+        version: 0.10.0(@vitest/expect@4.0.16)(vitest@4.0.16(@types/node@20.19.9)(yaml@2.8.2))
 
   packages/bootstrap:
     dependencies:
@@ -1292,6 +1308,32 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
+  '@suites/core.unit@3.0.1':
+    resolution: {integrity: sha512-X5xNg5EK1zAKXo4WS1fyBcViyvWvUWCEaA1fv/3ow5mD9AkKnIQajqm9pLAkUl/BM73baLQv9biLnmEHje1ghA==}
+    engines: {node: ^16.10.0 || ^18.12.0 || >=20.0.0}
+
+  '@suites/doubles.vitest@3.0.1':
+    resolution: {integrity: sha512-CldGybIRIUNR88CXWb9ofCAoIg7RnBQ3uItpe7b0YGFhSl5fFwuzQuqBjUVkof0Fe9PyloCZ0U1lAzcxwgfwww==}
+    engines: {node: ^18.12.0 || >=20.0.0}
+    peerDependencies:
+      '@vitest/spy': '>= 1.0'
+      vitest: '>= 1.0'
+
+  '@suites/types.common@3.0.0':
+    resolution: {integrity: sha512-+kCWmVAyEI01P4d/t3LbrOCq1xXQlh3SsPstn1uBuC/MDMW/pENHkU5xVC9G8VOW/pkXh53KXwbHIxpJImp4Zw==}
+    engines: {node: ^16.10.0 || ^18.12.0 || >=20.0.0}
+
+  '@suites/types.di@3.0.0':
+    resolution: {integrity: sha512-RzvgfTsjg3KrJ3SRbo9J84g5mRfkMZMzinLTjAQO+yCBBz+YMhbwaUXDBX70RcFGiAHjTNPg0jWjis3FHPH8Dg==}
+    engines: {node: ^16.10.0 || ^18.12.0 || >=20.0.0}
+
+  '@suites/types.doubles@3.0.0':
+    resolution: {integrity: sha512-B5sHH98qU7Fq+ozA42J3LLv846xRJn2ndx1xfLr0oaKxEG6Xud/vmdJpH65F/2P7DNMJkxWo/VDIqXrN4UDcvg==}
+
+  '@suites/unit@3.0.1':
+    resolution: {integrity: sha512-28RLtgxG8NH6zcBvfiMGqbToWNTs2WnTPa9GWQ2k1laXueGILDTTRjQrsApIAlbtRF5lGuGPynRFEMBAL+90Mw==}
+    engines: {node: ^16.10.0 || ^18.12.0 || >=20.0.0}
+
   '@swc-node/core@1.14.1':
     resolution: {integrity: sha512-jrt5GUaZUU6cmMS+WTJEvGvaB6j1YNKPHPzC2PUi2BjaFbtxURHj6641Az6xN7b665hNniAIdvjxWcRml5yCnw==}
     engines: {node: '>= 10'}
@@ -1990,6 +2032,10 @@ packages:
 
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
+
+  lodash.isequal@4.5.0:
+    resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -3768,6 +3814,35 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
+  '@suites/core.unit@3.0.1':
+    dependencies:
+      '@suites/types.common': 3.0.0
+      '@suites/types.di': 3.0.0
+      lodash.isequal: 4.5.0
+
+  '@suites/doubles.vitest@3.0.1(@vitest/spy@4.0.16)(vitest@4.0.16(@types/node@20.19.9)(yaml@2.8.2))':
+    dependencies:
+      '@suites/core.unit': 3.0.1
+      '@suites/types.common': 3.0.0
+      '@suites/types.doubles': 3.0.0
+      '@vitest/spy': 4.0.16
+      vitest: 4.0.16(@types/node@20.19.9)(yaml@2.8.2)
+
+  '@suites/types.common@3.0.0': {}
+
+  '@suites/types.di@3.0.0':
+    dependencies:
+      '@suites/types.common': 3.0.0
+
+  '@suites/types.doubles@3.0.0': {}
+
+  '@suites/unit@3.0.1':
+    dependencies:
+      '@suites/core.unit': 3.0.1
+      '@suites/types.common': 3.0.0
+      '@suites/types.di': 3.0.0
+      '@suites/types.doubles': 3.0.0
+
   '@swc-node/core@1.14.1(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.25)':
     dependencies:
       '@swc/core': 1.5.29(@swc/helpers@0.5.17)
@@ -4453,6 +4528,8 @@ snapshots:
   lines-and-columns@2.0.3: {}
 
   lodash.debounce@4.0.8: {}
+
+  lodash.isequal@4.5.0: {}
 
   log-symbols@4.1.0:
     dependencies:

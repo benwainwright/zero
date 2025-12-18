@@ -4,7 +4,7 @@ export { type IAllEvents } from './all-events.ts';
 export { AbstractCommandHandler } from './abstract-command-handler.ts';
 export { DomainEventStore } from './domain-event-buffer.ts';
 export { CommandBus } from './command-bus.ts';
-export { TransactionalServiceBus } from './transactional-command-bus.ts';
+export { TransactionalCommandBus as TransactionalServiceBus } from './transactional-command-bus.ts';
 export { SessionStorage } from './session-storage.ts';
 export { AbstractQueryHandler } from './abstract-query-handler.ts';
 export { QueryBus } from './query-bus.ts';

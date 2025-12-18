@@ -1,16 +1,14 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
 
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/packages/application-core',
-  plugins: [],
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [],
-  // },
+  plugins: [nxViteTsPaths()],
   test: {
-    name: '@org/application-core',
+    name: '@zero/application-core',
     watch: false,
     globals: true,
     environment: 'node',

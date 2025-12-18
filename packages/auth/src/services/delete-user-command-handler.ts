@@ -1,15 +1,19 @@
 import {
-  AbstractCommand,
   AbstractCommandHandler,
   type ICommandContext,
 } from '@zero/application-core';
-import { DeleteUserCommand } from './delete-user-command.ts';
 import type { IUserRepository } from '@ports';
 import { injectable } from 'inversify';
 import { inject } from '@core';
+import type { AuthCommands } from './auth-commands.ts';
 
 @injectable()
-export class DeleteUserCommandHandler extends AbstractCommandHandler<DeleteUserCommand> {
+export class DeleteUserCommandHandler extends AbstractCommandHandler<
+  AuthCommands,
+  'CreateUserCommand'
+> {
+  public override readonly name = 'CreateUserCommand';
+
   public constructor(
     @inject('UserRepository')
     private readonly userRepo: IUserRepository
@@ -17,14 +21,8 @@ export class DeleteUserCommandHandler extends AbstractCommandHandler<DeleteUserC
     super();
   }
 
-  public override canHandle(
-    thing: AbstractCommand<string>
-  ): thing is DeleteUserCommand {
-    return thing instanceof DeleteUserCommand;
-  }
-
   protected override async handle(
-    _context: ICommandContext<DeleteUserCommand>
+    _context: ICommandContext<AuthCommands, 'DeleteUserCommand'>
   ): Promise<void> {
     throw new Error('Method not implemented.');
   }

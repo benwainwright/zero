@@ -1,15 +1,23 @@
-import { AbstractCommand } from './abstract-command.ts';
-import type { ICommandContext } from '@types';
+import type { ICommand, ICommandContext, IPickCommand } from '@types';
 import { BaseHandler } from './base-handler.ts';
 
 export abstract class AbstractCommandHandler<
-  TCommand extends AbstractCommand<string>
-> extends BaseHandler {
-  public abstract canHandle(thing: AbstractCommand<string>): thing is TCommand;
+  TCommands extends ICommand<string>,
+  TKey extends TCommands['key']
+> extends BaseHandler<TKey> {
+  public canHandle(
+    thing: ICommand<string>
+  ): thing is IPickCommand<TCommands, TKey> {
+    return thing.key === this.name;
+  }
 
-  protected abstract handle(context: ICommandContext<TCommand>): Promise<void>;
+  protected abstract handle(
+    context: ICommandContext<TCommands, TKey>
+  ): Promise<void>;
 
-  public async doHandle(context: ICommandContext<TCommand>): Promise<void> {
+  public async doHandle(
+    context: ICommandContext<TCommands, TKey>
+  ): Promise<void> {
     await this.handle(context);
   }
 }
