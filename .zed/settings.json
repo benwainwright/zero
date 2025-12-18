@@ -1,0 +1,26 @@
+{
+  "lsp": {
+    "oxc": {
+      "initialization_options": {
+        "options": {
+          "run": "onType",
+          "tsConfigPath": "./tsconfig.json",
+          "unusedDisableDirectives": "allow",
+          "typeAware": true,
+          "flags": {}
+        }
+      }
+    }
+  },
+  "languages": {
+    "TSX": {
+      "language_servers": ["vtsls", "oxc"]
+    },
+    "TypeScript": {
+      "language_servers": ["vtsls", "oxc"]
+    },
+    "JavaScript": {
+      "language_servers": ["vtsls", "oxc"]
+    }
+  }
+}

@@ -1,18 +1,31 @@
 {
-  "name": "@org/source",
+  "name": "@zero/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "type": "module",
+  "scripts": {
+    "test": "pnpm exec test"
+  },
   "private": true,
-  "dependencies": {},
   "devDependencies": {
     "@nx/js": "22.2.1",
+    "@nx/vite": "22.3.0",
+    "@nx/vitest": "22.2.1",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
+    "@types/node": "20.19.9",
+    "@typescript/native-preview": "7.0.0-dev.20251112.1",
+    "@vitest/coverage-v8": "^4.0.0",
     "nx": "22.2.1",
+    "oxlint": "1.32.0",
+    "oxlint-tsgolint": "0.9.0",
     "prettier": "^2.6.2",
     "tslib": "^2.3.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vite": "^7.0.0",
+    "vite-tsconfig-paths": "6.0.2",
+    "vitest": "^4.0.0",
+    "vitest-mock-extended": "3.1.0"
   }
 }
