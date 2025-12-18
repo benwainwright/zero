@@ -1,2 +1,11 @@
 packages:
   - 'packages/*'
+
+catalog:
+  inversify: 7.10.7
+  reflect-metadata: 0.2.2
+  '@inversifyjs/strongly-typed': 2.2.0
+  zod: 4.2.1
+  vitest-when: 0.10.0
+  typeson: 9.0.4
+  stacktracey: 2.1.8

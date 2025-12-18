@@ -1,24 +1,24 @@
-import type { DomainEvents } from './domain-events.ts';
+import type { IDomainEvents } from './domain-events.ts';
 
 import type { IEvent } from './i-event.ts';
 
 export abstract class DomainModel<TShape> {
   public abstract readonly id: string;
 
-  private events: IEvent<DomainEvents, keyof DomainEvents>[] = [];
+  private events: IEvent<IDomainEvents, keyof IDomainEvents>[] = [];
 
   public hasEvents(): boolean {
     return this.events.length > 0;
   }
 
-  public pullEvents(): IEvent<DomainEvents, keyof DomainEvents>[] {
+  public pullEvents(): IEvent<IDomainEvents, keyof IDomainEvents>[] {
     const events = this.events;
     this.events = [];
     return events;
   }
 
-  protected raiseEvent<TKey extends keyof DomainEvents>(
-    event: IEvent<DomainEvents, TKey>
+  protected raiseEvent<TKey extends keyof IDomainEvents>(
+    event: IEvent<IDomainEvents, TKey>
   ) {
     this.events.push(event);
   }

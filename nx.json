@@ -26,7 +26,9 @@
       "exclude": [
         "packages/domain/*",
         "packages/application-core/*",
-        "packages/auth/*"
+        "packages/auth/*",
+        "packages/bootstrap/*",
+        "packages/serialiser/*"
       ]
     },
     {
@@ -34,7 +36,9 @@
       "include": [
         "packages/domain/*",
         "packages/application-core/*",
-        "packages/auth/*"
+        "packages/auth/*",
+        "packages/bootstrap/*",
+        "packages/serialiser/*"
       ],
       "options": {
         "typecheck": {

@@ -13,5 +13,16 @@
     },
     "./package.json": "./package.json"
   },
-  "dependencies": {}
+  "devDependencies": {
+    "vitest-when": "catalog:"
+  },
+  "dependencies": {
+    "@inversifyjs/strongly-typed": "catalog:",
+    "@zero/bootstrap": "workspace:*",
+    "@zero/domain": "workspace:*",
+    "@zero/serialiser": "workspace:*",
+    "inversify": "catalog:",
+    "zod": "catalog:",
+    "reflect-metadata": "catalog:"
+  }
 }

@@ -1,1 +1,1 @@
-export * from './lib/auth.js';
+export { authModule } from './auth-module.ts';

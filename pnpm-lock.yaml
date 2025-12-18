@@ -4,6 +4,30 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@inversifyjs/strongly-typed':
+      specifier: 2.2.0
+      version: 2.2.0
+    inversify:
+      specifier: 7.10.7
+      version: 7.10.7
+    reflect-metadata:
+      specifier: 0.2.2
+      version: 0.2.2
+    stacktracey:
+      specifier: 2.1.8
+      version: 2.1.8
+    typeson:
+      specifier: 9.0.4
+      version: 9.0.4
+    vitest-when:
+      specifier: 0.10.0
+      version: 0.10.0
+    zod:
+      specifier: 4.2.1
+      version: 4.2.1
+
 importers:
 
   .:
@@ -66,15 +90,90 @@ importers:
         specifier: 3.1.0
         version: 3.1.0(typescript@5.9.3)(vitest@4.0.16(@types/node@20.19.9)(yaml@2.8.2))
 
-  packages/application-core: {}
+  packages/application-core:
+    dependencies:
+      '@inversifyjs/strongly-typed':
+        specifier: 'catalog:'
+        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      '@zero/bootstrap':
+        specifier: workspace:*
+        version: link:../bootstrap
+      '@zero/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@zero/serialiser':
+        specifier: workspace:*
+        version: link:../serialiser
+      inversify:
+        specifier: 'catalog:'
+        version: 7.10.7(reflect-metadata@0.2.2)
+      reflect-metadata:
+        specifier: 'catalog:'
+        version: 0.2.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.2.1
+    devDependencies:
+      vitest-when:
+        specifier: 'catalog:'
+        version: 0.10.0(@vitest/expect@4.0.16)(vitest@4.0.16(@types/node@20.19.9)(yaml@2.8.2))
 
-  packages/auth: {}
+  packages/auth:
+    dependencies:
+      '@inversifyjs/strongly-typed':
+        specifier: 'catalog:'
+        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      '@zero/application-core':
+        specifier: workspace:*
+        version: link:../application-core
+      '@zero/bootstrap':
+        specifier: workspace:*
+        version: link:../bootstrap
+      '@zero/domain':
+        specifier: workspace:*
+        version: link:../domain
+      inversify:
+        specifier: 'catalog:'
+        version: 7.10.7(reflect-metadata@0.2.2)
+      reflect-metadata:
+        specifier: 'catalog:'
+        version: 0.2.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.2.1
+
+  packages/bootstrap:
+    dependencies:
+      '@inversifyjs/strongly-typed':
+        specifier: 'catalog:'
+        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      inversify:
+        specifier: 'catalog:'
+        version: 7.10.7(reflect-metadata@0.2.2)
+      reflect-metadata:
+        specifier: 'catalog:'
+        version: 0.2.2
+      stacktracey:
+        specifier: 'catalog:'
+        version: 2.1.8
+      zod:
+        specifier: 'catalog:'
+        version: 4.2.1
 
   packages/domain:
     dependencies:
       zod:
         specifier: 4.2.1
         version: 4.2.1
+
+  packages/serialiser:
+    dependencies:
+      '@zero/domain':
+        specifier: workspace:*
+        version: link:../domain
+      typeson:
+        specifier: 'catalog:'
+        version: 9.0.4
 
 packages:
 
@@ -784,6 +883,33 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@inversifyjs/common@1.5.2':
+    resolution: {integrity: sha512-WlzR9xGadABS9gtgZQ+luoZ8V6qm4Ii6RQfcfC9Ho2SOlE6ZuemFo7PKJvKI0ikm8cmKbU8hw5UK6E4qovH21w==}
+
+  '@inversifyjs/container@1.14.4':
+    resolution: {integrity: sha512-QQi+lIHxB/hnf4C1umpm51AVa7MbadWIhTERuPV61kKMqUmLALfmThU0VHbYblH/2vIR2dM6scei1m/WYyO75g==}
+    peerDependencies:
+      reflect-metadata: ~0.2.2
+
+  '@inversifyjs/core@9.1.2':
+    resolution: {integrity: sha512-8baIvwVUliZ6TeaYI0w8XRMTOX3i3AtANolbH/8TazecALIcpLAaiadKOm2yPguac1uCIUznSglOlG411rBTAQ==}
+
+  '@inversifyjs/plugin@0.2.0':
+    resolution: {integrity: sha512-R/JAdkTSD819pV1zi0HP54mWHyX+H2m8SxldXRgPQarS3ySV4KPyRdosWcfB8Se0JJZWZLHYiUNiS6JvMWSPjw==}
+
+  '@inversifyjs/prototype-utils@0.1.3':
+    resolution: {integrity: sha512-EzRamZzNgE9Sn3QtZ8NncNa2lpPMZfspqbK6BWFguWnOpK8ymp2TUuH46ruFHZhrHKnknPd7fG22ZV7iF517TQ==}
+
+  '@inversifyjs/reflect-metadata-utils@1.4.1':
+    resolution: {integrity: sha512-Cp77C4d2wLaHXiUB7iH6Cxb7i1lD/YDuTIHLTDzKINqGSz0DCSoL/Dg2wVkW/6Qx03r/yQMLJ+32Agl32N2X8g==}
+    peerDependencies:
+      reflect-metadata: ~0.2.2
+
+  '@inversifyjs/strongly-typed@2.2.0':
+    resolution: {integrity: sha512-oDRQAst1noKp8uZ150dIJ5H8n70ZCkK5qptz+T/HDXx8dWIVwZWTeec1SXsoSUsVpofJlpQLTAdv7QU27K8i3w==}
+    peerDependencies:
+      inversify: ^7.6.1
+
   '@jest/diff-sequences@30.0.1':
     resolution: {integrity: sha512-n5H8QLDJ47QqbCNn5SuFjCRDrOLEZ0h8vAHCK5RL9Ls7Xa8AQLa/YxAc9UjFqoEDM48muwtBGjtMY5cr0PLDCw==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
@@ -1395,6 +1521,9 @@ packages:
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
+  as-table@1.0.55:
+    resolution: {integrity: sha512-xvsWESUJn0JN421Xb9MQw6AsMHRCUknCe0Wjlxvjud80mU4E6hQf1A6NzQKcYNmYw62MfzEtXc+badstZP3JpQ==}
+
   assertion-error@2.0.1:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
@@ -1533,6 +1662,9 @@ packages:
   cosmiconfig@7.1.0:
     resolution: {integrity: sha512-AdmX6xUzdNASswsFtmwSt7Vj8po9IuqXm0UXz7QKPuEUmPB4XyjGfaAr2PSuELMwkRMVH1EpIkX5bTZGRB3eCA==}
     engines: {node: '>=10'}
+
+  data-uri-to-buffer@2.0.2:
+    resolution: {integrity: sha512-ND9qDTLc6diwj+Xe5cdAgVTbLVdXbtxTJRXRhli8Mowuaan+0EJOtdqJ0QCHNSSPyoXGx9HX2/VMnKeC34AChA==}
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -1717,6 +1849,9 @@ packages:
     resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
     engines: {node: '>= 0.4'}
 
+  get-source@2.0.12:
+    resolution: {integrity: sha512-X5+4+iD+HoSeEED+uwrQ07BOQr0kEDFMVqqpBuI+RaZBpBpHCuXxo70bjar6f0b0u/DQJsJ7ssurpP0V60Az+w==}
+
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
@@ -1760,6 +1895,9 @@ packages:
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
+
+  inversify@7.10.7:
+    resolution: {integrity: sha512-tLS9Aie8FZHNXopJ2PoJXLTDx7f7HUIAvdJQKL3r5uMwi8Ox/+agY+Fbsgi2SzGsSLRxcv8vgG+9YynGIvwxUQ==}
 
   is-arrayish@0.2.1:
     resolution: {integrity: sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg==}
@@ -2021,6 +2159,9 @@ packages:
     resolution: {integrity: sha512-9uBdv/B4EefsuAL+pWqueZyZS2Ba+LxfFeQ9DN14HU4bN8bhaxKdkpjpB6fs9+pSjIBu+FXQHImEg8j/Lw0+vA==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
 
+  printable-characters@1.0.42:
+    resolution: {integrity: sha512-dKp+C4iXWK4vVYZmYSd0KBH5F/h1HoZRsbJ82AVKRO3PEo8L4lBS/vLwhVtpwwuYcoIsVY+1JYKR268yn480uQ==}
+
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
@@ -2030,6 +2171,9 @@ packages:
   readable-stream@3.6.2:
     resolution: {integrity: sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==}
     engines: {node: '>= 6'}
+
+  reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
   regenerate-unicode-properties@10.2.2:
     resolution: {integrity: sha512-m03P+zhBeQd1RGnYxrGyDAPpWX/epKirLrp8e3qevZdVkKtnCrjjWczIbYc8+xd6vcTStVlqfycTx1KR4LOr0g==}
@@ -2117,6 +2261,9 @@ packages:
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
+  stacktracey@2.1.8:
+    resolution: {integrity: sha512-Kpij9riA+UNg7TnphqjH7/CzctQ/owJGNbFkfEeve4Z4uxT5+JapVLFXcsurIfN34gnTWZNJ/f7NMG0E8JDzTw==}
+
   std-env@3.10.0:
     resolution: {integrity: sha512-5GS12FdOZNliM5mAOxFRg7Ir0pWz8MdpYm6AY6VPkGpbA7ZzmbzNcBJQ0GPvvyWgcY7QAhCgf9Uy89I03faLkg==}
 
@@ -2200,6 +2347,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  typeson@9.0.4:
+    resolution: {integrity: sha512-umRYLe37m4fTu0AlgFaqu1C+N+i3LqAehCzbvNx9w7alyN1wpPyS6FbBEsvWD2FppS2yJ9gk0FkFBkZ/wJE13Q==}
+    engines: {node: '>=16.0.0'}
+
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
@@ -2281,6 +2432,15 @@ packages:
     peerDependencies:
       typescript: 3.x || 4.x || 5.x
       vitest: '>=3.0.0'
+
+  vitest-when@0.10.0:
+    resolution: {integrity: sha512-tZiZ3+HR3X+pN1h4484an6/kuPezs/0b7frOikEnHfsPbOLGoiC+8NHRP/CRTAnG9Ccevq5/oGfCNRm/sp2EAw==}
+    peerDependencies:
+      '@vitest/expect': '>=0.31.0 <5'
+      vitest: '>=0.31.0 <5'
+    peerDependenciesMeta:
+      '@vitest/expect':
+        optional: true
 
   vitest@4.0.16:
     resolution: {integrity: sha512-E4t7DJ9pESL6E3I8nFjPa4xGUd3PmiWDLsDztS2qXSJWfHtbQnwAWylaBvSNY48I3vr8PTqIZlyK8TE3V3CA4Q==}
@@ -3165,6 +3325,38 @@ snapshots:
   '@esbuild/win32-x64@0.27.2':
     optional: true
 
+  '@inversifyjs/common@1.5.2': {}
+
+  '@inversifyjs/container@1.14.4(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/core': 9.1.2(reflect-metadata@0.2.2)
+      '@inversifyjs/plugin': 0.2.0
+      '@inversifyjs/reflect-metadata-utils': 1.4.1(reflect-metadata@0.2.2)
+      reflect-metadata: 0.2.2
+
+  '@inversifyjs/core@9.1.2(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/prototype-utils': 0.1.3
+      '@inversifyjs/reflect-metadata-utils': 1.4.1(reflect-metadata@0.2.2)
+    transitivePeerDependencies:
+      - reflect-metadata
+
+  '@inversifyjs/plugin@0.2.0': {}
+
+  '@inversifyjs/prototype-utils@0.1.3':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+
+  '@inversifyjs/reflect-metadata-utils@1.4.1(reflect-metadata@0.2.2)':
+    dependencies:
+      reflect-metadata: 0.2.2
+
+  '@inversifyjs/strongly-typed@2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))':
+    dependencies:
+      inversify: 7.10.7(reflect-metadata@0.2.2)
+
   '@jest/diff-sequences@30.0.1': {}
 
   '@jest/get-type@30.1.0': {}
@@ -3799,6 +3991,10 @@ snapshots:
 
   argparse@2.0.1: {}
 
+  as-table@1.0.55:
+    dependencies:
+      printable-characters: 1.0.42
+
   assertion-error@2.0.1: {}
 
   ast-v8-to-istanbul@0.3.9:
@@ -3956,6 +4152,8 @@ snapshots:
       parse-json: 5.2.0
       path-type: 4.0.0
       yaml: 1.10.2
+
+  data-uri-to-buffer@2.0.2: {}
 
   debug@4.4.3:
     dependencies:
@@ -4135,6 +4333,11 @@ snapshots:
       dunder-proto: 1.0.1
       es-object-atoms: 1.1.1
 
+  get-source@2.0.12:
+    dependencies:
+      data-uri-to-buffer: 2.0.2
+      source-map: 0.6.1
+
   globrex@0.1.2: {}
 
   gopd@1.2.0: {}
@@ -4165,6 +4368,14 @@ snapshots:
       resolve-from: 4.0.0
 
   inherits@2.0.4: {}
+
+  inversify@7.10.7(reflect-metadata@0.2.2):
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/container': 1.14.4(reflect-metadata@0.2.2)
+      '@inversifyjs/core': 9.1.2(reflect-metadata@0.2.2)
+    transitivePeerDependencies:
+      - reflect-metadata
 
   is-arrayish@0.2.1: {}
 
@@ -4493,6 +4704,8 @@ snapshots:
       ansi-styles: 5.2.0
       react-is: 18.3.1
 
+  printable-characters@1.0.42: {}
+
   proxy-from-env@1.1.0: {}
 
   react-is@18.3.1: {}
@@ -4502,6 +4715,8 @@ snapshots:
       inherits: 2.0.4
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
+
+  reflect-metadata@0.2.2: {}
 
   regenerate-unicode-properties@10.2.2:
     dependencies:
@@ -4599,6 +4814,11 @@ snapshots:
 
   stackback@0.0.2: {}
 
+  stacktracey@2.1.8:
+    dependencies:
+      as-table: 1.0.55
+      get-source: 2.0.12
+
   std-env@3.10.0: {}
 
   string-width@4.2.3:
@@ -4664,6 +4884,8 @@ snapshots:
 
   typescript@5.9.3: {}
 
+  typeson@9.0.4: {}
+
   undici-types@6.21.0: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
@@ -4714,6 +4936,13 @@ snapshots:
       ts-essentials: 10.1.1(typescript@5.9.3)
       typescript: 5.9.3
       vitest: 4.0.16(@types/node@20.19.9)(yaml@2.8.2)
+
+  vitest-when@0.10.0(@vitest/expect@4.0.16)(vitest@4.0.16(@types/node@20.19.9)(yaml@2.8.2)):
+    dependencies:
+      pretty-format: 30.2.0
+      vitest: 4.0.16(@types/node@20.19.9)(yaml@2.8.2)
+    optionalDependencies:
+      '@vitest/expect': 4.0.16
 
   vitest@4.0.16(@types/node@20.19.9)(yaml@2.8.2):
     dependencies:

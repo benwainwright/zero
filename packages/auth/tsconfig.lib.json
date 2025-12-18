@@ -7,7 +7,12 @@
     "emitDeclarationOnly": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@services": ["./src/services/index.ts"],
+      "@ports": ["./src/ports/index.ts"],
+      "@core": ["./src/core/index.ts"]
+    }
   },
   "include": ["src/**/*.ts"],
   "references": [
@@ -16,6 +21,9 @@
     },
     {
       "path": "../application-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../bootstrap/tsconfig.lib.json"
     }
   ],
   "exclude": [

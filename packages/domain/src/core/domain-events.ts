@@ -1,3 +1,3 @@
 import type { UserEvents } from '@user';
 
-export type DomainEvents = UserEvents;
+export type IDomainEvents = UserEvents;

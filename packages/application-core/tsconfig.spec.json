@@ -10,7 +10,12 @@
       "vitest"
     ],
     "forceConsistentCasingInFileNames": true,
-    "importHelpers": true
+    "importHelpers": true,
+    "paths": {
+      "@core": ["./src/core/index.ts"],
+      "@types": ["./src/types/index.ts"],
+      "@ports": ["./src/ports/index.ts"]
+    }
   },
   "include": [
     "vite.config.ts",

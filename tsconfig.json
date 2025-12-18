@@ -11,6 +11,12 @@
     },
     {
       "path": "./packages/auth"
+    },
+    {
+      "path": "./packages/bootstrap"
+    },
+    {
+      "path": "./packages/serialiser"
     }
   ]
 }

@@ -7,10 +7,26 @@
     "emitDeclarationOnly": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@core": ["./src/core/index.ts"],
+      "@types": ["./src/types/index.ts"],
+      "@ports": ["./src/ports/index.ts"],
+      "@errors": ["./src/errors/index.ts"]
+    }
   },
   "include": ["src/**/*.ts"],
-  "references": [],
+  "references": [
+    {
+      "path": "../serialiser/tsconfig.lib.json"
+    },
+    {
+      "path": "../domain/tsconfig.lib.json"
+    },
+    {
+      "path": "../bootstrap/tsconfig.lib.json"
+    }
+  ],
   "exclude": [
     "vite.config.ts",
     "vite.config.mts",
