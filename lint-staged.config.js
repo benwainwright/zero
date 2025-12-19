@@ -6,6 +6,7 @@ import path from 'path';
  */
 export default {
   '*.{js,ts,tsx,jsx,json}': [
+    'pnpm exec nx sync',
     (files) =>
       `pnpm exec nx affected --targets test --files ${files
         .map((file) => path.relative(process.cwd(), file))

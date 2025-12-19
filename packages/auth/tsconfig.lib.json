@@ -18,6 +18,7 @@
   "references": [
     {
       "path": "../domain/tsconfig.lib.json"
+
     },
     {
       "path": "../application-core/tsconfig.lib.json"
