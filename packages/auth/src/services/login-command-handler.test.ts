@@ -54,7 +54,10 @@ describe('login command handler', async () => {
     await handler.doHandle(context);
 
     expect(currentUserSetter.set).toHaveBeenCalledWith(user);
-    expect(eventBus.emit).toHaveBeenCalledWith('LoginEvent');
+    expect(eventBus.emit).toHaveBeenCalledWith(
+      'LoginSuccessfulEvent',
+      undefined
+    );
   });
 
   it('checks does not set the current user if it fails, also emits loginfailedevent', async () => {
@@ -79,7 +82,7 @@ describe('login command handler', async () => {
     await handler.doHandle(context);
 
     expect(currentUserSetter.set).not.toHaveBeenCalled();
-    expect(eventBus.emit).toHaveBeenCalledWith('LoginFailedEvent');
+    expect(eventBus.emit).toHaveBeenCalledWith('LoginFailedEvent', undefined);
   });
 
   it('check does not set the current user if it doesnt exist and emits loginfailedevent', async () => {
@@ -95,6 +98,6 @@ describe('login command handler', async () => {
     await handler.doHandle(context);
 
     expect(currentUserSetter.set).not.toHaveBeenCalled();
-    expect(eventBus.emit).toHaveBeenCalledWith('LoginFailedEvent');
+    expect(eventBus.emit).toHaveBeenCalledWith('LoginFailedEvent', undefined);
   });
 });

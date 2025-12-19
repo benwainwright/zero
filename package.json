@@ -8,15 +8,19 @@
   },
   "private": true,
   "devDependencies": {
-    "@nx/js": "22.2.1",
+    "@nx/js": "22.3.0",
     "@nx/vite": "22.3.0",
     "@nx/vitest": "22.2.1",
+    "@nx/web": "22.3.0",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
     "@types/node": "20.19.9",
     "@typescript/native-preview": "7.0.0-dev.20251112.1",
     "@vitest/coverage-v8": "^4.0.0",
+    "@vitest/ui": "^4.0.0",
+    "jiti": "2.4.2",
+    "jsdom": "~22.1.0",
     "nx": "22.2.1",
     "oxlint": "1.32.0",
     "oxlint-tsgolint": "0.9.0",
@@ -24,8 +28,10 @@
     "tslib": "^2.3.0",
     "typescript": "~5.9.2",
     "vite": "^7.0.0",
+    "vite-plugin-dts": "~4.5.0",
     "vite-tsconfig-paths": "6.0.2",
     "vitest": "^4.0.0",
     "vitest-mock-extended": "3.1.0"
-  }
+  },
+  "dependencies": {}
 }

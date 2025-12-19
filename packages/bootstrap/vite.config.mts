@@ -1,17 +1,18 @@
 /// <reference types='vitest' />
-import path from 'path';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import dts from 'vite-plugin-dts';
+import tsconfigPaths from "vite-tsconfig-paths"
+import * as path from 'path';
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
-  cacheDir: '../../node_modules/.vite/packages/application-core',
+  cacheDir: '../../node_modules/.vite/packages/bootstrap',
   plugins: [
-    tsconfigPaths({
-      projects: [
-        path.join(import.meta.dirname, 'tsconfig.lib.json'),
-        path.join(import.meta.dirname, 'tsconfig.spec.json'),
-      ],
+    tsconfigPaths({projects: [path.join(import.meta.dirname, 'tsconfig.lib.json')]}),
+    dts({
+      entryRoot: 'src',
+      tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
     }),
   ],
   build: {
@@ -23,16 +24,17 @@ export default defineConfig(() => ({
     },
     lib: {
       entry: 'src/index.ts',
-      name: '@zero/application-core',
+      name: '@zero/bootstrap',
       fileName: 'index',
       formats: ['es' as const],
     },
     rollupOptions: {
+      // External packages that should not be bundled into your library.
       external: [],
     },
   },
   test: {
-    name: '@zero/application-core',
+    name: '@zero/auth',
     watch: false,
     globals: true,
     environment: 'node',
