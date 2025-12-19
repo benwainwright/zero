@@ -30,6 +30,7 @@ const newLibrary = async (tree: Tree, schema: CreateLibrarySchema) => {
 
   const libraryRoot = readProjectConfiguration(tree, schema.name).root;
 
+  tree.delete(`${libraryRoot}/src`);
   generateFiles(tree, joinPathFragments(__dirname, './files'), libraryRoot, {
     ...schema,
     packageDir: libraryRoot,
