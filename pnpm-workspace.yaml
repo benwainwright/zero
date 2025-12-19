@@ -4,6 +4,7 @@ packages:
 catalog:
   inversify: 7.10.7
   reflect-metadata: 0.2.2
+  vitest-mock-extended: 3.1.0
   '@inversifyjs/strongly-typed': 2.2.0
   zod: 4.2.1
   vitest-when: 0.10.0

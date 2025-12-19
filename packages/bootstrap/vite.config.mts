@@ -1,15 +1,19 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import dts from 'vite-plugin-dts';
-import tsconfigPaths from "vite-tsconfig-paths"
+import tsconfigPaths from 'vite-tsconfig-paths';
 import * as path from 'path';
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/packages/bootstrap',
   plugins: [
-    tsconfigPaths({projects: [path.join(import.meta.dirname, 'tsconfig.lib.json')]}),
+    tsconfigPaths({
+      projects: [
+        path.join(import.meta.dirname, 'tsconfig.lib.json'),
+        path.join(import.meta.dirname, 'tsconfig.spec.json'),
+      ],
+    }),
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
@@ -41,6 +45,12 @@ export default defineConfig(() => ({
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
+      thresholds: {
+        100: true,
+      },
+      enabled: true,
+      includes: ['./src/**/*.ts'],
+      exclude: ['./src/**/*.test.ts', './src/**/*.spec.ts'],
       reportsDirectory: './test-output/vitest/coverage',
       provider: 'v8' as const,
     },

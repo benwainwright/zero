@@ -27,6 +27,9 @@ catalogs:
     typeson:
       specifier: 9.0.4
       version: 9.0.4
+    vitest-mock-extended:
+      specifier: 3.1.0
+      version: 3.1.0
     vitest-when:
       specifier: 0.10.0
       version: 0.10.0
@@ -190,6 +193,10 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 4.2.1
+    devDependencies:
+      vitest-mock-extended:
+        specifier: 'catalog:'
+        version: 3.1.0(typescript@5.9.3)(vitest@4.0.16)
 
   packages/domain:
     dependencies:
@@ -205,8 +212,6 @@ importers:
       typeson:
         specifier: 'catalog:'
         version: 9.0.4
-
-  packages/test: {}
 
 packages:
 

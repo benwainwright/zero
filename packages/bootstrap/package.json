@@ -13,6 +13,9 @@
     },
     "./package.json": "./package.json"
   },
+  "devDependencies": {
+    "vitest-mock-extended": "catalog:"
+  },
   "dependencies": {
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
