@@ -47,6 +47,8 @@ const newLibrary = async (tree: Tree, schema: CreateLibrarySchema) => {
     tree.rename(`${libraryRoot}/${file}_`, `${libraryRoot}/${file}`);
   });
 
+  tree.delete(`${libraryRoot}/vite.config.ts`);
+
   await formatFiles(tree);
   return () => {
     installPackagesTask(tree);
