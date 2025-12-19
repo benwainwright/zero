@@ -6,6 +6,7 @@
   "scripts": {
     "test": "pnpm exec nx run-many --targets test",
     "type-check": "pnpm exec nx run-many --targets typecheck",
+    "build": "pnpm exec nx run-many --targets build",
     "prepare": "husky"
   },
   "private": true,
