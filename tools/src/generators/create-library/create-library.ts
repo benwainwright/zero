@@ -42,6 +42,7 @@ const newLibrary = async (tree: Tree, schema: CreateLibrarySchema) => {
     'tsconfig.spec.json',
     'package.json',
     'src/index.ts',
+    'src/lib/the-thing.test.ts_',
   ];
 
   underScoreFiles.forEach((file) => {
