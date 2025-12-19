@@ -12,3 +12,5 @@ catalog:
   stacktracey: 2.1.8
   '@suites/unit': 3.0.1
   '@suites/doubles.vitest': 3.0.1
+  '@inversifyjs/plugin': 0.2.0
+  winston: 3.19.0

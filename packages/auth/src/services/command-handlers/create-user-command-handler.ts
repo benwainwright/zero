@@ -2,7 +2,12 @@ import {
   AbstractCommandHandler,
   type ICommandContext,
 } from '@zero/application-core';
-import type { IPasswordHasher, IRoleRepository, IUserRepository } from '@ports';
+import type {
+  IGrantManager,
+  IPasswordHasher,
+  IRoleRepository,
+  IUserRepository,
+} from '@ports';
 import { injectable } from 'inversify';
 import { inject } from '@core';
 import type { AuthCommands } from '../auth-commands.ts';
@@ -27,6 +32,9 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
     @inject('PasswordHasher')
     private readonly passwordHasher: IPasswordHasher,
 
+    @inject('GrantService')
+    private readonly grants: IGrantManager,
+
     @inject('Logger')
     logger: ILogger
   ) {
@@ -39,6 +47,10 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
     const passwordHash = await this.passwordHasher.hashPassword(password);
 
     const role = await this.roleRepo.get(USER_ROLE_ID);
+
+    this.grants.requires({
+      capability: 'user:create',
+    });
 
     const user = User.create({
       id: username,

@@ -6,7 +6,12 @@ export {
   type IAllEvents,
 } from '@core';
 
-export { type IEventBus } from '@ports';
+export {
+  type IEventBus,
+  type ICommandBus,
+  type IQueryBus,
+  type ICurrentUserCache,
+} from '@ports';
 
 export { AppError } from '@errors';
 

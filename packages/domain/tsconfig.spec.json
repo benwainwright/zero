@@ -31,7 +31,7 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
     "src/**/*.d.ts"
-  ],
+, "../auth/src/core/grant.test.ts"  ],
   "references": [
     {
       "path": "./tsconfig.lib.json"

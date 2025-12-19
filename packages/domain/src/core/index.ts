@@ -4,5 +4,4 @@ export { type CapabilityList } from './capability-list.ts';
 export { type IDomainEvents } from './domain-events.ts';
 export { DomainError } from './domain-error.ts';
 export { capabilities, type ICapability } from './i-capability.ts';
-export { Grants } from './grants.ts';
 export { type IActor } from './i-actor.ts';

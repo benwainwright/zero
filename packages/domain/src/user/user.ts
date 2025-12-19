@@ -1,6 +1,6 @@
 import { Role } from '@role';
 import { userSchema, type IUser } from './i-user.ts';
-import { DomainModel, type IActor, Grants } from '@core';
+import { DomainModel, type IActor } from '@core';
 
 export class User extends DomainModel<IUser> implements IActor {
   public readonly id: string;
@@ -20,13 +20,11 @@ export class User extends DomainModel<IUser> implements IActor {
     return User.reconstitute(this.toObject({ secure: true }));
   }
 
-  public get grants() {
-    return new Grants(
-      this._roles.flatMap((role) => role.toObject().permissions)
-    );
+  public get permissions() {
+    return this._roles.flatMap((role) => role.toObject().permissions);
   }
 
-  public roles() {
+  public get roles() {
     return this._roles;
   }
 

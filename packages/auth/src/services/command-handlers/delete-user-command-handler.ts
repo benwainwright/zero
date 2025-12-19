@@ -2,7 +2,7 @@ import {
   AbstractCommandHandler,
   type ICommandContext,
 } from '@zero/application-core';
-import type { IUserRepository } from '@ports';
+import type { IGrantManager, IUserRepository } from '@ports';
 import { injectable } from 'inversify';
 import { inject } from '@core';
 import type { AuthCommands } from '../auth-commands.ts';
@@ -19,6 +19,9 @@ export class DeleteUserCommandHandler extends AbstractCommandHandler<
     @inject('UserRepository')
     private readonly userRepo: IUserRepository,
 
+    @inject('GrantService')
+    private readonly grants: IGrantManager,
+
     @inject('Logger')
     logger: ILogger
   ) {
@@ -29,6 +32,12 @@ export class DeleteUserCommandHandler extends AbstractCommandHandler<
     command: { username },
   }: ICommandContext<AuthCommands, 'DeleteUserCommand'>): Promise<void> {
     const user = await this.userRepo.get(username);
+
+    this.grants.requires({
+      capability: 'user:delete',
+      for: user,
+    });
+
     if (user) {
       this.userRepo.delete(user);
     }

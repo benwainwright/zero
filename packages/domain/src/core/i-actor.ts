@@ -1,5 +1,5 @@
-import type { Grants } from './grants.ts';
+import type { IPermission } from '@permission';
 
 export interface IActor {
-  grants: Grants;
+  permissions: IPermission[];
 }

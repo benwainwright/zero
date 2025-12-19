@@ -3,7 +3,8 @@
   "compilerOptions": {
     "paths": {
       "@lib": ["./src/lib/index.ts"],
-      "@types": ["./src/types/index.ts"]
+      "@types": ["./src/types/index.ts"],
+      "@decorator-manager": ["./src/decorator-manager/index.ts"]
     },
     "outDir": "./out-tsc/vitest",
     "types": [

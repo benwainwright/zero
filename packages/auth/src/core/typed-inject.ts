@@ -6,12 +6,13 @@ import type {
 
 import type { IBootstrapTypes } from '@zero/bootstrap';
 import type { IApplicationTypes } from '@zero/application-core';
-import type { IAuthTypes } from './i-auth-types.ts';
+import type { IAuthPorts } from './i-auth-types.ts';
+import type { IAuthExports } from './i-auth-exports.ts';
 
 export const inject = inversifyInject as TypedInject<
-  IApplicationTypes & IBootstrapTypes & IAuthTypes
+  IApplicationTypes & IBootstrapTypes & IAuthPorts & IAuthExports
 >;
 
 export const multiInject = inversifyInject as TypedMultiInject<
-  IApplicationTypes & IBootstrapTypes & IAuthTypes
+  IApplicationTypes & IBootstrapTypes & IAuthPorts & IAuthExports
 >;

@@ -4,7 +4,7 @@ import {
   type IEventBus,
 } from '@zero/application-core';
 import type { AuthCommands } from '../auth-commands.ts';
-import type { ICurrentUserSetter } from '@ports';
+import type { ICurrentUserSetter, IGrantManager } from '@ports';
 import { inject } from '@core';
 import type { ILogger } from '@zero/bootstrap';
 import type { IAuthEvents } from '../auth-events.ts';
@@ -20,6 +20,9 @@ export class LogoutCommandHandler extends AbstractCommandHandler<
     @inject('EventBus')
     private readonly eventBus: IEventBus<IAllEvents & IAuthEvents>,
 
+    @inject('GrantService')
+    private readonly grants: IGrantManager,
+
     @inject('Logger')
     logger: ILogger
   ) {
@@ -27,6 +30,8 @@ export class LogoutCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle(): Promise<void> {
+    this.grants.requiresNoPermissions();
+
     await this.currentUserSetter.set(undefined);
     this.eventBus.emit('LogoutSuccessfulEvent', undefined);
   }

@@ -1,15 +1,16 @@
 import type { ICommandBus, IDomainEventStore, IUnitOfWork } from '@ports';
 import { injectable } from 'inversify';
 import { inject } from './typed-inject.ts';
-import type { ILogger } from '@zero/bootstrap';
+import { priority, type ILogger } from '@zero/bootstrap';
 import type { ICommand } from '@types';
 
 const LOG_CONTEXT = { context: 'transactional-service-bus' };
 
+@priority(10_000)
 @injectable()
 export class TransactionalCommandBus implements ICommandBus {
   public constructor(
-    @inject('RootCommandBus')
+    @inject('CommandBus')
     private rootBus: ICommandBus,
 
     @inject('UnitOfWork')

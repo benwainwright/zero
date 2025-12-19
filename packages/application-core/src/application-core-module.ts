@@ -11,11 +11,13 @@ import { type IApplicationTypes } from '@types';
 import { module, type IBootstrapTypes } from '@zero/bootstrap';
 
 export const applicationCoreModule = module<IApplicationTypes>(
-  ({ load, container }) => {
+  async ({ load, container, decorators }) => {
     container.bind('DomainEventBuffer').to(DomainEventStore).inRequestScope();
     container.bind('DomainEventEmitter').toService('DomainEventBuffer');
-    load.bind('RootCommandBus').to(CommandBus).inRequestScope();
-    load.bind('CommandBus').to(TransactionalServiceBus).inRequestScope();
+
+    load.bind('CommandBus').to(CommandBus).inRequestScope();
+    await decorators.decorate('CommandBus', TransactionalServiceBus);
+
     load.bind('QueryBus').to(QueryBus);
 
     load.bind('ContainerFactory').toFactory(() => {

@@ -1,7 +1,8 @@
-import { type IAuthTypes } from '@core';
+import { type IAuthExports, type IAuthTypes } from '@core';
 import { TypedContainer } from '@inversifyjs/strongly-typed';
 import {
   type ICurrentUserSetter,
+  type IGrantManager,
   type IPasswordHasher,
   type IPasswordVerifier,
   type IRoleRepository,
@@ -13,7 +14,9 @@ import { type IApplicationTypes, type IEventBus } from '@zero/application-core';
 import { type IBootstrapTypes, type ILogger } from '@zero/bootstrap';
 
 interface IMockContainer {
-  container: TypedContainer<IAuthTypes & IApplicationTypes & IBootstrapTypes>;
+  container: TypedContainer<
+    IAuthTypes & IApplicationTypes & IBootstrapTypes & IAuthExports
+  >;
   logger: Mocked<ILogger>;
   currentUserSetter: Mocked<ICurrentUserSetter>;
   userRepo: Mocked<IUserRepository>;
@@ -21,6 +24,7 @@ interface IMockContainer {
   passwordVerifier: Mocked<IPasswordVerifier>;
   roleRepo: Mocked<IRoleRepository>;
   eventBus: Mocked<IEventBus>;
+  grantManager: Mocked<IGrantManager>;
 }
 
 export const containerWithAuthDepsMocked = (): IMockContainer => {
@@ -31,9 +35,10 @@ export const containerWithAuthDepsMocked = (): IMockContainer => {
   const passwordVerifier = mock<IPasswordVerifier>();
   const roleRepo = mock<IRoleRepository>();
   const eventBus = mock<IEventBus>();
+  const grantManager = mock<IGrantManager>();
 
   const container = new TypedContainer<
-    IAuthTypes & IApplicationTypes & IBootstrapTypes
+    IAuthTypes & IApplicationTypes & IBootstrapTypes & IAuthExports
   >();
 
   container.bind('EventBus').toConstantValue(eventBus);
@@ -43,10 +48,12 @@ export const containerWithAuthDepsMocked = (): IMockContainer => {
   container.bind('PasswordHasher').toConstantValue(passwordHasher);
   container.bind('PasswordVerifier').toConstantValue(passwordVerifier);
   container.bind('RoleRepository').toConstantValue(roleRepo);
+  container.bind('GrantService').toConstantValue(grantManager);
 
   return {
     container,
     userRepo,
+    grantManager,
     currentUserSetter,
     passwordHasher,
     passwordVerifier,

@@ -8,6 +8,7 @@ import type { AuthCommands } from '../auth-commands.ts';
 import { injectable } from 'inversify';
 import type {
   ICurrentUserSetter,
+  IGrantManager,
   IPasswordVerifier,
   IUserRepository,
 } from '@ports';
@@ -35,6 +36,9 @@ export class LoginCommandHandler extends AbstractCommandHandler<
     @inject('EventBus')
     private eventBus: IEventBus<IAllEvents & IAuthEvents>,
 
+    @inject('GrantService')
+    private grants: IGrantManager,
+
     @inject('Logger')
     logger: ILogger
   ) {
@@ -44,6 +48,8 @@ export class LoginCommandHandler extends AbstractCommandHandler<
   protected override async handle({
     command: { username, password },
   }: ICommandContext<AuthCommands, 'LoginCommand'>): Promise<void> {
+    this.grants.requiresNoPermissions();
+
     const user = await this.userRepo.get(username);
 
     if (

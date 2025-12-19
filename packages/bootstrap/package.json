@@ -17,6 +17,8 @@
     "vitest-mock-extended": "catalog:"
   },
   "dependencies": {
+    "@inversifyjs/plugin": "catalog:",
+    "winston": "catalog:",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
     "@inversifyjs/strongly-typed": "catalog:",

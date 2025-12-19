@@ -10,7 +10,9 @@
     "types": ["node"],
     "paths": {
       "@lib": ["./src/lib/index.ts"],
-      "@types": ["./src/types/index.ts"]
+      "@types": ["./src/types/index.ts"],
+      "@test-helpers":  ["./src/test-helpers/index.ts"],
+      "@decorator-manager": ["./src/decorator-manager/index.ts"]
     }
   },
   "include": ["src/**/*.ts"],

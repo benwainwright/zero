@@ -25,7 +25,6 @@ export interface IApplicationTypes {
   CommandHandler: AbstractCommandHandler<ICommand<string>, string>;
   CurrentUserCache: ICurrentUserCache;
   QueryHandler: AbstractQueryHandler<IQuery<string>, string>;
-  RootCommandBus: ICommandBus;
   CommandBus: ICommandBus;
   QueryBus: IQueryBus;
   UnitOfWork: IUnitOfWork;

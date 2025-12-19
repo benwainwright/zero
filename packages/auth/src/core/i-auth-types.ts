@@ -6,7 +6,7 @@ import type {
   IUserRepository,
 } from '@ports';
 
-export interface IAuthTypes {
+export interface IAuthPorts {
   UserRepository: IUserRepository;
   CurrentUserSetter: ICurrentUserSetter;
   PasswordHasher: IPasswordHasher;
