@@ -7,11 +7,13 @@
     "test": "pnpm exec nx run-many --targets test",
     "type-check": "pnpm exec nx run-many --targets typecheck",
     "build": "pnpm exec nx run-many --targets build",
-    "prepare": "husky"
+    "prepare": "husky",
+    "g": "pnpm exec nx g"
   },
   "private": true,
   "devDependencies": {
     "@nx/js": "22.3.0",
+    "@nx/plugin": "22.3.1",
     "@nx/vite": "22.3.0",
     "@nx/vitest": "22.2.1",
     "@nx/web": "22.3.0",
