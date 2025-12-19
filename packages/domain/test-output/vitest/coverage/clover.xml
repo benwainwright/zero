@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1766049017670" clover="3.2.0">
-  <project timestamp="1766049017670" name="All files">
-    <metrics statements="54" coveredstatements="33" conditionals="14" coveredconditionals="5" methods="27" coveredmethods="13" elements="95" coveredelements="51" complexity="0" loc="54" ncloc="54" packages="4" files="17" classes="17"/>
-    <package name="core">
-      <metrics statements="20" coveredstatements="6" conditionals="8" coveredconditionals="0" methods="9" coveredmethods="2"/>
+<coverage generated="1766136014105" clover="3.2.0">
+  <project timestamp="1766136014105" name="All files">
+    <metrics statements="54" coveredstatements="46" conditionals="14" coveredconditionals="13" methods="27" coveredmethods="19" elements="95" coveredelements="78" complexity="0" loc="54" ncloc="54" packages="5" files="21" classes="21"/>
+    <package name="src">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="index.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/index.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+    <package name="src.core">
+      <metrics statements="20" coveredstatements="19" conditionals="8" coveredconditionals="8" methods="9" coveredmethods="8"/>
       <file name="authorisation-error.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/core/authorisation-error.ts">
-        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="7" count="0" type="stmt"/>
-        <line num="8" count="0" type="stmt"/>
-        <line num="10" count="0" type="stmt"/>
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="7" count="10" type="stmt"/>
+        <line num="8" count="10" type="stmt"/>
+        <line num="10" count="10" type="stmt"/>
       </file>
       <file name="capability-list.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/core/capability-list.ts">
         <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
@@ -16,9 +22,12 @@
       <file name="domain-error.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/core/domain-error.ts">
         <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       </file>
+      <file name="domain-events.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/core/domain-events.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
       <file name="domain-model.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/core/domain-model.ts">
         <metrics statements="6" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="2"/>
-        <line num="8" count="15" type="stmt"/>
+        <line num="8" count="30" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="15" count="3" type="stmt"/>
         <line num="16" count="3" type="stmt"/>
@@ -26,17 +35,17 @@
         <line num="23" count="5" type="stmt"/>
       </file>
       <file name="grants.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/core/grants.ts">
-        <metrics statements="10" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="5" coveredmethods="0"/>
-        <line num="7" count="0" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="32" count="0" type="stmt"/>
-        <line num="38" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="39" count="0" type="stmt"/>
-        <line num="42" count="0" type="stmt"/>
+        <metrics statements="10" coveredstatements="10" conditionals="8" coveredconditionals="8" methods="5" coveredmethods="5"/>
+        <line num="7" count="9" type="stmt"/>
+        <line num="14" count="18" type="stmt"/>
+        <line num="16" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="18" type="stmt"/>
+        <line num="21" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="9" type="stmt"/>
+        <line num="32" count="9" type="stmt"/>
+        <line num="38" count="9" type="cond" truecount="4" falsecount="0"/>
+        <line num="39" count="4" type="stmt"/>
+        <line num="42" count="5" type="stmt"/>
       </file>
       <file name="i-actor.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/core/i-actor.ts">
         <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
@@ -52,7 +61,7 @@
         <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       </file>
     </package>
-    <package name="permission">
+    <package name="src.permission">
       <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
       <file name="i-permission.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/permission/i-permission.ts">
         <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
@@ -63,7 +72,7 @@
         <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       </file>
     </package>
-    <package name="role">
+    <package name="src.role">
       <metrics statements="7" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="2"/>
       <file name="i-role.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/role/i-role.ts">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
@@ -82,15 +91,21 @@
         <line num="28" count="0" type="stmt"/>
       </file>
     </package>
-    <package name="user">
+    <package name="src.user">
       <metrics statements="25" coveredstatements="19" conditionals="6" coveredconditionals="5" methods="14" coveredmethods="8"/>
       <file name="i-user.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/user/i-user.ts">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="4" count="1" type="stmt"/>
       </file>
+      <file name="index.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/user/index.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
       <file name="user-capabilities.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/user/user-capabilities.ts">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="3" count="1" type="stmt"/>
+      </file>
+      <file name="user-events.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/user/user-events.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       </file>
       <file name="user.ts" path="/Users/benwainwright/repos/zero/packages/domain/src/user/user.ts">
         <metrics statements="23" coveredstatements="17" conditionals="6" coveredconditionals="5" methods="14" coveredmethods="8"/>

@@ -4,7 +4,7 @@ import path from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/packages/serialiser',
+  cacheDir: '../../node_modules/.vite/packages/bootstrap',
   plugins: [
     tsconfigPaths({
       projects: [
@@ -14,7 +14,7 @@ export default defineConfig(() => ({
     }),
   ],
   test: {
-    name: '@zero/serialiser',
+    name: '@zero/bootstrap',
     watch: false,
     globals: true,
     environment: 'node',
@@ -26,9 +26,9 @@ export default defineConfig(() => ({
       exclude: ['./src/**/*.test.ts', '*./src/**/*.spec.ts'],
       thresholds: {
         autoUpdate: true,
-        functions: 6.89,
-        lines: 20.4,
-        statements: 20.19,
+        functions: 50,
+        lines: 53.33,
+        statements: 53.33,
         branches: 0,
       },
       reportsDirectory: './test-output/vitest/coverage',

@@ -4,7 +4,7 @@ import path from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/packages/serialiser',
+  cacheDir: '../../node_modules/.vite/packages/auth',
   plugins: [
     tsconfigPaths({
       projects: [
@@ -14,7 +14,7 @@ export default defineConfig(() => ({
     }),
   ],
   test: {
-    name: '@zero/serialiser',
+    name: '@zero/auth',
     watch: false,
     globals: true,
     environment: 'node',
@@ -26,10 +26,10 @@ export default defineConfig(() => ({
       exclude: ['./src/**/*.test.ts', '*./src/**/*.spec.ts'],
       thresholds: {
         autoUpdate: true,
-        functions: 6.89,
-        lines: 20.4,
-        statements: 20.19,
-        branches: 0,
+        functions: 38.46,
+        lines: 54.9,
+        statements: 57.4,
+        branches: 90,
       },
       reportsDirectory: './test-output/vitest/coverage',
       provider: 'v8' as const,
