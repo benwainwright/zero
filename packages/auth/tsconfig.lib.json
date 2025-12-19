@@ -11,7 +11,9 @@
     "paths": {
       "@services": ["./src/services/index.ts"],
       "@ports": ["./src/ports/index.ts"],
+      "@bootstrap": ["./src/bootstrap/index.ts"],
       "@core": ["./src/core/index.ts"],
+      "@constants": ["./src/constants.ts"]
     }
   },
   "include": ["src/**/*.ts"],

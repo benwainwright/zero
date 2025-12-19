@@ -23,13 +23,17 @@ export default defineConfig(() => ({
     coverage: {
       enabled: true,
       include: ['./src/**/*.ts'],
-      exclude: ['./src/**/*.test.ts', '*./src/**/*.spec.ts'],
+      exclude: [
+        './src/**/*.test.ts',
+        './src/**/*.spec.ts',
+        './src/test-helpers/**/*',
+      ],
       thresholds: {
         autoUpdate: true,
-        functions: 38.46,
-        lines: 54.9,
-        statements: 57.4,
-        branches: 90,
+        functions: 84.61,
+        lines: 82.6,
+        statements: 83.56,
+        branches: 87.5,
       },
       reportsDirectory: './test-output/vitest/coverage',
       provider: 'v8' as const,

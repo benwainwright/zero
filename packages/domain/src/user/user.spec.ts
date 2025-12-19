@@ -1,6 +1,4 @@
-import { type IActor } from '@core';
 import { User } from './user.ts';
-import { mock } from 'vitest-mock-extended';
 
 describe('the user model', () => {
   describe('freeze dry', () => {
@@ -63,17 +61,6 @@ describe('the user model', () => {
   });
 
   describe('update', () => {
-    it('calls grants.can correctly', () => {
-      const user = User.reconstitute({
-        id: 'foo',
-        passwordHash: 'hash',
-        email: 'a@b.c',
-        roles: [],
-      });
-
-      user.update({ hash: 'foo' });
-    });
-
     it('raises a domain event', () => {
       const user = User.reconstitute({
         id: 'foo',
@@ -107,24 +94,7 @@ describe('the user model', () => {
   });
 
   describe('delete', () => {
-    it('calls grant.can correctly', () => {
-      const actor = mock<IActor>({ grants: mock() });
-
-      const user = User.reconstitute({
-        roles: [{ id: 'foo', permissions: [], name: 'foo' }],
-        id: 'foo',
-        passwordHash: 'hash',
-        email: 'a@b.c',
-      });
-
-      user.delete(actor);
-
-      expect(actor.grants.can).toHaveBeenCalledWith(user, 'user:delete');
-    });
-
     it('raises an a delete event', () => {
-      const actor = mock<IActor>({ grants: mock() });
-
       const user = User.reconstitute({
         roles: [{ id: 'foo', permissions: [], name: 'foo' }],
         id: 'foo',
@@ -132,7 +102,7 @@ describe('the user model', () => {
         email: 'a@b.c',
       });
 
-      user.delete(actor);
+      user.delete();
 
       expect(user.pullEvents()).toEqual([
         {

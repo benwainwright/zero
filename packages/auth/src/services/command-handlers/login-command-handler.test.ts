@@ -9,20 +9,23 @@ import { when } from 'vitest-when';
 import type { User } from '@zero/domain';
 import { getMockCommandContext } from '@test-helpers';
 import { type IAllEvents, type IEventBus } from '@zero/application-core';
-import type { IAuthEvents } from './auth-events.ts';
+import type { IAuthEvents } from '../auth-events.ts';
+import { type ILogger } from '@zero/bootstrap';
 
 const getHandler = () => {
   const userRepo = mock<IUserRepository>();
   const passwordVerifier = mock<IPasswordVerifier>();
   const currentUserSetter = mock<ICurrentUserSetter>();
   const eventBus = mock<IEventBus<IAllEvents & IAuthEvents>>();
+  const logger = mock<ILogger>();
 
   return {
     handler: new LoginCommandHandler(
       userRepo,
       passwordVerifier,
       currentUserSetter,
-      eventBus
+      eventBus,
+      logger
     ),
     eventBus,
     userRepo,

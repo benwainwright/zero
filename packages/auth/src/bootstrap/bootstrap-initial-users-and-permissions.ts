@@ -1,10 +1,13 @@
 import type { TypedContainer } from '@inversifyjs/strongly-typed';
 import { Role, User } from '@zero/domain';
-import type { IAuthTypes } from './i-auth-types.ts';
+import type { IAuthTypes } from '@core';
 import type { IBootstrapper } from '@zero/bootstrap';
 import z from 'zod';
+import { adminPermissions } from './admin-permissions.ts';
+import { ADMIN_USER_ID, USER_ROLE_ID } from '@constants';
+import { userPermissions } from './user-permissions.ts';
 
-export const bootstrapAdminUser = (
+export const bootstrapInitialUsersAndPermissions = (
   bootstrapper: IBootstrapper,
   container: TypedContainer<IAuthTypes>
 ) => {
@@ -12,13 +15,20 @@ export const bootstrapAdminUser = (
   const adminPassword = bootstrapper.configValue('adminPassword', z.string());
   bootstrapper.addInitStep(async () => {
     const adminRole = Role.reconstitute({
-      id: 'admin',
+      id: ADMIN_USER_ID,
       name: 'Admin',
-      permissions: [],
+      permissions: adminPermissions,
+    });
+
+    const userRole = Role.reconstitute({
+      id: USER_ROLE_ID,
+      name: 'User',
+      permissions: userPermissions,
     });
 
     const roleRepo = await container.getAsync('RoleRepository');
     await roleRepo.save(adminRole);
+    await roleRepo.save(userRole);
 
     const userRepo = await container.getAsync('UserRepository');
     const passwordHasher = await container.getAsync('PasswordHasher');

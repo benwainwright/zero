@@ -45,8 +45,7 @@ export class User extends DomainModel<IUser> implements IActor {
     };
   }
 
-  public delete(actor: IActor) {
-    actor.grants.can(this, 'user:delete');
+  public delete() {
     this.raiseEvent({ event: 'UserDeleted', data: this });
   }
 

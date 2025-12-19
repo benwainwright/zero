@@ -5,4 +5,5 @@ export {
   type IEvent,
   DomainModel,
 } from '@core';
-export { Role } from '@role';
+export { type IPermission } from '@permission';
+export { Role, type IRole } from '@role';

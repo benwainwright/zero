@@ -2,7 +2,7 @@ import {
   AbstractQueryHandler,
   type IQueryContext,
 } from '@zero/application-core';
-import type { AuthQueries } from './auth-queries.ts';
+import type { AuthQueries } from '../auth-queries.ts';
 import { User } from '@zero/domain';
 
 export class GetCurrentUserQueryHandler extends AbstractQueryHandler<

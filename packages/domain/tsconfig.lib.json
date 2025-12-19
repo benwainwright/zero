@@ -10,7 +10,9 @@
     "paths": {
       "@core": ["./src/core/index.ts"],
       "@user": ["./src/user/index.ts"],
+      "@user/*": ["./src/user/*"],
       "@role": ["./src/role/index.ts"],
+      "@types": ["./src/types/index.ts"],
       "@permission": ["./src/permission/index.ts"]
     }
   },

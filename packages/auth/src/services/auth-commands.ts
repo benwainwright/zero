@@ -1,6 +1,8 @@
-import type { User } from '@zero/domain';
-
 export type AuthCommands =
+  | {
+      key: 'LogoutCommand';
+      params: undefined;
+    }
   | {
       key: 'CreateUserCommand';
       params: {
@@ -12,7 +14,7 @@ export type AuthCommands =
   | {
       key: 'DeleteUserCommand';
       params: {
-        user: User;
+        username: string;
       };
     }
   | {

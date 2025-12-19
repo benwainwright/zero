@@ -4,7 +4,7 @@ import {
   type ICommandContext,
   type IEventBus,
 } from '@zero/application-core';
-import type { AuthCommands } from './auth-commands.ts';
+import type { AuthCommands } from '../auth-commands.ts';
 import { injectable } from 'inversify';
 import type {
   ICurrentUserSetter,
@@ -12,7 +12,8 @@ import type {
   IUserRepository,
 } from '@ports';
 import { inject } from '@core';
-import type { IAuthEvents } from './auth-events.ts';
+import type { IAuthEvents } from '../auth-events.ts';
+import type { ILogger } from '@zero/bootstrap';
 
 @injectable()
 export class LoginCommandHandler extends AbstractCommandHandler<
@@ -32,9 +33,12 @@ export class LoginCommandHandler extends AbstractCommandHandler<
     private currentUserSetter: ICurrentUserSetter,
 
     @inject('EventBus')
-    private eventBus: IEventBus<IAllEvents & IAuthEvents>
+    private eventBus: IEventBus<IAllEvents & IAuthEvents>,
+
+    @inject('Logger')
+    logger: ILogger
   ) {
-    super();
+    super(logger);
   }
 
   protected override async handle({
