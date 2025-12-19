@@ -1,0 +1,11 @@
+{
+  "name": "zero/tools",
+  "version": "0.1",
+  "generators": {
+    "create-library": {
+      "factory": "./src/generators/create-library/create-library.ts",
+      "schema": "./src/generators/create-library/schema.json",
+      "description": "Convert Nx projects to use inferred targets."
+    }
+  }
+}
