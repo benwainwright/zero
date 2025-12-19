@@ -4,7 +4,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "pnpm exec test"
+    "test": "pnpm exec nx run-many --targets test",
+    "type-check": "pnpm exec nx run-many --targets typecheck",
+    "prepare": "husky"
   },
   "private": true,
   "devDependencies": {
@@ -19,8 +21,10 @@
     "@typescript/native-preview": "7.0.0-dev.20251112.1",
     "@vitest/coverage-v8": "^4.0.0",
     "@vitest/ui": "^4.0.0",
+    "husky": "9.1.7",
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
+    "lint-staged": "16.2.7",
     "nx": "22.2.1",
     "oxlint": "1.32.0",
     "oxlint-tsgolint": "0.9.0",
@@ -32,6 +36,5 @@
     "vite-tsconfig-paths": "6.0.2",
     "vitest": "^4.0.0",
     "vitest-mock-extended": "3.1.0"
-  },
-  "dependencies": {}
+  }
 }
