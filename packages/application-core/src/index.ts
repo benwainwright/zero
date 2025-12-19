@@ -8,6 +8,8 @@ export {
 
 export { type IEventBus } from '@ports';
 
+export { AppError } from '@errors';
+
 export {
   type IQueryContext,
   type ICommandContext,

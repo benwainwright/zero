@@ -1,22 +1,10 @@
-import { mock } from 'vitest-mock-extended';
 import { LogoutCommandHandler } from './logout-command-handler.ts';
-import { type ICurrentUserSetter } from '@ports';
-import { type ILogger } from '@zero/bootstrap';
-import { getMockCommandContext } from '@test-helpers';
-import { type IAllEvents, type IEventBus } from '@zero/application-core';
-import type { IAuthEvents } from '../auth-events.ts';
-
-const getHandler = () => {
-  const currentUserSetter = mock<ICurrentUserSetter>();
-  const logger = mock<ILogger>();
-  const eventBus = mock<IEventBus<IAllEvents & IAuthEvents>>();
-  const handler = new LogoutCommandHandler(currentUserSetter, eventBus, logger);
-  return { handler, currentUserSetter, eventBus, logger };
-};
+import { buildCommandHandler, getMockCommandContext } from '@test-helpers';
 
 describe('logout command handler', () => {
   it('sets the current user to undefined', async () => {
-    const { currentUserSetter, handler } = getHandler();
+    const { currentUserSetter, handler } =
+      buildCommandHandler(LogoutCommandHandler);
 
     const context = getMockCommandContext('LogoutCommand', undefined);
 
@@ -26,7 +14,7 @@ describe('logout command handler', () => {
   });
 
   it('emits a logout event', async () => {
-    const { eventBus, handler } = getHandler();
+    const { eventBus, handler } = buildCommandHandler(LogoutCommandHandler);
 
     const context = getMockCommandContext('LogoutCommand', undefined);
 

@@ -1,5 +1,13 @@
 export type AuthCommands =
   | {
+      key: 'UpdateUserCommand';
+      params: {
+        email: string;
+        password: string;
+        username: string;
+      };
+    }
+  | {
       key: 'LogoutCommand';
       params: undefined;
     }

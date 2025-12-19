@@ -1,43 +1,13 @@
-import {
-  type ICurrentUserSetter,
-  type IPasswordVerifier,
-  type IUserRepository,
-} from '@ports';
 import { LoginCommandHandler } from './login-command-handler.ts';
 import { mock } from 'vitest-mock-extended';
 import { when } from 'vitest-when';
 import type { User } from '@zero/domain';
-import { getMockCommandContext } from '@test-helpers';
-import { type IAllEvents, type IEventBus } from '@zero/application-core';
-import type { IAuthEvents } from '../auth-events.ts';
-import { type ILogger } from '@zero/bootstrap';
-
-const getHandler = () => {
-  const userRepo = mock<IUserRepository>();
-  const passwordVerifier = mock<IPasswordVerifier>();
-  const currentUserSetter = mock<ICurrentUserSetter>();
-  const eventBus = mock<IEventBus<IAllEvents & IAuthEvents>>();
-  const logger = mock<ILogger>();
-
-  return {
-    handler: new LoginCommandHandler(
-      userRepo,
-      passwordVerifier,
-      currentUserSetter,
-      eventBus,
-      logger
-    ),
-    eventBus,
-    userRepo,
-    passwordVerifier,
-    currentUserSetter,
-  };
-};
+import { buildCommandHandler, getMockCommandContext } from '@test-helpers';
 
 describe('login command handler', async () => {
   it('checks the password and sets the current user if it is successful', async () => {
     const { handler, userRepo, passwordVerifier, eventBus, currentUserSetter } =
-      getHandler();
+      buildCommandHandler(LoginCommandHandler);
 
     const context = getMockCommandContext('LoginCommand', {
       username: 'ben',
@@ -65,7 +35,7 @@ describe('login command handler', async () => {
 
   it('checks does not set the current user if it fails, also emits loginfailedevent', async () => {
     const { handler, userRepo, passwordVerifier, eventBus, currentUserSetter } =
-      getHandler();
+      buildCommandHandler(LoginCommandHandler);
 
     const context = getMockCommandContext('LoginCommand', {
       username: 'ben',
@@ -89,7 +59,8 @@ describe('login command handler', async () => {
   });
 
   it('check does not set the current user if it doesnt exist and emits loginfailedevent', async () => {
-    const { handler, userRepo, eventBus, currentUserSetter } = getHandler();
+    const { handler, userRepo, eventBus, currentUserSetter } =
+      buildCommandHandler(LoginCommandHandler);
 
     const context = getMockCommandContext('LoginCommand', {
       username: 'ben',
