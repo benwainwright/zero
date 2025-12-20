@@ -125,9 +125,7 @@ export const testUserAndRoleRepository = (
 
       expect(limitedRoles).toHaveLength(3);
       limitedRoles.forEach((role) =>
-        expect(roles.map((existingRole) => existingRole.id)).toContain(
-          role.id
-        )
+        expect(roles.map((existingRole) => existingRole.id)).toContain(role.id)
       );
 
       expect(overflowingRoles).toHaveLength(0);
@@ -255,7 +253,7 @@ export const testUserAndRoleRepository = (
           {
             resource: '*',
             action: 'ALLOW',
-            capabilities: ['read'],
+            capabilities: ['user:read'],
           },
         ],
       });
@@ -287,7 +285,7 @@ export const testUserAndRoleRepository = (
 
       const retrieved = await userRepo.getUser(updatedUser.id);
 
-      expect(retrieved?.roles).toEqual([viewerRole.toObject()]);
+      expect(retrieved?.roles).toEqual([viewerRole]);
       expect(retrieved?.roles).not.toEqual(originalUser.roles);
     });
 
