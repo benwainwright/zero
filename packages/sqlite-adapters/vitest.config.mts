@@ -4,7 +4,7 @@ import path from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/packages/application-core',
+  cacheDir: '../../node_modules/.vite/packages/sqlite-adapters',
   plugins: [
     tsconfigPaths({
       projects: [
@@ -14,7 +14,7 @@ export default defineConfig(() => ({
     }),
   ],
   test: {
-    name: '@zero/application-core',
+    name: '@zero/',
     watch: false,
     globals: true,
     environment: 'node',
@@ -25,10 +25,9 @@ export default defineConfig(() => ({
       include: ['./src/**/*.ts'],
       exclude: ['./src/**/*.test.ts', '*./src/**/*.spec.ts'],
       thresholds: {
-        autoUpdate: true,
-        functions: 22.22,
-        lines: 46.8,
-        statements: 46.46,
+        functions: 100,
+        lines: 100,
+        statements: 100,
         branches: 100,
       },
       reportsDirectory: './test-output/vitest/coverage',

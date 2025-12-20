@@ -34,7 +34,7 @@ export class UpdateUserCommandHandler extends AbstractCommandHandler<
   protected override async handle({
     command: { username, email, password },
   }: ICommandContext<AuthCommands, 'UpdateUserCommand'>): Promise<void> {
-    const user = await this.userRepo.get(username);
+    const user = await this.userRepo.getUser(username);
 
     this.grants.requires({
       capability: 'user:update',
@@ -52,6 +52,6 @@ export class UpdateUserCommandHandler extends AbstractCommandHandler<
       hash,
     });
 
-    await this.userRepo.save(user);
+    await this.userRepo.saveUser(user);
   }
 }

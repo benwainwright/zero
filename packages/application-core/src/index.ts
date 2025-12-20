@@ -9,7 +9,9 @@ export {
 export {
   type IEventBus,
   type ICommandBus,
+  type IUnitOfWork,
   type IQueryBus,
+  type IDomainEventBuffer,
   type ICurrentUserCache,
 } from '@ports';
 

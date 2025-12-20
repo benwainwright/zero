@@ -15,7 +15,7 @@ describe('Update user command handler', () => {
       password: 'foo',
     });
 
-    when(userRepo.get).calledWith('ben').thenResolve(undefined);
+    when(userRepo.getUser).calledWith('ben').thenResolve(undefined);
     await expect(handler.doHandle(context)).rejects.toThrow(UserNotFoundError);
   });
   it('will update an existing user', async () => {
@@ -31,7 +31,7 @@ describe('Update user command handler', () => {
 
     const mockUser = mock<User>();
 
-    when(userRepo.get).calledWith('ben').thenResolve(mockUser);
+    when(userRepo.getUser).calledWith('ben').thenResolve(mockUser);
     when(passwordHasher.hashPassword).calledWith('foo').thenResolve('hash');
 
     await handler.doHandle(context);
@@ -41,6 +41,6 @@ describe('Update user command handler', () => {
       hash: 'hash',
     });
 
-    expect(userRepo.save).toHaveBeenCalledWith(mockUser);
+    expect(userRepo.saveUser).toHaveBeenCalledWith(mockUser);
   });
 });

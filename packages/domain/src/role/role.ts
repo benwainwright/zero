@@ -20,6 +20,14 @@ export class Role extends DomainModel<IRole> {
     this._permissions = config.permissions;
   }
 
+  public get permissions() {
+    return this._permissions;
+  }
+
+  public get name() {
+    return this._name;
+  }
+
   public override toObject(_config?: { secure: boolean }): {
     id: string;
     name: string;

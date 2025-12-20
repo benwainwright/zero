@@ -1,7 +1,6 @@
 import * as z4 from 'zod/v4/core';
 
 import type { ConfigValue } from '@lib';
-import type { ServiceIdentifier } from 'inversify';
 
 export interface IBootstrapper {
   configValue<TConfigValue extends z4.$ZodType>(config: {
@@ -15,6 +14,3 @@ export interface IBootstrapper {
 
   start(): Promise<void>;
 }
-
-export const BootstrapperToken: ServiceIdentifier<IBootstrapper> =
-  Symbol.for('Bootstrapper');

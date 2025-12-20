@@ -1,6 +1,7 @@
 import type { Role } from '@zero/domain';
 
 export interface IRoleRepository {
-  get(id: string): Promise<Role>;
-  save(role: Role): Promise<Role>;
+  getRole(id: string): Promise<Role | undefined>;
+  saveRole(role: Role): Promise<Role>;
+  getManyRoles(offset: number, limit: number): Promise<Role[]>;
 }

@@ -18,10 +18,10 @@ describe('delete user command handler', () => {
 
     const mockUser = mock<User>();
 
-    when(userRepo.get).calledWith('ben').thenResolve(mockUser);
+    when(userRepo.getUser).calledWith('ben').thenResolve(mockUser);
 
     await handler.doHandle(context);
 
-    expect(userRepo.delete).toHaveBeenCalledWith(mockUser);
+    expect(userRepo.deleteUser).toHaveBeenCalledWith(mockUser);
   });
 });

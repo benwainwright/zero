@@ -50,7 +50,7 @@ export class LoginCommandHandler extends AbstractCommandHandler<
   }: ICommandContext<AuthCommands, 'LoginCommand'>): Promise<void> {
     this.grants.requiresNoPermissions();
 
-    const user = await this.userRepo.get(username);
+    const user = await this.userRepo.getUser(username);
 
     if (
       user &&

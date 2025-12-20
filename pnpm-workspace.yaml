@@ -1,6 +1,11 @@
 packages:
   - 'packages/*'
 
+
+onlyBuiltDependencies:
+  - better-sqlite3
+
+
 catalog:
   inversify: 7.10.7
   reflect-metadata: 0.2.2

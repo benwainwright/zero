@@ -12,5 +12,5 @@ export const containerWithMockedBootstrapDepsBound = () => {
   container.bind('Logger').toConstantValue(logger);
   container.bind('Container').toConstantValue(container);
   container.bind('DecoratorManager').toConstantValue(decoratorManager);
-  return { container, logger, bootstrapper, decoratorManager };
+  return { container, logger, bootstrapper };
 };

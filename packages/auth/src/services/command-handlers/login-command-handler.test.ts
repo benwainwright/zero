@@ -18,7 +18,7 @@ describe('login command handler', async () => {
       passwordHash: 'mockHash',
     });
 
-    when(userRepo.get).calledWith('ben').thenResolve(user);
+    when(userRepo.getUser).calledWith('ben').thenResolve(user);
 
     when(passwordVerifier.verifyPassword)
       .calledWith('foo', 'mockHash')
@@ -46,7 +46,7 @@ describe('login command handler', async () => {
       passwordHash: 'mockHash',
     });
 
-    when(userRepo.get).calledWith('ben').thenResolve(user);
+    when(userRepo.getUser).calledWith('ben').thenResolve(user);
 
     when(passwordVerifier.verifyPassword)
       .calledWith('foo', 'mockHash')
@@ -67,7 +67,7 @@ describe('login command handler', async () => {
       password: 'foo',
     });
 
-    when(userRepo.get).calledWith('ben').thenResolve(undefined);
+    when(userRepo.getUser).calledWith('ben').thenResolve(undefined);
 
     await handler.doHandle(context);
 

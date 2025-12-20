@@ -1,7 +1,8 @@
 import type { User } from '@zero/domain';
 
 export interface IUserRepository {
-  save(user: User): Promise<User>;
-  get(id: string): Promise<User | undefined>;
-  delete(user: User): Promise<void>;
+  saveUser(user: User): Promise<User>;
+  getUser(id: string): Promise<User | undefined>;
+  getManyUsers(start?: number, limit?: number): Promise<User[]>;
+  deleteUser(user: User): Promise<void>;
 }

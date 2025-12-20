@@ -39,8 +39,8 @@ export const bootstrapInitialUsersAndPermissions = (
     });
 
     const roleRepo = await container.getAsync('RoleRepository');
-    await roleRepo.save(adminRole);
-    await roleRepo.save(userRole);
+    await roleRepo.saveRole(adminRole);
+    await roleRepo.saveRole(userRole);
 
     const userRepo = await container.getAsync('UserRepository');
     const passwordHasher = await container.getAsync('PasswordHasher');
@@ -53,6 +53,6 @@ export const bootstrapInitialUsersAndPermissions = (
       ),
       roles: [adminRole.toObject()],
     });
-    await userRepo.save(bootstrapAdmin);
+    await userRepo.saveUser(bootstrapAdmin);
   });
 };

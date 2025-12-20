@@ -31,7 +31,7 @@ export class DeleteUserCommandHandler extends AbstractCommandHandler<
   protected override async handle({
     command: { username },
   }: ICommandContext<AuthCommands, 'DeleteUserCommand'>): Promise<void> {
-    const user = await this.userRepo.get(username);
+    const user = await this.userRepo.getUser(username);
 
     this.grants.requires({
       capability: 'user:delete',
@@ -39,7 +39,7 @@ export class DeleteUserCommandHandler extends AbstractCommandHandler<
     });
 
     if (user) {
-      this.userRepo.delete(user);
+      this.userRepo.deleteUser(user);
     }
   }
 }

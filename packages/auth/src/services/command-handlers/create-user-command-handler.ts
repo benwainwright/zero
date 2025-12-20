@@ -9,7 +9,7 @@ import type {
   IUserRepository,
 } from '@ports';
 import { injectable } from 'inversify';
-import { inject } from '@core';
+import { AuthError, inject } from '@core';
 import type { AuthCommands } from '../auth-commands.ts';
 import type { ILogger } from '@zero/bootstrap';
 import { User } from '@zero/domain';
@@ -46,7 +46,11 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
   }: ICommandContext<AuthCommands, 'CreateUserCommand'>) {
     const passwordHash = await this.passwordHasher.hashPassword(password);
 
-    const role = await this.roleRepo.get(USER_ROLE_ID);
+    const role = await this.roleRepo.getRole(USER_ROLE_ID);
+
+    if (!role) {
+      throw new AuthError(`User role was not found!`);
+    }
 
     this.grants.requires({
       capability: 'user:create',
@@ -59,6 +63,6 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
       roles: [role.toObject()],
     });
 
-    await this.userRepo.save(user);
+    await this.userRepo.saveUser(user);
   }
 }

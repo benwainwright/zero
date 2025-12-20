@@ -1,0 +1,1 @@
+export { sqliteAdaptersModule } from '@core';
