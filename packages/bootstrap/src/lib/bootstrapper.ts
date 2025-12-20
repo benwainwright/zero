@@ -23,7 +23,8 @@ export class Bootstrapper implements IBootstrapper {
   private bootstrappingSteps: (() => Promise<void>)[] = [];
   private emitter = new EventEmitter();
   private fullSchema: Record<string, Record<string, z4.$ZodType>> = {};
-  private readonly configDescriptions: Record<string, Record<string, string>> = {};
+  private readonly configDescriptions: Record<string, Record<string, string>> =
+    {};
 
   private _config: Record<string, unknown>;
 
@@ -72,12 +73,17 @@ export class Bootstrapper implements IBootstrapper {
     }, Promise.resolve());
   }
 
-  public configValue<TConfigValue extends z4.$ZodType>(
-    namespace: string,
-    key: string,
-    schema: TConfigValue,
-    description: string
-  ): ConfigValue<z4.output<TConfigValue>> {
+  public configValue<TConfigValue extends z4.$ZodType>({
+    namespace,
+    key,
+    schema,
+    description,
+  }: {
+    namespace: string;
+    key: string;
+    schema: TConfigValue;
+    description: string;
+  }): ConfigValue<z4.output<TConfigValue>> {
     const namespacedConfig = (this._config[namespace] ?? {}) as Record<
       string,
       unknown

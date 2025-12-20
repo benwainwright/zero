@@ -39,19 +39,26 @@ describe('Bootstrapper', () => {
     const bootstrapper = new Bootstrapper(configPath, logger);
 
     const order: string[] = [];
-    const barValue = bootstrapper.configValue('foo', 'bar', z.string(), 'bar value');
-    const countValue = bootstrapper.configValue(
-      'foo',
-      'count',
-      z.number(),
-      'count value'
-    );
-    const otherValue = bootstrapper.configValue(
-      'other',
-      'value',
-      z.string(),
-      'other value'
-    );
+    const barValue = bootstrapper.configValue({
+      namespace: 'foo',
+      key: 'bar',
+      schema: z.string(),
+      description: 'bar value',
+    });
+
+    const countValue = bootstrapper.configValue({
+      namespace: 'foo',
+      key: 'count',
+      schema: z.number(),
+      description: 'count value',
+    });
+
+    const otherValue = bootstrapper.configValue({
+      namespace: 'other',
+      key: 'value',
+      schema: z.string(),
+      description: 'other value',
+    });
 
     bootstrapper.addInitStep(async () => {
       order.push('first');
@@ -82,12 +89,12 @@ describe('Bootstrapper', () => {
     const logger = mock<ILogger>();
     const bootstrapper = new Bootstrapper(configPath, logger);
 
-    const pendingValue = bootstrapper.configValue(
-      'foo',
-      'bar',
-      z.string(),
-      'missing value'
-    ).value;
+    const pendingValue = bootstrapper.configValue({
+      namespace: 'foo',
+      key: 'bar',
+      schema: z.string(),
+      description: 'missing value',
+    }).value;
     let resolved = false;
     pendingValue.then(() => {
       resolved = true;
@@ -114,7 +121,12 @@ describe('Bootstrapper', () => {
     const logger = mock<ILogger>();
     const bootstrapper = new Bootstrapper(configPath, logger);
 
-    const value = bootstrapper.configValue('foo', 'bar', z.string(), 'from env');
+    const value = bootstrapper.configValue({
+      namespace: 'foo',
+      key: 'bar',
+      schema: z.string(),
+      description: 'from env',
+    });
 
     const initStep = vi.fn();
     bootstrapper.addInitStep(initStep);
