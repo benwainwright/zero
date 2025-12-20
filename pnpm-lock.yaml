@@ -236,6 +236,12 @@ importers:
       '@zero/domain':
         specifier: workspace:*
         version: link:../domain
+      inversify:
+        specifier: 'catalog:'
+        version: 7.10.7(reflect-metadata@0.2.2)
+      reflect-metadata:
+        specifier: 'catalog:'
+        version: 0.2.2
       typeson:
         specifier: 'catalog:'
         version: 9.0.4

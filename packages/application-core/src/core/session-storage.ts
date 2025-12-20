@@ -21,6 +21,9 @@ export class SessionStorage implements ISingleItemStore<User> {
     @inject('SessionIdRequester')
     private sessionIdRequester: ISessionIdRequester,
 
+    @inject('Serialiser')
+    private readonly serialiser: Serialiser,
+
     @inject('Logger')
     private logger: ILogger
   ) {}
@@ -48,11 +51,10 @@ export class SessionStorage implements ISingleItemStore<User> {
       LOG_CONTEXT
     );
 
-    const serialiser = new Serialiser();
     if (!sessionData) {
       return undefined;
     }
-    const data = serialiser.deserialise(sessionData);
+    const data = this.serialiser.deserialise(sessionData);
 
     if (data instanceof User) {
       return data;
@@ -68,12 +70,10 @@ export class SessionStorage implements ISingleItemStore<User> {
       LOG_CONTEXT
     );
 
-    const serialiser = new Serialiser();
-
     await this.storage.set(
       'sessions',
       `${sessionId}-session-key`,
-      thing ? serialiser.serialise(thing) : undefined
+      thing ? this.serialiser.serialise(thing) : undefined
     );
   }
 }

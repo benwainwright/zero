@@ -14,6 +14,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "reflect-metadata": "catalog:",
+    "inversify": "catalog:",
     "@zero/domain": "workspace:*",
     "typeson": "catalog:"
   }

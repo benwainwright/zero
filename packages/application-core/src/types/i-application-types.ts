@@ -19,6 +19,7 @@ import type {
 import type { User } from '@zero/domain';
 import type { ICommand } from './i-command.ts';
 import type { IQuery } from '@types';
+import type { Serialiser } from '@zero/serialiser';
 
 export interface IApplicationTypes {
   EventBus: IEventBus;
@@ -26,6 +27,7 @@ export interface IApplicationTypes {
   CurrentUserCache: ICurrentUserCache;
   QueryHandler: AbstractQueryHandler<IQuery<string>, string>;
   CommandBus: ICommandBus;
+  Serialiser: Serialiser;
   QueryBus: IQueryBus;
   UnitOfWork: IUnitOfWork;
   ObjectStore: IObjectStorage;

@@ -1,6 +1,8 @@
 import { type IUser, User } from '@zero/domain';
 import { Typeson } from 'typeson';
+import { injectable } from 'inversify';
 
+@injectable()
 export class Serialiser {
   private registry = new Typeson();
 

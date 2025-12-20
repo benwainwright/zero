@@ -14,7 +14,8 @@
     "paths": {
       "@core": ["./src/core/index.ts"],
       "@types": ["./src/types/index.ts"],
-      "@ports": ["./src/ports/index.ts"]
+      "@ports": ["./src/ports/index.ts"],
+      "@errors": ["./src/errors/index.ts"]
     }
   },
   "include": [
