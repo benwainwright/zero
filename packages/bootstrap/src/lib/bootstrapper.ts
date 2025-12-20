@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { cwd } from 'process';
-import z, { ZodError } from 'zod';
+import z, { type ZodRawShape, ZodError } from 'zod';
 import * as z4 from 'zod/v4/core';
 
 import { ConfigValue } from './config-value.ts';
@@ -22,7 +22,8 @@ export const BootstrapConfigFileToken: ServiceIdentifier<string> = Symbol.for(
 export class Bootstrapper implements IBootstrapper {
   private bootstrappingSteps: (() => Promise<void>)[] = [];
   private emitter = new EventEmitter();
-  private fullSchema: Record<string, z4.$ZodType> = {};
+  private fullSchema: Record<string, Record<string, z4.$ZodType>> = {};
+  private readonly configDescriptions: Record<string, Record<string, string>> = {};
 
   private _config: Record<string, unknown>;
 
@@ -51,7 +52,7 @@ export class Bootstrapper implements IBootstrapper {
   public async start(): Promise<void> {
     this.logger.debug(`Starting application`, LOG_CONTEXT);
     try {
-      z.object(this.fullSchema).parse(this._config);
+      z.object(this.buildSchema()).parse(this._config);
     } catch (error) {
       if (error instanceof ZodError) {
         this.logger.error(z.prettifyError(error), LOG_CONTEXT);
@@ -72,11 +73,33 @@ export class Bootstrapper implements IBootstrapper {
   }
 
   public configValue<TConfigValue extends z4.$ZodType>(
+    namespace: string,
     key: string,
-    schema: TConfigValue
+    schema: TConfigValue,
+    description: string
   ): ConfigValue<z4.output<TConfigValue>> {
-    const value = this._config[key];
-    this.fullSchema[key] = schema;
+    const namespacedConfig = (this._config[namespace] ?? {}) as Record<
+      string,
+      unknown
+    >;
+    const envKey = `ZERO_CONFIG_${namespace}_${key}`.toUpperCase();
+    const envValue = process.env[envKey];
+
+    const value =
+      namespacedConfig[key] === undefined && envValue !== undefined
+        ? envValue
+        : namespacedConfig[key];
+    if (namespacedConfig[key] === undefined && envValue !== undefined) {
+      this._config[namespace] = {
+        ...namespacedConfig,
+        [key]: envValue,
+      };
+    }
+    this.fullSchema[namespace] ??= {};
+    this.fullSchema[namespace][key] = schema;
+
+    this.configDescriptions[namespace] ??= {};
+    this.configDescriptions[namespace][key] = description;
 
     const valuePromise = new Promise<z4.output<TConfigValue>>((accept) =>
       this.emitter.on(RESOLVE_CONFIG, () => {
@@ -85,5 +108,15 @@ export class Bootstrapper implements IBootstrapper {
     );
 
     return new ConfigValue(valuePromise);
+  }
+
+  private buildSchema(): ZodRawShape {
+    return Object.entries(this.fullSchema).reduce<ZodRawShape>(
+      (schema, [namespace, configValues]) => ({
+        ...schema,
+        [namespace]: z.object(configValues as ZodRawShape),
+      }),
+      {}
+    );
   }
 }
