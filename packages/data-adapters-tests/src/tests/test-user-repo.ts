@@ -96,6 +96,42 @@ export const testUserAndRoleRepository = (
       const roleTwo = await roleRepo.getRole('admin');
       expect(roleTwo).toEqual(adminRole);
     });
+
+    it('can respect pagination when fetching many roles', async () => {
+      const { unitOfWork, roleRepo } = await create();
+
+      const roles = Array.from({ length: 8 }, (_, index) =>
+        Role.reconstitute({
+          id: `role-${index}`,
+          name: `Role ${index}`,
+          permissions: [
+            {
+              resource: '*',
+              action: 'ALLOW',
+              capabilities: ['all'],
+            },
+          ],
+        })
+      );
+
+      await unitOfWork.begin();
+      for (const role of roles) {
+        await roleRepo.saveRole(role);
+      }
+      await unitOfWork.commit();
+
+      const limitedRoles = await roleRepo.getManyRoles(2, 3);
+      const overflowingRoles = await roleRepo.getManyRoles(20, 5);
+
+      expect(limitedRoles).toHaveLength(3);
+      limitedRoles.forEach((role) =>
+        expect(roles.map((existingRole) => existingRole.id)).toContain(
+          role.id
+        )
+      );
+
+      expect(overflowingRoles).toHaveLength(0);
+    });
   });
 
   describe('the user and role repositories', () => {
@@ -197,6 +233,64 @@ export const testUserAndRoleRepository = (
       expect(user).toEqual(data);
     });
 
+    it('replaces role assignments when updating a user', async () => {
+      const { userRepo, roleRepo, unitOfWork } = await create();
+
+      const adminRole = Role.reconstitute({
+        id: 'admin',
+        name: 'Administrator',
+        permissions: [
+          {
+            resource: '*',
+            action: 'ALLOW',
+            capabilities: ['all'],
+          },
+        ],
+      });
+
+      const viewerRole = Role.reconstitute({
+        id: 'viewer',
+        name: 'Viewer',
+        permissions: [
+          {
+            resource: '*',
+            action: 'ALLOW',
+            capabilities: ['read'],
+          },
+        ],
+      });
+
+      await unitOfWork.begin();
+      await roleRepo.saveRole(adminRole);
+      await roleRepo.saveRole(viewerRole);
+      await unitOfWork.commit();
+
+      const originalUser = User.reconstitute({
+        email: 'user@example.com',
+        id: 'changing-roles',
+        passwordHash: 'hash',
+        roles: [adminRole.toObject()],
+      });
+
+      await unitOfWork.begin();
+      await userRepo.saveUser(originalUser);
+      await unitOfWork.commit();
+
+      const updatedUser = User.reconstitute({
+        ...originalUser.toObject(),
+        roles: [viewerRole.toObject()],
+      });
+
+      await unitOfWork.begin();
+      await userRepo.saveUser(updatedUser);
+      await unitOfWork.commit();
+
+      const retrieved = await userRepo.getUser(updatedUser.id);
+
+      expect(retrieved?.roles).toEqual([viewerRole.toObject()]);
+      expect(retrieved?.roles).not.toEqual(originalUser.roles);
+    });
+
     it('if someone tries to insert an email twice in a tx will fail due to uniqueness constraint and rollback the tx', async () => {
       const { userRepo, unitOfWork } = await create();
 
@@ -231,6 +325,48 @@ export const testUserAndRoleRepository = (
       const user = await userRepo.getUser(data.id);
 
       expect(user).toEqual(undefined);
+    });
+
+    it('rolls back conflicting updates that violate unique email constraints', async () => {
+      const { userRepo, unitOfWork } = await create();
+
+      const userOne = User.reconstitute({
+        email: 'first@example.com',
+        id: 'first',
+        passwordHash: 'hash',
+        roles: [],
+      });
+
+      const userTwo = User.reconstitute({
+        email: 'second@example.com',
+        id: 'second',
+        passwordHash: 'hash',
+        roles: [],
+      });
+
+      await unitOfWork.begin();
+      await userRepo.saveUser(userOne);
+      await userRepo.saveUser(userTwo);
+      await unitOfWork.commit();
+
+      const conflictingUserTwo = User.reconstitute({
+        ...userTwo.toObject(),
+        email: userOne.email,
+      });
+
+      try {
+        await unitOfWork.begin();
+        await userRepo.saveUser(conflictingUserTwo);
+        await unitOfWork.commit();
+      } catch {
+        await unitOfWork.rollback();
+      }
+
+      const persistedUserOne = await userRepo.getUser(userOne.id);
+      const persistedUserTwo = await userRepo.getUser(userTwo.id);
+
+      expect(persistedUserOne?.email).toBe(userOne.email);
+      expect(persistedUserTwo?.email).toBe(userTwo.email);
     });
 
     describe('getMany', () => {
@@ -270,6 +406,38 @@ export const testUserAndRoleRepository = (
         const users = await userRepo.getManyUsers();
 
         expect(users).toEqual(expect.arrayContaining([data, data2, data3]));
+      });
+
+      it('respects limits when returning many users', async () => {
+        const { userRepo, unitOfWork } = await create();
+
+        const manyUsers = Array.from({ length: 45 }, (_, index) =>
+          User.reconstitute({
+            email: `bulk-${index}@example.com`,
+            id: `bulk-${index}`,
+            passwordHash: 'hash',
+            roles: [],
+          })
+        );
+
+        await unitOfWork.begin();
+        for (const user of manyUsers) {
+          await userRepo.saveUser(user);
+        }
+        await unitOfWork.commit();
+
+        const defaultLimitedUsers = await userRepo.getManyUsers();
+        const offsetLimitedUsers = await userRepo.getManyUsers(40, 10);
+
+        expect(defaultLimitedUsers).toHaveLength(30);
+        expect(defaultLimitedUsers).toEqual(
+          expect.arrayContaining([manyUsers[0], manyUsers[29]])
+        );
+
+        expect(offsetLimitedUsers).toHaveLength(5);
+        offsetLimitedUsers.forEach((user) =>
+          expect(manyUsers.map((existing) => existing.id)).toContain(user.id)
+        );
       });
     });
 
