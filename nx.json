@@ -24,28 +24,13 @@
           "watchDepsName": "watch-deps"
         }
       },
-      "exclude": [
-        "packages/domain/*",
-        "packages/application-core/*",
-        "packages/auth/*",
-        "packages/bootstrap/*",
-        "packages/serialiser/*"
-      ]
-    },
-    {
-      "plugin": "@nx/js/typescript",
       "include": [
         "packages/domain/*",
         "packages/application-core/*",
         "packages/auth/*",
         "packages/bootstrap/*",
         "packages/serialiser/*"
-      ],
-      "options": {
-        "typecheck": {
-          "targetName": "typecheck"
-        }
-      }
+      ]
     },
     {
       "plugin": "@nx/vitest",
