@@ -8,42 +8,12 @@ import type {
   ContainerBinding,
 } from './inversify-types.ts';
 import { injectable } from 'inversify';
-import { Plugin, type PluginApi } from '@inversifyjs/plugin';
 import { inject } from '@lib';
 import { getPriority } from './get-priority.ts';
+import type { ContainerWithMove } from './container-with-move.ts';
+import { MovePlugin } from './move-plugin.ts';
 
 const INVERSIFY_METADATA_KEY = '@inversifyjs/core/classMetadataReflectKey';
-
-type ContainerWithMove<TMap extends BindingMap> = TypedContainer<TMap> & {
-  moveBinding(from: string, to: string): Promise<void>;
-};
-
-class MovePlugin<TMap extends BindingMap> extends Plugin<
-  ContainerWithMove<TMap>
-> {
-  override load(api: PluginApi): void {
-    api.define('moveBinding', async (from: string, to: string) => {
-      await this.moveBinding(from, to);
-    });
-  }
-
-  private async moveBinding(from: string, to: string) {
-    const result = this._context.bindingService.get(from);
-
-    if (result) {
-      for (const thing of result) {
-        if (thing.type === 'Instance') {
-          this._context.bindingService.set({
-            ...thing,
-            serviceIdentifier: to,
-          });
-        }
-      }
-    }
-
-    await this._container.unbind(from);
-  }
-}
 
 @injectable()
 export class DecoratorManager<TMap extends BindingMap> {
