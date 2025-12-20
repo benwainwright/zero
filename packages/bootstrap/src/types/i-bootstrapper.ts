@@ -5,8 +5,10 @@ import type { ServiceIdentifier } from 'inversify';
 
 export interface IBootstrapper {
   configValue<TConfigValue extends z4.$ZodType>(
+    namespace: string,
     key: string,
-    schema: TConfigValue
+    schema: TConfigValue,
+    description: string
   ): ConfigValue<z4.output<TConfigValue>>;
 
   addInitStep(callback: () => Promise<void>): void;

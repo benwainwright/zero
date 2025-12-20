@@ -11,8 +11,18 @@ export const bootstrapInitialUsersAndPermissions = (
   bootstrapper: IBootstrapper,
   container: TypedContainer<IAuthTypes>
 ) => {
-  const adminEmail = bootstrapper.configValue('adminEmail', z.string());
-  const adminPassword = bootstrapper.configValue('adminPassword', z.string());
+  const adminEmail = bootstrapper.configValue(
+    'auth',
+    'adminEmail',
+    z.string(),
+    'Email address for the bootstrap administrator account'
+  );
+  const adminPassword = bootstrapper.configValue(
+    'auth',
+    'adminPassword',
+    z.string(),
+    'Password for the bootstrap administrator account'
+  );
   bootstrapper.addInitStep(async () => {
     const adminRole = Role.reconstitute({
       id: ADMIN_USER_ID,
