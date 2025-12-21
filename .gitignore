@@ -48,3 +48,5 @@ vitest.config.*.timestamp*node_modules
 vitest.config.*.timestamp*
 vite.config.*.timestamp*
 **/test-output
+
+test-output

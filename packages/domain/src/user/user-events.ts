@@ -1,6 +1,6 @@
 import type { User } from './user.ts';
 
-export interface UserEvents {
+export interface IUserEvents {
   UserCreated: User;
   UserUpdated: { old: User; new: User };
   UserDeleted: User;

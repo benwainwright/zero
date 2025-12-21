@@ -19,15 +19,16 @@
     "vitest-when": "catalog:"
   },
   "dependencies": {
-    "zod": "catalog:",
     "@inversifyjs/strongly-typed": "catalog:",
     "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
-    "@zero/domain": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "@zero/data-adapters-tests": "workspace:*",
+    "@zero/domain": "workspace:*",
     "better-sqlite3": "12.5.0",
     "inversify": "catalog:",
-    "reflect-metadata": "catalog:"
+    "kysely": "^0.28.9",
+    "reflect-metadata": "catalog:",
+    "zod": "catalog:"
   }
 }

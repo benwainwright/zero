@@ -1,0 +1,29 @@
+{
+  "name": "@zero/web",
+  "private": true,
+  "type": "module",
+  "scripts": {},
+  "sideEffects": false,
+  "dependencies": {
+    "@mantine/core": "8.3.8",
+    "@mantine/form": "8.3.8",
+    "@mantine/hooks": "8.3.8",
+    "@mantine/notifications": "8.3.8",
+    "@react-router/node": "7.9.6-pre.0",
+    "@react-router/serve": "7.9.6-pre.0",
+    "@tabler/icons-react": "3.36.0",
+    "@zero/domain": "workspace:*",
+    "@zero/serialiser": "workspace:*",
+    "isbot": "^4.4.0",
+    "postcss-preset-mantine": "^1.18.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "7.9.6-pre.0"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.2.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  }
+}

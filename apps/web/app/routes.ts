@@ -1,0 +1,23 @@
+import {
+  index,
+  layout,
+  route,
+  type RouteConfig,
+} from '@react-router/dev/routes';
+
+// import { routesList, type RouteSpec } from './config/routes-list.tsx';
+
+// const list: Record<string, RouteSpec> = routesList;
+
+// const routes = [
+//   layout(
+//     "routes/app-layout.tsx",
+//     Object.entries(list).map(([key, value]) =>
+//       value.isIndex ? index(value.component) : route(value.path ? value.path : key, value.component)
+//     )
+//   )
+// ];
+
+const routes = [index('routes/home.tsx')];
+
+export default routes satisfies RouteConfig;

@@ -1,21 +1,19 @@
 packages:
   - 'packages/*'
-
-
+  - 'apps/*'
 onlyBuiltDependencies:
-  - better-sqlite3
-
-
+  - 'better-sqlite3'
 catalog:
-  inversify: 7.10.7
-  reflect-metadata: 0.2.2
-  vitest-mock-extended: 3.1.0
-  '@inversifyjs/strongly-typed': 2.2.0
-  zod: 4.2.1
-  vitest-when: 0.10.0
-  typeson: 9.0.4
-  stacktracey: 2.1.8
-  '@suites/unit': 3.0.1
-  '@suites/doubles.vitest': 3.0.1
-  '@inversifyjs/plugin': 0.2.0
-  winston: 3.19.0
+  luxon: 3.7.2
+  inversify: '7.10.7'
+  reflect-metadata: '0.2.2'
+  vitest-mock-extended: '3.1.0'
+  '@inversifyjs/strongly-typed': '2.2.0'
+  zod: '4.2.1'
+  vitest-when: '0.10.0'
+  typeson: '9.0.4'
+  stacktracey: '2.1.8'
+  '@suites/unit': '3.0.1'
+  '@suites/doubles.vitest': '3.0.1'
+  '@inversifyjs/plugin': '0.2.0'
+  winston: '3.19.0'

@@ -26,6 +26,12 @@
     },
     {
       "path": "./packages/data-adapters-tests"
+    },
+    {
+      "path": "./apps/web-e2e"
+    },
+    {
+      "path": "./apps/web"
     }
   ]
 }
