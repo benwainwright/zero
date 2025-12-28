@@ -456,6 +456,12 @@ importers:
         specifier: 'catalog:'
         version: 0.10.0(@vitest/expect@4.0.16)(vitest@4.0.16)
 
+  tools:
+    dependencies:
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+
 packages:
 
   '@babel/code-frame@7.27.1':
