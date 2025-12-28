@@ -15,18 +15,38 @@ import { MovePlugin } from './move-plugin.ts';
 
 const INVERSIFY_METADATA_KEY = '@inversifyjs/core/classMetadataReflectKey';
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const isConstructorArgument = (
+  value: unknown
+): value is ConstructorArgument => {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    'value' in value &&
+    'optional' in value &&
+    'tags' in value &&
+    'kind' in value
+  );
+};
+
+const hasMoveBinding = <TMap extends BindingMap>(
+  container: TypedContainer<TMap>
+): container is ContainerWithMove<TMap> => 'moveBinding' in container;
+
 @injectable()
 export class DecoratorManager<TMap extends BindingMap> {
-  private readonly container: ContainerWithMove<TMap>;
-  private static readonly containersWithMove = new WeakSet<
-    ContainerWithMove<any>
-  >();
+  private readonly container: TypedContainer<TMap>;
+  private static readonly containersWithMove = new WeakSet<object>();
 
   public constructor(
     @inject('Container')
     container: TypedContainer<TMap>
   ) {
-    this.container = container as ContainerWithMove<TMap>;
+    this.container = container;
   }
 
   private pluginLoaded = false;
@@ -37,7 +57,7 @@ export class DecoratorManager<TMap extends BindingMap> {
       return;
     }
 
-    if ('moveBinding' in this.container) {
+    if (hasMoveBinding(this.container)) {
       DecoratorManager.containersWithMove.add(this.container);
       this.pluginLoaded = true;
       return;
@@ -52,12 +72,22 @@ export class DecoratorManager<TMap extends BindingMap> {
 
   private decorationMap = new Map<
     keyof TMap,
-    { thing: Newable<any>; args: ConstructorArgument[] }[]
+    { thing: Newable<unknown>; args: ConstructorArgument[] }[]
   >();
 
-  private getConstructorArguments(thing: Newable<any>) {
+  private getConstructorArguments(thing: Newable<unknown>) {
     const meta = Reflect.getMetadata(INVERSIFY_METADATA_KEY, thing);
-    return meta.constructorArguments as ConstructorArgument[];
+    if (!isRecord(meta)) {
+      return [];
+    }
+
+    const constructorArguments = meta['constructorArguments'];
+
+    if (!Array.isArray(constructorArguments)) {
+      return [];
+    }
+
+    return constructorArguments.filter(isConstructorArgument);
   }
 
   private getDecoratorKeyForIndex(token: keyof TMap, index: number) {
@@ -92,7 +122,7 @@ export class DecoratorManager<TMap extends BindingMap> {
 
   private adjustConstructorParamDecoration(
     token: string,
-    theThing: Newable<any>,
+    theThing: Newable<unknown>,
     serviceIndex: number
   ) {
     const args = this.getConstructorArguments(theThing);
@@ -108,8 +138,9 @@ export class DecoratorManager<TMap extends BindingMap> {
 
   private async bindDecoratorList<TKey extends keyof TMap>(
     token: TKey & string,
-    decorators: { thing: Newable<any> }[]
+    decorators: { thing: Newable<unknown> }[]
   ) {
+    const containerWithMove = this.getContainerWithMove();
     for (let index = 0; index < decorators.length; index++) {
       const decorator = decorators[index];
       if (!decorator) {
@@ -118,21 +149,21 @@ export class DecoratorManager<TMap extends BindingMap> {
       const { thing: atIndex } = decorator;
       if (index === 0) {
         const rootKey = this.getRootKey(token);
-        if (!this.container.isBound(rootKey)) {
-          await this.container.moveBinding(token as string, rootKey);
+        if (!containerWithMove.isBound(rootKey)) {
+          await containerWithMove.moveBinding(token, rootKey);
         }
-        if (this.container.isBound(token)) {
-          await this.container.unbind(token);
+        if (containerWithMove.isBound(token)) {
+          await containerWithMove.unbind(token);
         }
-        this.container.bind(token).to(atIndex);
+        containerWithMove.bind(token).to(atIndex);
       } else {
         const decoratorKey = this.getDecoratorKeyForIndex(token, index);
-        if (this.container.isBound(decoratorKey)) {
-          await this.container.unbind(decoratorKey);
+        if (containerWithMove.isBound(decoratorKey)) {
+          await containerWithMove.unbind(decoratorKey);
         }
-        this.container.bind(decoratorKey).to(atIndex);
+        containerWithMove.bind(decoratorKey).to(atIndex);
       }
-      this.adjustConstructorParamDecoration(token as string, atIndex, index);
+      this.adjustConstructorParamDecoration(token, atIndex, index);
     }
   }
 
@@ -170,7 +201,7 @@ export class DecoratorManager<TMap extends BindingMap> {
     }
   }
 
-  private storeDecoration(token: keyof TMap, thing: Newable<any>) {
+  private storeDecoration(token: keyof TMap, thing: Newable<unknown>) {
     const existingDecorations = this.decorationMap.get(token);
     if (!existingDecorations) {
       this.decorationMap.set(token, [
@@ -182,5 +213,15 @@ export class DecoratorManager<TMap extends BindingMap> {
         { thing: thing, args: this.getConstructorArguments(thing) },
       ]);
     }
+  }
+
+  private getContainerWithMove(): ContainerWithMove<TMap> {
+    this.loadPluginIfNotLoaded();
+
+    if (!hasMoveBinding(this.container)) {
+      throw new Error('MovePlugin did not register moveBinding');
+    }
+
+    return this.container;
   }
 }

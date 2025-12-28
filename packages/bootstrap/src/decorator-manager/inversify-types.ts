@@ -16,7 +16,7 @@ type ServiceIdentifier<TInstance = unknown> =
   | Function;
 
 type BindingMapProperty = string | symbol;
-export type BindingMap = Record<BindingMapProperty, any>;
+export type BindingMap = Record<BindingMapProperty, unknown>;
 
 type IfAny<T, TYes, TNo> = 0 extends 1 & T ? TYes : TNo;
 
@@ -28,13 +28,13 @@ type MappedServiceIdentifier<T extends BindingMap> = IfAny<
 
 export type ContainerBinding<
   TBindingMap extends BindingMap,
-  TKey extends MappedServiceIdentifier<TBindingMap> = any
+  TKey extends MappedServiceIdentifier<TBindingMap> = MappedServiceIdentifier<TBindingMap>
 > = TKey extends keyof TBindingMap
   ? TBindingMap[TKey]
   : TKey extends Newable<infer C>
   ? C
   : TKey extends Function
-  ? any
+  ? unknown
   : never;
 
 declare enum ClassElementMetadataKind {
