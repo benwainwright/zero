@@ -17,7 +17,11 @@ describe('MovePlugin', () => {
 
     container.register(MovePlugin);
 
-    await container.moveBinding('Foo', 'FooMoved');
+    await (
+      container as TypedContainer<ContainerTypes> & {
+        moveBinding: (from: string, to: string) => Promise<void>;
+      }
+    ).moveBinding('Foo', 'FooMoved');
 
     expect(container.isBound('Foo')).toBe(false);
     expect(container.isBound('FooMoved')).toBe(true);
@@ -35,7 +39,11 @@ describe('MovePlugin', () => {
 
     container.register(MovePlugin);
 
-    await container.moveBinding('Value', 'ValueMoved');
+    await (
+      container as TypedContainer<ContainerTypes> & {
+        moveBinding: (from: string, to: string) => Promise<void>;
+      }
+    ).moveBinding('Value', 'ValueMoved');
 
     expect(container.isBound('Value')).toBe(false);
     expect(container.isBound('ValueMoved')).toBe(false);

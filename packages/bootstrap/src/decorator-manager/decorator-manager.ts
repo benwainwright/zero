@@ -138,7 +138,7 @@ export class DecoratorManager<TMap extends BindingMap> {
 
   private async bindDecoratorList<TKey extends keyof TMap>(
     token: TKey & string,
-    decorators: { thing: Newable<unknown> }[]
+    decorators: { thing: Newable<any> }[]
   ) {
     const containerWithMove = this.getContainerWithMove();
     for (let index = 0; index < decorators.length; index++) {
