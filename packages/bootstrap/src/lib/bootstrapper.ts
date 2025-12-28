@@ -53,10 +53,11 @@ export class Bootstrapper implements IBootstrapper {
   public async start(): Promise<void> {
     this.logger.debug(`Starting application`, LOG_CONTEXT);
     try {
+      this.ensureNamespacesPresent();
       z.object(this.buildSchema()).parse(this._config);
     } catch (error) {
       if (error instanceof ZodError) {
-        this.logger.error(z.prettifyError(error), LOG_CONTEXT);
+        this.logger.error(this.formatValidationError(error), LOG_CONTEXT);
         return;
       }
     }
@@ -114,6 +115,49 @@ export class Bootstrapper implements IBootstrapper {
     );
 
     return new ConfigValue(valuePromise);
+  }
+
+  private ensureNamespacesPresent() {
+    for (const namespace of Object.keys(this.fullSchema)) {
+      if (this._config[namespace] === undefined) {
+        this._config[namespace] = {};
+      }
+    }
+  }
+
+  private formatValidationError(error: ZodError): string {
+    const missingMessages: string[] = [];
+    const otherMessages: string[] = [];
+
+    for (const issue of error.issues) {
+      const path = issue.path.map(String);
+      const pathLabel = path.join('.');
+      const isMissing =
+        issue.code === 'invalid_type' &&
+        (issue.received === 'undefined' || issue.received === undefined);
+
+      if (isMissing) {
+        if (path.length >= 2) {
+          const [namespace, key] = path;
+          const description =
+            this.configDescriptions[namespace]?.[key] ?? 'no description';
+          missingMessages.push(
+            `Missing config value: ${pathLabel} (${description})`
+          );
+        } else {
+          missingMessages.push(
+            `Missing config value: ${pathLabel || 'config'}`
+          );
+        }
+        continue;
+      }
+
+      otherMessages.push(
+        pathLabel ? `${pathLabel}: ${issue.message}` : issue.message
+      );
+    }
+
+    return [...missingMessages, ...otherMessages].join('\n');
   }
 
   private buildSchema(): ZodRawShape {
