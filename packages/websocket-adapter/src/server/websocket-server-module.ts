@@ -1,4 +1,5 @@
-import { AppServer, ServerSocketClient } from '@lib';
+import { AppServer } from './app-server.ts';
+import { ServerSocketClient } from './server-socket-client.ts';
 import * as z from 'zod';
 
 import { module } from '@zero/bootstrap';

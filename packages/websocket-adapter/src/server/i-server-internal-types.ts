@@ -1,7 +1,8 @@
-import type { AppServer, ServerSocketClient } from '@lib';
+import { AppServer } from './app-server.ts';
+import { ServerSocketClient } from './server-socket-client.ts';
 import type { ConfigValue } from '@zero/bootstrap';
 
-export interface IInternalTypes {
+export interface IServerInternalTypes {
   AppServer: AppServer;
   ServerWebsocketClient: ServerSocketClient;
   WebsocketServerHost: ConfigValue<string>;

@@ -2,8 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@lib": ["./src/lib/index.ts"],
-      "@types": ["./src/types/index.ts"]
+      "@server": ["./src/server/index.ts"],
+      "@core": ["./src/core/index.ts"],
+      "@types": ["./src/types/index.ts"],
+      "@client": ["./src/client/index.ts"],
     },
     "outDir": "./out-tsc/vitest",
     "types": [

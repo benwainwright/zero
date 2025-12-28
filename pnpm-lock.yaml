@@ -240,9 +240,9 @@ importers:
       '@zero/sqlite-adapters':
         specifier: workspace:*
         version: link:../../packages/sqlite-adapters
-      '@zero/websocket-server-adapter':
+      '@zero/websocket-adapter':
         specifier: workspace:*
-        version: link:../../packages/websocket-server-adapter
+        version: link:../../packages/websocket-adapter
 
   apps/web:
     dependencies:
@@ -485,6 +485,58 @@ importers:
       '@types/better-sqlite3':
         specifier: 7.6.13
         version: 7.6.13
+      vitest-mock-extended:
+        specifier: 'catalog:'
+        version: 3.1.0(typescript@5.9.3)(vitest@4.0.16)
+      vitest-when:
+        specifier: 'catalog:'
+        version: 0.10.0(@vitest/expect@4.0.16)(vitest@4.0.16)
+
+  packages/websocket-adapter:
+    dependencies:
+      '@inversifyjs/strongly-typed':
+        specifier: 'catalog:'
+        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      '@zero/application-core':
+        specifier: workspace:*
+        version: link:../application-core
+      '@zero/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@zero/bootstrap':
+        specifier: workspace:*
+        version: link:../bootstrap
+      '@zero/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@zero/serialiser':
+        specifier: workspace:*
+        version: link:../serialiser
+      cookie:
+        specifier: 1.1.1
+        version: 1.1.1
+      inversify:
+        specifier: 'catalog:'
+        version: 7.10.7(reflect-metadata@0.2.2)
+      reflect-metadata:
+        specifier: 'catalog:'
+        version: 0.2.2
+      uuid:
+        specifier: 13.0.0
+        version: 13.0.0
+      ws:
+        specifier: 8.18.3
+        version: 8.18.3
+      zod:
+        specifier: 'catalog:'
+        version: 4.2.1
+    devDependencies:
+      '@types/ws':
+        specifier: 8.18.1
+        version: 8.18.1
+      get-port:
+        specifier: 7.1.0
+        version: 7.1.0
       vitest-mock-extended:
         specifier: 'catalog:'
         version: 3.1.0(typescript@5.9.3)(vitest@4.0.16)
@@ -5085,6 +5137,10 @@ packages:
   get-port@5.1.1:
     resolution: {integrity: sha512-g/Q1aTSDOxFpchXC4i8ZWvxA1lnPqx/JHqcpIw0/LX9T8x/GBbi6YnlN5nhaKIFkT8oFsscUKgDJYxfwfS6QsQ==}
     engines: {node: '>=8'}
+
+  get-port@7.1.0:
+    resolution: {integrity: sha512-QB9NKEeDg3xxVwCCwJQ9+xycaz6pBB6iQ76wiWMl1927n0Kir6alPiP+yuiICLLU4jpMe08dXfpebuQppFA2zw==}
+    engines: {node: '>=16'}
 
   get-proto@1.0.1:
     resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
@@ -13655,6 +13711,8 @@ snapshots:
   get-package-type@0.1.0: {}
 
   get-port@5.1.1: {}
+
+  get-port@7.1.0: {}
 
   get-proto@1.0.1:
     dependencies:

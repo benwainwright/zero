@@ -4,6 +4,8 @@ export { type IDomainEventStore } from './i-domain-event-store.ts';
 export { type IDomainEventBuffer } from './i-domain-event-buffer.ts';
 export { type IEventBus } from './i-event-bus.ts';
 export { type ICommandBus } from './i-command-bus.ts';
+export { type IQueryClient } from './i-query-client.ts';
+export { type ICommandClient } from './i-command-client.ts';
 export { type IUnitOfWork } from './i-unit-of-work.ts';
 export { type IObjectStorage } from './i-object-storage.ts';
 export { type IStringHasher } from './i-string-hasher.ts';

@@ -8,7 +8,7 @@ import type {
   ContainerBinding,
 } from './inversify-types.ts';
 import { injectable } from 'inversify';
-import { inject } from '@lib';
+import { inject } from '@inversify';
 import { getPriority } from './get-priority.ts';
 import type { ContainerWithMove } from './container-with-move.ts';
 import { MovePlugin } from './move-plugin.ts';

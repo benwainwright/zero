@@ -37,7 +37,7 @@
       "path": "./apps/backend"
     },
     {
-      "path": "./packages/websocket-server-adapter"
+      "path": "./packages/websocket-adapter"
     }
   ]
 }

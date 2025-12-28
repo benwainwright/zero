@@ -7,7 +7,7 @@
     "@zero/application-core": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "@zero/sqlite-adapters": "workspace:*",
-    "@zero/websocket-server-adapter": "workspace:*",
+    "@zero/websocket-adapter": "workspace:*",
     "@zero/auth": "workspace:*",
     "@zero/domain": "workspace:*",
     "@inversifyjs/strongly-typed": "catalog:"

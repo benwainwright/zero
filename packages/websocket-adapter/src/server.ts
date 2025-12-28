@@ -1,0 +1,1 @@
+export { websocketServerModule } from '@server';

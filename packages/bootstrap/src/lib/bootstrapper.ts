@@ -8,7 +8,7 @@ import * as z4 from 'zod/v4/core';
 import { ConfigValue } from './config-value.ts';
 import { type ILogger, type IBootstrapper } from '@types';
 import { injectable, type ServiceIdentifier } from 'inversify';
-import { inject } from './typed-inject.ts';
+import { inject } from '@inversify';
 
 export const LOG_CONTEXT = { context: 'bootstrapper' };
 

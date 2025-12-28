@@ -10,7 +10,7 @@ import { User } from '@zero/domain';
 import { Serialiser } from '@zero/serialiser';
 import { injectable } from 'inversify';
 import { WebSocket } from 'ws';
-import { inject } from '@core';
+import { inject } from './typed-inject.ts';
 import type { IQueryResponseEvent, IWebsocketPacket } from '@types';
 
 export const LOG_CONTEXT = {

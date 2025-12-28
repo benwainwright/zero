@@ -4,14 +4,14 @@ import type {
   TypedMultiInject,
 } from '@inversifyjs/strongly-typed';
 
-import type { IInternalTypes } from './i-internal-types.ts';
+import type { IServerInternalTypes } from './i-server-internal-types.ts';
 import type { IBootstrapTypes } from '@zero/bootstrap';
 import type { IApplicationTypes } from '@zero/application-core';
 
 export const inject = inversifyInject as TypedInject<
-  IApplicationTypes & IInternalTypes & IBootstrapTypes
+  IApplicationTypes & IServerInternalTypes & IBootstrapTypes
 >;
 
 export const multiInject = inversifyInject as TypedMultiInject<
-  IApplicationTypes & IInternalTypes & IBootstrapTypes
+  IApplicationTypes & IServerInternalTypes & IBootstrapTypes
 >;

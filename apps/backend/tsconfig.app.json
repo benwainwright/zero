@@ -16,6 +16,9 @@
       "path": "../../packages/auth/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/websocket-adapter/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/sqlite-adapters/tsconfig.lib.json"
     },
     {

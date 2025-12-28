@@ -1,5 +1,5 @@
 {
-  "name": "@zero/websocket-server-adapter",
+  "name": "@zero/websocket-adapter",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -9,15 +9,20 @@
       "import": "./src/server.ts",
       "default": "./src/server.ts"
     },
+    "./client": {
+      "types": "./src/client.ts",
+      "import": "./src/client.ts",
+      "default": "./src/client.ts"
+    },
     "./package.json": "./package.json"
   },
   "devDependencies": {
     "@types/ws": "8.18.1",
+    "get-port": "7.1.0",
     "vitest-mock-extended": "catalog:",
     "vitest-when": "catalog:"
   },
   "dependencies": {
-    "zod": "catalog:",
     "@inversifyjs/strongly-typed": "catalog:",
     "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
@@ -28,6 +33,7 @@
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
     "uuid": "13.0.0",
-    "ws": "8.18.3"
+    "ws": "8.18.3",
+    "zod": "catalog:"
   }
 }

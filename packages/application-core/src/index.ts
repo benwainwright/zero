@@ -12,6 +12,8 @@ export {
   type ISingleItemStore,
   type IUnitOfWork,
   type IQueryBus,
+  type IQueryClient,
+  type ICommandClient,
   type IDomainEventBuffer,
   type ICurrentUserCache,
   type ISessionIdRequester,
