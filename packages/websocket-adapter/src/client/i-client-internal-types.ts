@@ -12,9 +12,8 @@ import type {
 } from '@zero/application-core';
 
 export interface IClientInternalTypes {
-  Websocket: WebSocket;
-  CommandClient: ICommandClient<IKnownCommands>;
-  QueryClient: IQueryClient<IKnownQueries>;
   UUIDGenerator: IUUIDGenerator;
   EventListener: IEventListener<IAllEvents & IQueryResponseEvent>;
+  CommandClient: ICommandClient<IKnownCommands>;
+  QueryClient: IQueryClient<IKnownQueries>;
 }

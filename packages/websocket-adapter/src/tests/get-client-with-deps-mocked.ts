@@ -1,4 +1,8 @@
-import { type IClientInternalTypes, websocketClientModule } from '@client';
+import {
+  type IClientInternalTypes,
+  type IClientTypes,
+  websocketClientModule,
+} from '@client';
 import {
   TypedContainer,
   TypedContainerModule,
@@ -9,7 +13,7 @@ import { mock } from 'vitest-mock-extended';
 
 export const getClientWithDepsMocked = async (port: number) => {
   const container = new TypedContainer<
-    IClientInternalTypes & IBootstrapTypes
+    IClientInternalTypes & IBootstrapTypes & IClientTypes
   >();
 
   const uuidGenerator = mock<IUUIDGenerator>();
@@ -26,11 +30,11 @@ export const getClientWithDepsMocked = async (port: number) => {
     });
   });
 
-  const overrideModule = new TypedContainerModule<IClientInternalTypes>(
-    (load) => {
-      load.bind('Websocket').toConstantValue(socket);
-    }
-  );
+  const overrideModule = new TypedContainerModule<
+    IClientInternalTypes & IClientTypes
+  >((load) => {
+    load.bind('Websocket').toConstantValue(socket);
+  });
 
   await container.load(overrideModule);
 

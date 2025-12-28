@@ -16,6 +16,7 @@ interface RawRole {
   id: string;
   name: string;
   permissions: string;
+  routes: string;
 }
 
 type TableName = 'users' | 'roles';
@@ -33,7 +34,7 @@ export class SqliteRepositoryAdapter
 
   public async getRole(id: string): Promise<Role | undefined> {
     const result = await this.database.getFromDb<RawRole | undefined>(
-      `SELECT id, name, permissions
+      `SELECT id, name, permissions, routes
         FROM ${await this.getTableName('roles')}
         where id = ?`,
       [id]
@@ -50,6 +51,7 @@ export class SqliteRepositoryAdapter
     return Role.reconstitute({
       ...raw,
       permissions: z.array(permissionSchema).parse(JSON.parse(raw.permissions)),
+      routes: JSON.parse(raw.routes),
     });
   }
 
@@ -57,12 +59,19 @@ export class SqliteRepositoryAdapter
     const roleTable = await this.getTableName('roles');
 
     this.database.deferQueryToTransaction(
-      `INSERT INTO ${roleTable} (id, name, permissions)
-        VALUES (?, ?, ?)
+      `INSERT INTO ${roleTable} (id, name, permissions, routes)
+        VALUES (?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
           name = excluded.name,
-          permissions = excluded.permissions`,
-      [role.id, role.name, JSON.stringify(role.permissions)]
+          permissions = excluded.permissions,
+          routes = excluded.routes
+          `,
+      [
+        role.id,
+        role.name,
+        JSON.stringify(role.permissions),
+        JSON.stringify(role.routes),
+      ]
     );
 
     return role;
@@ -70,7 +79,7 @@ export class SqliteRepositoryAdapter
 
   public async getManyRoles(offset: number, limit: number): Promise<Role[]> {
     const result = await this.database.getAllFromDatabase<RawRole[]>(
-      `SELECT id, name, permissions
+      `SELECT id, name, permissions, routes
         FROM ${await this.getTableName('roles')}
         LIMIT ? OFFSET ?`,
       [limit, offset]
@@ -119,7 +128,8 @@ export class SqliteRepositoryAdapter
     )} (
           id TEXT PRIMARY KEY,
           name TEXT NOT NULL,
-          permissions TEXT NOT NULL
+          permissions TEXT NOT NULL,
+          routes TEXT NOT NULL
       );`);
 
     await this.database.runQuery(
@@ -182,7 +192,8 @@ export class SqliteRepositoryAdapter
         json_object(
           'id', roles.id,
           'name', roles.name,
-          'permissions', roles.permissions
+          'permissions', roles.permissions,
+          'routes', roles.routes
         )
       )
       FROM ${await this.getJoinTableName('users', 'roles')} user_roles

@@ -7,6 +7,7 @@ export { type IEventListener, type IListener } from './i-event-listener.ts';
 export { type IEventEmitter } from './i-event-emitter.ts';
 export { type ICommandBus } from './i-command-bus.ts';
 export { type IQueryClient } from './i-query-client.ts';
+export { type IApiSurface } from './i-api-surface.ts';
 export { type ICommandClient } from './i-command-client.ts';
 export { type IUnitOfWork } from './i-unit-of-work.ts';
 export { type IObjectStorage } from './i-object-storage.ts';

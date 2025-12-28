@@ -1,7 +1,7 @@
-import { applicationCoreModule } from '@zero/application-core';
-import { bootstrapModule, type IBootstrapTypes } from '@zero/bootstrap';
-
 import { TypedContainer } from '@inversifyjs/strongly-typed';
+
+import { bootstrapModule, type IBootstrapTypes } from '@zero/bootstrap';
+import { applicationCoreModule } from '@zero/application-core';
 import { authModule } from '@zero/auth';
 import { sqliteAdaptersModule } from '@zero/sqlite-adapters';
 import { websocketServerModule } from '@zero/websocket-adapter/server';

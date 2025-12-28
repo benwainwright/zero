@@ -13,6 +13,9 @@ const nodeBuiltins = [
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/packages/application-core',
+  define: {
+    'process.env': {},
+  },
   plugins: [
     tsconfigPaths({
       projects: [

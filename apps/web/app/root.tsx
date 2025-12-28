@@ -18,12 +18,13 @@ import {
 // import type { Route } from "./+types/root.ts";
 import { Notifications } from '@mantine/notifications';
 import type { ReactNode } from 'react';
+import { ApiProvider, CurrentUserProvider } from '@data';
 
 // export const links: Route.LinksFunction = () => [];
 
 export function Layout({ children }: { children: React.ReactNode }): ReactNode {
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang="" {...mantineHtmlProps}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -34,7 +35,9 @@ export function Layout({ children }: { children: React.ReactNode }): ReactNode {
       <body>
         <MantineProvider>
           <Notifications />
-          {children}
+          <ApiProvider url={`ws://localhost:3000`}>
+            <CurrentUserProvider>{children}</CurrentUserProvider>
+          </ApiProvider>
         </MantineProvider>
         <ScrollRestoration />
         <Scripts />

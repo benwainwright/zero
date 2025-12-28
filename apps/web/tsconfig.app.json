@@ -60,6 +60,12 @@
       "path": "../../packages/serialiser/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/application-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/websocket-adapter/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/domain/tsconfig.lib.json"
     }
   ]

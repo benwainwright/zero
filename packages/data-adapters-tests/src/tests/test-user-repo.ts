@@ -27,6 +27,7 @@ export const testUserAndRoleRepository = (
       const adminRole = Role.reconstitute({
         id: 'admin',
         name: 'Administrator',
+        routes: ['all'],
         permissions: [
           {
             resource: '*',
@@ -39,6 +40,7 @@ export const testUserAndRoleRepository = (
       const userRole = Role.reconstitute({
         id: 'user',
         name: 'User',
+        routes: ['home'],
         permissions: [
           {
             resource: '*',
@@ -64,6 +66,7 @@ export const testUserAndRoleRepository = (
       const adminRole = Role.reconstitute({
         id: 'admin',
         name: 'Administrator',
+        routes: ['home'],
         permissions: [
           {
             resource: '*',
@@ -76,6 +79,7 @@ export const testUserAndRoleRepository = (
       const userRole = Role.reconstitute({
         id: 'user',
         name: 'User',
+        routes: ['home', 'login'],
         permissions: [
           {
             resource: '*',
@@ -102,6 +106,7 @@ export const testUserAndRoleRepository = (
 
       const roles = Array.from({ length: 8 }, (_, index) =>
         Role.reconstitute({
+          routes: ['home'],
           id: `role-${index}`,
           name: `Role ${index}`,
           permissions: [
@@ -137,6 +142,7 @@ export const testUserAndRoleRepository = (
       const { userRepo, unitOfWork, roleRepo } = await create();
 
       const adminRole = Role.reconstitute({
+        routes: ['home'],
         id: 'admin',
         name: 'Administrator',
         permissions: [
@@ -149,6 +155,7 @@ export const testUserAndRoleRepository = (
       });
 
       const userRole = Role.reconstitute({
+        routes: ['home'],
         id: 'user',
         name: 'User',
         permissions: [
@@ -235,6 +242,7 @@ export const testUserAndRoleRepository = (
       const { userRepo, roleRepo, unitOfWork } = await create();
 
       const adminRole = Role.reconstitute({
+        routes: ['home'],
         id: 'admin',
         name: 'Administrator',
         permissions: [
@@ -247,6 +255,7 @@ export const testUserAndRoleRepository = (
       });
 
       const viewerRole = Role.reconstitute({
+        routes: ['home'],
         id: 'viewer',
         name: 'Viewer',
         permissions: [

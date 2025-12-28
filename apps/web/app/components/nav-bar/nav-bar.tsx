@@ -1,31 +1,31 @@
 import { AppShell, NavLink } from '@mantine/core';
-// import { routesList, type RouteSpec } from "@config";
+import { routesList } from '@config';
 import { useContext, type ReactNode } from 'react';
-import { CurrentUserContext } from '@components';
-import { canAccess } from '@utils';
+import { CurrentUserContext } from '@data';
 import { Link, useLocation } from 'react-router';
+import type { IRoute } from '@zero/domain';
 
 export const NavBar = (): ReactNode => {
   const location = useLocation();
   const { hash, pathname, search } = location;
   console.log({ hash, pathname, search });
-  // const list: Record<string, RouteSpec> = routesList;
-  const { currentUser: user } = useContext(CurrentUserContext);
+  const list = routesList;
+  const { user } = useContext(CurrentUserContext);
   return (
     <AppShell.Navbar>
       <ul>
-        {/*{Object.entries(list)
+        {Object.entries(list)
           .filter(
-            ([, value]) =>
-              canAccess({ user, routeTags: value.permissionsRequired }) && !value.hideFromMenu
+            ([key, value]) =>
+              user?.canView(key as IRoute) && !value.hideFromMenu
           )
           .map(([key, value]) => {
-            const toString = value.isIndex ? "" : key;
+            const toString = value.isIndex ? '' : key;
             return (
               <NavLink
                 key={`nav-bar-${key}`}
                 active={
-                  (toString.length === 0 && pathname === "/") ||
+                  (toString.length === 0 && pathname === '/') ||
                   (toString.length > 0 && pathname.endsWith(toString))
                 }
                 component={Link}
@@ -34,7 +34,7 @@ export const NavBar = (): ReactNode => {
                 leftSection={value.sidebarIcon ? value.sidebarIcon : undefined}
               />
             );
-          })}*/}
+          })}
       </ul>
     </AppShell.Navbar>
   );

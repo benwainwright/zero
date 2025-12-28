@@ -1,1 +1,1 @@
-// export { routesList, type RouteSpec } from "./routes-list.tsx";
+export { routesList, type RouteSpec } from './routes-list.tsx';

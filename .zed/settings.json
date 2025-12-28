@@ -1,0 +1,7 @@
+{
+  "inlay_hints": {
+    "show_parameter_hints": false,
+    "show_type_hints": false,
+    "show_value_hints": false
+  }
+}

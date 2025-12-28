@@ -5,3 +5,4 @@ export { type IDomainEvents } from './domain-events.ts';
 export { DomainError } from './domain-error.ts';
 export { capabilities, type ICapability } from './i-capability.ts';
 export { type IActor } from './i-actor.ts';
+export { type IViewer } from './i-viewer.ts';

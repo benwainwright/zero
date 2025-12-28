@@ -1,8 +1,8 @@
-import { Role } from '@role';
+import { Role, type IRoute } from '@role';
 import { userSchema, type IUser } from './i-user.ts';
-import { DomainModel, type IActor } from '@core';
+import { DomainModel, type IActor, type IViewer } from '@core';
 
-export class User extends DomainModel<IUser> implements IActor {
+export class User extends DomainModel<IUser> implements IActor, IViewer {
   public readonly id: string;
   private _passwordHash: string;
   private _email: string;
@@ -14,6 +14,14 @@ export class User extends DomainModel<IUser> implements IActor {
     this._passwordHash = config.passwordHash;
     this._email = config.email;
     this._roles = config.roles.map((role) => Role.reconstitute(role));
+  }
+
+  public canView(route: IRoute): boolean {
+    return Boolean(
+      this._roles.find((role) =>
+        Boolean(role.routes.find((theRoute) => theRoute === route))
+      )
+    );
   }
 
   public clone() {

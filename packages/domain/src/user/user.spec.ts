@@ -6,6 +6,7 @@ describe('the user model', () => {
   describe('the email getter', () => {
     it('works', () => {
       const mockRoleTwo: IRole = {
+        routes: ['all'],
         id: 'bar',
         permissions: [],
         name: 'baz',
@@ -24,6 +25,7 @@ describe('the user model', () => {
   describe('the passwordHash getter', () => {
     it('works', () => {
       const mockRoleTwo: IRole = {
+        routes: ['home'],
         id: 'bar',
         permissions: [],
         name: 'baz',
@@ -42,6 +44,7 @@ describe('the user model', () => {
   describe('the role getter', () => {
     it('works', () => {
       const mockRoleTwo: IRole = {
+        routes: ['login'],
         id: 'bar',
         permissions: [],
         name: 'baz',
@@ -76,12 +79,14 @@ describe('the user model', () => {
       ];
 
       const mockRole: IRole = {
+        routes: ['home'],
         permissions: permOne,
         id: 'foo',
         name: 'foo',
       };
 
       const mockRoleTwo: IRole = {
+        routes: ['register'],
         id: 'bar',
         permissions: permTwo,
         name: 'baz',
@@ -193,7 +198,14 @@ describe('the user model', () => {
   describe('delete', () => {
     it('raises an a delete event', () => {
       const user = User.reconstitute({
-        roles: [{ id: 'foo', permissions: [], name: 'foo' }],
+        roles: [
+          {
+            id: 'foo',
+            permissions: [],
+            name: 'foo',
+            routes: ['home', 'register'],
+          },
+        ],
         id: 'foo',
         passwordHash: 'hash',
         email: 'a@b.c',

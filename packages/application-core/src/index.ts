@@ -16,6 +16,7 @@ export {
   type IListener,
   type IQueryBus,
   type IQueryClient,
+  type IApiSurface,
   type ICommandClient,
   type IDomainEventBuffer,
   type ICurrentUserCache,

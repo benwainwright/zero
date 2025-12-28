@@ -253,6 +253,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@inversifyjs/strongly-typed':
+        specifier: 'catalog:'
+        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
       '@mantine/core':
         specifier: 8.3.8
         version: 8.3.8(@mantine/hooks@8.3.8(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -274,12 +277,21 @@ importers:
       '@tabler/icons-react':
         specifier: 3.36.0
         version: 3.36.0(react@19.2.3)
+      '@zero/application-core':
+        specifier: workspace:*
+        version: link:../../packages/application-core
       '@zero/domain':
         specifier: workspace:*
         version: link:../../packages/domain
       '@zero/serialiser':
         specifier: workspace:*
         version: link:../../packages/serialiser
+      '@zero/websocket-adapter':
+        specifier: workspace:*
+        version: link:../../packages/websocket-adapter
+      inversify:
+        specifier: 'catalog:'
+        version: 7.10.7(reflect-metadata@0.2.2)
       isbot:
         specifier: ^4.4.0
         version: 4.4.0
@@ -295,6 +307,9 @@ importers:
       react-router:
         specifier: 7.9.6-pre.0
         version: 7.9.6-pre.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      reflect-metadata:
+        specifier: 'catalog:'
+        version: 0.2.2
     devDependencies:
       '@react-router/dev':
         specifier: ^7.2.0

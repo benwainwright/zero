@@ -18,6 +18,7 @@ export default defineConfig(() => ({
   plugins: [
     !process.env['VITEST'] && reactRouter(),
     tsconfigPaths({
+      projectDiscovery: 'lazy',
       projects: [
         path.join(import.meta.dirname, 'tsconfig.app.json'),
         path.join(import.meta.dirname, 'tsconfig.spec.json'),

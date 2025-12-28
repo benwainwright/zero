@@ -28,11 +28,13 @@ export const bootstrapInitialUsersAndPermissions = (
   bootstrapper.addInitStep(async () => {
     const adminRole = Role.reconstitute({
       id: ADMIN_USER_ID,
+      routes: ['all'],
       name: 'Admin',
       permissions: adminPermissions,
     });
 
     const userRole = Role.reconstitute({
+      routes: ['home'],
       id: USER_ROLE_ID,
       name: 'User',
       permissions: userPermissions,
