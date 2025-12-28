@@ -227,6 +227,59 @@ describe('decorate', () => {
     ]);
   });
 
+  it('does not attempt to register the move plugin more than once per container', async () => {
+    interface IThing {
+      doThing(): void;
+    }
+
+    @injectable()
+    class BaseThing implements IThing {
+      doThing() {}
+    }
+
+    @injectable()
+    class Decorator implements IThing {
+      public constructor(
+        @inject('TheThing')
+        private root: IThing
+      ) {}
+
+      doThing() {
+        this.root.doThing();
+      }
+    }
+
+    interface ContainerTypes {
+      TheThing: IThing;
+    }
+
+    const container = new TypedContainer<ContainerTypes>();
+    container.bind('TheThing').to(BaseThing);
+
+    const firstManager = new DecoratorManager(container);
+    const secondManager = new DecoratorManager(container);
+
+    await firstManager.decorate('TheThing', Decorator);
+
+    await expect(
+      secondManager.decorate('TheThing', Decorator)
+    ).resolves.not.toThrow();
+  });
+
+  it('treats containers with an existing moveBinding method as already patched', () => {
+    interface ContainerTypes {
+      TheThing: string;
+    }
+
+    const container = new TypedContainer<ContainerTypes>();
+    (container as { moveBinding?: () => Promise<void> }).moveBinding =
+      async () => {};
+
+    const manager = new DecoratorManager(container);
+
+    expect(() => manager.loadPluginIfNotLoaded()).not.toThrow();
+  });
+
   it('handles a long decoration chain', async () => {
     let calledOne = false;
     let calledTwo = false;

@@ -18,6 +18,9 @@ const INVERSIFY_METADATA_KEY = '@inversifyjs/core/classMetadataReflectKey';
 @injectable()
 export class DecoratorManager<TMap extends BindingMap> {
   private readonly container: ContainerWithMove<TMap>;
+  private static readonly containersWithMove = new WeakSet<
+    ContainerWithMove<any>
+  >();
 
   public constructor(
     @inject('Container')
@@ -29,8 +32,20 @@ export class DecoratorManager<TMap extends BindingMap> {
   private pluginLoaded = false;
 
   public loadPluginIfNotLoaded() {
+    if (DecoratorManager.containersWithMove.has(this.container)) {
+      this.pluginLoaded = true;
+      return;
+    }
+
+    if ('moveBinding' in this.container) {
+      DecoratorManager.containersWithMove.add(this.container);
+      this.pluginLoaded = true;
+      return;
+    }
+
     if (!this.pluginLoaded) {
       this.container.register(MovePlugin);
+      DecoratorManager.containersWithMove.add(this.container);
       this.pluginLoaded = true;
     }
   }

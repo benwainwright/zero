@@ -95,6 +95,12 @@ describe('Bootstrapper', () => {
       schema: z.string(),
       description: 'missing value',
     }).value;
+    bootstrapper.configValue({
+      namespace: 'foo',
+      key: 'baz',
+      schema: z.number(),
+      description: 'missing number',
+    });
     let resolved = false;
     pendingValue.then(() => {
       resolved = true;
@@ -107,7 +113,14 @@ describe('Bootstrapper', () => {
 
     await bootstrapper.start();
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.stringContaining('Missing config value: foo.bar (missing value)'),
+      { context: 'bootstrapper' }
+    );
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.stringContaining('Missing config value: foo.baz (missing number)'),
+      { context: 'bootstrapper' }
+    );
     expect(initStep).not.toHaveBeenCalled();
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(resolved).toBe(false);
@@ -139,5 +152,29 @@ describe('Bootstrapper', () => {
 
     expect(await value.value).toBe('env-value');
     expect(initStep).toHaveBeenCalled();
+  });
+
+  it('includes non-missing validation issues in the log output', async () => {
+    const configPath = createConfigFile({
+      foo: {
+        bar: 'hi',
+      },
+    });
+    const logger = mock<ILogger>();
+    const bootstrapper = new Bootstrapper(configPath, logger);
+
+    bootstrapper.configValue({
+      namespace: 'foo',
+      key: 'bar',
+      schema: z.string().min(5),
+      description: 'bar value',
+    });
+
+    await bootstrapper.start();
+
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.stringContaining('foo.bar:'),
+      { context: 'bootstrapper' }
+    );
   });
 });
