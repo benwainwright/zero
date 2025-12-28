@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import z, { type ZodRawShape, ZodError, type core } from 'zod';
+import z, { type ZodRawShape, ZodError, type ZodType, type core } from 'zod';
 
 import { ConfigValue } from './config-value.ts';
 import { type ILogger, type IBootstrapper } from '@types';
@@ -21,7 +21,7 @@ export const BootstrapConfigFileToken: ServiceIdentifier<string> = Symbol.for(
 export class Bootstrapper implements IBootstrapper {
   private bootstrappingSteps: (() => Promise<void>)[] = [];
   private emitter = new EventEmitter();
-  private fullSchema: Record<string, ZodRawShape> = {};
+  private fullSchema: Record<string, Record<string, ZodType>> = {};
   private readonly configDescriptions: Record<string, Record<string, string>> =
     {};
 
@@ -71,7 +71,7 @@ export class Bootstrapper implements IBootstrapper {
     }, Promise.resolve());
   }
 
-  public configValue<TConfigValue extends core.$ZodType>({
+  public configValue<TConfigValue extends ZodType>({
     namespace,
     key,
     schema,
@@ -127,17 +127,23 @@ export class Bootstrapper implements IBootstrapper {
       const path = issue.path.map(String);
       const pathLabel = path.join('.');
       const isMissing =
-        issue.code === 'invalid_type' &&
-        (issue.received === 'undefined' || issue.received === undefined);
+        issue.code === 'invalid_type' && issue.input === undefined;
 
       if (isMissing) {
         if (path.length >= 2) {
-          const [namespace, key] = path;
-          const description =
-            this.configDescriptions[namespace]?.[key] ?? 'no description';
-          missingMessages.push(
-            `Missing config value: ${pathLabel} (${description})`
-          );
+          const namespace = path[0];
+          const key = path[1];
+          if (namespace && key) {
+            const description =
+              this.configDescriptions[namespace]?.[key] ?? 'no description';
+            missingMessages.push(
+              `Missing config value: ${pathLabel} (${description})`
+            );
+          } else {
+            missingMessages.push(
+              `Missing config value: ${pathLabel || 'config'}`
+            );
+          }
         } else {
           missingMessages.push(
             `Missing config value: ${pathLabel || 'config'}`
@@ -155,18 +161,17 @@ export class Bootstrapper implements IBootstrapper {
   }
 
   private buildSchema(): ZodRawShape {
-    return Object.entries(this.fullSchema).reduce<ZodRawShape>(
-      (schema, [namespace, configValues]) => ({
-        ...schema,
-        [namespace]: z.object(configValues),
-      }),
-      {}
-    );
+    return Object.fromEntries(
+      Object.entries(this.fullSchema).map(([namespace, configValues]) => [
+        namespace,
+        z.object(configValues as ZodRawShape),
+      ])
+    ) as ZodRawShape;
   }
 
   private ensureRecord(value: unknown): Record<string, unknown> {
     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      return value;
+      return value as Record<string, unknown>;
     }
 
     return {};
