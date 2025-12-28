@@ -32,6 +32,12 @@
     },
     {
       "path": "./apps/web"
+    },
+    {
+      "path": "./apps/backend"
+    },
+    {
+      "path": "./packages/websocket-server-adapter"
     }
   ]
 }

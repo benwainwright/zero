@@ -9,10 +9,12 @@ export {
 export {
   type IEventBus,
   type ICommandBus,
+  type ISingleItemStore,
   type IUnitOfWork,
   type IQueryBus,
   type IDomainEventBuffer,
   type ICurrentUserCache,
+  type ISessionIdRequester,
 } from '@ports';
 
 export { AppError } from '@errors';

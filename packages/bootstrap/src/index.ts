@@ -1,4 +1,4 @@
-export { module, AbstractError, ConfigValue } from '@lib';
+export { module, AbstractError, ConfigValue, bootstrapModule } from '@lib';
 export type { IBootstrapTypes, IBootstrapper, ILogger } from '@types';
 
 export {

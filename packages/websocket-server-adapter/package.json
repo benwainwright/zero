@@ -1,0 +1,33 @@
+{
+  "name": "@zero/websocket-server-adapter",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./server": {
+      "types": "./src/server.ts",
+      "import": "./src/server.ts",
+      "default": "./src/server.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "@types/ws": "8.18.1",
+    "vitest-mock-extended": "catalog:",
+    "vitest-when": "catalog:"
+  },
+  "dependencies": {
+    "zod": "catalog:",
+    "@inversifyjs/strongly-typed": "catalog:",
+    "@zero/application-core": "workspace:*",
+    "@zero/auth": "workspace:*",
+    "@zero/bootstrap": "workspace:*",
+    "@zero/domain": "workspace:*",
+    "@zero/serialiser": "workspace:*",
+    "cookie": "1.1.1",
+    "inversify": "catalog:",
+    "reflect-metadata": "catalog:",
+    "uuid": "13.0.0",
+    "ws": "8.18.3"
+  }
+}

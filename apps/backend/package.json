@@ -1,0 +1,15 @@
+{
+  "name": "@zero/backend",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@zero/application-core": "workspace:*",
+    "@zero/bootstrap": "workspace:*",
+    "@zero/sqlite-adapters": "workspace:*",
+    "@zero/websocket-server-adapter": "workspace:*",
+    "@zero/auth": "workspace:*",
+    "@zero/domain": "workspace:*",
+    "@inversifyjs/strongly-typed": "catalog:"
+  }
+}
