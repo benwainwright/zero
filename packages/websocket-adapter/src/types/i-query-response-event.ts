@@ -1,6 +1,7 @@
 export interface IQueryResponseEvent {
-  QueryResponse: {
+  QueryResponseEvent: {
     id: string;
     data: unknown;
   };
+  AnotherEvent: number;
 }

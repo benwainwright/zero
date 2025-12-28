@@ -1,12 +1,10 @@
 import {
   type IEventBus,
   type ICommandBus,
-  type ISingleItemStore,
   type IQueryBus,
   type IAllEvents,
 } from '@zero/application-core';
 import { AbstractError, type ILogger } from '@zero/bootstrap';
-import { User } from '@zero/domain';
 import { Serialiser } from '@zero/serialiser';
 import { injectable } from 'inversify';
 import { WebSocket } from 'ws';
@@ -30,10 +28,7 @@ export class ServerSocketClient {
     private eventBus: IEventBus<IAllEvents & IQueryResponseEvent>,
 
     @inject('Logger')
-    private logger: ILogger,
-
-    @inject('SessionStore')
-    private currentUserCache: ISingleItemStore<User>
+    private logger: ILogger
   ) {}
 
   public onConnect(socket: WebSocket) {
@@ -46,21 +41,6 @@ export class ServerSocketClient {
     });
   }
 
-  private parseMessage(message: unknown) {
-    const serialiser = new Serialiser();
-    const content =
-      message instanceof Buffer
-        ? (serialiser.deserialise(message.toString('utf-8')) as Record<
-            string,
-            unknown
-          >)
-        : typeof message === 'string'
-        ? (serialiser.deserialise(message) as Record<string, unknown>)
-        : message;
-
-    return content as IWebsocketPacket;
-  }
-
   public onClose() {
     this.eventBus.removeAll();
   }
@@ -68,7 +48,10 @@ export class ServerSocketClient {
   public async onMessage(message: WebSocket.RawData) {
     this.logger.silly(`Message received on socket`, LOG_CONTEXT);
     try {
-      const parsed = this.parseMessage(message);
+      const serialiser = new Serialiser();
+      const parsed = serialiser.deserialise(
+        message.toString('utf-8')
+      ) as IWebsocketPacket;
 
       this.logger.debug(`Message parsed`, {
         ...LOG_CONTEXT,
@@ -79,7 +62,7 @@ export class ServerSocketClient {
         await this.commandBus.execute(parsed.packet);
       } else {
         const response = await this.queryBus.execute(parsed.packet);
-        this.eventBus.emit('QueryResponse', {
+        this.eventBus.emit('QueryResponseEvent', {
           id: parsed.packet.id,
           data: response,
         });

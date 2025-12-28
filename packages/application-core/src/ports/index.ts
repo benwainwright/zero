@@ -3,6 +3,8 @@ export { type ISessionIdRequester } from './i-session-id-requester.ts';
 export { type IDomainEventStore } from './i-domain-event-store.ts';
 export { type IDomainEventBuffer } from './i-domain-event-buffer.ts';
 export { type IEventBus } from './i-event-bus.ts';
+export { type IEventListener, type IListener } from './i-event-listener.ts';
+export { type IEventEmitter } from './i-event-emitter.ts';
 export { type ICommandBus } from './i-command-bus.ts';
 export { type IQueryClient } from './i-query-client.ts';
 export { type ICommandClient } from './i-command-client.ts';

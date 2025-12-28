@@ -19,9 +19,15 @@ export const getClientWithDepsMocked = async (port: number) => {
   container.bind('UUIDGenerator').toConstantValue(uuidGenerator);
   container.bind('Logger').toConstantValue(logger);
 
+  const socket = await new Promise<WebSocket>((accept) => {
+    const socket = new WebSocket(`ws://localhost:${String(port)}`);
+    socket.addEventListener('open', () => {
+      accept(socket);
+    });
+  });
+
   const overrideModule = new TypedContainerModule<IClientInternalTypes>(
     (load) => {
-      const socket = new WebSocket(`ws://localhost:${String(port)}`);
       load.bind('Websocket').toConstantValue(socket);
     }
   );
@@ -29,5 +35,7 @@ export const getClientWithDepsMocked = async (port: number) => {
   await container.load(overrideModule);
 
   const commandClient = container.get('CommandClient');
-  return { commandClient, logger, uuidGenerator };
+  const queryClient = container.get('QueryClient');
+
+  return { commandClient, logger, uuidGenerator, socket, queryClient };
 };

@@ -2,15 +2,20 @@ import {
   TypedContainer,
   TypedContainerModule,
 } from '@inversifyjs/strongly-typed';
-import { type IServerInternalTypes, websocketServerModule } from '@server';
+import {
+  AppServer,
+  type IServerInternalTypes,
+  websocketServerModule,
+} from '@server';
 import { mock } from 'vitest-mock-extended';
 
 import {
   type ICommandBus,
   type IApplicationTypes,
   type IQueryBus,
-  type ISessionIdRequester,
+  type IEventBus,
 } from '@zero/application-core';
+
 import {
   ConfigValue,
   type IBootstrapper,
@@ -20,8 +25,21 @@ import {
 } from '@zero/bootstrap';
 
 import getPort from 'get-port';
+import type { Mocked } from 'vitest';
+import type { Factory } from 'inversify';
+import { EventEmitter } from 'node:events';
 
-export const getServerWithDepsMocked = async () => {
+interface IServerWithDeps {
+  server: AppServer;
+  commandBus: Mocked<ICommandBus>;
+  queryBus: Mocked<IQueryBus>;
+  port: number;
+  logger: Mocked<ILogger>;
+  eventBus: Mocked<IEventBus>;
+  containerFactory: Mocked<Factory<TypedContainer>>;
+}
+
+export const getServerWithDepsMocked = async (): Promise<IServerWithDeps> => {
   const container = new TypedContainer<
     IServerInternalTypes & IApplicationTypes & IBootstrapTypes
   >();
@@ -41,20 +59,25 @@ export const getServerWithDepsMocked = async () => {
     }
   );
 
-  await container.load(overridesModule);
+  const eventBus = mock<IEventBus>();
+
+  eventBus.onAll.mockImplementation((callback) => {
+    eventBus.emit.mockImplementation((key, data) => {
+      callback({ key, data } as Parameters<typeof callback>[0]);
+    });
+    return '0';
+  });
+
+  container.bind('EventBus').toConstantValue(eventBus);
 
   const bootstrapper = mock<IBootstrapper>();
   container.bind('Bootstrapper').toConstantValue(bootstrapper);
   container.bind('Container').toConstantValue(container);
 
-  const containerFactory =
-    mock<
-      (
-        sessionIdRequester: ISessionIdRequester
-      ) => Promise<TypedContainer<IServerInternalTypes>>
-    >();
-
+  const containerFactory = vi.fn();
   container.bind('ContainerFactory').toConstantValue(containerFactory);
+
+  containerFactory.mockResolvedValue(container);
 
   const logger = mock<ILogger>();
   container.bind('Logger').toConstantValue(logger);
@@ -69,6 +92,7 @@ export const getServerWithDepsMocked = async () => {
   container.bind('DecoratorManager').toConstantValue(decoratorManager);
 
   await container.getAsync('Bootstrapper');
+  await container.load(overridesModule);
   const server = await container.getAsync('AppServer');
 
   return {
@@ -77,6 +101,7 @@ export const getServerWithDepsMocked = async () => {
     queryBus,
     port: freePort,
     logger,
+    eventBus,
     containerFactory,
   };
 };

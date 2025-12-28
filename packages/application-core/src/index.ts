@@ -10,7 +10,10 @@ export {
   type IEventBus,
   type ICommandBus,
   type ISingleItemStore,
+  type IEventEmitter,
   type IUnitOfWork,
+  type IEventListener,
+  type IListener,
   type IQueryBus,
   type IQueryClient,
   type ICommandClient,
@@ -29,6 +32,7 @@ export {
   type IQuery,
   type IPickCommand,
   type IPickQuery,
+  type IEventPacket,
 } from '@types';
 
 export { applicationCoreModule } from './application-core-module.ts';

@@ -6,11 +6,12 @@ import type {
 
 import type { IClientInternalTypes } from './i-client-internal-types.ts';
 import type { IBootstrapTypes } from '@zero/bootstrap';
+import type { IApplicationTypes } from '@zero/application-core';
 
 export const inject = inversifyInject as TypedInject<
-  IClientInternalTypes & IBootstrapTypes
+  IClientInternalTypes & IBootstrapTypes & IApplicationTypes
 >;
 
 export const multiInject = inversifyInject as TypedMultiInject<
-  IClientInternalTypes & IBootstrapTypes
+  IClientInternalTypes & IBootstrapTypes & IApplicationTypes
 >;

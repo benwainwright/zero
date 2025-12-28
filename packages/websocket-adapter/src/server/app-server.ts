@@ -6,6 +6,7 @@ import { SessionIdHandler } from './session-id-handler.ts';
 import { inject } from './typed-inject.ts';
 import { type IServerInternalTypes } from './i-server-internal-types.ts';
 import type { TypedContainer } from '@inversifyjs/strongly-typed';
+import { ServerSocketClient } from './server-socket-client.ts';
 
 export const LOG_CONTEXT = {
   context: 'app-server',
@@ -14,6 +15,9 @@ export const LOG_CONTEXT = {
 export class AppServer {
   public close() {
     this.wss?.close();
+    this.clientSet.values().forEach((client) => {
+      client.onClose();
+    });
   }
 
   [Symbol.asyncDispose]() {
@@ -43,6 +47,8 @@ export class AppServer {
   ) {
     this.sessionIdHandler = new SessionIdHandler(logger);
   }
+
+  private clientSet = new Set<ServerSocketClient>();
 
   public async start() {
     this.wss = new WebSocketServer({
@@ -78,10 +84,14 @@ export class AppServer {
         });
 
         const client = await container.getAsync('ServerWebsocketClient');
+        this.clientSet.add(client);
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         ws.on('message', client.onMessage.bind(client));
-        ws.on('close', client.onClose.bind(client));
+        ws.on('close', () => {
+          client.onClose();
+          this.clientSet.delete(client);
+        });
 
         client.onConnect(ws);
       });

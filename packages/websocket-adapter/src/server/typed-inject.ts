@@ -9,9 +9,9 @@ import type { IBootstrapTypes } from '@zero/bootstrap';
 import type { IApplicationTypes } from '@zero/application-core';
 
 export const inject = inversifyInject as TypedInject<
-  IApplicationTypes & IServerInternalTypes & IBootstrapTypes
+  Omit<IApplicationTypes, 'EventBus'> & IServerInternalTypes & IBootstrapTypes
 >;
 
 export const multiInject = inversifyInject as TypedMultiInject<
-  IApplicationTypes & IServerInternalTypes & IBootstrapTypes
+  Omit<IApplicationTypes, 'EventBus'> & IServerInternalTypes & IBootstrapTypes
 >;
