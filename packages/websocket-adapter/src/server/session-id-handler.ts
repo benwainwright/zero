@@ -1,16 +1,28 @@
 import type { ILogger } from '@zero/bootstrap';
 import cookie from 'cookie';
 import { IncomingMessage } from 'http';
-import { v7 } from 'uuid';
 
 import { WebsocketServerError } from './websocket-server-error.ts';
+import { injectable } from 'inversify';
+import { inject } from './typed-inject.ts';
+import type { IUUIDGenerator } from '@types';
 
-export const SESSION_ID_COOKIE_KEY = `ynab-plus-session-id`;
+export const SESSION_ID_COOKIE_KEY = `zero-session-id`;
 
 export const LOG_CONTEXT = { context: 'session-id-handler' };
 
+@injectable()
 export class SessionIdHandler {
-  public constructor(private logger: ILogger) {}
+  public constructor(
+    @inject('Logger')
+    private logger: ILogger,
+
+    @inject('SessionIdCookieKey')
+    private key: string,
+
+    @inject('UUIDGenerator')
+    private uuidGenerator: IUUIDGenerator
+  ) {}
 
   private sessionIds = new WeakMap<IncomingMessage, string>();
 
@@ -20,8 +32,8 @@ export class SessionIdHandler {
     if (existingId) {
       this.sessionIds.set(request, existingId);
     } else {
-      const newId = v7();
-      headers.push(`Set-Cookie: ${SESSION_ID_COOKIE_KEY}=${newId}; HttpOnly;`);
+      const newId = this.uuidGenerator.v7();
+      headers.push(`Set-Cookie: ${this.key}=${newId}; HttpOnly;`);
       this.sessionIds.set(request, newId);
     }
   }
@@ -30,7 +42,7 @@ export class SessionIdHandler {
     request: IncomingMessage
   ): string | undefined {
     const cookies = cookie.parse(request.headers.cookie ?? '');
-    const key = cookies[SESSION_ID_COOKIE_KEY];
+    const key = cookies[this.key];
     if (key) {
       this.logger.silly(`Found session id in cookies: ${key}`, LOG_CONTEXT);
       return key;

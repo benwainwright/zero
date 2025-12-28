@@ -18,7 +18,7 @@ export class LogoutCommandHandler extends AbstractCommandHandler<
     private readonly currentUserSetter: ICurrentUserSetter,
 
     @inject('EventBus')
-    private readonly eventBus: IEventBus<IAllEvents & IAuthEvents>,
+    private readonly eventBus: IEventBus<IAllEvents> & IEventBus<IAuthEvents>,
 
     @inject('GrantService')
     private readonly grants: IGrantManager,

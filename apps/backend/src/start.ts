@@ -4,7 +4,7 @@ import { bootstrapModule, type IBootstrapTypes } from '@zero/bootstrap';
 import { TypedContainer } from '@inversifyjs/strongly-typed';
 import { authModule } from '@zero/auth';
 import { sqliteAdaptersModule } from '@zero/sqlite-adapters';
-import { websocketServerModule } from '@zero/websocket-server-adapter/server';
+import { websocketServerModule } from '@zero/websocket-adapter/server';
 
 const start = async () => {
   const container = new TypedContainer<IBootstrapTypes>({

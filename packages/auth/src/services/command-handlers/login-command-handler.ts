@@ -34,7 +34,7 @@ export class LoginCommandHandler extends AbstractCommandHandler<
     private currentUserSetter: ICurrentUserSetter,
 
     @inject('EventBus')
-    private eventBus: IEventBus<IAllEvents & IAuthEvents>,
+    private eventBus: IEventBus<IAllEvents> & IEventBus<IAuthEvents>,
 
     @inject('GrantService')
     private grants: IGrantManager,

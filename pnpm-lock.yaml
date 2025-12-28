@@ -243,6 +243,10 @@ importers:
       '@zero/websocket-adapter':
         specifier: workspace:*
         version: link:../../packages/websocket-adapter
+    devDependencies:
+      vite-node:
+        specifier: 5.2.0
+        version: 5.2.0(@types/node@20.19.9)(jiti@2.4.2)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(yaml@2.8.2)
 
   apps/web:
     dependencies:
@@ -537,55 +541,6 @@ importers:
       get-port:
         specifier: 7.1.0
         version: 7.1.0
-      vitest-mock-extended:
-        specifier: 'catalog:'
-        version: 3.1.0(typescript@5.9.3)(vitest@4.0.16)
-      vitest-when:
-        specifier: 'catalog:'
-        version: 0.10.0(@vitest/expect@4.0.16)(vitest@4.0.16)
-
-  packages/websocket-server-adapter:
-    dependencies:
-      '@inversifyjs/strongly-typed':
-        specifier: 'catalog:'
-        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
-      '@zero/application-core':
-        specifier: workspace:*
-        version: link:../application-core
-      '@zero/auth':
-        specifier: workspace:*
-        version: link:../auth
-      '@zero/bootstrap':
-        specifier: workspace:*
-        version: link:../bootstrap
-      '@zero/domain':
-        specifier: workspace:*
-        version: link:../domain
-      '@zero/serialiser':
-        specifier: workspace:*
-        version: link:../serialiser
-      cookie:
-        specifier: 1.1.1
-        version: 1.1.1
-      inversify:
-        specifier: 'catalog:'
-        version: 7.10.7(reflect-metadata@0.2.2)
-      reflect-metadata:
-        specifier: 'catalog:'
-        version: 0.2.2
-      uuid:
-        specifier: 13.0.0
-        version: 13.0.0
-      ws:
-        specifier: 8.18.3
-        version: 8.18.3
-      zod:
-        specifier: 'catalog:'
-        version: 4.2.1
-    devDependencies:
-      '@types/ws':
-        specifier: 8.18.1
-        version: 8.18.1
       vitest-mock-extended:
         specifier: 'catalog:'
         version: 3.1.0(typescript@5.9.3)(vitest@4.0.16)
@@ -7800,6 +7755,11 @@ packages:
   vite-node@3.2.4:
     resolution: {integrity: sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
+    hasBin: true
+
+  vite-node@5.2.0:
+    resolution: {integrity: sha512-7UT39YxUukIA97zWPXUGb0SGSiLexEGlavMwU3HDE6+d/HJhKLjLqu4eX2qv6SQiocdhKLRcusroDwXHQ6CnRQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
   vite-plugin-dts@4.5.4:
@@ -16821,6 +16781,26 @@ snapshots:
       - stylus
       - sugarss
       - supports-color
+      - terser
+      - tsx
+      - yaml
+
+  vite-node@5.2.0(@types/node@20.19.9)(jiti@2.4.2)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(yaml@2.8.2):
+    dependencies:
+      cac: 6.7.14
+      es-module-lexer: 1.7.0
+      obug: 2.1.1
+      pathe: 2.0.3
+      vite: 7.3.0(@types/node@20.19.9)(jiti@2.4.2)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(yaml@2.8.2)
+    transitivePeerDependencies:
+      - '@types/node'
+      - jiti
+      - less
+      - lightningcss
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
       - terser
       - tsx
       - yaml

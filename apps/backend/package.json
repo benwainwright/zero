@@ -3,13 +3,19 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "scripts": {
+    "dev": "vite-node src/start.ts"
+  },
   "dependencies": {
+    "@inversifyjs/strongly-typed": "catalog:",
     "@zero/application-core": "workspace:*",
-    "@zero/bootstrap": "workspace:*",
-    "@zero/sqlite-adapters": "workspace:*",
-    "@zero/websocket-adapter": "workspace:*",
     "@zero/auth": "workspace:*",
+    "@zero/bootstrap": "workspace:*",
     "@zero/domain": "workspace:*",
-    "@inversifyjs/strongly-typed": "catalog:"
+    "@zero/sqlite-adapters": "workspace:*",
+    "@zero/websocket-adapter": "workspace:*"
+  },
+  "devDependencies": {
+    "vite-node": "5.2.0"
   }
 }

@@ -27,7 +27,6 @@ import {
 import getPort from 'get-port';
 import type { Mocked } from 'vitest';
 import type { Factory } from 'inversify';
-import { EventEmitter } from 'node:events';
 
 interface IServerWithDeps {
   server: AppServer;

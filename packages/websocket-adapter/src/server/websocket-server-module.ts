@@ -1,9 +1,12 @@
 import { AppServer } from './app-server.ts';
 import { ServerSocketClient } from './server-socket-client.ts';
+import { v7 } from 'uuid';
 import * as z from 'zod';
 
 import { module } from '@zero/bootstrap';
-export const websocketServerModule = module(
+import { type IServerInternalTypes } from './i-server-internal-types.ts';
+import { SessionIdHandler } from './session-id-handler.ts';
+export const websocketServerModule = module<IServerInternalTypes>(
   ({ load, container, bootstrapper, logger }) => {
     load.bind('ServerWebsocketClient').to(ServerSocketClient);
     load.bind('AppServer').to(AppServer);
@@ -13,6 +16,15 @@ export const websocketServerModule = module(
       logger.info(`Starting websocket server`);
       await server.start();
     });
+
+    load.bind('SessionIdHandler').to(SessionIdHandler);
+    load.bind('SessionIdCookieKey').toConstantValue('zero-session-id');
+
+    const uuidGenerator = {
+      v7,
+    };
+
+    load.bind('UUIDGenerator').toConstantValue(uuidGenerator);
 
     load.bind('WebsocketServerHost').toConstantValue(
       bootstrapper.configValue({

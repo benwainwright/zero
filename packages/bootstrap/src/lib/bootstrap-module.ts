@@ -10,10 +10,7 @@ export const bootstrapModule = new TypedContainerModule<
   const logger = getWinstonLogger();
   logger.info(`Starting application`);
 
-  load
-    .bind('ConfigFile')
-    .toConstantValue('ynab-plus.config.websocket-server.json');
-
+  load.bind('ConfigFile').toConstantValue('zero.config.json');
   logger.info(`Initialising bootstrap module`);
 
   load.bind('Logger').toConstantValue(logger);

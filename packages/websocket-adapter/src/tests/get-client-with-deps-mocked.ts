@@ -16,7 +16,7 @@ export const getClientWithDepsMocked = async (port: number) => {
   const logger = mock<ILogger>();
 
   await container.load(websocketClientModule);
-  container.bind('UUIDGenerator').toConstantValue(uuidGenerator);
+  container.rebindSync('UUIDGenerator').toConstantValue(uuidGenerator);
   container.bind('Logger').toConstantValue(logger);
 
   const socket = await new Promise<WebSocket>((accept) => {

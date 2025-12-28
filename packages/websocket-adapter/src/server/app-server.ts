@@ -24,8 +24,6 @@ export class AppServer {
     this.close();
   }
 
-  private sessionIdHandler: SessionIdHandler;
-
   public readonly name = 'Websocket Server';
 
   private wss: WebSocketServer | undefined;
@@ -42,11 +40,12 @@ export class AppServer {
     @inject('WebsocketServerHost')
     private host: ConfigValue<string>,
 
+    @inject('SessionIdHandler')
+    private sessionIdHandler: SessionIdHandler,
+
     @inject('Logger')
     private logger: ILogger
-  ) {
-    this.sessionIdHandler = new SessionIdHandler(logger);
-  }
+  ) {}
 
   private clientSet = new Set<ServerSocketClient>();
 
