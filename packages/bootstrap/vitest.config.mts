@@ -30,9 +30,9 @@ export default defineConfig(() => ({
       ],
       thresholds: {
         autoUpdate: true,
-        functions: 85,
-        lines: 82.23,
-        statements: 82.58,
+        functions: 86,
+        lines: 83.98,
+        statements: 83.8,
         branches: 72.22,
       },
       reportsDirectory: './test-output/vitest/coverage',

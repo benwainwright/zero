@@ -1,9 +1,8 @@
 import EventEmitter from 'events';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { cwd } from 'process';
-import z, { type ZodRawShape, ZodError } from 'zod';
-import * as z4 from 'zod/v4/core';
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+import z, { type ZodRawShape, ZodError, type core } from 'zod';
 
 import { ConfigValue } from './config-value.ts';
 import { type ILogger, type IBootstrapper } from '@types';
@@ -22,7 +21,7 @@ export const BootstrapConfigFileToken: ServiceIdentifier<string> = Symbol.for(
 export class Bootstrapper implements IBootstrapper {
   private bootstrappingSteps: (() => Promise<void>)[] = [];
   private emitter = new EventEmitter();
-  private fullSchema: Record<string, Record<string, z4.$ZodType>> = {};
+  private fullSchema: Record<string, ZodRawShape> = {};
   private readonly configDescriptions: Record<string, Record<string, string>> =
     {};
 
@@ -38,12 +37,10 @@ export class Bootstrapper implements IBootstrapper {
     this.logger.silly('Initialising bootstrapper', {
       context: 'bootstrapper',
     });
-    const configFilePath = join(cwd(), this.configFile);
+    const configFilePath = path.join(process.cwd(), this.configFile);
 
-    this._config = JSON.parse(readFileSync(configFilePath, 'utf-8')) as Record<
-      string,
-      unknown
-    >;
+    const rawConfig = JSON.parse(fs.readFileSync(configFilePath, 'utf-8'));
+    this._config = this.ensureRecord(rawConfig);
   }
 
   public addInitStep(callback: () => Promise<void>) {
@@ -74,7 +71,7 @@ export class Bootstrapper implements IBootstrapper {
     }, Promise.resolve());
   }
 
-  public configValue<TConfigValue extends z4.$ZodType>({
+  public configValue<TConfigValue extends core.$ZodType>({
     namespace,
     key,
     schema,
@@ -84,11 +81,8 @@ export class Bootstrapper implements IBootstrapper {
     key: string;
     schema: TConfigValue;
     description: string;
-  }): ConfigValue<z4.output<TConfigValue>> {
-    const namespacedConfig = (this._config[namespace] ?? {}) as Record<
-      string,
-      unknown
-    >;
+  }): ConfigValue<core.output<TConfigValue>> {
+    const namespacedConfig = this.ensureNamespacedConfig(namespace);
     const envKey = `ZERO_CONFIG_${namespace}_${key}`.toUpperCase();
     const envValue = process.env[envKey];
 
@@ -108,9 +102,9 @@ export class Bootstrapper implements IBootstrapper {
     this.configDescriptions[namespace] ??= {};
     this.configDescriptions[namespace][key] = description;
 
-    const valuePromise = new Promise<z4.output<TConfigValue>>((accept) =>
+    const valuePromise = new Promise<core.output<TConfigValue>>((accept) =>
       this.emitter.on(RESOLVE_CONFIG, () => {
-        accept(value as z4.output<TConfigValue>);
+        accept(schema.parse(value));
       })
     );
 
@@ -164,9 +158,23 @@ export class Bootstrapper implements IBootstrapper {
     return Object.entries(this.fullSchema).reduce<ZodRawShape>(
       (schema, [namespace, configValues]) => ({
         ...schema,
-        [namespace]: z.object(configValues as ZodRawShape),
+        [namespace]: z.object(configValues),
       }),
       {}
     );
+  }
+
+  private ensureRecord(value: unknown): Record<string, unknown> {
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      return value;
+    }
+
+    return {};
+  }
+
+  private ensureNamespacedConfig(namespace: string): Record<string, unknown> {
+    const existing = this.ensureRecord(this._config[namespace]);
+    this._config[namespace] = existing;
+    return existing;
   }
 }

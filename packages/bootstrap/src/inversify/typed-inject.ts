@@ -6,8 +6,9 @@ import type {
 
 import type { IBootstrapTypes, IInternalTypes } from '@types';
 
-export const inject = inversifyInject as TypedInject<
-  IBootstrapTypes & IInternalTypes
->;
+export const inject: TypedInject<IBootstrapTypes & IInternalTypes> = (
+  identifier
+) => inversifyInject(identifier);
 
-export const multiInject = inversifyInject as TypedMultiInject<IBootstrapTypes>;
+export const multiInject: TypedMultiInject<IBootstrapTypes> = (identifier) =>
+  inversifyInject(identifier);

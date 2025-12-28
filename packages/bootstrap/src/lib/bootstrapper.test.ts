@@ -73,7 +73,7 @@ describe('Bootstrapper', () => {
     expect(await countValue.value).toBe(5);
     expect(await otherValue.value).toBe('qux');
     expect(order).toEqual(['first', 'second']);
-    expect((bootstrapper as any).configDescriptions).toEqual({
+    expect(bootstrapper).toHaveProperty('configDescriptions', {
       foo: {
         bar: 'bar value',
         count: 'count value',

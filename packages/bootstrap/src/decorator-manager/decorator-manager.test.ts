@@ -272,8 +272,10 @@ describe('decorate', () => {
     }
 
     const container = new TypedContainer<ContainerTypes>();
-    (container as { moveBinding?: () => Promise<void> }).moveBinding =
-      async () => {};
+    Object.defineProperty(container, 'moveBinding', {
+      value: async () => {},
+      configurable: true,
+    });
 
     const manager = new DecoratorManager(container);
 
