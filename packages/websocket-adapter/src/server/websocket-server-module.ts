@@ -31,7 +31,7 @@ export const websocketServerModule = module<IServerInternalTypes>(
         namespace: `websocketServer`,
         key: 'host',
         schema: z.string(),
-        description: `Host name for the websocket server to listen on`,
+        description: `Websocket server will listen from this host`,
       })
     );
 
@@ -40,7 +40,7 @@ export const websocketServerModule = module<IServerInternalTypes>(
         namespace: 'websocketServer',
         key: 'port',
         schema: z.number(),
-        description: 'Port for the websocket server to listen on',
+        description: 'Websocket server will listen from this port',
       })
     );
   }

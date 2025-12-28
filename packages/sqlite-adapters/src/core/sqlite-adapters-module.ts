@@ -13,7 +13,7 @@ export const sqliteAdaptersModule = module<
     namespace: 'sqlite',
     key: 'tablePrefix',
     schema: z.string(),
-    description: 'String that will prefix all table names in the database',
+    description: 'String that will be prefixed before sqlite table names',
   });
 
   load.bind('DatabaseTablePrefix').toConstantValue(tablePrefix);

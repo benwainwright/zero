@@ -15,14 +15,14 @@ export const bootstrapInitialUsersAndPermissions = (
     namespace: 'auth',
     key: 'adminEmail',
     schema: z.string(),
-    description: 'Email address for the bootstrap administrator account',
+    description: 'Email address for bootstrap administrator account',
   });
 
   const adminPassword = bootstrapper.configValue({
     namespace: 'auth',
     key: 'adminPassword',
     schema: z.string(),
-    description: 'Password for the bootstrap administrator account',
+    description: 'Password for bootstrap administrator account',
   });
 
   bootstrapper.addInitStep(async () => {
