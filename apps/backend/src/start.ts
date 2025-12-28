@@ -5,6 +5,7 @@ import { TypedContainer } from '@inversifyjs/strongly-typed';
 import { authModule } from '@zero/auth';
 import { sqliteAdaptersModule } from '@zero/sqlite-adapters';
 import { websocketServerModule } from '@zero/websocket-adapter/server';
+import { nodeAdaptersModule } from '@zero/node-adapters';
 
 const start = async () => {
   const container = new TypedContainer<IBootstrapTypes>({
@@ -18,6 +19,7 @@ const start = async () => {
   await container.load(authModule);
   await container.load(sqliteAdaptersModule);
   await container.load(websocketServerModule);
+  await container.load(nodeAdaptersModule);
 
   const bootstrapper = await container.getAsync('Bootstrapper');
 

@@ -10,19 +10,22 @@
   "exclude": [],
   "references": [
     {
-      "path": "../../packages/domain/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/auth/tsconfig.lib.json"
-    },
-    {
       "path": "../../packages/websocket-adapter/tsconfig.lib.json"
     },
     {
       "path": "../../packages/sqlite-adapters/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/domain/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/node-adapters/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/bootstrap/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/auth/tsconfig.lib.json"
     },
     {
       "path": "../../packages/application-core/tsconfig.lib.json"

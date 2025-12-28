@@ -1,0 +1,1 @@
+export { nodeAdaptersModule } from '@core';

@@ -38,6 +38,9 @@
     },
     {
       "path": "./packages/websocket-adapter"
+    },
+    {
+      "path": "./packages/node-adapters"
     }
   ]
 }

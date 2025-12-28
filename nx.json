@@ -33,7 +33,8 @@
         "packages/sqlite-adapters/*",
         "packages/adapter-tests/*",
         "packages/task-scheduler/*",
-        "packages/websocket-server-adapter/*"
+        "packages/websocket-server-adapter/*",
+        "packages/node-adapters/*"
       ]
     },
     {

@@ -237,6 +237,9 @@ importers:
       '@zero/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@zero/node-adapters':
+        specifier: workspace:*
+        version: link:../../packages/node-adapters
       '@zero/sqlite-adapters':
         specifier: workspace:*
         version: link:../../packages/sqlite-adapters
@@ -434,6 +437,34 @@ importers:
       zod:
         specifier: 4.2.1
         version: 4.2.1
+
+  packages/node-adapters:
+    dependencies:
+      '@inversifyjs/strongly-typed':
+        specifier: 'catalog:'
+        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      '@zero/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@zero/bootstrap':
+        specifier: workspace:*
+        version: link:../bootstrap
+      bcryptjs:
+        specifier: ^3.0.3
+        version: 3.0.3
+      inversify:
+        specifier: 'catalog:'
+        version: 7.10.7(reflect-metadata@0.2.2)
+      reflect-metadata:
+        specifier: 'catalog:'
+        version: 0.2.2
+    devDependencies:
+      vitest-mock-extended:
+        specifier: 'catalog:'
+        version: 3.1.0(typescript@5.9.3)(vitest@4.0.16)
+      vitest-when:
+        specifier: 'catalog:'
+        version: 0.10.0(@vitest/expect@4.0.16)(vitest@4.0.16)
 
   packages/serialiser:
     dependencies:
@@ -3924,6 +3955,10 @@ packages:
   basic-auth@2.0.1:
     resolution: {integrity: sha512-NF+epuEdnUYVlGuhaxbbq+dvJttwLnGY+YixlXlME5KpQ5W3CnXA5cVTneY3SPbPDRkcjMbifrwmFYcClgOZeg==}
     engines: {node: '>= 0.8'}
+
+  bcryptjs@3.0.3:
+    resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
+    hasBin: true
 
   better-sqlite3@12.5.0:
     resolution: {integrity: sha512-WwCZ/5Diz7rsF29o27o0Gcc1Du+l7Zsv7SYtVPG0X3G/uUI1LqdxrQI7c9Hs2FWpqXXERjW9hp6g3/tH7DlVKg==}
@@ -12329,6 +12364,8 @@ snapshots:
   basic-auth@2.0.1:
     dependencies:
       safe-buffer: 5.1.2
+
+  bcryptjs@3.0.3: {}
 
   better-sqlite3@12.5.0:
     dependencies:
