@@ -1,14 +1,17 @@
-import { inject } from './typed-inject.ts';
-import { AppError } from '@errors';
+import { AuthError } from './auth-error.ts';
+
 import {
   type IObjectStorage,
   type ISessionIdRequester,
   type ISingleItemStore,
-} from '@ports';
+} from '@zero/application-core';
+
 import { type ILogger } from '@zero/bootstrap';
 import { User } from '@zero/domain';
 import { Serialiser } from '@zero/serialiser';
 import { injectable } from 'inversify';
+
+import { inject } from './typed-inject.ts';
 
 export const LOG_CONTEXT = { context: 'session-storage' };
 
@@ -32,7 +35,7 @@ export class SessionStorage implements ISingleItemStore<User> {
     const item = await this.get();
 
     if (!item) {
-      throw new AppError(
+      throw new AuthError(
         `Session data required but was not found. This method should not be called when the user is logged out`
       );
     }
@@ -59,7 +62,7 @@ export class SessionStorage implements ISingleItemStore<User> {
     if (data instanceof User) {
       return data;
     }
-    throw new AppError(`Something strange was found in session data`);
+    throw new AuthError(`Something strange was found in session data`);
   }
 
   async set(thing: User | undefined): Promise<void> {

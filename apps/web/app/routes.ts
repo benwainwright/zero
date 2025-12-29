@@ -5,19 +5,20 @@ import {
   type RouteConfig,
 } from '@react-router/dev/routes';
 
-// import { routesList, type RouteSpec } from './config/routes-list.tsx';
+import { routesList, type RouteSpec } from './config/routes-list.tsx';
+import type { IRoute } from '@zero/domain';
 
-// const list: Record<string, RouteSpec> = routesList;
+const list: Record<Exclude<IRoute, 'all'>, RouteSpec> = routesList;
 
-// const routes = [
-//   layout(
-//     "routes/app-layout.tsx",
-//     Object.entries(list).map(([key, value]) =>
-//       value.isIndex ? index(value.component) : route(value.path ? value.path : key, value.component)
-//     )
-//   )
-// ];
-
-const routes = [index('routes/home.tsx')];
+const routes = [
+  layout(
+    'routes/app-layout.tsx',
+    Object.entries(list).map(([key, value]) =>
+      value.isIndex
+        ? index(value.component)
+        : route(value.path ? value.path : key, value.component)
+    )
+  ),
+];
 
 export default routes satisfies RouteConfig;

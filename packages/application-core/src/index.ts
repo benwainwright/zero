@@ -12,6 +12,7 @@ export {
   type ISingleItemStore,
   type IEventEmitter,
   type IUnitOfWork,
+  type IStringHasher,
   type IEventListener,
   type IListener,
   type IQueryBus,
@@ -21,6 +22,7 @@ export {
   type IDomainEventBuffer,
   type ICurrentUserCache,
   type ISessionIdRequester,
+  type IObjectStorage,
 } from '@ports';
 
 export { AppError } from '@errors';

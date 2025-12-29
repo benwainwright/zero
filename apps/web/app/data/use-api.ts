@@ -1,5 +1,6 @@
 import { TypedContainer } from '@inversifyjs/strongly-typed';
-import { type IApiSurface, type IAllEvents } from '@zero/application-core';
+import type { IApiSurface, IAllEvents } from '@zero/application-core';
+
 import {
   type IClientTypes,
   type IKnownCommands,

@@ -1,4 +1,7 @@
-import { inject as inversifyInject } from 'inversify';
+import {
+  inject as inversifyInject,
+  multiInject as inversifyMultiInject,
+} from 'inversify';
 import type {
   TypedInject,
   TypedMultiInject,
@@ -11,4 +14,4 @@ export const inject: TypedInject<IBootstrapTypes & IInternalTypes> = (
 ) => inversifyInject(identifier);
 
 export const multiInject: TypedMultiInject<IBootstrapTypes> = (identifier) =>
-  inversifyInject(identifier);
+  inversifyMultiInject(identifier);

@@ -20,13 +20,15 @@
   "references": [
     {
       "path": "../domain/tsconfig.lib.json"
-
     },
     {
-      "path": "../application-core/tsconfig.lib.json"
+      "path": "../serialiser/tsconfig.lib.json"
     },
     {
       "path": "../bootstrap/tsconfig.lib.json"
+    },
+    {
+      "path": "../application-core/tsconfig.lib.json"
     }
   ],
   "exclude": [

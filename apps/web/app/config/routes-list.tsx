@@ -24,7 +24,6 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     authFailRedirect: '/',
     sidebarIcon: <IconUser size={16} stroke={1.5} />,
   },
-
   login: {
     component: 'routes/login.tsx',
     authFailRedirect: '/',

@@ -1,1 +1,8 @@
-export interface IInternalTypes {}
+import type { ConfigValue } from '@zero/bootstrap';
+import type EventEmitter from 'node:events';
+
+export interface IInternalTypes {
+  EventBusListener: EventEmitter;
+  BusNamespace: string;
+  StoragePath: ConfigValue<string>;
+}

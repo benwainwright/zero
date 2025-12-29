@@ -2,7 +2,6 @@ import {
   CommandBus,
   DomainEventStore,
   QueryBus,
-  SessionStorage,
   TransactionalServiceBus,
 } from '@core';
 import { TypedContainer } from '@inversifyjs/strongly-typed';
@@ -34,17 +33,9 @@ export const applicationCoreModule = module<IApplicationTypes>(
         const parentEventBus = await container.getAsync('EventBus');
 
         requestContainer
-          .bind('CurrentUserCache')
-          .to(SessionStorage)
-          .inRequestScope();
-
-        requestContainer
-          .bind('SessionStore')
-          .to(SessionStorage)
-          .inRequestScope();
-        requestContainer
           .bind('SessionIdRequester')
           .toConstantValue(sessionIdRequester);
+
         const hasher = await container.getAsync('StringHasher');
         const logger = await container.getAsync('Logger');
         const sessionId = await sessionIdRequester.getSessionId();

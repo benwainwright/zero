@@ -1,4 +1,7 @@
-import { inject as inversifyInject } from 'inversify';
+import {
+  inject as inversifyInject,
+  multiInject as inversifyMultiInject,
+} from 'inversify';
 import type {
   TypedInject,
   TypedMultiInject,
@@ -11,6 +14,6 @@ export const inject = inversifyInject as TypedInject<
   IApplicationTypes & IBootstrapTypes
 >;
 
-export const multiInject = inversifyInject as TypedMultiInject<
+export const multiInject = inversifyMultiInject as TypedMultiInject<
   IApplicationTypes & IBootstrapTypes
 >;

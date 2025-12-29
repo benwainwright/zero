@@ -25,6 +25,7 @@
     "zod": "catalog:",
     "@zero/application-core": "workspace:*",
     "@zero/bootstrap": "workspace:*",
+    "@zero/serialiser": "workspace:*",
     "@zero/domain": "workspace:*"
   }
 }

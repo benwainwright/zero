@@ -1,11 +1,15 @@
-import { type IObjectStorage, type ISessionIdRequester } from '@ports';
+import {
+  type IObjectStorage,
+  type ISessionIdRequester,
+} from '@zero/application-core';
+
 import { mock } from 'vitest-mock-extended';
 import { SessionStorage } from './session-storage.ts';
 import { when } from 'vitest-when';
 import type { ILogger } from '@zero/bootstrap';
 import { Serialiser } from '@zero/serialiser';
 import { User } from '@zero/domain';
-import { AppError } from '@errors';
+import { AuthError } from './auth-error.ts';
 
 describe('session storage', () => {
   describe('require', () => {
@@ -180,7 +184,7 @@ describe('session storage', () => {
 
       when(serialiser.deserialise).calledWith(user).thenReturn({ foo: 'bar' });
 
-      await expect(storage.get()).rejects.toThrow(AppError);
+      await expect(storage.get()).rejects.toThrow(AuthError);
     });
 
     it('returns the user if the object store contains a user', async () => {

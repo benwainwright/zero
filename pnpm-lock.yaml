@@ -368,6 +368,9 @@ importers:
       '@zero/domain':
         specifier: workspace:*
         version: link:../domain
+      '@zero/serialiser':
+        specifier: workspace:*
+        version: link:../serialiser
       inversify:
         specifier: 'catalog:'
         version: 7.10.7(reflect-metadata@0.2.2)
@@ -458,6 +461,9 @@ importers:
       '@inversifyjs/strongly-typed':
         specifier: 'catalog:'
         version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      '@zero/application-core':
+        specifier: workspace:*
+        version: link:../application-core
       '@zero/auth':
         specifier: workspace:*
         version: link:../auth
@@ -473,6 +479,12 @@ importers:
       reflect-metadata:
         specifier: 'catalog:'
         version: 0.2.2
+      uuid:
+        specifier: 13.0.0
+        version: 13.0.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.2.1
     devDependencies:
       vitest-mock-extended:
         specifier: 'catalog:'

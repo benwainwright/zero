@@ -19,10 +19,13 @@
   },
   "dependencies": {
     "@inversifyjs/strongly-typed": "catalog:",
+    "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "bcryptjs": "^3.0.3",
     "inversify": "catalog:",
-    "reflect-metadata": "catalog:"
+    "reflect-metadata": "catalog:",
+    "uuid": "13.0.0",
+    "zod": "catalog:"
   }
 }
