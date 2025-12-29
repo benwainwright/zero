@@ -14,6 +14,7 @@
     "@tabler/icons-react": "3.36.0",
     "@zero/domain": "workspace:*",
     "@zero/application-core": "workspace:*",
+    "@zero/auth": "workspace:*",
     "@zero/websocket-adapter": "workspace:*",
     "@zero/serialiser": "workspace:*",
     "isbot": "^4.4.0",

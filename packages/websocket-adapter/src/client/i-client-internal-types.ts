@@ -4,6 +4,7 @@ import type {
   IQueryResponseEvent,
   IUUIDGenerator,
 } from '@types';
+
 import type {
   IAllEvents,
   ICommandClient,
@@ -11,9 +12,11 @@ import type {
   IQueryClient,
 } from '@zero/application-core';
 
+import type { AuthEvents } from '@zero/auth';
+
 export interface IClientInternalTypes {
   UUIDGenerator: IUUIDGenerator;
-  EventListener: IEventListener<IAllEvents & IQueryResponseEvent>;
+  EventListener: IEventListener<IAllEvents & IQueryResponseEvent & AuthEvents>;
   CommandClient: ICommandClient<IKnownCommands>;
   QueryClient: IQueryClient<IKnownQueries>;
 }

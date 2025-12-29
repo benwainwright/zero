@@ -1,4 +1,5 @@
 import { Page } from '@components';
+import { ApiContext, CurrentUserContext, useEvent } from '@data';
 // import { command, useEvent } from "@data";
 import {
   Button,
@@ -18,66 +19,70 @@ interface FormValues {
 }
 
 export const Login = (): ReactNode => {
-  return <></>;
-  // const { currentUser, reloadUser } = useContext(CurrentUserContext);
-  // const navigate = useNavigate();
+  const { user, reload } = useContext(CurrentUserContext);
+  const { api } = useContext(ApiContext);
 
-  // const form = useForm({
-  //   initialValues: {
-  //     username: "",
-  //     password: ""
-  //   } satisfies FormValues
-  // });
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   void (async () => {
-  //     if (currentUser) {
-  //       await navigate("/");
-  //     }
-  //   })();
-  // }, [currentUser]);
+  const form = useForm({
+    initialValues: {
+      username: '',
+      password: '',
+    } satisfies FormValues,
+  });
 
-  // const onSubmit = async (values: FormValues) => {
-  //   await command("LoginCommand", {
-  //     username: values.username,
-  //     password: values.password
-  //   });
-  // };
+  useEffect(() => {
+    void (async () => {
+      if (user) {
+        await navigate('/');
+      }
+    })();
+  }, [user]);
 
-  // useEvent("LoginSuccess", () => {
-  //   reloadUser();
-  // });
+  const onSubmit = async (values: FormValues) => {
+    await api?.executeCommand({
+      key: 'LoginCommand',
+      params: {
+        username: values.username,
+        password: values.password,
+      },
+    });
+  };
 
-  // return (
-  //   <Page routeName="login">
-  //     <form method="post" onSubmit={form.onSubmit(onSubmit)}>
-  //       <TextInput
-  //         label="Username"
-  //         placeholder=""
-  //         key={form.key("username")}
-  //         {...form.getInputProps("username")}
-  //       />
+  useEvent('LoginSuccessfulEvent', () => {
+    reload?.();
+  });
 
-  //       <PasswordInput
-  //         label="Password"
-  //         placeholder=""
-  //         key={form.key("password")}
-  //         {...form.getInputProps("password")}
-  //       />
+  return (
+    <Page routeName="login">
+      <form method="post" onSubmit={form.onSubmit(onSubmit)}>
+        <TextInput
+          label="Username"
+          placeholder=""
+          key={form.key('username')}
+          {...form.getInputProps('username')}
+        />
 
-  //       <Group mt="md" mb="md">
-  //         <Button type="submit">Login</Button>
-  //       </Group>
-  //       <Text>
-  //         Or you can{" "}
-  //         <Anchor to="/register" component={Link}>
-  //           register
-  //         </Anchor>{" "}
-  //         a new account...
-  //       </Text>
-  //     </form>
-  //   </Page>
-  // );
+        <PasswordInput
+          label="Password"
+          placeholder=""
+          key={form.key('password')}
+          {...form.getInputProps('password')}
+        />
+
+        <Group mt="md" mb="md">
+          <Button type="submit">Login</Button>
+        </Group>
+        <Text>
+          Or you can{' '}
+          <Anchor to="/register" component={Link}>
+            register
+          </Anchor>{' '}
+          a new account...
+        </Text>
+      </form>
+    </Page>
+  );
 };
 
 export default Login;

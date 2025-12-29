@@ -9,6 +9,7 @@ import { WebsocketQueryClient } from './websocket-query-client.ts';
 import { WebsocketEventListener } from './websocket-event-listener.ts';
 import { v7 } from 'uuid';
 import type { IClientTypes } from './i-client-types.ts';
+import { WebsocketApi } from './websocket-api.ts';
 
 export const websocketClientModule = new TypedContainerModule<
   IClientInternalTypes & IClientTypes
@@ -16,6 +17,7 @@ export const websocketClientModule = new TypedContainerModule<
   load.bind('CommandClient').to(WebsocketCommandClient);
   load.bind('QueryClient').to(WebsocketQueryClient);
   load.bind('EventListener').to(WebsocketEventListener);
+  load.bind('ApiSurface').to(WebsocketApi);
 
   const uuidGenerator = {
     v7,

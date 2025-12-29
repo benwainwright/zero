@@ -3,7 +3,6 @@ import type { ICommandClient } from '@zero/application-core';
 import { Serialiser } from '@zero/serialiser';
 import { injectable } from 'inversify';
 import { inject } from './typed-inject.ts';
-import type { ILogger } from '@zero/bootstrap';
 
 @injectable()
 export class WebsocketCommandClient implements ICommandClient<IKnownCommands> {
@@ -12,10 +11,7 @@ export class WebsocketCommandClient implements ICommandClient<IKnownCommands> {
     private socket: WebSocket,
 
     @inject('UUIDGenerator')
-    private uuidGenerator: IUUIDGenerator,
-
-    @inject('Logger')
-    private logger: ILogger
+    private uuidGenerator: IUUIDGenerator
   ) {}
 
   public async execute(command: Omit<IKnownCommands, 'id'>): Promise<void> {

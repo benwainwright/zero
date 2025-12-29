@@ -7,8 +7,7 @@ import type { IRoute } from '@zero/domain';
 
 export const NavBar = (): ReactNode => {
   const location = useLocation();
-  const { hash, pathname, search } = location;
-  console.log({ hash, pathname, search });
+  const { pathname } = location;
   const list = routesList;
   const { user } = useContext(CurrentUserContext);
   return (
@@ -17,7 +16,8 @@ export const NavBar = (): ReactNode => {
         {Object.entries(list)
           .filter(
             ([key, value]) =>
-              user?.canView(key as IRoute) && !value.hideFromMenu
+              (user?.canView(key as IRoute) && !value.hideFromMenu) ||
+              value.public
           )
           .map(([key, value]) => {
             const toString = value.isIndex ? '' : key;

@@ -15,11 +15,9 @@ export const applicationCoreModule = module<IApplicationTypes>(
     container.bind('DomainEventBuffer').to(DomainEventStore).inRequestScope();
     container.bind('DomainEventEmitter').toService('DomainEventBuffer');
     load.bind('Serialiser').to(Serialiser);
-
     load.bind('CommandBus').to(CommandBus).inRequestScope();
+    load.bind('QueryBus').to(QueryBus).inRequestScope();
     await decorators.decorate('CommandBus', TransactionalServiceBus);
-
-    load.bind('QueryBus').to(QueryBus);
 
     load.bind('ContainerFactory').toFactory(() => {
       return async (sessionIdRequester: ISessionIdRequester) => {

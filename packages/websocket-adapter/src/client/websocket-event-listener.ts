@@ -5,15 +5,17 @@ import type {
   IListener,
 } from '@zero/application-core';
 
+import { AuthEvents } from '@zero/auth';
+
 import { Serialiser } from '@zero/serialiser';
 import type { IQueryResponseEvent } from '@types';
 import { injectable } from 'inversify';
 import { inject } from './typed-inject.ts';
 
+type Events = IAllEvents & IQueryResponseEvent & AuthEvents;
+
 @injectable()
-export class WebsocketEventListener
-  implements IEventListener<IAllEvents & IQueryResponseEvent>
-{
+export class WebsocketEventListener implements IEventListener<Events> {
   private listenerMap = new Map<string, (packet: MessageEvent) => void>();
 
   private nextListenerId = 0;
@@ -31,18 +33,16 @@ export class WebsocketEventListener
     this.listenerMap.delete(identifier);
   }
 
-  public onAll(callback: IListener<IAllEvents & IQueryResponseEvent>): string {
+  public onAll(callback: IListener<Events>): string {
     const listenerId = `listener-${this.nextListenerId++}`;
 
-    const listener = (
-      packet: MessageEvent<IAllEvents & IQueryResponseEvent>
-    ) => {
+    const listener = (packet: MessageEvent<Events>) => {
       if (packet.type === 'message' && typeof packet.data === 'string') {
         const serialiser = new Serialiser();
 
-        const parsed = serialiser.deserialise(packet.data) as IEventPacket<
-          IAllEvents & IQueryResponseEvent
-        >;
+        const parsed = serialiser.deserialise(
+          packet.data
+        ) as IEventPacket<Events>;
         callback(parsed);
       }
     };
@@ -52,15 +52,11 @@ export class WebsocketEventListener
     return listenerId;
   }
 
-  public on<TKey extends keyof (IAllEvents & IQueryResponseEvent)>(
+  public on<TKey extends keyof Events>(
     key: TKey,
-    callback: (
-      data: IEventPacket<IAllEvents & IQueryResponseEvent, TKey>['data']
-    ) => void
+    callback: (data: IEventPacket<Events, TKey>['data']) => void
   ): string {
-    const handler = (
-      packet: IEventPacket<IAllEvents & IQueryResponseEvent>
-    ) => {
+    const handler = (packet: IEventPacket<Events>) => {
       if (packet.key === key) {
         callback(packet.data);
       }

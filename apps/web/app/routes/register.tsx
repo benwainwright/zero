@@ -1,5 +1,5 @@
-import { CurrentUserContext, Page } from '@components';
-// import { command, useEvent } from "@data";
+import { Page } from '@components';
+import { useEvent, CurrentUserContext, ApiContext } from '@data';
 import { useContext, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -14,83 +14,86 @@ interface FormValues {
 }
 
 export const Register = (): ReactNode => {
-  return <></>;
-  // const navigate = useNavigate();
-  // const { currentUser, reloadUser } = useContext(CurrentUserContext);
+  const navigate = useNavigate();
+  const { user, reload } = useContext(CurrentUserContext);
+  const { api } = useContext(ApiContext);
 
-  // const form = useForm({
-  //   initialValues: {
-  //     username: "",
-  //     email: "",
-  //     password: "",
-  //     validatePassword: ""
-  //   } satisfies FormValues,
+  const form = useForm({
+    initialValues: {
+      username: '',
+      email: '',
+      password: '',
+      validatePassword: '',
+    } satisfies FormValues,
 
-  //   validate: {
-  //     email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-  //     validatePassword: (value, values) =>
-  //       value !== values.password ? "Passwords did not match" : null
-  //   }
-  // });
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      validatePassword: (value, values) =>
+        value !== values.password ? 'Passwords did not match' : null,
+    },
+  });
 
-  // const onSubmit = async (values: FormValues) => {
-  //   await command("RegisterCommand", {
-  //     username: values.username,
-  //     email: values.email,
-  //     password: values.password
-  //   });
-  // };
+  const onSubmit = async (values: FormValues) => {
+    api?.executeCommand({
+      key: 'CreateUserCommand',
+      params: {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      },
+    });
+  };
 
-  // useEffect(() => {
-  //   void (async () => {
-  //     if (currentUser) {
-  //       await navigate("/");
-  //     }
-  //   })();
-  // }, [currentUser]);
+  useEffect(() => {
+    void (async () => {
+      if (user) {
+        await navigate('/');
+      }
+    })();
+  }, [user]);
 
-  // useEvent("RegisterSuccess", () => {
-  //   reloadUser();
-  // });
+  useEvent('UserCreated', () => {
+    reload?.();
+  });
 
-  // return (
-  //   <Page routeName="register">
-  //     <form method="post" onSubmit={form.onSubmit(onSubmit)}>
-  //       <TextInput
-  //         label="Username"
-  //         placeholder=""
-  //         key={form.key("username")}
-  //         {...form.getInputProps("username")}
-  //       />
+  return (
+    <Page routeName="register">
+      <form method="post" onSubmit={form.onSubmit(onSubmit)}>
+        <TextInput
+          label="Username"
+          placeholder=""
+          key={form.key('username')}
+          {...form.getInputProps('username')}
+        />
 
-  //       <TextInput
-  //         label="Email"
-  //         type="email"
-  //         placeholder=""
-  //         key={form.key("email")}
-  //         {...form.getInputProps("email")}
-  //       />
+        <TextInput
+          label="Email"
+          type="email"
+          placeholder=""
+          key={form.key('email')}
+          {...form.getInputProps('email')}
+        />
 
-  //       <PasswordInput
-  //         label="Password"
-  //         placeholder=""
-  //         key={form.key("password")}
-  //         {...form.getInputProps("password")}
-  //       />
+        <PasswordInput
+          label="Password"
+          placeholder=""
+          key={form.key('password')}
+          {...form.getInputProps('password')}
+        />
 
-  //       <PasswordInput
-  //         label="Verify Password"
-  //         placeholder=""
-  //         key={form.key("validatePassword")}
-  //         {...form.getInputProps("validatePassword")}
-  //       />
+        <PasswordInput
+          label="Verify Password"
+          placeholder=""
+          key={form.key('validatePassword')}
+          {...form.getInputProps('validatePassword')}
+        />
 
-  //       <Group mt="md">
-  //         <Button type="submit">Submit</Button>
-  //       </Group>
-  //     </form>
-  //   </Page>
-  // );
+        <Group mt="md">
+          <Button type="submit">Submit</Button>
+        </Group>
+      </form>
+    </Page>
+  );
 };
 
 export default Register;

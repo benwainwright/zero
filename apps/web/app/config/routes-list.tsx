@@ -8,6 +8,7 @@ export interface RouteSpec {
   header?: string;
   hideFromMenu?: boolean;
   component: string;
+  public?: boolean;
   authFailRedirect: string;
   sidebarIcon?: ReactElement;
 }
@@ -23,10 +24,12 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     component: 'routes/register.tsx',
     authFailRedirect: '/',
     sidebarIcon: <IconUser size={16} stroke={1.5} />,
+    public: true,
   },
   login: {
     component: 'routes/login.tsx',
     authFailRedirect: '/',
     sidebarIcon: <IconLogin size={16} stroke={1.5} />,
+    public: true,
   },
 } as const satisfies Record<string, RouteSpec>;

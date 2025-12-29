@@ -280,6 +280,9 @@ importers:
       '@zero/application-core':
         specifier: workspace:*
         version: link:../../packages/application-core
+      '@zero/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@zero/domain':
         specifier: workspace:*
         version: link:../../packages/domain

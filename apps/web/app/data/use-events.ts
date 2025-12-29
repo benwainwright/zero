@@ -1,28 +1,22 @@
-// import type { AllEvents, IListener } from "@ynab-plus/app";
-// import { useEffect, useState } from "react";
+import type { IListener } from '@zero/application-core';
+import { useContext, useEffect, useRef } from 'react';
+import { ApiContext } from './api-provider.tsx';
 
-// import { SocketEventListener } from "./socket-event-listener.ts";
-// import { useSocket } from "./use-socket.ts";
+export const useEvents =
+  typeof window !== 'undefined'
+    ? (callback: IListener) => {
+        const { api } = useContext(ApiContext);
+        const listener = useRef<string | undefined>(undefined);
 
-// export const useEvents =
-//   typeof window !== "undefined"
-//     ? (callback: IListener) => {
-//         const socket = useSocket();
-
-//         const [listener, setSocketEventListener] = useState<SocketEventListener>();
-
-//         useEffect(() => {
-//           if (socket) {
-//             setSocketEventListener(new SocketEventListener(socket));
-//           }
-//         }, [socket]);
-
-//         useEffect(() => {
-//           if (listener) {
-//             listener.onAll(callback);
-//           }
-
-//           return () => listener?.removeAll();
-//         }, [listener]);
-//       }
-//     : () => {};
+        useEffect(() => {
+          if (api) {
+            listener.current = api.onAll(callback);
+          }
+          return () => {
+            if (listener.current) {
+              api?.off(listener.current);
+            }
+          };
+        }, [api]);
+      }
+    : () => {};

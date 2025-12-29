@@ -9,7 +9,6 @@ import type {
   IQueryClient,
 } from '@zero/application-core';
 import { inject } from './typed-inject.ts';
-import type { ILogger } from '@zero/bootstrap';
 import { Serialiser } from '@zero/serialiser';
 
 export class WebsocketQueryClient implements IQueryClient<IKnownQueries> {
@@ -19,9 +18,6 @@ export class WebsocketQueryClient implements IQueryClient<IKnownQueries> {
 
     @inject('UUIDGenerator')
     private uuidGenerator: IUUIDGenerator,
-
-    @inject('Logger')
-    private logger: ILogger,
 
     @inject('EventListener')
     private eventBus: IEventListener<IAllEvents & IQueryResponseEvent>

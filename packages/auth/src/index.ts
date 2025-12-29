@@ -5,5 +5,11 @@ export {
   type IPasswordHasher,
   type IPasswordVerifier,
 } from '@ports';
+
 export { type IAuthTypes } from '@core';
-export { type AuthCommands, type AuthQueries } from '@services';
+
+export {
+  type AuthCommands,
+  type AuthQueries,
+  type AuthEvents,
+} from '@services';
