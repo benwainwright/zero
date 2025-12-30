@@ -5,6 +5,7 @@ export const userCapabilities = [
   `user:delete`,
   `user:read`,
   `user:update`,
+  `user:list`,
 ] as const satisfies ICapabilityList<'user'>;
 
 export const selfCapabilities = [

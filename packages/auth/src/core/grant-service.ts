@@ -40,7 +40,7 @@ export class GrantService {
 
   public requires(config: {
     capability: ICapability;
-    for: DomainModel<unknown>;
+    for?: DomainModel<unknown>;
   }) {
     const allowPermissionFound = this.isThereAMatchingPermission(
       config.for,

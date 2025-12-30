@@ -7,8 +7,7 @@ const Home = (): ReactNode => {
     <Page routeName="home">
       <Typography>
         <p>
-          Welcome to YNAB plus - to get started, head over to the integrations
-          page
+          Welcome to Zero - to get started, head over to the integrations page
         </p>
       </Typography>
     </Page>

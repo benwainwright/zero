@@ -1,10 +1,5 @@
+import type { IKnownCommands, IKnownQueries } from '@types';
 import type {
-  IKnownCommands,
-  IKnownQueries,
-  IQueryResponseEvent,
-} from '@types';
-import type {
-  IAllEvents,
   IApiSurface,
   ICommandClient,
   IEventListener,
@@ -12,18 +7,15 @@ import type {
   IListener,
   IQueryClient,
 } from '@zero/application-core';
+
 import type { AuthCommands, AuthQueries } from '@zero/auth';
 import { injectable } from 'inversify';
 import { inject } from './typed-inject.ts';
+import type { IKnownEvents } from './i-known-events.ts';
 
 @injectable()
 export class WebsocketApi
-  implements
-    IApiSurface<
-      IKnownCommands,
-      IKnownQueries,
-      IAllEvents & IQueryResponseEvent
-    >
+  implements IApiSurface<IKnownCommands, IKnownQueries, IKnownEvents>
 {
   public constructor(
     @inject('CommandClient')
@@ -33,7 +25,7 @@ export class WebsocketApi
     private readonly queryClient: IQueryClient<IKnownQueries>,
 
     @inject('EventListener')
-    private eventBus: IEventListener<IAllEvents & IQueryResponseEvent>
+    private eventBus: IEventListener<IKnownEvents>
   ) {}
 
   public removeAll() {
@@ -44,15 +36,13 @@ export class WebsocketApi
     this.eventBus.off(identifier);
   }
 
-  public onAll(callback: IListener<IAllEvents & IQueryResponseEvent>) {
+  public onAll(callback: IListener<IKnownEvents>) {
     return this.eventBus.onAll(callback);
   }
 
-  public on<TKey extends keyof (IAllEvents & IQueryResponseEvent)>(
+  public on<TKey extends keyof IKnownEvents>(
     key: TKey,
-    callback: (
-      data: IEventPacket<IAllEvents & IQueryResponseEvent, TKey>['data']
-    ) => void
+    callback: (data: IEventPacket<IKnownEvents, TKey>['data']) => void
   ): string {
     return this.eventBus.on(key, callback);
   }

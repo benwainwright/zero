@@ -13,8 +13,8 @@ import type {
   IUserRepository,
 } from '@ports';
 import { inject } from '@core';
-import type { IAuthEvents } from '../auth-events.ts';
 import type { ILogger } from '@zero/bootstrap';
+import type { AuthEvents } from '@services';
 
 @injectable()
 export class LoginCommandHandler extends AbstractCommandHandler<
@@ -34,7 +34,7 @@ export class LoginCommandHandler extends AbstractCommandHandler<
     private currentUserSetter: ICurrentUserSetter,
 
     @inject('EventBus')
-    private eventBus: IEventBus<IAllEvents> & IEventBus<IAuthEvents>,
+    private eventBus: IEventBus<IAllEvents> & IEventBus<AuthEvents>,
 
     @inject('GrantService')
     private grants: IGrantManager,

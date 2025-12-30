@@ -1,5 +1,5 @@
 import { type ReactElement } from 'react';
-import { IconLogin, IconUser, IconHome } from '@tabler/icons-react';
+import { IconLogin, IconUser, IconHome, IconLogout } from '@tabler/icons-react';
 import type { IRoute } from '@zero/domain';
 
 export interface RouteSpec {
@@ -9,6 +9,7 @@ export interface RouteSpec {
   hideFromMenu?: boolean;
   component: string;
   public?: boolean;
+  publicOnly?: boolean;
   authFailRedirect: string;
   sidebarIcon?: ReactElement;
 }
@@ -24,10 +25,17 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     component: 'routes/register.tsx',
     authFailRedirect: '/',
     sidebarIcon: <IconUser size={16} stroke={1.5} />,
-    public: true,
+    publicOnly: true,
+  },
+
+  logout: {
+    component: 'routes/logout.tsx',
+    authFailRedirect: '/login',
+    sidebarIcon: <IconLogout size={16} stroke={1.5} />,
   },
   login: {
     component: 'routes/login.tsx',
+    publicOnly: true,
     authFailRedirect: '/',
     sidebarIcon: <IconLogin size={16} stroke={1.5} />,
     public: true,

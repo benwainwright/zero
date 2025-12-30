@@ -1,21 +1,16 @@
 import type {
-  IAllEvents,
   IEventListener,
   IEventPacket,
   IListener,
 } from '@zero/application-core';
 
-import { AuthEvents } from '@zero/auth';
-
 import { Serialiser } from '@zero/serialiser';
-import type { IQueryResponseEvent } from '@types';
 import { injectable } from 'inversify';
 import { inject } from './typed-inject.ts';
-
-type Events = IAllEvents & IQueryResponseEvent & AuthEvents;
+import type { IKnownEvents } from './i-known-events.ts';
 
 @injectable()
-export class WebsocketEventListener implements IEventListener<Events> {
+export class WebsocketEventListener implements IEventListener<IKnownEvents> {
   private listenerMap = new Map<string, (packet: MessageEvent) => void>();
 
   private nextListenerId = 0;
@@ -33,16 +28,16 @@ export class WebsocketEventListener implements IEventListener<Events> {
     this.listenerMap.delete(identifier);
   }
 
-  public onAll(callback: IListener<Events>): string {
+  public onAll(callback: IListener<IKnownEvents>): string {
     const listenerId = `listener-${this.nextListenerId++}`;
 
-    const listener = (packet: MessageEvent<Events>) => {
+    const listener = (packet: MessageEvent<IKnownEvents>) => {
       if (packet.type === 'message' && typeof packet.data === 'string') {
         const serialiser = new Serialiser();
 
         const parsed = serialiser.deserialise(
           packet.data
-        ) as IEventPacket<Events>;
+        ) as IEventPacket<IKnownEvents>;
         callback(parsed);
       }
     };
@@ -52,11 +47,11 @@ export class WebsocketEventListener implements IEventListener<Events> {
     return listenerId;
   }
 
-  public on<TKey extends keyof Events>(
+  public on<TKey extends keyof IKnownEvents>(
     key: TKey,
-    callback: (data: IEventPacket<Events, TKey>['data']) => void
+    callback: (data: IEventPacket<IKnownEvents, TKey>['data']) => void
   ): string {
-    const handler = (packet: IEventPacket<Events>) => {
+    const handler = (packet: IEventPacket<IKnownEvents>) => {
       if (packet.key === key) {
         callback(packet.data);
       }

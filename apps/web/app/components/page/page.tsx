@@ -4,6 +4,7 @@ import { Navigate } from 'react-router';
 
 import { routesList } from '@config';
 import { Box, Flex, Title } from '@mantine/core';
+import { routeAvailable } from '@utils';
 
 interface PageProps {
   routeName: keyof typeof routesList;
@@ -28,7 +29,8 @@ export const Page = ({
   const capitalisedHeader = `${header
     .charAt(0)
     .toLocaleUpperCase()}${header.slice(1)}`;
-  if (!user?.canView(routeName)) {
+
+  if (!routeAvailable(user, routeConfig, routeName)) {
     return initialLoadComplete ? (
       <Navigate to={routeConfig.authFailRedirect} />
     ) : (

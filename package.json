@@ -8,6 +8,7 @@
     "type-check": "pnpm exec nx run-many --targets typecheck",
     "build": "pnpm exec nx run-many --targets build",
     "prepare": "husky",
+    "dev": "pnpm exec nx run @zero/web:dev",
     "g": "pnpm exec nx g"
   },
   "private": true,

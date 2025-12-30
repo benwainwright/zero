@@ -4,6 +4,7 @@ import { useContext, type ReactNode } from 'react';
 import { CurrentUserContext } from '@data';
 import { Link, useLocation } from 'react-router';
 import type { IRoute } from '@zero/domain';
+import { routeAvailable } from '@utils';
 
 export const NavBar = (): ReactNode => {
   const location = useLocation();
@@ -14,11 +15,7 @@ export const NavBar = (): ReactNode => {
     <AppShell.Navbar>
       <ul>
         {Object.entries(list)
-          .filter(
-            ([key, value]) =>
-              (user?.canView(key as IRoute) && !value.hideFromMenu) ||
-              value.public
-          )
+          .filter(([key, value]) => routeAvailable(user, value, key as IRoute))
           .map(([key, value]) => {
             const toString = value.isIndex ? '' : key;
             return (

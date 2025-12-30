@@ -51,6 +51,50 @@ describe('grant', () => {
   });
 
   describe('can', () => {
+    it('correctly interprets an empty domain model as - needs global permissions', () => {
+      const grant = new GrantService();
+
+      grant.setActor({
+        permissions: [
+          {
+            action: 'ALLOW',
+            capabilities: ['user:list'],
+            resource: '*',
+          },
+        ],
+      });
+
+      expect(() => grant.requires({ capability: 'user:list' })).not.toThrow();
+    });
+
+    it('throws if an empty domain model is provided and global permissions are not present', () => {
+      const grant = new GrantService();
+
+      class TestDomainModel extends DomainModel<unknown> {
+        public override toObject() {
+          return this;
+        }
+
+        public id = 'foo';
+      }
+
+      const model = new TestDomainModel();
+
+      grant.setActor({
+        permissions: [
+          {
+            action: 'ALLOW',
+            capabilities: ['user:list'],
+            resource: model,
+          },
+        ],
+      });
+
+      expect(() => grant.requires({ capability: 'user:list' })).toThrow(
+        AuthorisationError
+      );
+    });
+
     it('throws an authorisation error if there are no permissions', () => {
       const grant = new GrantService();
 

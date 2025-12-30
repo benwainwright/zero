@@ -19,7 +19,11 @@ export class User extends DomainModel<IUser> implements IActor, IViewer {
   public canView(route: IRoute): boolean {
     return Boolean(
       this._roles.find((role) =>
-        Boolean(role.routes.find((theRoute) => theRoute === route))
+        Boolean(
+          role.routes.find(
+            (theRoute) => theRoute === route || theRoute === 'all'
+          )
+        )
       )
     );
   }

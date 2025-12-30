@@ -1,10 +1,10 @@
 import { TypedContainer } from '@inversifyjs/strongly-typed';
-import type { IApiSurface, IAllEvents } from '@zero/application-core';
-import type { AuthEvents } from '@zero/auth';
+import type { IApiSurface } from '@zero/application-core';
 
 import {
   type IClientTypes,
   type IKnownCommands,
+  type IKnownEvents,
   type IKnownQueries,
   websocketClientModule,
 } from '@zero/websocket-adapter/client';
@@ -16,9 +16,7 @@ export const useApi = (url: string) => {
   const { socket } = useOpenSocket(url);
 
   const [api, setApi] =
-    useState<
-      IApiSurface<IKnownCommands, IKnownQueries, IAllEvents & AuthEvents>
-    >();
+    useState<IApiSurface<IKnownCommands, IKnownQueries, IKnownEvents>>();
 
   useEffect(() => {
     (async () => {

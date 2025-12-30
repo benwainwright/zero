@@ -14,6 +14,7 @@ export default defineConfig(() => ({
   cacheDir: '../../node_modules/.vite/packages/auth',
   plugins: [
     tsconfigPaths({
+      projectDiscovery: 'lazy',
       projects: [
         path.join(import.meta.dirname, 'tsconfig.lib.json'),
         path.join(import.meta.dirname, 'tsconfig.spec.json'),

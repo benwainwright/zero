@@ -2,15 +2,14 @@ import type { IAllEvents, IApiSurface } from '@zero/application-core';
 import type { AuthEvents } from '@zero/auth';
 import type {
   IKnownCommands,
+  IKnownEvents,
   IKnownQueries,
 } from '@zero/websocket-adapter/client';
 import { createContext, type ReactNode } from 'react';
 import { useApi } from './use-api.ts';
 
 interface IApiContextType {
-  api?:
-    | IApiSurface<IKnownCommands, IKnownQueries, IAllEvents & AuthEvents>
-    | undefined;
+  api?: IApiSurface<IKnownCommands, IKnownQueries, IKnownEvents> | undefined;
 }
 
 export const ApiContext = createContext<IApiContextType>({});

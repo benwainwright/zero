@@ -20,11 +20,7 @@ const AppLayout = (): ReactNode => {
           collapsed: { mobile: !opened },
         }}
       >
-        <Header
-          title="YNAB Plus!"
-          onBurgerClick={toggle}
-          sideBarOpened={opened}
-        />
+        <Header title="Zero" onBurgerClick={toggle} sideBarOpened={opened} />
         <NavBar />
 
         <AppShell.Main>

@@ -26,8 +26,8 @@ export const CurrentUserProvider = ({ children }: CurrentUserProviderProps) => {
 
   useEffect(() => {
     void (async () => {
-      if (dirty) {
-        const user = await api?.executeQuery({
+      if (dirty && api) {
+        const user = await api.executeQuery({
           key: 'GetCurrentUser',
           params: undefined,
         });
@@ -37,7 +37,7 @@ export const CurrentUserProvider = ({ children }: CurrentUserProviderProps) => {
         setInitialLoadComplete(true);
       }
     })();
-  }, [dirty]);
+  }, [dirty, api]);
   return (
     <CurrentUserContext
       value={{

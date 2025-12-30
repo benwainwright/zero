@@ -20,12 +20,15 @@ export class AuthorisingQueryBus implements IQueryBus {
     private readonly userStore: ICurrentUserCache
   ) {}
 
-  public async execute(command: IQuery<string>['query']): Promise<void> {
+  public async execute<TQuery extends IQuery<string>>(
+    command: TQuery['query']
+  ): Promise<TQuery['response']> {
     const user = await this.userStore.get();
     if (user) {
       this.grantService.setActor(user);
     }
-    await this.nextBus.execute(command);
+    const result = await this.nextBus.execute<TQuery>(command);
     this.grantService.done();
+    return result;
   }
 }

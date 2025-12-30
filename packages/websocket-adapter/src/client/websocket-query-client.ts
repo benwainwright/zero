@@ -1,15 +1,8 @@
-import type {
-  IKnownQueries,
-  IQueryResponseEvent,
-  IUUIDGenerator,
-} from '@types';
-import type {
-  IAllEvents,
-  IEventListener,
-  IQueryClient,
-} from '@zero/application-core';
+import type { IKnownQueries, IUUIDGenerator } from '@types';
+import type { IEventListener, IQueryClient } from '@zero/application-core';
 import { inject } from './typed-inject.ts';
 import { Serialiser } from '@zero/serialiser';
+import type { IKnownEvents } from './i-known-events.ts';
 
 export class WebsocketQueryClient implements IQueryClient<IKnownQueries> {
   public constructor(
@@ -20,7 +13,7 @@ export class WebsocketQueryClient implements IQueryClient<IKnownQueries> {
     private uuidGenerator: IUUIDGenerator,
 
     @inject('EventListener')
-    private eventBus: IEventListener<IAllEvents & IQueryResponseEvent>
+    private eventBus: IEventListener<IKnownEvents>
   ) {}
 
   public async execute<TQuery extends IKnownQueries>(

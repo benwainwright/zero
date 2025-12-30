@@ -34,7 +34,7 @@ export const bootstrapInitialUsersAndPermissions = (
     });
 
     const userRole = Role.reconstitute({
-      routes: ['home'],
+      routes: ['home', 'register', 'login', 'logout'],
       id: USER_ROLE_ID,
       name: 'User',
       permissions: userPermissions,

@@ -1,30 +1,33 @@
-import { CurrentUserContext, Page } from '@components';
+import { Page } from '@components';
+import { useEvent, CurrentUserContext, ApiContext } from '@data';
 // import { command, useEvent } from "@data";
 import { useContext, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 
 export const Logout = (): ReactNode => {
   const navigate = useNavigate();
-  const { currentUser, reloadUser } = useContext(CurrentUserContext);
+  const { user, reload } = useContext(CurrentUserContext);
+  const { api } = useContext(ApiContext);
 
-  // useEffect(() => {
-  //   void (async () => {
-  //     if (currentUser) {
-  //       await command('LogoutCommand', undefined);
-  //     } else {
-  //       await navigate('/login');
-  //     }
-  //   })();
-  // }, [currentUser]);
+  useEffect(() => {
+    void (async () => {
+      if (user && api) {
+        await api.executeCommand({
+          key: 'LogoutCommand',
+          params: undefined,
+        });
+      } else {
+        await navigate('/login');
+      }
+    })();
+  }, [user, api]);
 
-  // useEvent('LogoutSuccess', () => {
-  //   reloadUser();
-  // });
+  useEvent('LogoutSuccessfulEvent', () => {
+    reload?.();
+  });
 
   return (
-    <Page
-    // routeName="logout"
-    >
+    <Page routeName="logout">
       <p>Logging out...</p>
     </Page>
   );

@@ -7,7 +7,7 @@ import type { AuthCommands } from '../auth-commands.ts';
 import type { ICurrentUserSetter, IGrantManager } from '@ports';
 import { inject } from '@core';
 import type { ILogger } from '@zero/bootstrap';
-import type { IAuthEvents } from '../auth-events.ts';
+import type { AuthEvents } from '@services';
 
 export class LogoutCommandHandler extends AbstractCommandHandler<
   AuthCommands,
@@ -18,7 +18,7 @@ export class LogoutCommandHandler extends AbstractCommandHandler<
     private readonly currentUserSetter: ICurrentUserSetter,
 
     @inject('EventBus')
-    private readonly eventBus: IEventBus<IAllEvents> & IEventBus<IAuthEvents>,
+    private readonly eventBus: IEventBus<IAllEvents> & IEventBus<AuthEvents>,
 
     @inject('GrantService')
     private readonly grants: IGrantManager,

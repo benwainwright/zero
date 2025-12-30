@@ -20,7 +20,16 @@ export default defineConfig(() => ({
     tsconfigPaths({
       projectDiscovery: 'lazy',
       projects: [
-        path.join(import.meta.dirname, 'tsconfig.app.json'),
+        path.join(import.meta.dirname, 'tsconfig.lib.json'),
+        path.join(
+          import.meta.dirname,
+          '..',
+          '..',
+          'packages',
+          'websocket-adapter',
+          'tsconfig.lib.json'
+        ),
+
         path.join(import.meta.dirname, 'tsconfig.spec.json'),
       ],
     }),
