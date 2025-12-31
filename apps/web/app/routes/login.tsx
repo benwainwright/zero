@@ -40,13 +40,12 @@ export const Login = (): ReactNode => {
   }, [user]);
 
   const onSubmit = async (values: FormValues) => {
-    await api?.executeCommand({
-      key: 'LoginCommand',
-      params: {
+    if (api) {
+      await api.executeCommand('LoginCommand', {
         username: values.username,
         password: values.password,
-      },
-    });
+      });
+    }
   };
 
   useEvent('LoginSuccessfulEvent', () => {

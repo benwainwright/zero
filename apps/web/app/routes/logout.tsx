@@ -12,10 +12,7 @@ export const Logout = (): ReactNode => {
   useEffect(() => {
     void (async () => {
       if (user && api) {
-        await api.executeCommand({
-          key: 'LogoutCommand',
-          params: undefined,
-        });
+        await api.executeCommand('LogoutCommand');
       } else {
         await navigate('/login');
       }

@@ -24,13 +24,10 @@ describe('the app server', () => {
 
     commandBus.execute.mockRejectedValue('foo');
 
-    await commandClient.execute({
-      key: 'CreateUserCommand',
-      params: {
-        email: 'a@b.c',
-        password: 'foo',
-        username: 'foo',
-      },
+    await commandClient.execute('CreateUserCommand', {
+      email: 'a@b.c',
+      password: 'foo',
+      username: 'foo',
     });
 
     await vi.waitFor(() => {
@@ -53,13 +50,10 @@ describe('the app server', () => {
 
     commandBus.execute.mockRejectedValue(new Error('foo'));
 
-    await commandClient.execute({
-      key: 'CreateUserCommand',
-      params: {
-        email: 'a@b.c',
-        password: 'foo',
-        username: 'foo',
-      },
+    await commandClient.execute('CreateUserCommand', {
+      email: 'a@b.c',
+      password: 'foo',
+      username: 'foo',
     });
 
     await vi.waitFor(() => {
@@ -91,13 +85,10 @@ describe('the app server', () => {
 
     commandBus.execute.mockRejectedValue(new TestError('foo'));
 
-    await commandClient.execute({
-      key: 'CreateUserCommand',
-      params: {
-        email: 'a@b.c',
-        password: 'foo',
-        username: 'foo',
-      },
+    await commandClient.execute('CreateUserCommand', {
+      email: 'a@b.c',
+      password: 'foo',
+      username: 'foo',
     });
 
     await vi.waitFor(() => {
@@ -145,10 +136,7 @@ describe('the query client', () => {
       })
       .thenResolve(expectedResult);
 
-    const response = await queryClient.execute({
-      key: 'GetCurrentUser',
-      params: undefined,
-    });
+    const response = await queryClient.execute('GetCurrentUser');
 
     expect(response).toEqual(expectedResult);
 
@@ -192,15 +180,9 @@ describe('the query client', () => {
       })
       .thenResolve(expectedResultTwo);
 
-    const responseOnePromise = queryClient.execute({
-      key: 'GetCurrentUser',
-      params: undefined,
-    });
+    const responseOnePromise = queryClient.execute('GetCurrentUser');
 
-    const responseTwoPromise = queryClient.execute({
-      key: 'GetCurrentUser',
-      params: undefined,
-    });
+    const responseTwoPromise = queryClient.execute('GetCurrentUser');
 
     expect(await responseOnePromise).toEqual(expectedResultOne);
     expect(await responseTwoPromise).toEqual(expectedResultTwo);
@@ -221,14 +203,12 @@ describe('the command client', () => {
 
     uuidGenerator.v7.mockReturnValue('foo-id');
 
-    await commandClient.execute({
-      key: 'CreateUserCommand',
-      params: {
-        email: 'a@b.c',
-        password: 'foo',
-        username: 'foo',
-      },
+    await commandClient.execute('CreateUserCommand', {
+      email: 'a@b.c',
+      password: 'foo',
+      username: 'foo',
     });
+
     await vi.waitFor(() => {
       expect(commandBus.execute).toHaveBeenCalledWith({
         key: 'CreateUserCommand',

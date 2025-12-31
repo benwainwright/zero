@@ -1,7 +1,9 @@
-import type { IQueryParamsOrUndefined } from './i-query-params-or-undefined.ts';
 import type { IQuery } from './i-query.ts';
 
-export type IQueryParams<TQuery extends IQuery<string>> =
-  IQueryParamsOrUndefined<TQuery> extends undefined
+export type IQueryParams<TQuery extends IQuery<string>> = TQuery extends {
+  params: infer TParams;
+}
+  ? TParams extends undefined
     ? []
-    : [params: IQueryParamsOrUndefined<TQuery>];
+    : [params: TParams]
+  : [];

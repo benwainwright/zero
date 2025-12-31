@@ -21,7 +21,7 @@ export { useEvents } from './use-events.ts';
 //   type Oauth2IntegrationStatusNeedsRedirect
 // } from "./use-oauth2-integration-status.ts";
 // export { useUser } from "./use-user.ts";
-// export { useUsers } from "./use-users.ts";
+export { useUsers } from './use-users.ts';
 // export { useTasks } from "./use-tasks.ts";
 // export {
 //   useBankIntegrationStatus,

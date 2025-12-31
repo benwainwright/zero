@@ -5,13 +5,13 @@ import type {
   IEventListener,
   IEventPacket,
   IListener,
-  IQueryParamsOrUndefined,
   IQueryClient,
   IQueryParams,
   ICommandParams,
+  IPickCommand,
+  IPickQuery,
 } from '@zero/application-core';
 
-import type { AuthCommands, AuthQueries } from '@zero/auth';
 import { injectable } from 'inversify';
 import { inject } from './typed-inject.ts';
 import type { IKnownEvents } from './i-known-events.ts';
@@ -51,16 +51,22 @@ export class WebsocketApi
   }
 
   public async executeCommand<
-    TCommand extends AuthCommands,
+    TCommand extends IKnownCommands,
     TKey extends TCommand['key']
-  >(key: TKey, ...params: ICommandParams<TCommand>): Promise<void> {
+  >(
+    key: TKey,
+    ...params: ICommandParams<IPickCommand<IKnownCommands, TKey>>
+  ): Promise<void> {
     await this.commandClient.execute(key, ...params);
   }
 
   public async executeQuery<
-    TQuery extends AuthQueries,
+    TQuery extends IKnownQueries,
     TKey extends TQuery['key']
-  >(key: TKey, ...params: IQueryParams<TQuery>): Promise<TQuery['response']> {
+  >(
+    key: TKey,
+    ...params: IQueryParams<TQuery>
+  ): Promise<IPickQuery<TQuery, TKey>['response']> {
     return await this.queryClient.execute(key, ...params);
   }
 }

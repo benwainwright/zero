@@ -34,13 +34,10 @@ export const Register = (): ReactNode => {
   });
 
   const onSubmit = async (values: FormValues) => {
-    api?.executeCommand({
-      key: 'CreateUserCommand',
-      params: {
-        username: values.username,
-        email: values.email,
-        password: values.password,
-      },
+    api?.executeCommand('CreateUserCommand', {
+      username: values.username,
+      email: values.email,
+      password: values.password,
     });
   };
 

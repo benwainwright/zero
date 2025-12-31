@@ -23,7 +23,7 @@ export default defineConfig(() => ({
       transformMixedEsModules: true,
     },
     lib: {
-      entry: 'src/index.ts',
+      entry: ['src/client.ts', 'src/server.ts'],
       name: '@zero/websocket-server-adapter',
       fileName: 'index',
       formats: ['es' as const],

@@ -27,7 +27,7 @@ export const CurrentUserProvider = ({ children }: CurrentUserProviderProps) => {
   useEffect(() => {
     void (async () => {
       if (dirty && api) {
-        const user = await api.executeQuery('GetCurrentUser', undefined);
+        const user = await api.executeQuery('GetCurrentUser');
 
         setCurrentUser(user);
         setDirty(false);

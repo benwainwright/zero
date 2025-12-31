@@ -2,6 +2,7 @@ import type {
   ICommand,
   ICommandParams,
   IEventPacket,
+  IPickCommand,
   IPickQuery,
   IQuery,
   IQueryParams,
@@ -15,13 +16,13 @@ export interface IApiSurface<
 > {
   executeCommand<TCommand extends TCommands, TKey extends TCommand['key']>(
     key: TKey,
-    ...params: ICommandParams<TCommand>
+    ...params: ICommandParams<IPickCommand<TCommands, TKey>>
   ): Promise<void>;
 
   executeQuery<TQuery extends TQueries, TKey extends TQuery['key']>(
     key: TKey,
-    ...params: IQueryParams<TQuery>
-  ): Promise<TQuery['response']>;
+    ...params: IQueryParams<IPickQuery<TQuery, TKey>>
+  ): Promise<IPickQuery<TQuery, TKey>['response']>;
 
   on<TKey extends keyof TEvents>(
     key: TKey,

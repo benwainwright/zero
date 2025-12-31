@@ -1,4 +1,5 @@
 import { Loader, Page } from '@components';
+import { useUsers } from '@data';
 // import { useUsers } from "@data";
 import { Table } from '@mantine/core';
 import type { ReactNode } from 'react';

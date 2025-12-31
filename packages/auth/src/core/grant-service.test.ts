@@ -48,6 +48,24 @@ describe('grant', () => {
 
       expect(() => grant.done()).not.toThrow();
     });
+
+    it('throws no error if requiresNoPermissions has been called', () => {
+      const grant = new GrantService();
+
+      grant.setActor({
+        permissions: [
+          {
+            resource: '*',
+            action: 'ALLOW',
+            capabilities: ['user:delete', 'user:create'],
+          },
+        ],
+      });
+
+      grant.requiresNoPermissions();
+
+      expect(() => grant.done()).not.toThrow();
+    });
   });
 
   describe('can', () => {
@@ -67,7 +85,7 @@ describe('grant', () => {
       expect(() => grant.requires({ capability: 'user:list' })).not.toThrow();
     });
 
-    it.only('throws if an empty domain model is provided and global permissions are not present', () => {
+    it('throws if an empty domain model is provided and global permissions are not present', () => {
       const grant = new GrantService();
 
       class TestDomainModel extends DomainModel<unknown> {
