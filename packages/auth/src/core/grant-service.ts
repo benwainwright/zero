@@ -19,7 +19,7 @@ export class GrantService {
   }
 
   private isThereAMatchingPermission(
-    entity: DomainModel<unknown>,
+    entity: DomainModel<unknown> | undefined,
     capability: ICapability,
     action: 'ALLOW' | 'DENY'
   ) {
@@ -29,9 +29,13 @@ export class GrantService {
         permission.capabilities.includes(capability)
     );
 
-    return foundMatchingPerms?.find(
-      (allow) => allow.resource === '*' || allow.resource.id === entity.id
-    );
+    return foundMatchingPerms?.find((allow) => {
+      if (allow.resource === '*') {
+        return true;
+      }
+
+      return Boolean(entity && allow.resource.id === entity?.id);
+    });
   }
 
   public requiresNoPermissions() {

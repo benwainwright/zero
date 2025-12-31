@@ -1,4 +1,11 @@
-import type { ICommand, IEventPacket, IQuery } from '@types';
+import type {
+  ICommand,
+  ICommandParams,
+  IEventPacket,
+  IPickQuery,
+  IQuery,
+  IQueryParams,
+} from '@types';
 import type { IListener } from './i-event-listener.ts';
 
 export interface IApiSurface<
@@ -6,10 +13,14 @@ export interface IApiSurface<
   TQueries extends IQuery<string>,
   TEvents
 > {
-  executeCommand(command: Omit<TCommands, 'id'>): Promise<void>;
+  executeCommand<TCommand extends TCommands, TKey extends TCommand['key']>(
+    key: TKey,
+    ...params: ICommandParams<TCommand>
+  ): Promise<void>;
 
-  executeQuery<TQuery extends TQueries>(
-    query: Omit<TQuery['query'], 'id'>
+  executeQuery<TQuery extends TQueries, TKey extends TQuery['key']>(
+    key: TKey,
+    ...params: IQueryParams<TQuery>
   ): Promise<TQuery['response']>;
 
   on<TKey extends keyof TEvents>(

@@ -5,7 +5,10 @@ import type {
   IEventListener,
   IEventPacket,
   IListener,
+  IQueryParamsOrUndefined,
   IQueryClient,
+  IQueryParams,
+  ICommandParams,
 } from '@zero/application-core';
 
 import type { AuthCommands, AuthQueries } from '@zero/auth';
@@ -47,15 +50,17 @@ export class WebsocketApi
     return this.eventBus.on(key, callback);
   }
 
-  public async executeCommand(
-    command: Omit<AuthCommands, 'id'>
-  ): Promise<void> {
-    await this.commandClient.execute(command);
+  public async executeCommand<
+    TCommand extends AuthCommands,
+    TKey extends TCommand['key']
+  >(key: TKey, ...params: ICommandParams<TCommand>): Promise<void> {
+    await this.commandClient.execute(key, ...params);
   }
 
-  public async executeQuery<TQuery extends AuthQueries>(
-    query: Omit<TQuery['query'], 'id'>
-  ): Promise<TQuery['response']> {
-    return await this.queryClient.execute(query);
+  public async executeQuery<
+    TQuery extends AuthQueries,
+    TKey extends TQuery['key']
+  >(key: TKey, ...params: IQueryParams<TQuery>): Promise<TQuery['response']> {
+    return await this.queryClient.execute(key, ...params);
   }
 }

@@ -16,8 +16,11 @@ describe('get users query handler', () => {
     const users = [mock<User>(), mock<User>()];
     when(userRepo.getManyUsers).calledWith(0, 30).thenResolve(users);
 
-    const result = await handler.doHandle(context);
+    const result = await handler.tryHandle(context);
 
-    expect(result).toEqual(users);
+    expect.assertions(1);
+    if (result.handled) {
+      expect(result.response).toEqual(users);
+    }
   });
 });

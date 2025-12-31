@@ -1,5 +1,11 @@
 import { type ReactElement } from 'react';
-import { IconLogin, IconUser, IconHome, IconLogout } from '@tabler/icons-react';
+import {
+  IconLogin,
+  IconUser,
+  IconHome,
+  IconLogout,
+  IconUsers,
+} from '@tabler/icons-react';
 import type { IRoute } from '@zero/domain';
 
 export interface RouteSpec {
@@ -39,5 +45,10 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     authFailRedirect: '/',
     sidebarIcon: <IconLogin size={16} stroke={1.5} />,
     public: true,
+  },
+  users: {
+    component: 'routes/users.tsx',
+    authFailRedirect: '/login',
+    sidebarIcon: <IconUsers size={16} stroke={1.5} />,
   },
 } as const satisfies Record<string, RouteSpec>;

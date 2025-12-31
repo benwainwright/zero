@@ -7,10 +7,13 @@ describe('get current user query handler', () => {
     const { handler } = buildQueryHandler(GetCurrentUserQueryHandler);
     const context = getMockQueryContext('GetCurrentUser', undefined, 'ben');
 
-    const result = await handler.doHandle(context);
+    const result = await handler.tryHandle(context);
 
-    expect(result).toBeInstanceOf(User);
-    expect(result?.id).toEqual('ben');
+    expect.assertions(2);
+    if (result.handled) {
+      expect(result.response).toBeInstanceOf(User);
+      expect(result.response?.id).toEqual('ben');
+    }
   });
 
   it('returns undefined ifd not', async () => {
@@ -18,8 +21,11 @@ describe('get current user query handler', () => {
 
     const context = getMockQueryContext('GetCurrentUser', undefined);
 
-    const result = await handler.doHandle(context);
+    const result = await handler.tryHandle(context);
 
-    expect(result).toBeUndefined();
+    expect.assertions(1);
+    if (result.handled) {
+      expect(result.response).toBeUndefined();
+    }
   });
 });

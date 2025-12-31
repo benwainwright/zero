@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "@inversifyjs/strongly-typed": "catalog:",
-    "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
     "@zero/bootstrap": "workspace:*",
+    "@zero/application-core": "workspace:*",
     "@zero/domain": "workspace:*",
     "@zero/serialiser": "workspace:*",
     "cookie": "1.1.1",

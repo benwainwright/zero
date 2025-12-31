@@ -1,5 +1,5 @@
 import type { IKnownCommands, IUUIDGenerator } from '@types';
-import type { ICommandClient } from '@zero/application-core';
+import type { ICommandClient, ICommandParams } from '@zero/application-core';
 import { Serialiser } from '@zero/serialiser';
 import { injectable } from 'inversify';
 import { inject } from './typed-inject.ts';
@@ -14,12 +14,16 @@ export class WebsocketCommandClient implements ICommandClient<IKnownCommands> {
     private uuidGenerator: IUUIDGenerator
   ) {}
 
-  public async execute(command: Omit<IKnownCommands, 'id'>): Promise<void> {
+  public async execute<
+    TCommand extends IKnownCommands,
+    TKey extends TCommand['key']
+  >(key: TKey, ...params: ICommandParams<TCommand>): Promise<void> {
     const packet = {
       type: 'command',
       packet: {
         id: this.uuidGenerator.v7(),
-        ...command,
+        key,
+        params: params[0],
       },
     };
 

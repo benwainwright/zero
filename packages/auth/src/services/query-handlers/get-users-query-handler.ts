@@ -1,5 +1,6 @@
 import {
   AbstractQueryHandler,
+  type IPickQuery,
   type IQueryContext,
 } from '@zero/application-core';
 import type { AuthQueries } from '../auth-queries.ts';
@@ -16,8 +17,8 @@ export class GetUsersQueryHandler extends AbstractQueryHandler<
     @inject('UserRepository')
     private readonly users: IUserRepository,
 
-    @inject("GrantService")
-    private readonly grants: GrantService
+    @inject('GrantService')
+    private readonly grants: GrantService,
 
     @inject('Logger')
     logger: ILogger
@@ -25,15 +26,16 @@ export class GetUsersQueryHandler extends AbstractQueryHandler<
     super(logger);
   }
 
-  protected override handle(
-    context: IQueryContext<AuthQueries, 'GetUsers'>
-  ): Promise<User[]> {
-
+  protected override async handle({
+    query: { offset, limit },
+  }: IQueryContext<IPickQuery<AuthQueries, 'GetUsers'>>): Promise<User[]> {
     this.grants.requires({
-      capability: "user:read",
+      capability: 'user:list',
+    });
 
-    })
+    const users = await this.users.getManyUsers(offset, limit);
 
+    return users;
   }
   public override readonly name = 'GetUsers';
 }

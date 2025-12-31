@@ -67,7 +67,7 @@ describe('grant', () => {
       expect(() => grant.requires({ capability: 'user:list' })).not.toThrow();
     });
 
-    it('throws if an empty domain model is provided and global permissions are not present', () => {
+    it.only('throws if an empty domain model is provided and global permissions are not present', () => {
       const grant = new GrantService();
 
       class TestDomainModel extends DomainModel<unknown> {

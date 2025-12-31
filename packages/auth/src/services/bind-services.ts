@@ -12,6 +12,7 @@ import type { IAuthTypes } from '@core';
 import { LoginCommandHandler } from './command-handlers/login-command-handler.ts';
 import { LogoutCommandHandler } from './command-handlers/logout-command-handler.ts';
 import { UpdateUserCommandHandler } from './command-handlers/update-user-command-handler.ts';
+import { GetUsersQueryHandler } from './query-handlers/get-users-query-handler.ts';
 
 export const bindServices = (
   load: TypedContainerModuleLoadOptions<
@@ -25,4 +26,5 @@ export const bindServices = (
   load.bind('CommandHandler').to(UpdateUserCommandHandler);
 
   load.bind('QueryHandler').to(GetCurrentUserQueryHandler);
+  load.bind('QueryHandler').to(GetUsersQueryHandler);
 };

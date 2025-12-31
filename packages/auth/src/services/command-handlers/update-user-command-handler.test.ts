@@ -16,7 +16,7 @@ describe('Update user command handler', () => {
     });
 
     when(userRepo.getUser).calledWith('ben').thenResolve(undefined);
-    await expect(handler.doHandle(context)).rejects.toThrow(UserNotFoundError);
+    await expect(handler.tryHandle(context)).rejects.toThrow(UserNotFoundError);
   });
   it('will update an existing user', async () => {
     const { handler, userRepo, passwordHasher } = buildCommandHandler(
@@ -34,7 +34,7 @@ describe('Update user command handler', () => {
     when(userRepo.getUser).calledWith('ben').thenResolve(mockUser);
     when(passwordHasher.hashPassword).calledWith('foo').thenResolve('hash');
 
-    await handler.doHandle(context);
+    await handler.tryHandle(context);
 
     expect(mockUser.update).toHaveBeenCalledWith({
       email: 'a@b.c',

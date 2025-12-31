@@ -1,6 +1,7 @@
 import {
   AbstractCommandHandler,
   type ICommandContext,
+  type IPickCommand,
 } from '@zero/application-core';
 import type {
   IGrantManager,
@@ -43,7 +44,7 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
 
   public override async handle({
     command: { password, username, email },
-  }: ICommandContext<AuthCommands, 'CreateUserCommand'>) {
+  }: ICommandContext<IPickCommand<AuthCommands, 'CreateUserCommand'>>) {
     const passwordHash = await this.passwordHasher.hashPassword(password);
 
     const role = await this.roleRepo.getRole(USER_ROLE_ID);

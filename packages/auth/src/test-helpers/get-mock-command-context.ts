@@ -3,7 +3,7 @@ import type { IPickCommand } from '@zero/application-core';
 import { User } from '@zero/domain';
 
 export const getMockCommandContext = <TKey extends AuthCommands['key']>(
-  _key: TKey,
+  key: TKey,
   params: IPickCommand<AuthCommands, TKey>['params'],
   user?: string
 ) => {
@@ -17,7 +17,7 @@ export const getMockCommandContext = <TKey extends AuthCommands['key']>(
     : undefined;
 
   return {
-    command: params,
+    command: { id: 'foo-bar', key: key, params },
     authContext,
   };
 };

@@ -2,29 +2,33 @@ import { injectable } from 'inversify';
 import { inject, multiInject } from './typed-inject.ts';
 import type { AbstractQueryHandler } from './abstract-query-handler.ts';
 import type { IQuery } from '@types';
-import type { ICurrentUserCache } from '@ports';
+import type { ICurrentUserCache, IQueryBus } from '@ports';
+import { AppError } from '@errors';
 
 @injectable()
-export class QueryBus {
+export class QueryBus<IQueries extends IQuery<string>> implements IQueryBus {
   public constructor(
     @multiInject('QueryHandler')
-    private readonly handlers: AbstractQueryHandler<IQuery<string>, string>[],
+    private readonly handlers: AbstractQueryHandler<IQueries, string>[],
+
     @inject('CurrentUserCache')
     private readonly userStore: ICurrentUserCache
   ) {}
 
   public async execute<TQuery extends IQuery<string>>(
-    query: TQuery['query']
+    query: Omit<TQuery, 'response'>
   ): Promise<TQuery['response']> {
-    const theHandler = this.handlers.find((handler) =>
-      handler.canHandle(query)
-    );
-
     const currentUser = await this.userStore.get();
+    for (let handler of this.handlers) {
+      const result = await handler.tryHandle({
+        query,
+        authContext: currentUser,
+      });
+      if (result.handled) {
+        return result.response;
+      }
+    }
 
-    return await theHandler?.doHandle({
-      query: query.params,
-      authContext: currentUser,
-    });
+    throw new AppError(`No handler found for query '${query.key}'`);
   }
 }

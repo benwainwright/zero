@@ -24,7 +24,7 @@ describe('login command handler', async () => {
       .calledWith('foo', 'mockHash')
       .thenResolve(true);
 
-    await handler.doHandle(context);
+    await handler.tryHandle(context);
 
     expect(currentUserSetter.set).toHaveBeenCalledWith(user);
     expect(eventBus.emit).toHaveBeenCalledWith(
@@ -52,7 +52,7 @@ describe('login command handler', async () => {
       .calledWith('foo', 'mockHash')
       .thenResolve(false);
 
-    await handler.doHandle(context);
+    await handler.tryHandle(context);
 
     expect(currentUserSetter.set).not.toHaveBeenCalled();
     expect(eventBus.emit).toHaveBeenCalledWith('LoginFailedEvent', undefined);
@@ -69,7 +69,7 @@ describe('login command handler', async () => {
 
     when(userRepo.getUser).calledWith('ben').thenResolve(undefined);
 
-    await handler.doHandle(context);
+    await handler.tryHandle(context);
 
     expect(currentUserSetter.set).not.toHaveBeenCalled();
     expect(eventBus.emit).toHaveBeenCalledWith('LoginFailedEvent', undefined);

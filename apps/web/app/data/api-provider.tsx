@@ -1,5 +1,4 @@
-import type { IAllEvents, IApiSurface } from '@zero/application-core';
-import type { AuthEvents } from '@zero/auth';
+import type { IApiSurface } from '@zero/application-core';
 import type {
   IKnownCommands,
   IKnownEvents,

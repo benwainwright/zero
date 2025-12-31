@@ -22,7 +22,7 @@ describe('bind services', () => {
     expect(commandHandlers).toHaveLength(handlerFiles.length);
   });
 
-  it('calls bind all all of the queryy handlers', async () => {
+  it('calls bind all all of the query handlers', async () => {
     const module = new TypedContainerModule((load) => {
       bindServices(load);
     });

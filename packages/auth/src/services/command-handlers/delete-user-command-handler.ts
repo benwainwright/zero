@@ -1,6 +1,7 @@
 import {
   AbstractCommandHandler,
   type ICommandContext,
+  type IPickCommand,
 } from '@zero/application-core';
 import type { IGrantManager, IUserRepository } from '@ports';
 import { injectable } from 'inversify';
@@ -30,7 +31,9 @@ export class DeleteUserCommandHandler extends AbstractCommandHandler<
 
   protected override async handle({
     command: { username },
-  }: ICommandContext<AuthCommands, 'DeleteUserCommand'>): Promise<void> {
+  }: ICommandContext<
+    IPickCommand<AuthCommands, 'DeleteUserCommand'>
+  >): Promise<void> {
     const user = await this.userRepo.getUser(username);
 
     this.grants.requires({

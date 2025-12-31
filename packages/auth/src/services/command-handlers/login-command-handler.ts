@@ -3,6 +3,7 @@ import {
   type IAllEvents,
   type ICommandContext,
   type IEventBus,
+  type IPickCommand,
 } from '@zero/application-core';
 import type { AuthCommands } from '../auth-commands.ts';
 import { injectable } from 'inversify';
@@ -47,7 +48,9 @@ export class LoginCommandHandler extends AbstractCommandHandler<
 
   protected override async handle({
     command: { username, password },
-  }: ICommandContext<AuthCommands, 'LoginCommand'>): Promise<void> {
+  }: ICommandContext<
+    IPickCommand<AuthCommands, 'LoginCommand'>
+  >): Promise<void> {
     this.grants.requiresNoPermissions();
 
     const user = await this.userRepo.getUser(username);

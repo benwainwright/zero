@@ -21,7 +21,7 @@ export class AuthorisingQueryBus implements IQueryBus {
   ) {}
 
   public async execute<TQuery extends IQuery<string>>(
-    command: TQuery['query']
+    command: Omit<TQuery, 'response'>
   ): Promise<TQuery['response']> {
     const user = await this.userStore.get();
     if (user) {

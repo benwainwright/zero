@@ -1,5 +1,6 @@
 import {
   AbstractQueryHandler,
+  type IPickQuery,
   type IQueryContext,
 } from '@zero/application-core';
 import type { AuthQueries } from '../auth-queries.ts';
@@ -26,7 +27,9 @@ export class GetCurrentUserQueryHandler extends AbstractQueryHandler<
 
   protected override async handle({
     authContext,
-  }: IQueryContext<AuthQueries, 'GetCurrentUser'>): Promise<User | undefined> {
+  }: IQueryContext<IPickQuery<AuthQueries, 'GetCurrentUser'>>): Promise<
+    User | undefined
+  > {
     this.grant.requiresNoPermissions();
 
     if (authContext instanceof User) {

@@ -21,7 +21,7 @@ describe('authorising command bus', () => {
       mockCurrentUserCache
     );
 
-    const mockQuery = mock<IQuery<string>['query']>();
+    const mockQuery = mock<IQuery<string>>();
 
     const mockUser = mock<User>();
 
@@ -44,7 +44,7 @@ describe('authorising command bus', () => {
       mockCurrentUserCache
     );
 
-    const mockQuery = mock<IQuery<string>['query']>();
+    const mockQuery = mock<IQuery<string>>();
 
     when(mockCurrentUserCache.get).calledWith().thenResolve(undefined);
 

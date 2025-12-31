@@ -8,7 +8,7 @@ describe('logout command handler', () => {
 
     const context = getMockCommandContext('LogoutCommand', undefined);
 
-    await handler.doHandle(context);
+    await handler.tryHandle(context);
 
     expect(currentUserSetter.set).toHaveBeenCalledWith(undefined);
   });
@@ -18,7 +18,7 @@ describe('logout command handler', () => {
 
     const context = getMockCommandContext('LogoutCommand', undefined);
 
-    await handler.doHandle(context);
+    await handler.tryHandle(context);
 
     expect(eventBus.emit).toHaveBeenCalledWith(
       'LogoutSuccessfulEvent',

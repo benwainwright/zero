@@ -20,7 +20,7 @@ describe('delete user command handler', () => {
 
     when(userRepo.getUser).calledWith('ben').thenResolve(mockUser);
 
-    await handler.doHandle(context);
+    await handler.tryHandle(context);
 
     expect(userRepo.deleteUser).toHaveBeenCalledWith(mockUser);
   });

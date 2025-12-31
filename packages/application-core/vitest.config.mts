@@ -26,7 +26,7 @@ export default defineConfig(() => ({
       exclude: ['./src/**/*.test.ts', '*./src/**/*.spec.ts'],
       thresholds: {
         autoUpdate: true,
-        functions: 22.22,
+        functions: 22.72,
         lines: 46.8,
         statements: 46.46,
         branches: 100,

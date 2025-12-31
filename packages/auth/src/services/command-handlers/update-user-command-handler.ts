@@ -1,6 +1,7 @@
 import {
   AbstractCommandHandler,
   type ICommandContext,
+  type IPickCommand,
 } from '@zero/application-core';
 import type { AuthCommands } from '../auth-commands.ts';
 import type { IGrantManager, IPasswordHasher, IUserRepository } from '@ports';
@@ -33,7 +34,9 @@ export class UpdateUserCommandHandler extends AbstractCommandHandler<
 
   protected override async handle({
     command: { username, email, password },
-  }: ICommandContext<AuthCommands, 'UpdateUserCommand'>): Promise<void> {
+  }: ICommandContext<
+    IPickCommand<AuthCommands, 'UpdateUserCommand'>
+  >): Promise<void> {
     const user = await this.userRepo.getUser(username);
 
     this.grants.requires({

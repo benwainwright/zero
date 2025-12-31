@@ -1,5 +1,10 @@
 import type { IKnownQueries, IUUIDGenerator } from '@types';
-import type { IEventListener, IQueryClient } from '@zero/application-core';
+import type {
+  IEventListener,
+  IPickQuery,
+  IQueryClient,
+  IQueryParams,
+} from '@zero/application-core';
 import { inject } from './typed-inject.ts';
 import { Serialiser } from '@zero/serialiser';
 import type { IKnownEvents } from './i-known-events.ts';
@@ -16,15 +21,21 @@ export class WebsocketQueryClient implements IQueryClient<IKnownQueries> {
     private eventBus: IEventListener<IKnownEvents>
   ) {}
 
-  public async execute<TQuery extends IKnownQueries>(
-    query: Omit<TQuery['query'], 'id'>
-  ): Promise<TQuery['response']> {
+  public async execute<
+    TQuery extends IKnownQueries,
+    TKey extends TQuery['key']
+  >(
+    key: TKey,
+    ...params: IQueryParams<TQuery>
+  ): Promise<IPickQuery<TQuery, TKey>['response']> {
     const id = this.uuidGenerator.v7();
+
     const packet = {
       type: 'query',
       packet: {
         id,
-        ...query,
+        key,
+        params: params[0],
       },
     };
 
@@ -35,7 +46,13 @@ export class WebsocketQueryClient implements IQueryClient<IKnownQueries> {
     return await new Promise((accept) => {
       const listener = this.eventBus.on('QueryResponseEvent', (data) => {
         if (data.id === id) {
-          accept(data.data as TQuery['response']);
+          const newData = data.data as Promise<
+            IPickQuery<TQuery, TKey>['response']
+          >;
+
+          if (newData) {
+            accept(newData);
+          }
           this.eventBus.off(listener);
         }
       });

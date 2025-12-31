@@ -32,10 +32,13 @@ export {
   type ICommandContext,
   type IApplicationTypes,
   type ICommand,
+  type IQueryParamsOrUndefined,
   type IQuery,
   type IPickCommand,
   type IPickQuery,
+  type ICommandParams,
   type IEventPacket,
+  type IQueryParams,
 } from '@types';
 
 export { applicationCoreModule } from './application-core-module.ts';

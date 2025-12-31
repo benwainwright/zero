@@ -1,10 +1,13 @@
 import type { AuthQueries } from '@services';
-import type { IPickQuery } from '@zero/application-core';
+import type {
+  IQueryParamsOrUndefined,
+  IPickQuery,
+} from '@zero/application-core';
 import { User } from '@zero/domain';
 
-export const getMockQueryContext = <TKey extends AuthQueries['query']['key']>(
-  _key: TKey,
-  params: IPickQuery<AuthQueries, TKey>['query']['params'],
+export const getMockQueryContext = <TKey extends AuthQueries['key']>(
+  key: TKey,
+  params: IQueryParamsOrUndefined<IPickQuery<AuthQueries, TKey>>,
   user?: string
 ) => {
   const authContext = user
@@ -18,6 +21,6 @@ export const getMockQueryContext = <TKey extends AuthQueries['query']['key']>(
 
   return {
     authContext,
-    query: params,
+    query: { id: 'foo-bar', key: key, params },
   };
 };

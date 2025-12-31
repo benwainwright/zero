@@ -3,6 +3,7 @@ import type { AbstractCommandHandler } from './abstract-command-handler.ts';
 import { inject, multiInject } from './typed-inject.ts';
 import type { ICommandBus, ICurrentUserCache } from '@ports';
 import type { ICommand } from '@types';
+import { AppError } from '@errors';
 
 @injectable()
 export class CommandBus implements ICommandBus {
@@ -18,15 +19,13 @@ export class CommandBus implements ICommandBus {
   ) {}
 
   public async execute(command: ICommand<string>) {
-    const theHandler = this.handlers.find((handler) =>
-      handler.canHandle(command)
-    );
-
     const currentUser = await this.userStore.get();
+    for (let handler of this.handlers) {
+      if (await handler.tryHandle({ command, authContext: currentUser })) {
+        return;
+      }
+    }
 
-    await theHandler?.doHandle({
-      command: command.params,
-      authContext: currentUser,
-    });
+    throw new AppError(`No handler found for command '${command.key}'`);
   }
 }
