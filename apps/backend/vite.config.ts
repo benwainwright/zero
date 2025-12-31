@@ -13,7 +13,11 @@ export default defineConfig(() => ({
       projects: [path.join(import.meta.dirname, 'tsconfig.app.json')],
     }),
   ],
+  ssr: {
+    target: 'node' as const,
+  },
   build: {
+    ssr: true,
     outDir: './dist',
     emptyOutDir: true,
     reportCompressedSize: true,
@@ -21,7 +25,7 @@ export default defineConfig(() => ({
       transformMixedEsModules: true,
     },
     lib: {
-      entry: 'src/index.ts',
+      entry: 'src/start.ts',
       name: '@zero/bootstrap',
       fileName: 'index',
       formats: ['es' as const],

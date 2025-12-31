@@ -21,6 +21,7 @@
     "@inversifyjs/strongly-typed": "catalog:",
     "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
+    "@zero/domain": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "bcryptjs": "^3.0.3",
     "inversify": "catalog:",

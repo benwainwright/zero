@@ -8,14 +8,15 @@ export default defineConfig(() => ({
   cacheDir: '../../node_modules/.vite/packages/node-adapters',
   plugins: [
     tsconfigPaths({
-      projectDiscovery: 'lazy',
       projects: [
         path.join(import.meta.dirname, 'tsconfig.lib.json'),
         path.join(import.meta.dirname, 'tsconfig.spec.json'),
       ],
     }),
   ],
+  ssr: { target: 'node' as const },
   build: {
+    ssr: true,
     outDir: './dist',
     emptyOutDir: true,
     reportCompressedSize: true,

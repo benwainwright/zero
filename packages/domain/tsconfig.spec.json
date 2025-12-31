@@ -4,7 +4,10 @@
     "paths": {
       "@core": ["./src/core/index.ts"],
       "@user": ["./src/user/index.ts"],
+      "@bank-connection": ["./src/bank-connection/index.ts"],
+      "@user/*": ["./src/user/*"],
       "@role": ["./src/role/index.ts"],
+      "@types": ["./src/types/index.ts"],
       "@permission": ["./src/permission/index.ts"]
     },
     "outDir": "./out-tsc/vitest",

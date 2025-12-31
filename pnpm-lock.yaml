@@ -473,6 +473,9 @@ importers:
       '@zero/bootstrap':
         specifier: workspace:*
         version: link:../bootstrap
+      '@zero/domain':
+        specifier: workspace:*
+        version: link:../domain
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
