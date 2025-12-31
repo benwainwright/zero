@@ -3,6 +3,12 @@ import type { User } from '@zero/domain';
 export type AuthQueries =
   | {
       id: string;
+      key: 'GetUser';
+      params: { username: string };
+      response: User;
+    }
+  | {
+      id: string;
       key: 'GetCurrentUser';
       params: undefined;
       response: User | undefined;

@@ -50,9 +50,7 @@ export class WebsocketQueryClient implements IQueryClient<IKnownQueries> {
             IPickQuery<TQuery, TKey>['response']
           >;
 
-          if (newData) {
-            accept(newData);
-          }
+          accept(newData);
           this.eventBus.off(listener);
         }
       });

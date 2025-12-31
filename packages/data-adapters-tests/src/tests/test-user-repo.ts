@@ -376,6 +376,45 @@ export const testUserAndRoleRepository = (
       expect(persistedUserTwo?.email).toBe(userTwo.email);
     });
 
+    describe('requireUser', () => {
+      it('returns a user if present', async () => {
+        const { userRepo, unitOfWork } = await create();
+
+        const data = User.reconstitute({
+          email: 'bwainwright28@gmail.com',
+          id: 'ben',
+          passwordHash:
+            '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+          roles: [],
+        });
+
+        await unitOfWork.begin();
+        await userRepo.saveUser(data);
+        await unitOfWork.commit();
+
+        const user = await userRepo.requireUser('ben');
+
+        expect(user).toEqual(data);
+      });
+      it('throws if not present', async () => {
+        const { userRepo, unitOfWork } = await create();
+
+        const data = User.reconstitute({
+          email: 'bwainwright28@gmail.com',
+          id: 'ben',
+          passwordHash:
+            '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+          roles: [],
+        });
+
+        await unitOfWork.begin();
+        await userRepo.saveUser(data);
+        await unitOfWork.commit();
+
+        await expect(userRepo.requireUser('another-user')).rejects.toThrow();
+      });
+    });
+
     describe('getMany', () => {
       it('can return many users', async () => {
         const { userRepo, unitOfWork } = await create();

@@ -1,7 +1,6 @@
 import { CurrentUserContext } from '@data';
 import { type ReactNode, useContext } from 'react';
 import { Navigate } from 'react-router';
-
 import { routesList } from '@config';
 import { Box, Flex, Title } from '@mantine/core';
 import { routeAvailable } from '@utils';
@@ -37,6 +36,8 @@ export const Page = ({
       loading
     );
   }
+
+  console.log({ initialLoadComplete });
 
   return initialLoadComplete ? (
     <>

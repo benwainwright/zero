@@ -7,7 +7,7 @@ import { Link } from 'react-router';
 export const Users = (): ReactNode => {
   const { data: users } = useQuery('GetUsers', {
     offset: 0,
-    limit: 0,
+    limit: 30,
   });
 
   return (
@@ -19,7 +19,6 @@ export const Users = (): ReactNode => {
               <Table.Tr>
                 <Table.Th>Username</Table.Th>
                 <Table.Th>Email</Table.Th>
-                <Table.Th>Permissions</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <tbody>
@@ -29,7 +28,6 @@ export const Users = (): ReactNode => {
                     <Link to={`/users/${user.id}/edit`}>{user.id}</Link>
                   </Table.Td>
                   <Table.Td>{user.email}</Table.Td>
-                  <Table.Td>{user.permissions.join(', ')}</Table.Td>
                 </Table.Tr>
               ))}
             </tbody>

@@ -49,6 +49,41 @@ describe('grant', () => {
       expect(() => grant.done()).not.toThrow();
     });
 
+    it(`bypassesses any other caps if the 'all' cap is set`, () => {
+      class TestOtherDomainModel extends DomainModel<unknown> {
+        public override toObject() {
+          return this;
+        }
+
+        public id = 'foo';
+      }
+
+      const grant = new GrantService();
+      grant.setActor({
+        permissions: [
+          {
+            resource: new TestOtherDomainModel(),
+            action: 'ALLOW',
+            capabilities: ['all'],
+          },
+        ],
+      });
+
+      class TestDomainModel extends DomainModel<unknown> {
+        public override toObject() {
+          return this;
+        }
+
+        public id = 'foo';
+      }
+
+      const model = new TestDomainModel();
+
+      expect(() =>
+        grant.requires({ capability: 'user:create', for: model })
+      ).not.toThrow();
+    });
+
     it('throws no error if requiresNoPermissions has been called', () => {
       const grant = new GrantService();
 

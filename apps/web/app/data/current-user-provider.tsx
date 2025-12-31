@@ -28,13 +28,12 @@ export const CurrentUserProvider = ({ children }: CurrentUserProviderProps) => {
     void (async () => {
       if (dirty && api) {
         const user = await api.executeQuery('GetCurrentUser');
-
         setCurrentUser(user);
         setDirty(false);
         setInitialLoadComplete(true);
       }
     })();
-  }, [dirty, api]);
+  }, [dirty, api, initialLoadComplete]);
   return (
     <CurrentUserContext
       value={{

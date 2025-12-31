@@ -26,7 +26,8 @@ export class GrantService {
     const foundMatchingPerms = this.actor?.permissions.filter(
       (permission) =>
         permission.action === action &&
-        permission.capabilities.includes(capability)
+        (permission.capabilities.includes(capability) ||
+          permission.capabilities.includes('all'))
     );
 
     return foundMatchingPerms?.find((allow) => {

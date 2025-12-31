@@ -2,13 +2,13 @@ import { Header, NavBar } from '@components';
 import { useDisclosure } from '@mantine/hooks';
 import { AppShell, Container } from '@mantine/core';
 import { Outlet } from 'react-router';
-// import { useNotifications } from "@data";
+import { useNotifications } from '@data';
 import type { ReactNode } from 'react';
 import { CurrentUserProvider } from '@data';
 
 const AppLayout = (): ReactNode => {
   const [opened, { toggle }] = useDisclosure();
-  // useNotifications();
+  useNotifications();
   return (
     <CurrentUserProvider>
       <AppShell

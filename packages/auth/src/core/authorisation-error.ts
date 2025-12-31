@@ -7,9 +7,9 @@ export class AuthorisationError extends AuthError {
     public readonly neededCapabilities: ICapability
   ) {
     super(
-      `Not authorised - need ${neededCapabilities}${
+      `Not authorised - ${neededCapabilities}${
         entity ? `for resource ${entity.id}}` : ``
-      }`
+      }  not permitted`
     );
   }
 }
