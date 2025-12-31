@@ -3,6 +3,7 @@ export {
   CurrentUserContext,
 } from './current-user-provider.tsx';
 export { ApiContext, ApiProvider } from './api-provider.tsx';
+export { useCommand } from './use-command.ts';
 //
 // export { command } from "./command.ts";
 // export { getCurrentUser } from "./get-current-user.ts";
@@ -12,6 +13,7 @@ export { ApiContext, ApiProvider } from './api-provider.tsx';
 // export { useCurrentUser } from "./use-current-user.ts";
 export { useEvent } from './use-event.ts';
 export { useEvents } from './use-events.ts';
+export { useQuery } from './use-query.ts';
 // export { useNotifications } from "./use-notifications.ts";
 // export {
 //   useOauth2IntegrationStatus,

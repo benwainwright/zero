@@ -1,5 +1,5 @@
 import { Page } from '@components';
-import { useEvent, CurrentUserContext, ApiContext } from '@data';
+import { useEvent, CurrentUserContext, useCommand } from '@data';
 import { useContext, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -16,7 +16,7 @@ interface FormValues {
 export const Register = (): ReactNode => {
   const navigate = useNavigate();
   const { user, reload } = useContext(CurrentUserContext);
-  const { api } = useContext(ApiContext);
+  const { execute: createUser } = useCommand('CreateUserCommand');
 
   const form = useForm({
     initialValues: {
@@ -33,14 +33,6 @@ export const Register = (): ReactNode => {
     },
   });
 
-  const onSubmit = async (values: FormValues) => {
-    api?.executeCommand('CreateUserCommand', {
-      username: values.username,
-      email: values.email,
-      password: values.password,
-    });
-  };
-
   useEffect(() => {
     void (async () => {
       if (user) {
@@ -55,7 +47,7 @@ export const Register = (): ReactNode => {
 
   return (
     <Page routeName="register">
-      <form method="post" onSubmit={form.onSubmit(onSubmit)}>
+      <form method="post" onSubmit={form.onSubmit(createUser)}>
         <TextInput
           label="Username"
           placeholder=""

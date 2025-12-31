@@ -1,6 +1,5 @@
 import { Page } from '@components';
-import { ApiContext, CurrentUserContext, useEvent } from '@data';
-// import { command, useEvent } from "@data";
+import { CurrentUserContext, useCommand, useEvent } from '@data';
 import {
   Button,
   Group,
@@ -20,7 +19,7 @@ interface FormValues {
 
 export const Login = (): ReactNode => {
   const { user, reload } = useContext(CurrentUserContext);
-  const { api } = useContext(ApiContext);
+  const { execute: login } = useCommand('LoginCommand');
 
   const navigate = useNavigate();
 
@@ -40,12 +39,10 @@ export const Login = (): ReactNode => {
   }, [user]);
 
   const onSubmit = async (values: FormValues) => {
-    if (api) {
-      await api.executeCommand('LoginCommand', {
-        username: values.username,
-        password: values.password,
-      });
-    }
+    await login({
+      username: values.username,
+      password: values.password,
+    });
   };
 
   useEvent('LoginSuccessfulEvent', () => {
