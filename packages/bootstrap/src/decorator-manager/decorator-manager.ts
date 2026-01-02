@@ -13,6 +13,7 @@ import { getPriority } from './get-priority.ts';
 import type { ContainerWithMove } from './container-with-move.ts';
 import { MovePlugin } from './move-plugin.ts';
 import type { IParentDecoratorManager } from './i-parent-decorator-manager.ts';
+import type { IDecoratorManager } from './i-decorator-manager.ts';
 
 const INVERSIFY_METADATA_KEY = '@inversifyjs/core/classMetadataReflectKey';
 
@@ -40,7 +41,7 @@ const hasMoveBinding = <TMap extends BindingMap>(
 
 @injectable()
 export class DecoratorManager<TMap extends BindingMap>
-  implements IParentDecoratorManager<TMap>
+  implements IDecoratorManager<TMap>
 {
   private readonly container: TypedContainer<TMap>;
   private static readonly containersWithMove = new WeakSet<object>();

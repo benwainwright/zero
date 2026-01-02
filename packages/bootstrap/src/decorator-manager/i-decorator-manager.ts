@@ -6,6 +6,4 @@ export interface IDecoratorManager<TMap extends BindingMap = any> {
     token: TKey,
     thing: Newable<ContainerBinding<TMap, TKey>>
   ): void;
-
-  save(): void;
 }
