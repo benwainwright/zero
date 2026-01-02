@@ -5,6 +5,7 @@ import {
   IconHome,
   IconLogout,
   IconUsers,
+  IconUsersGroup,
 } from '@tabler/icons-react';
 import type { IRoute } from '@zero/domain';
 
@@ -27,13 +28,17 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     authFailRedirect: '/login',
     sidebarIcon: <IconHome size={16} stroke={1.5} />,
   },
+  roles: {
+    component: 'routes/roles.tsx',
+    authFailRedirect: '/',
+    sidebarIcon: <IconUsersGroup size={16} stroke={1.5} />,
+  },
   register: {
     component: 'routes/register.tsx',
     authFailRedirect: '/',
     sidebarIcon: <IconUser size={16} stroke={1.5} />,
     publicOnly: true,
   },
-
   logout: {
     component: 'routes/logout.tsx',
     authFailRedirect: '/login',
@@ -54,6 +59,12 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
   editUser: {
     component: 'routes/edit-user.tsx',
     path: 'users/:userId/edit',
+    authFailRedirect: '/login',
+    hideFromMenu: true,
+  },
+  editRole: {
+    component: 'routes/edit-role.tsx',
+    path: 'roles/:roleId/edit',
     authFailRedirect: '/login',
     hideFromMenu: true,
   },

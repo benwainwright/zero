@@ -20,4 +20,4 @@ export {
   permissionSchema,
 } from '@permission';
 
-export { Role, type IRole, roleSchema, type IRoute } from '@role';
+export { Role, type IRole, roleSchema, type IRoute, routes } from '@role';

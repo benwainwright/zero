@@ -9,7 +9,11 @@ export const useQuery = <
 >(
   key: TKey,
   ...params: IQueryParams<IPickQuery<TQuery, TKey>>
-) => {
+): {
+  data: IPickQuery<TQuery, TKey>['response'] | undefined;
+  isPending: boolean;
+  refresh: () => void;
+} => {
   const [isPending, startTransition] = useTransition();
   const [data, setData] = useState<IPickQuery<TQuery, TKey>['response']>();
   const [dirty, setDirty] = useState(true);

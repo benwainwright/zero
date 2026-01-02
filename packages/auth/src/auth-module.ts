@@ -22,7 +22,11 @@ export const authModule = module<
   bootstrapInitialUsersAndPermissions(bootstrapper, container);
   bindServices(load);
 
-  load.bind('GrantService').to(GrantService);
+  bootstrapper.onRequest<IAuthExports>(async (container) => {
+    container.unbindSync('GrantService');
+    container.bind('GrantService').to(GrantService).inRequestScope();
+  });
+
   decorators.decorate('QueryBus', AuthorisingQueryBus);
   decorators.decorate('CommandBus', AuthorisingCommandBus);
   decorators.decorate('UserRepository', UserRepositoryAuthEventStager);

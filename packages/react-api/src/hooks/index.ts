@@ -7,3 +7,5 @@ export { useOpenSocket } from './use-open-socket.ts';
 export { useQuery } from './use-query.ts';
 export { useUser } from './use-user.ts';
 export { useUsers } from './use-users.ts';
+export { useRoles } from './use-roles.tsx';
+export { useRole } from './use-role.tsx';

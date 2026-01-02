@@ -5,9 +5,16 @@ import process from 'process';
 import z, { type ZodRawShape, ZodError, type ZodType, type core } from 'zod';
 
 import { ConfigValue } from './config-value.ts';
-import { type ILogger, type IBootstrapper } from '@types';
+import {
+  type ILogger,
+  type IBootstrapper,
+  type IBootstrapTypes,
+  type RequestCallback,
+} from '@types';
 import { injectable, type ServiceIdentifier } from 'inversify';
 import { inject } from '@inversify';
+import type { TypedContainer } from '@inversifyjs/strongly-typed';
+import type { BindingMap } from '@decorator-manager';
 
 export const LOG_CONTEXT = { context: 'bootstrapper' };
 
@@ -27,6 +34,8 @@ export class Bootstrapper implements IBootstrapper {
 
   private _config: Record<string, unknown>;
 
+  private requestCallbacks: RequestCallback<BindingMap>[] = [];
+
   public constructor(
     @inject('ConfigFile')
     private configFile: string,
@@ -45,6 +54,20 @@ export class Bootstrapper implements IBootstrapper {
 
   public addInitStep(callback: () => Promise<void>) {
     this.bootstrappingSteps.push(callback);
+  }
+
+  public async executeRequestCallbacks<TTypeMap extends BindingMap>(
+    requestContainer: TypedContainer<TTypeMap & IBootstrapTypes>
+  ) {
+    for (const callback of this.requestCallbacks) {
+      await callback(requestContainer);
+    }
+  }
+
+  public onRequest<TTypeMap extends BindingMap>(
+    callback: RequestCallback<TTypeMap>
+  ) {
+    this.requestCallbacks.push(callback);
   }
 
   public async start(): Promise<void> {

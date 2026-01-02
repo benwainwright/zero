@@ -1,13 +1,23 @@
 import { Page } from '@components';
-import { useUser } from '@zero/react-api';
+import { useRoles, useUser } from '@zero/react-api';
 import { useParams } from 'react-router';
 import { useForm } from '@mantine/form';
-import { Button, Group, PasswordInput, TextInput } from '@mantine/core';
+import {
+  Button,
+  Checkbox,
+  Fieldset,
+  Group,
+  PasswordInput,
+  Stack,
+  TextInput,
+} from '@mantine/core';
 import { type ReactNode, useEffect } from 'react';
+import React from 'react';
 
 interface FormValues {
   email: string;
   password: string;
+  roles: string[];
   validatePassword: string;
 }
 
@@ -16,14 +26,20 @@ export const EditUser = (): ReactNode => {
   if (!userId) {
     throw new Error(`User id missing!`);
   }
-  const { user, saveUser, isPending } = useUser(userId);
+  const { user, saveUser, isPending, updateUser } = useUser(userId);
+  const roles = useRoles(0, 30);
 
   const form = useForm({
     initialValues: {
       email: user?.email ?? '',
       password: '',
+      roles: user?.roles,
       validatePassword: '',
     } satisfies FormValues,
+
+    onValuesChange: (values) => {
+      updateUser({ username: userId, ...values });
+    },
 
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
@@ -36,20 +52,18 @@ export const EditUser = (): ReactNode => {
     if (!isPending && user) {
       form.setValues({
         email: user.email,
+        roles: user.roles,
       });
       form.resetDirty();
     }
   }, [isPending]);
 
-  const onSubmit = async (values: FormValues) => {
-    await saveUser({
-      email: values.email,
-      password: values.password,
-    });
+  const onSubmit = async () => {
+    await saveUser();
   };
 
   return (
-    <Page routeName="editUser">
+    <Page routeName="editUser" title="Edit User">
       <form method="post" onSubmit={form.onSubmit(onSubmit)}>
         <TextInput
           label="Username"
@@ -80,6 +94,45 @@ export const EditUser = (): ReactNode => {
           key={form.key('validatePassword')}
           {...form.getInputProps('validatePassword')}
         />
+
+        <Fieldset legend="Roles" mt="lg">
+          <Stack>
+            {roles &&
+              roles?.map((role) => {
+                console.log(form.getValues());
+                return (
+                  <Checkbox
+                    checked={
+                      form.getValues()?.roles?.includes(role.id) ?? false
+                    }
+                    onChange={(checked) => {
+                      form.setValues((previous) => {
+                        if (previous.roles) {
+                          if (checked.target.checked) {
+                            return {
+                              ...previous,
+                              roles: previous.roles.includes(role.id)
+                                ? previous.roles
+                                : [...previous.roles, role.id],
+                            };
+                          }
+                          return {
+                            ...previous,
+                            roles: previous.roles.filter(
+                              (theRole) => theRole !== role.id
+                            ),
+                          };
+                        }
+                        return previous;
+                      });
+                    }}
+                    key={`role-checkbox-${role.id}`}
+                    label={role.name}
+                  ></Checkbox>
+                );
+              })}
+          </Stack>
+        </Fieldset>
 
         <Group justify="flex-end" mt="md">
           <Button type="submit" disabled={!form.isDirty()}>

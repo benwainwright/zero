@@ -8,6 +8,8 @@ export {
   useEvents,
   useOpenSocket,
   useQuery,
+  useRoles,
+  useRole,
 } from '@hooks';
 
 export {

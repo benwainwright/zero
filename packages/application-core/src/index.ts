@@ -30,6 +30,7 @@ export { AppError } from '@errors';
 export {
   type IQueryContext,
   type ICommandContext,
+  type IExtractParams,
   type IApplicationTypes,
   type ICommand,
   type IQueryParamsOrUndefined,

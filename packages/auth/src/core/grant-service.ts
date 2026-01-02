@@ -1,9 +1,7 @@
 import type { DomainModel, IActor, ICapability } from '@zero/domain';
 import { AuthorisationError } from './authorisation-error.ts';
-import { injectable } from 'inversify';
 import { AuthError } from './auth-error.ts';
 
-@injectable()
 export class GrantService {
   private permissionsSet = false;
   private actor: IActor | undefined;
@@ -16,6 +14,7 @@ export class GrantService {
     if (!this.permissionsSet) {
       throw new AuthError(`Error - no permissions set`);
     }
+    this.permissionsSet = false;
   }
 
   private isThereAMatchingPermission(

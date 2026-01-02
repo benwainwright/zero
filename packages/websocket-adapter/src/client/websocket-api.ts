@@ -10,6 +10,7 @@ import type {
   ICommandParams,
   IPickCommand,
   IPickQuery,
+  IExtractParams,
 } from '@zero/application-core';
 
 import { injectable } from 'inversify';
@@ -52,12 +53,18 @@ export class WebsocketApi
 
   public async executeCommand<
     TCommand extends IKnownCommands,
-    TKey extends TCommand['key']
+    TKey extends TCommand['key'],
+    NotUndefined = true
   >(
     key: TKey,
-    ...params: ICommandParams<IPickCommand<IKnownCommands, TKey>>
+    ...params: NotUndefined extends true
+      ? [IExtractParams<TCommand>]
+      : ICommandParams<IPickCommand<IKnownCommands, TKey>, NotUndefined>
   ): Promise<void> {
-    await this.commandClient.execute(key, ...params);
+    await this.commandClient.execute<TCommand, TKey, NotUndefined>(
+      key,
+      ...params
+    );
   }
 
   public async executeQuery<

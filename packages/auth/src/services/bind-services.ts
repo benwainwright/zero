@@ -14,6 +14,8 @@ import { LogoutCommandHandler } from './command-handlers/logout-command-handler.
 import { UpdateUserCommandHandler } from './command-handlers/update-user-command-handler.ts';
 import { GetUsersQueryHandler } from './query-handlers/get-users-query-handler.ts';
 import { GetUserQueryHandler } from './query-handlers/get-user-query-handler.ts';
+import { GetRolesQueryHandler } from './query-handlers/get-roles-query-handler.ts';
+import { GetRoleQueryHandler } from './query-handlers/get-role-query-handler.ts';
 
 export const bindServices = (
   load: TypedContainerModuleLoadOptions<
@@ -29,4 +31,6 @@ export const bindServices = (
   load.bind('QueryHandler').to(GetCurrentUserQueryHandler);
   load.bind('QueryHandler').to(GetUsersQueryHandler);
   load.bind('QueryHandler').to(GetUserQueryHandler);
+  load.bind('QueryHandler').to(GetRolesQueryHandler);
+  load.bind('QueryHandler').to(GetRoleQueryHandler);
 };

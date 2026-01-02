@@ -34,8 +34,8 @@ describe('bind services', () => {
 
     const handlerFiles = files.filter((file) => !file.endsWith('test.ts'));
 
-    const commandHandlers = await container.getAllAsync('QueryHandler');
+    const queryHandlers = await container.getAllAsync('QueryHandler');
 
-    expect(commandHandlers).toHaveLength(handlerFiles.length);
+    expect(queryHandlers).toHaveLength(handlerFiles.length);
   });
 });

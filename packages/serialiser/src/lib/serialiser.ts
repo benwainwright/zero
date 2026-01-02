@@ -1,4 +1,4 @@
-import { type IUser, User } from '@zero/domain';
+import { type IRole, type IUser, Role, User } from '@zero/domain';
 import { Typeson } from 'typeson';
 import { injectable } from 'inversify';
 
@@ -8,6 +8,11 @@ export class Serialiser {
 
   public constructor() {
     this.registry.register({
+      role: [
+        (thing) => thing instanceof Role,
+        (user: Role) => user.toObject(),
+        (raw: IRole) => Role.reconstitute(raw),
+      ],
       user: [
         (thing) => thing instanceof User,
         (user: User) => user.toObject(),

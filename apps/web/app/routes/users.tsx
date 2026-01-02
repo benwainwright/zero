@@ -17,7 +17,7 @@ export const Users = (): ReactNode => {
                 <Table.Th>Email</Table.Th>
               </Table.Tr>
             </Table.Thead>
-            <tbody>
+            <Table.Tbody>
               {data.map((user) => (
                 <Table.Tr key={`${user.id}-user-row`}>
                   <Table.Td>
@@ -26,7 +26,7 @@ export const Users = (): ReactNode => {
                   <Table.Td>{user.email}</Table.Td>
                 </Table.Tr>
               ))}
-            </tbody>
+            </Table.Tbody>
           </Table>
         )}
       </Loader>

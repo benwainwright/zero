@@ -11,11 +11,13 @@ export const useCommand = <
 ) => {
   const { api } = useContext(ApiContext);
 
-  const execute = async (
-    ...params: ICommandParams<IPickCommand<TCommand, TKey>>
+  const execute = async <NotUndefined = false>(
+    ...params: NotUndefined extends true
+      ? [IPickCommand<TCommand, TKey>['params']]
+      : ICommandParams<IPickCommand<TCommand, TKey>, NotUndefined>
   ) => {
     if (key) {
-      await api?.executeCommand(key, ...params);
+      await api?.executeCommand<TCommand, TKey, NotUndefined>(key, ...params);
     }
   };
 

@@ -11,3 +11,4 @@ export { type IQueryParamsOrUndefined } from './i-query-params-or-undefined.ts';
 export { type ICommandParamsOrUndefined } from './i-command-params-or-undefined.ts';
 export { type ICommandParams } from './i-command-params.ts';
 export { type ITryHandleQueryResponse } from './i-try-handle-query-response.ts';
+export { type IExtractParams } from './i-extract-params.ts';

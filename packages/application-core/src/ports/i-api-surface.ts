@@ -14,9 +14,15 @@ export interface IApiSurface<
   TQueries extends IQuery<string>,
   TEvents
 > {
-  executeCommand<TCommand extends TCommands, TKey extends TCommand['key']>(
+  executeCommand<
+    TCommand extends TCommands,
+    TKey extends TCommand['key'],
+    NotUndefined = true
+  >(
     key: TKey,
-    ...params: ICommandParams<IPickCommand<TCommands, TKey>>
+    ...params: NotUndefined extends true
+      ? [IPickCommand<TCommand, TKey>['params']]
+      : ICommandParams<IPickCommand<TCommands, TKey>, NotUndefined>
   ): Promise<void>;
 
   executeQuery<TQuery extends TQueries, TKey extends TQuery['key']>(

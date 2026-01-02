@@ -1,4 +1,23 @@
+import type { IRole } from '@zero/domain';
+
 export type AuthCommands =
+  | {
+      id: string;
+      key: 'CreateRoleCommand';
+      params: Omit<IRole, 'id'>;
+    }
+  | {
+      id: string;
+      key: 'UpdateRoleCommand';
+      params: IRole;
+    }
+  | {
+      id: string;
+      key: 'DeleteRoleCommand';
+      params: {
+        id: string;
+      };
+    }
   | {
       id: string;
       key: 'UpdateUserCommand';
@@ -6,6 +25,7 @@ export type AuthCommands =
         email: string;
         password: string;
         username: string;
+        roles: string[];
       };
     }
   | {

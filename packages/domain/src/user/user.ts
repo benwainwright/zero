@@ -1,4 +1,4 @@
-import { Role, type IRoute } from '@role';
+import { Role, type IRole, type IRoute } from '@role';
 import { userSchema, type IUser } from './i-user.ts';
 import { DomainModel, type IActor, type IViewer } from '@core';
 
@@ -71,10 +71,19 @@ export class User extends DomainModel<IUser> implements IActor, IViewer {
     return this._email;
   }
 
-  public update({ hash, email }: { hash?: string; email?: string }) {
+  public update({
+    hash,
+    email,
+    roles,
+  }: {
+    hash?: string;
+    email?: string;
+    roles?: Role[];
+  }) {
     const old = this.clone();
     this._passwordHash = hash ?? this._passwordHash;
     this._email = email ?? this._email;
+    this._roles = roles ?? this._roles;
     this.raiseEvent({ event: 'UserUpdated', data: { old, new: this.clone() } });
   }
 }
