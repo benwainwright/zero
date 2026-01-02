@@ -4,7 +4,7 @@ import { AppShell, Container } from '@mantine/core';
 import { Outlet } from 'react-router';
 import { useNotifications } from '@data';
 import type { ReactNode } from 'react';
-import { CurrentUserProvider } from '@data';
+import { CurrentUserProvider } from '@zero/react-api';
 
 const AppLayout = (): ReactNode => {
   const [opened, { toggle }] = useDisclosure();

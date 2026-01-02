@@ -1,4 +1,4 @@
-import { CurrentUserContext } from '@data';
+import { CurrentUserContext } from '@zero/react-api';
 import { type ReactNode, useContext } from 'react';
 import { Navigate } from 'react-router';
 import { routesList } from '@config';
@@ -36,6 +36,8 @@ export const Page = ({
       loading
     );
   }
+
+  console.log({ initialLoadComplete });
 
   return initialLoadComplete ? (
     <>

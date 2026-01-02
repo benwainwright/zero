@@ -1,5 +1,5 @@
 import { Loader, Page } from '@components';
-import { useUsers } from '@data';
+import { useUsers } from '@zero/react-api';
 import { Table } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';

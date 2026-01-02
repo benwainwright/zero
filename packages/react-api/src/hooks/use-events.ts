@@ -1,6 +1,6 @@
 import type { IListener } from '@zero/application-core';
 import { useContext, useEffect, useRef } from 'react';
-import { ApiContext } from './api-provider.tsx';
+import { ApiContext } from '@providers';
 import type { IKnownEvents } from '@zero/websocket-adapter/client';
 
 export const useEvents =

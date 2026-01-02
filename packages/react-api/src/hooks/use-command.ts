@@ -1,6 +1,6 @@
 import type { IKnownCommands } from '@zero/websocket-adapter/client';
 import { useContext } from 'react';
-import { ApiContext } from './api-provider.tsx';
+import { ApiContext } from '@providers';
 import type { ICommandParams, IPickCommand } from '@zero/application-core';
 
 export const useCommand = <

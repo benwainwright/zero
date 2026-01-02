@@ -1,5 +1,5 @@
 import { Page } from '@components';
-import { useEvent, CurrentUserContext, useCommand } from '@data';
+import { useEvent, CurrentUserContext, useCommand } from '@zero/react-api';
 import { useContext, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 

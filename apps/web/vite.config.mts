@@ -29,6 +29,14 @@ export default defineConfig(() => ({
           'websocket-adapter',
           'tsconfig.lib.json'
         ),
+        path.join(
+          import.meta.dirname,
+          '..',
+          '..',
+          'packages',
+          'react-api',
+          'tsconfig.lib.json'
+        ),
 
         path.join(import.meta.dirname, 'tsconfig.spec.json'),
       ],

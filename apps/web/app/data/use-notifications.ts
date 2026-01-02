@@ -1,5 +1,5 @@
 import { showNotification } from './show-notification.tsx';
-import { useEvents } from './use-events.ts';
+import { useEvents } from '@zero/react-api';
 
 export const useNotifications = () => {
   useEvents((event) => {

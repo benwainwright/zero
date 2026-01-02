@@ -286,6 +286,9 @@ importers:
       '@zero/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@zero/react-api':
+        specifier: workspace:*
+        version: link:../../packages/react-api
       '@zero/serialiser':
         specifier: workspace:*
         version: link:../../packages/serialiser
@@ -491,6 +494,37 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 4.2.1
+    devDependencies:
+      vitest-mock-extended:
+        specifier: 'catalog:'
+        version: 3.1.0(typescript@5.9.3)(vitest@4.0.16)
+      vitest-when:
+        specifier: 'catalog:'
+        version: 0.10.0(@vitest/expect@4.0.16)(vitest@4.0.16)
+
+  packages/react-api:
+    dependencies:
+      '@inversifyjs/strongly-typed':
+        specifier: 'catalog:'
+        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      '@zero/application-core':
+        specifier: workspace:*
+        version: link:../application-core
+      '@zero/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@zero/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@zero/websocket-adapter':
+        specifier: workspace:*
+        version: link:../websocket-adapter
+      inversify:
+        specifier: 'catalog:'
+        version: 7.10.7(reflect-metadata@0.2.2)
+      reflect-metadata:
+        specifier: 'catalog:'
+        version: 0.2.2
     devDependencies:
       vitest-mock-extended:
         specifier: 'catalog:'

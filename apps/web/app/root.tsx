@@ -18,7 +18,7 @@ import {
 // import type { Route } from "./+types/root.ts";
 import { Notifications } from '@mantine/notifications';
 import type { ReactNode } from 'react';
-import { ApiProvider, CurrentUserProvider } from '@data';
+import { ApiProvider, CurrentUserProvider } from '@zero/react-api';
 
 // export const links: Route.LinksFunction = () => [];
 

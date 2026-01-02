@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useTransition } from 'react';
-import { ApiContext } from './api-provider.tsx';
+import { ApiContext } from '@providers';
 import type { IKnownQueries } from '@zero/websocket-adapter/client';
 import type { IPickQuery, IQueryParams } from '@zero/application-core';
 

@@ -34,7 +34,8 @@
         "packages/adapter-tests/*",
         "packages/task-scheduler/*",
         "packages/websocket-adapter/*",
-        "packages/node-adapters/*"
+        "packages/node-adapters/*",
+        "packages/react-api/*"
       ]
     },
     {

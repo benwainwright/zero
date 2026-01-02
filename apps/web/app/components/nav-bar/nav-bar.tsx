@@ -1,7 +1,7 @@
 import { AppShell, NavLink } from '@mantine/core';
 import { routesList } from '@config';
 import { useContext, type ReactNode } from 'react';
-import { CurrentUserContext } from '@data';
+import { CurrentUserContext } from '@zero/react-api';
 import { Link, useLocation } from 'react-router';
 import type { IRoute } from '@zero/domain';
 import { routeAvailable } from '@utils';

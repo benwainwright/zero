@@ -1,5 +1,5 @@
 import { Page } from '@components';
-import { useUser } from '@data';
+import { useUser } from '@zero/react-api';
 import { useParams } from 'react-router';
 import { useForm } from '@mantine/form';
 import { Button, Group, PasswordInput, TextInput } from '@mantine/core';

@@ -5,7 +5,7 @@ import type {
   IKnownQueries,
 } from '@zero/websocket-adapter/client';
 import { createContext, type ReactNode } from 'react';
-import { useApi } from './use-api.ts';
+import { useApi } from '@hooks';
 
 interface IApiContextType {
   api?: IApiSurface<IKnownCommands, IKnownQueries, IKnownEvents> | undefined;

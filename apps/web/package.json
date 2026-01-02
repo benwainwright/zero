@@ -16,6 +16,7 @@
     "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
     "@zero/websocket-adapter": "workspace:*",
+    "@zero/react-api": "workspace:*",
     "@zero/serialiser": "workspace:*",
     "isbot": "^4.4.0",
     "postcss-preset-mantine": "^1.18.0",

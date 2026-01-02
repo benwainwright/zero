@@ -1,5 +1,5 @@
 import { Page } from '@components';
-import { CurrentUserContext, useCommand, useEvent } from '@data';
+import { CurrentUserContext, useCommand, useEvent } from '@zero/react-api';
 import {
   Button,
   Group,
