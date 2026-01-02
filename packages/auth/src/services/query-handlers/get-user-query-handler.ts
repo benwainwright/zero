@@ -5,7 +5,7 @@ import {
 import type { AuthQueries } from '../auth-queries.ts';
 import type { User } from '@zero/domain';
 import type { ILogger } from '@zero/bootstrap';
-import { AuthError, inject } from '@core';
+import { inject } from '@core';
 import type { IGrantManager, IUserRepository } from '@ports';
 
 export class GetUserQueryHandler extends AbstractQueryHandler<

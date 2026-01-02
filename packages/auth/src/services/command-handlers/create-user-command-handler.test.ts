@@ -40,7 +40,7 @@ describe('create user command handler', () => {
       })
       .thenReturn(mockUser);
 
-    when(roleRepo.getRole).calledWith(USER_ROLE_ID).thenResolve(mockRole);
+    when(roleRepo.requireRole).calledWith(USER_ROLE_ID).thenResolve(mockRole);
     when(passwordHasher.hashPassword).calledWith('pass').thenResolve('hash');
 
     await handler.tryHandle(context);

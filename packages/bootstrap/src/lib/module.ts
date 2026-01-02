@@ -1,4 +1,8 @@
-import type { BindingMap, IDecoratorManager } from '@decorator-manager';
+import type {
+  BindingMap,
+  IDecoratorManager,
+  IParentDecoratorManager,
+} from '@decorator-manager';
 import {
   TypedContainerModule,
   type TypedContainerModuleLoadOptions,
@@ -20,7 +24,8 @@ export const module = <TTypeMap extends BindingMap>(
     bootstrapper: IBootstrapper;
     logger: ILogger;
     container: TypedContainer<TTypeMap & IBootstrapTypes>;
-    decorators: IDecoratorManager<TTypeMap & IBootstrapTypes>;
+    decorators: IDecoratorManager<TTypeMap & IBootstrapTypes> &
+      IParentDecoratorManager<TTypeMap & IBootstrapTypes>;
   }) => void
 ) => {
   return new TypedContainerModule<TTypeMap & IBootstrapTypes>((load) => {

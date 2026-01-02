@@ -415,6 +415,35 @@ export const testUserAndRoleRepository = (
       });
     });
 
+    describe('requireRole', () => {
+      it('throws an error one is not present', async () => {
+        const { roleRepo } = await create();
+
+        await expect(roleRepo.requireRole('viewer')).rejects.toThrow();
+      });
+      it('returns a role if one is present', async () => {
+        const { roleRepo, unitOfWork } = await create();
+
+        const viewerRole = Role.reconstitute({
+          routes: ['home'],
+          id: 'viewer',
+          name: 'Viewer',
+          permissions: [
+            {
+              resource: '*',
+              action: 'ALLOW',
+              capabilities: ['user:read'],
+            },
+          ],
+        });
+
+        await unitOfWork.begin();
+        await roleRepo.saveRole(viewerRole);
+        await unitOfWork.commit();
+        expect(await roleRepo.requireRole('viewer')).toEqual(viewerRole);
+      });
+    });
+
     describe('getMany', () => {
       it('can return many users', async () => {
         const { userRepo, unitOfWork } = await create();

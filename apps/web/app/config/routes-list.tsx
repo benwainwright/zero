@@ -51,4 +51,10 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     authFailRedirect: '/login',
     sidebarIcon: <IconUsers size={16} stroke={1.5} />,
   },
+  editUser: {
+    component: 'routes/edit-user.tsx',
+    path: 'users/:userId/edit',
+    authFailRedirect: '/login',
+    hideFromMenu: true,
+  },
 } as const satisfies Record<string, RouteSpec>;

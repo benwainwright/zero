@@ -15,7 +15,10 @@ export const NavBar = (): ReactNode => {
     <AppShell.Navbar>
       <ul>
         {Object.entries(list)
-          .filter(([key, value]) => routeAvailable(user, value, key as IRoute))
+          .filter(
+            ([key, value]) =>
+              routeAvailable(user, value, key as IRoute) && !value.hideFromMenu
+          )
           .map(([key, value]) => {
             const toString = value.isIndex ? '' : key;
             return (

@@ -1,6 +1,13 @@
 import z from 'zod';
 
-export const routes = ['home', 'register', 'login', 'logout', 'users'] as const;
+export const routes = [
+  'home',
+  'register',
+  'login',
+  'logout',
+  'users',
+  'editUser',
+] as const;
 
 export const routesSchema = z
   .array(

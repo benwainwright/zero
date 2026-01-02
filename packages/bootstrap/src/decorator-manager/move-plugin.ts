@@ -6,12 +6,12 @@ export class MovePlugin<TMap extends BindingMap> extends Plugin<
   ContainerWithMove<TMap>
 > {
   override load(api: PluginApi): void {
-    api.define('moveBinding', async (from: string, to: string) => {
-      await this.moveBinding(from, to);
+    api.define('moveBinding', (from: string, to: string) => {
+      this.moveBinding(from, to);
     });
   }
 
-  private async moveBinding(from: string, to: string) {
+  private moveBinding(from: string, to: string) {
     const result = this._context.bindingService.get(from);
 
     if (result) {
@@ -25,6 +25,6 @@ export class MovePlugin<TMap extends BindingMap> extends Plugin<
       }
     }
 
-    await this._container.unbind(from);
+    this._container.unbindSync(from);
   }
 }

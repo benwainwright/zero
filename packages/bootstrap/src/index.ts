@@ -5,6 +5,7 @@ export {
   type IDecoratorManager,
   priority,
   type BindingMap,
+  DecoratorManager,
 } from '@decorator-manager';
 
 export { containerWithMockedBootstrapDepsBound } from '@test-helpers';

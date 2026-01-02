@@ -106,10 +106,132 @@ describe('decorate', () => {
     container.bind('More').toConstantValue('foo');
 
     container.bind('TheThing').to(Decorated);
-    await manager.decorate('TheThing', Decorator);
-    await manager.decorate('TheThing', AnotherDecorator);
-    await manager.decorate('TheThing', AFourthDecorator);
-    await manager.decorate('TheThing', EvenMoreDecorators);
+    manager.decorate('TheThing', Decorator);
+    manager.decorate('TheThing', AnotherDecorator);
+    manager.decorate('TheThing', AFourthDecorator);
+    manager.decorate('TheThing', EvenMoreDecorators);
+
+    const result = child.get('TheThing');
+
+    result.doThing();
+    expect(order).toEqual([
+      'second-decorator',
+      'third-decorator',
+      'fourth-decorator',
+      'decorator',
+      'root',
+    ]);
+  });
+
+  it('works when decorating child containers', async () => {
+    const order: string[] = [];
+
+    interface IThing {
+      doThing(): void;
+    }
+
+    @injectable()
+    class Decorated implements IThing {
+      public constructor(
+        @inject('TheOtherThing')
+        private otherThing: Foo
+      ) {}
+
+      doThing() {
+        order.push('root');
+      }
+    }
+
+    @injectable()
+    class Foo {
+      public constructor(
+        @inject('More')
+        private readonly: string
+      ) {}
+    }
+
+    @injectable()
+    class Decorator implements IThing {
+      public constructor(
+        @inject('TheThing')
+        private root: IThing
+      ) {}
+      doThing() {
+        order.push('decorator');
+        this.root.doThing();
+      }
+    }
+
+    @priority(1000)
+    @injectable()
+    class AnotherDecorator implements IThing {
+      public constructor(
+        @inject('TheThing')
+        private root: IThing
+      ) {}
+      doThing() {
+        order.push('second-decorator');
+        this.root.doThing();
+      }
+    }
+
+    @priority(500)
+    @injectable()
+    class AFourthDecorator implements IThing {
+      public constructor(
+        @inject('Fish')
+        private fish: number,
+
+        @inject('TheThing')
+        private root: IThing
+      ) {}
+      doThing() {
+        order.push('third-decorator');
+        this.root.doThing();
+      }
+    }
+
+    @injectable()
+    class EvenMoreDecorators implements IThing {
+      public constructor(
+        @inject('Fish')
+        private fish: number,
+
+        @inject('TheThing')
+        private root: IThing
+      ) {}
+      doThing() {
+        order.push('fourth-decorator');
+        this.root.doThing();
+      }
+    }
+
+    interface ContainerTypes {
+      TheThing: IThing;
+      TheOtherThing: Foo;
+      Fish: number;
+      More: string;
+    }
+
+    const container = new TypedContainer<ContainerTypes>();
+    const manager = new DecoratorManager(container);
+
+    const child = new TypedContainer({
+      parent: container,
+    });
+
+    container.bind('Fish').toConstantValue(2);
+    container.bind('TheOtherThing').to(Foo);
+    container.bind('More').toConstantValue('foo');
+
+    container.bind('TheThing').to(Decorated);
+
+    manager.decorate('TheThing', Decorator);
+    manager.decorate('TheThing', AnotherDecorator);
+    manager.decorate('TheThing', AFourthDecorator);
+
+    const newManager = new DecoratorManager(child, manager);
+    newManager.decorate('TheThing', EvenMoreDecorators);
 
     const result = child.get('TheThing');
 
@@ -220,10 +342,10 @@ describe('decorate', () => {
     container.bind('TheOtherThing').to(Foo);
     container.bind('More').toConstantValue('foo');
 
-    await manager.decorate('TheThing', Decorator);
-    await manager.decorate('TheThing', AnotherDecorator);
-    await manager.decorate('TheThing', AFourthDecorator);
-    await manager.decorate('TheThing', EvenMoreDecorators);
+    manager.decorate('TheThing', Decorator);
+    manager.decorate('TheThing', AnotherDecorator);
+    manager.decorate('TheThing', AFourthDecorator);
+    manager.decorate('TheThing', EvenMoreDecorators);
 
     const result = container.get('TheThing');
     result.doThing();
@@ -330,10 +452,10 @@ describe('decorate', () => {
     container.bind('TheOtherThing').to(Foo);
     container.bind('More').toConstantValue('foo');
 
-    await manager.decorate('TheThing', Decorator);
-    await manager.decorate('TheThing', AnotherDecorator);
-    await manager.decorate('TheThing', AFourthDecorator);
-    await manager.decorate('TheThing', EvenMoreDecorators);
+    manager.decorate('TheThing', Decorator);
+    manager.decorate('TheThing', AnotherDecorator);
+    manager.decorate('TheThing', AFourthDecorator);
+    manager.decorate('TheThing', EvenMoreDecorators);
 
     const result = container.get('TheThing');
     result.doThing();
@@ -378,11 +500,9 @@ describe('decorate', () => {
     const firstManager = new DecoratorManager(container);
     const secondManager = new DecoratorManager(container);
 
-    await firstManager.decorate('TheThing', Decorator);
+    firstManager.decorate('TheThing', Decorator);
 
-    await expect(
-      secondManager.decorate('TheThing', Decorator)
-    ).resolves.not.toThrow();
+    expect(() => secondManager.decorate('TheThing', Decorator)).not.toThrow();
   });
 
   it('treats containers with an existing moveBinding method as already patched', () => {
@@ -499,10 +619,10 @@ describe('decorate', () => {
     container.bind('TheOtherThing').to(Foo);
     container.bind('More').toConstantValue('foo');
 
-    await manager.decorate('TheThing', Decorator);
-    await manager.decorate('TheThing', AnotherDecorator);
-    await manager.decorate('TheThing', EvenMoreDecorators);
-    await manager.decorate('TheThing', AFourthDecorator);
+    manager.decorate('TheThing', Decorator);
+    manager.decorate('TheThing', AnotherDecorator);
+    manager.decorate('TheThing', EvenMoreDecorators);
+    manager.decorate('TheThing', AFourthDecorator);
 
     const result = container.get('TheThing');
     result.doThing();
@@ -560,7 +680,7 @@ describe('decorate', () => {
     container.bind('TheOtherThing').to(Foo);
     container.bind('More').toConstantValue('foo');
 
-    await manager.decorate('TheThing', Decorator);
+    manager.decorate('TheThing', Decorator);
 
     const result = container.get('TheThing');
     result.doThing();

@@ -9,13 +9,13 @@ export const bootstrapModule = new TypedContainerModule<
 >((load) => {
   const logger = getWinstonLogger();
   logger.info(`Starting application`);
+  console.log('boot');
 
   load.bind('ConfigFile').toConstantValue('zero.config.json');
   logger.info(`Initialising bootstrap module`);
 
   load.bind('Logger').toConstantValue(logger);
   load.bind('Bootstrapper').to(Bootstrapper);
-  load.bind('DecoratorManager').to(DecoratorManager).inRequestScope();
-
+  load.bind('DecoratorManager').to(DecoratorManager).inSingletonScope();
   logger.debug(`Finished initialising bootstrap module`);
 });

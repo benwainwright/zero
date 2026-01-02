@@ -9,3 +9,5 @@ export { useEvents } from './use-events.ts';
 export { useQuery } from './use-query.ts';
 export { useNotifications } from './use-notifications.ts';
 export { useUsers } from './use-users.ts';
+export { useData } from './use-data.ts';
+export { useUser } from './use-user.ts';

@@ -17,7 +17,7 @@ export const applicationCoreModule = module<IApplicationTypes>(
     load.bind('Serialiser').to(Serialiser);
     load.bind('CommandBus').to(CommandBus).inRequestScope();
     load.bind('QueryBus').to(QueryBus).inRequestScope();
-    await decorators.decorate('CommandBus', TransactionalServiceBus);
+    decorators.decorate('CommandBus', TransactionalServiceBus);
 
     load.bind('ContainerFactory').toFactory(() => {
       return async (sessionIdRequester: ISessionIdRequester) => {
@@ -37,6 +37,10 @@ export const applicationCoreModule = module<IApplicationTypes>(
         const hasher = await container.getAsync('StringHasher');
         const logger = await container.getAsync('Logger');
         const sessionId = await sessionIdRequester.getSessionId();
+
+        requestContainer
+          .rebindSync('Container')
+          .toConstantValue(requestContainer);
 
         requestContainer.bind('Logger').toConstantValue(
           logger.child({

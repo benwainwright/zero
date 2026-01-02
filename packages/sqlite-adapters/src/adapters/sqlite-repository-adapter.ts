@@ -32,11 +32,20 @@ export class SqliteRepositoryAdapter
     private readonly tablePrefix: ConfigValue<string>
   ) {}
 
+  public async requireRole(id: string): Promise<Role> {
+    const role = await this.getRole(id);
+
+    if (!role) {
+      throw new Error(`Role '${id}' was not found`);
+    }
+    return role;
+  }
+
   public async requireUser(id: string): Promise<User> {
     const user = await this.getUser(id);
 
     if (!user) {
-      throw new Error(`User 'id' was not found!`);
+      throw new Error(`User '${id}' was not found!`);
     }
 
     return user;

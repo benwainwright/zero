@@ -1,15 +1,11 @@
 import { Loader, Page } from '@components';
-import { useQuery } from '@data';
+import { useUsers } from '@data';
 import { Table } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
 export const Users = (): ReactNode => {
-  const { data: users } = useQuery('GetUsers', {
-    offset: 0,
-    limit: 30,
-  });
-
+  const users = useUsers(0, 30);
   return (
     <Page routeName="users">
       <Loader data={users}>

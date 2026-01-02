@@ -5,5 +5,7 @@ export interface IDecoratorManager<TMap extends BindingMap = any> {
   decorate<TKey extends keyof TMap & string>(
     token: TKey,
     thing: Newable<ContainerBinding<TMap, TKey>>
-  ): Promise<void>;
+  ): void;
+
+  save(): void;
 }

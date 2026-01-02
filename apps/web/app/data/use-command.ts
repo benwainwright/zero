@@ -7,14 +7,16 @@ export const useCommand = <
   TCommand extends IKnownCommands,
   TKey extends TCommand['key']
 >(
-  key: TKey
+  key?: TKey
 ) => {
   const { api } = useContext(ApiContext);
 
   const execute = async (
     ...params: ICommandParams<IPickCommand<TCommand, TKey>>
   ) => {
-    await api?.executeCommand(key, ...params);
+    if (key) {
+      await api?.executeCommand(key, ...params);
+    }
   };
 
   return { execute };

@@ -12,17 +12,23 @@ export const useQuery = <
 ) => {
   const [isPending, startTransition] = useTransition();
   const [data, setData] = useState<IPickQuery<TQuery, TKey>['response']>();
+  const [dirty, setDirty] = useState(true);
   const { api } = useContext(ApiContext);
 
   useEffect(() => {
     startTransition(async () => {
       (async () => {
-        if (api) {
+        if (api && dirty) {
           setData(await api.executeQuery(key, ...params));
+          setDirty(false);
         }
       })();
     });
-  }, [api]);
+  }, [api, dirty]);
 
-  return { isPending, data };
+  const refresh = () => {
+    setDirty(true);
+  };
+
+  return { isPending, data, refresh };
 };

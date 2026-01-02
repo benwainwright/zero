@@ -37,8 +37,6 @@ export const Page = ({
     );
   }
 
-  console.log({ initialLoadComplete });
-
   return initialLoadComplete ? (
     <>
       <Title order={2} mb="xl" mt="l">

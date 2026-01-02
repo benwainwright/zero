@@ -6,10 +6,11 @@ import z from 'zod';
 import { adminPermissions } from './admin-permissions.ts';
 import { ADMIN_USER_ID, USER_ROLE_ID } from '@constants';
 import { userPermissions } from './user-permissions.ts';
+import type { IApplicationTypes } from '@zero/application-core';
 
 export const bootstrapInitialUsersAndPermissions = (
   bootstrapper: IBootstrapper,
-  container: TypedContainer<IAuthTypes>
+  container: TypedContainer<IAuthTypes & IApplicationTypes>
 ) => {
   const adminEmail = bootstrapper.configValue({
     namespace: 'auth',
@@ -40,6 +41,8 @@ export const bootstrapInitialUsersAndPermissions = (
       permissions: userPermissions,
     });
 
+    const unitOfWork = await container.getAsync('UnitOfWork');
+    await unitOfWork.begin();
     const roleRepo = await container.getAsync('RoleRepository');
     await roleRepo.saveRole(adminRole);
     await roleRepo.saveRole(userRole);
@@ -56,5 +59,6 @@ export const bootstrapInitialUsersAndPermissions = (
       roles: [adminRole.toObject()],
     });
     await userRepo.saveUser(bootstrapAdmin);
+    await unitOfWork.commit();
   });
 };

@@ -47,11 +47,7 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
   }: ICommandContext<IPickCommand<AuthCommands, 'CreateUserCommand'>>) {
     const passwordHash = await this.passwordHasher.hashPassword(password);
 
-    const role = await this.roleRepo.getRole(USER_ROLE_ID);
-
-    if (!role) {
-      throw new AuthError(`User role was not found!`);
-    }
+    const role = await this.roleRepo.requireRole(USER_ROLE_ID);
 
     this.grants.requires({
       capability: 'user:create',

@@ -14,10 +14,10 @@ const start = async () => {
 
   container.bind('Container').toConstantValue(container);
 
+  await container.load(sqliteAdaptersModule);
   await container.load(bootstrapModule);
   await container.load(applicationCoreModule);
   await container.load(authModule);
-  await container.load(sqliteAdaptersModule);
   await container.load(websocketServerModule);
   await container.load(nodeAdaptersModule);
 

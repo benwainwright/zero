@@ -1,6 +1,7 @@
 import { module, type IBootstrapTypes } from '@zero/bootstrap';
 import type { IApplicationTypes } from '@zero/application-core';
 import {
+  UserRepositoryAuthEventStager,
   AuthorisingCommandBus,
   AuthorisingQueryBus,
   GrantService,
@@ -20,7 +21,9 @@ export const authModule = module<
 
   bootstrapInitialUsersAndPermissions(bootstrapper, container);
   bindServices(load);
+
   load.bind('GrantService').to(GrantService);
-  await decorators.decorate('CommandBus', AuthorisingCommandBus);
-  await decorators.decorate('QueryBus', AuthorisingQueryBus);
+  decorators.decorate('QueryBus', AuthorisingQueryBus);
+  decorators.decorate('CommandBus', AuthorisingCommandBus);
+  decorators.decorate('UserRepository', UserRepositoryAuthEventStager);
 });

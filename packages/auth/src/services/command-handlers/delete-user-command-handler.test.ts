@@ -18,7 +18,7 @@ describe('delete user command handler', () => {
 
     const mockUser = mock<User>();
 
-    when(userRepo.getUser).calledWith('ben').thenResolve(mockUser);
+    when(userRepo.requireUser).calledWith('ben').thenResolve(mockUser);
 
     await handler.tryHandle(context);
 

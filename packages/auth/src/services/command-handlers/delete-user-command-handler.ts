@@ -34,15 +34,13 @@ export class DeleteUserCommandHandler extends AbstractCommandHandler<
   }: ICommandContext<
     IPickCommand<AuthCommands, 'DeleteUserCommand'>
   >): Promise<void> {
-    const user = await this.userRepo.getUser(username);
+    const user = await this.userRepo.requireUser(username);
 
     this.grants.requires({
       capability: 'user:delete',
       for: user,
     });
 
-    if (user) {
-      this.userRepo.deleteUser(user);
-    }
+    this.userRepo.deleteUser(user);
   }
 }
