@@ -10,7 +10,7 @@ import type {
   IUserRepository,
 } from '@ports';
 import { injectable } from 'inversify';
-import { AuthError, inject } from '@core';
+import { inject } from '@core';
 import type { AuthCommands } from '../auth-commands.ts';
 import type { ILogger } from '@zero/bootstrap';
 import { User } from '@zero/domain';
