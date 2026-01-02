@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./src/index.js",
   "types": "./src/index.ts",
   "exports": {
     ".": {
       "types": "./src/index.ts",
-      "import": "./src/index.ts",
-      "default": "./src/index.ts"
+      "import": "./src/index.js",
+      "default": "./src/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -29,6 +29,9 @@
     "inversify": "catalog:",
     "kysely": "^0.28.9",
     "reflect-metadata": "catalog:",
+    "vite-plugin-banner": "0.8.1",
+    "vite-plugin-node-polyfills": "0.24.0",
+    "vite-plugin-static-copy": "3.1.4",
     "zod": "catalog:"
   }
 }
