@@ -38,15 +38,7 @@ const getDbPackage = (env: Record<string, string>) => {
 
   const db = env['DATABASE'];
 
-  const module = databaseModules[db];
-
-  if (!module) {
-    throw new Error(
-      `DATABASE must be one of (${Object.keys(databaseModules).join(', ')})`
-    );
-  }
-
-  return module;
+  return databaseModules[db];
 };
 
 export default defineConfig(({ mode }) => {

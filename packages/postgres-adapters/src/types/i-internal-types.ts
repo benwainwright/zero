@@ -1,6 +1,6 @@
 import type { ConfigValue } from '@zero/bootstrap';
-import type { PostgresConnectionPool } from './postgress-connection-pool.ts';
-import type { PostgressDatabase } from './postgres-database.ts';
+import type { PostgresConnectionPool } from '../core/postgress-connection-pool.ts';
+import type { PostgressDatabase } from '../core/postgres-database.ts';
 
 export interface IInternalTypes {
   PostgresDatabaseName: ConfigValue<string>;

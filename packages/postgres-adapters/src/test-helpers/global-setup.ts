@@ -1,5 +1,5 @@
 import { upAll, downAll, type IDockerComposeResult } from 'docker-compose';
-import waitOn from 'wait-on';
+import waitPort from 'wait-port';
 
 import path from 'path';
 
@@ -8,8 +8,7 @@ export const setup = async () => {
   await new Promise<IDockerComposeResult>((accept, reject) =>
     upAll({ cwd: path.join(__dirname, '..'), log: true }).then(
       async (result) => {
-        console.log('Database started');
-        await waitOn({ resources: ['http://127.0.0.1:4566'] });
+        await waitPort({ host: 'localhost', port: 5432 });
         accept(result);
       },
       (err: unknown) => {

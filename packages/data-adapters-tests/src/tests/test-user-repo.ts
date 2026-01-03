@@ -14,9 +14,17 @@ export const testUserAndRoleRepository = (
 ) => {
   describe('the role repository', () => {
     it('returns undefined if the role isnt found', async () => {
-      const { roleRepo } = await create();
+      console.log('creating');
+      const { roleRepo, unitOfWork } = await create();
 
+      console.log('1-');
+
+      await unitOfWork.begin();
+      console.log('2-');
       const result = await roleRepo.getRole('ben');
+      console.log('3-');
+      await unitOfWork.commit();
+      console.log('4-');
 
       expect(result).toBeUndefined();
     });
@@ -50,12 +58,17 @@ export const testUserAndRoleRepository = (
         ],
       });
 
+      console.log('beg');
       await unitOfWork.begin();
+      console.log('next');
       await roleRepo.saveRole(userRole);
+      console.log('next-2');
       await roleRepo.saveRole(adminRole);
       await unitOfWork.commit();
 
+      await unitOfWork.begin();
       const roles = await roleRepo.getManyRoles(0, 30);
+      await unitOfWork.commit();
 
       expect(roles).toEqual(expect.arrayContaining([userRole, adminRole]));
     });
@@ -89,15 +102,31 @@ export const testUserAndRoleRepository = (
         ],
       });
 
+      console.log('one');
       await unitOfWork.begin();
+      console.log('two');
       await roleRepo.saveRole(userRole);
+      console.log('three');
       await roleRepo.saveRole(adminRole);
+      console.log('four');
       await unitOfWork.commit();
+      console.log('five');
 
+      await unitOfWork.begin();
+      console.log('six');
       const roleOne = await roleRepo.getRole('user');
+      console.log('seven');
+      await unitOfWork.commit();
+      console.log('eight');
       expect(roleOne).toEqual(userRole);
 
+      console.log('nine');
+      await unitOfWork.begin();
+      console.log('ten');
       const roleTwo = await roleRepo.getRole('admin');
+      console.log('11');
+      await unitOfWork.commit();
+      console.log('12');
       expect(roleTwo).toEqual(adminRole);
     });
 
@@ -125,8 +154,10 @@ export const testUserAndRoleRepository = (
       }
       await unitOfWork.commit();
 
+      await unitOfWork.begin();
       const limitedRoles = await roleRepo.getManyRoles(2, 3);
       const overflowingRoles = await roleRepo.getManyRoles(20, 5);
+      await unitOfWork.commit();
 
       expect(limitedRoles).toHaveLength(3);
       limitedRoles.forEach((role) =>
@@ -184,7 +215,9 @@ export const testUserAndRoleRepository = (
       await userRepo.saveUser(data);
       await unitOfWork.commit();
 
+      await unitOfWork.begin();
       const user = await userRepo.getUser(data.id);
+      await unitOfWork.commit();
 
       expect(user?.roles).toEqual(expect.arrayContaining(data.roles));
       expect(user?.id).toEqual(data.id);
@@ -213,7 +246,9 @@ export const testUserAndRoleRepository = (
       await userRepo.deleteUser(data);
       await unitOfWork.commit();
 
+      await unitOfWork.begin();
       const result = await userRepo.getUser('ben');
+      await unitOfWork.commit();
 
       expect(result).toEqual(undefined);
     });
@@ -233,7 +268,9 @@ export const testUserAndRoleRepository = (
       await userRepo.saveUser(data);
       await unitOfWork.commit();
 
+      await unitOfWork.begin();
       const user = await userRepo.getUser(data.id);
+      await unitOfWork.commit();
 
       expect(user).toEqual(data);
     });
@@ -325,11 +362,12 @@ export const testUserAndRoleRepository = (
       } catch {
         // This is fine. I just want to test that there is no users inserted
 
-        // This function is actually a noop - I'm just calling it to complete the coverage
         await unitOfWork.rollback();
       }
 
+      await unitOfWork.begin();
       const user = await userRepo.getUser(data.id);
+      await unitOfWork.commit();
 
       expect(user).toEqual(undefined);
     });
@@ -369,8 +407,10 @@ export const testUserAndRoleRepository = (
         await unitOfWork.rollback();
       }
 
+      await unitOfWork.begin();
       const persistedUserOne = await userRepo.getUser(userOne.id);
       const persistedUserTwo = await userRepo.getUser(userTwo.id);
+      await unitOfWork.commit();
 
       expect(persistedUserOne?.email).toBe(userOne.email);
       expect(persistedUserTwo?.email).toBe(userTwo.email);
@@ -392,7 +432,9 @@ export const testUserAndRoleRepository = (
         await userRepo.saveUser(data);
         await unitOfWork.commit();
 
+        await unitOfWork.begin();
         const user = await userRepo.requireUser('ben');
+        await unitOfWork.commit();
 
         expect(user).toEqual(data);
       });
@@ -440,7 +482,9 @@ export const testUserAndRoleRepository = (
         await unitOfWork.begin();
         await roleRepo.saveRole(viewerRole);
         await unitOfWork.commit();
+        await unitOfWork.begin();
         expect(await roleRepo.requireRole('viewer')).toEqual(viewerRole);
+        await unitOfWork.commit();
       });
     });
 
@@ -478,7 +522,9 @@ export const testUserAndRoleRepository = (
         await userRepo.saveUser(data3);
         await unitOfWork.commit();
 
+        await unitOfWork.begin();
         const users = await userRepo.getManyUsers();
+        await unitOfWork.commit();
 
         expect(users).toEqual(expect.arrayContaining([data, data2, data3]));
       });
@@ -501,8 +547,10 @@ export const testUserAndRoleRepository = (
         }
         await unitOfWork.commit();
 
+        await unitOfWork.begin();
         const defaultLimitedUsers = await userRepo.getManyUsers();
         const offsetLimitedUsers = await userRepo.getManyUsers(40, 10);
+        await unitOfWork.commit();
 
         expect(defaultLimitedUsers).toHaveLength(30);
         expect(defaultLimitedUsers).toEqual(
@@ -517,9 +565,11 @@ export const testUserAndRoleRepository = (
     });
 
     it('returns undefined if not present', async () => {
-      const { userRepo } = await create();
+      const { userRepo, unitOfWork } = await create();
 
+      await unitOfWork.begin();
       const user = await userRepo.getUser('foo');
+      await unitOfWork.commit();
 
       expect(user).toBeUndefined();
     });

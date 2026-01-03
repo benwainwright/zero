@@ -3,7 +3,7 @@ import type { IApplicationTypes } from '@zero/application-core';
 import type { IAuthTypes } from '@zero/auth';
 import { module } from '@zero/bootstrap';
 import { PostgressDatabase } from './postgres-database.ts';
-import type { IInternalTypes } from './i-internal-types.ts';
+import type { IInternalTypes } from '../types/i-internal-types.ts';
 import z from 'zod';
 import { PostgresConnectionPool } from './postgress-connection-pool.ts';
 
@@ -42,8 +42,8 @@ export const postgresAdaptersModule = module<
   load.bind('UserRepository').to(PostgresRepositoryAdapter).inRequestScope();
   load.bind('RoleRepository').to(PostgresRepositoryAdapter).inRequestScope();
   load.bind('PostgresDatabase').to(PostgressDatabase).inRequestScope();
+  load.bind('UnitOfWork').toService('PostgresDatabase');
   load.bind('PostgressUsername').toConstantValue(databaseUser);
-  load.bind('UnitOfWork').to(PostgressDatabase).inRequestScope();
   load.bind('PostgresDatabaseHost').toConstantValue(host);
   load.bind('PostgresDatabaseName').toConstantValue(databaseName);
   load.bind('PostgresDatabasePassword').toConstantValue(databasePassword);

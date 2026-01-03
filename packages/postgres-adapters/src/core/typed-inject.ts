@@ -8,7 +8,7 @@ import type {
 } from '@inversifyjs/strongly-typed';
 
 import type { IApplicationTypes } from '@zero/application-core';
-import type { IInternalTypes } from './i-internal-types.ts';
+import type { IInternalTypes } from '../types/i-internal-types.ts';
 import type { IBootstrapTypes } from '@zero/bootstrap';
 
 export const inject = inversifyInject as TypedInject<

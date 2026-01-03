@@ -14,7 +14,7 @@ export class PostgresRepositoryAdapter
   ) {}
 
   public async getRole(id: string): Promise<Role | undefined> {
-    const tx = await this.database.transaction();
+    const tx = await this.database.connection();
 
     const result = await tx
       .selectFrom('roles')
@@ -39,7 +39,10 @@ export class PostgresRepositoryAdapter
   }
 
   public async saveRole(role: Role): Promise<Role> {
-    const tx = await this.database.transaction();
+    console.log('saving');
+    console.log('index', this.database.currentIndex);
+    const tx = this.database.transaction();
+    console.log('get tx');
 
     const values = {
       ...role.toObject(),
@@ -47,12 +50,13 @@ export class PostgresRepositoryAdapter
       routes: json(role.toObject().routes),
     };
 
+    console.log('inserting');
     await tx.insertInto('roles').values(values).execute();
     return role;
   }
 
   public async getManyRoles(offset: number, limit: number): Promise<Role[]> {
-    const tx = await this.database.transaction();
+    const tx = this.database.transaction();
     const result = await tx
       .selectFrom('roles')
       .selectAll()
@@ -64,7 +68,7 @@ export class PostgresRepositoryAdapter
   }
 
   public async saveUser(user: User): Promise<User> {
-    const tx = await this.database.transaction();
+    const tx = this.database.transaction();
 
     await tx
       .insertInto('users')
@@ -90,7 +94,7 @@ export class PostgresRepositoryAdapter
   }
 
   private async getUsersQuery() {
-    const tx = await this.database.transaction();
+    const tx = this.database.transaction();
     return tx
       .selectFrom('users as u')
       .leftJoinLateral(
@@ -101,12 +105,12 @@ export class PostgresRepositoryAdapter
             .select([
               sql`jsonb_agg(
                        jsonb_build_object(
-                         'id', ro.id,
-                         'name', ro.name,
-                         'permissions', ro.permissions,
-                         'routes', ro.routes
+                         'id', roles.id,
+                         'name', roles.name,
+                         'permissions', roles.permissions,
+                         'routes', roles.routes
                        )
-                       ORDER BY ro.name
+                       ORDER BY roles.name
                      )`.as('roles'),
             ])
             .whereRef('ur.userId', '=', 'u.id')
@@ -155,7 +159,7 @@ export class PostgresRepositoryAdapter
   }
 
   public async deleteUser(user: User): Promise<void> {
-    const tx = await this.database.transaction();
+    const tx = this.database.transaction();
 
     await tx.deleteFrom('users').where('id', '=', user.id).execute();
   }

@@ -16,8 +16,10 @@ import {
   type IBootstrapTypes,
   type IBootstrapper,
   type IDecoratorManager,
+  type BindingMap,
 } from '@zero/bootstrap';
 import type { IAuthTypes } from '@zero/auth';
+import { inject, injectable } from 'inversify';
 
 type DataPortsWithMock = IBootstrapTypes & IAuthTypes & IApplicationTypes;
 
@@ -28,20 +30,83 @@ type WithOutputs<TKey extends Record<string, keyof DataPortsWithMock>> =
     [K in keyof TKey]: DataPortsWithMock[TKey[K]];
   }>;
 
+type CreateFunction<TKey extends Record<string, keyof DataPortsWithMock>> =
+  () => Promise<
+    {
+      unitOfWork: IUnitOfWork;
+      eventBuffer: Mocked<IDomainEventBuffer>;
+    } & WithOutputs<TKey>
+  >;
+
 export const createRepo = async <
   TKey extends Record<string, keyof DataPortsWithMock>
->(
-  repoKey: TKey,
-  ...modules: TypedContainerModule<DataPortsWithMock>[]
-): Promise<
-  {
-    unitOfWork: IUnitOfWork;
-    eventBuffer: Mocked<IDomainEventBuffer>;
-  } & WithOutputs<TKey>
-> => {
+>({
+  repoKey,
+  modules,
+  createCallback,
+  afterCallback,
+}: {
+  repoKey: TKey;
+  modules: TypedContainerModule<DataPortsWithMock>[];
+  afterCallback?: <TMap extends BindingMap>(
+    container: TypedContainer<DataPortsWithMock & TMap>
+  ) => Promise<void>;
+  createCallback?: <TMap extends BindingMap>(
+    container: TypedContainer<DataPortsWithMock & TMap>
+  ) => Promise<void>;
+}): Promise<CreateFunction<TKey>> => {
   const container = new TypedContainer<DataPortsWithMock & IBootstrapTypes>();
   const bootstrapper = mock<IBootstrapper>();
-  const logger = mock<ILogger>();
+
+  const logger: ILogger = {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    child: function <TContext extends object>(_context: TContext): ILogger {
+      throw new Error('Function not implemented.');
+    },
+    error: function <TData extends { context: string }>(
+      message: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _data?: TData
+    ): void {
+      console.log(message);
+    },
+    warn: function <TData extends { context: string }>(
+      message: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _data?: TData
+    ): void {
+      console.log(message);
+    },
+    info: function <TData extends { context: string }>(
+      message: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _data?: TData
+    ): void {
+      console.log(message);
+    },
+    debug: function <TData extends { context: string }>(
+      message: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _data?: TData
+    ): void {
+      console.log(message);
+    },
+    verbose: function <TData extends { context: string }>(
+      message: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _data?: TData
+    ): void {
+      console.log(message);
+    },
+    silly: function <TData extends { context: string }>(
+      message: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _data?: TData
+    ): void {
+      console.log(message);
+    },
+  };
+
   const decoratorManager = mock<IDecoratorManager>();
   container.bind('DecoratorManager').toConstantValue(decoratorManager);
   container.bind('Bootstrapper').toConstantValue(bootstrapper);
@@ -56,18 +121,43 @@ export const createRepo = async <
 
   container.get('Bootstrapper');
 
-  const thing = Object.fromEntries(
-    await Promise.all(
-      Object.entries(repoKey).map(async ([key, item]) => [
-        key,
-        await container.getAsync(item),
-      ])
-    )
-  ) as WithOutputs<TKey>;
+  console.log('before');
 
-  return {
-    ...thing,
-    unitOfWork: await container.getAsync('UnitOfWork'),
-    eventBuffer: mockEventBuffer,
+  afterEach(async () => {
+    await afterCallback?.(container);
+  });
+
+  return async () => {
+    await createCallback?.(container);
+    const unit = await container.getAsync('UnitOfWork');
+    console.log('after  unit');
+
+    const thing = Object.fromEntries(
+      await Promise.all(
+        Object.entries(repoKey).map(async ([key, _item], index) => {
+          @injectable()
+          class RepoContainer {
+            public constructor(
+              @inject('UnitOfWork')
+              public readonly unitOfWork: IUnitOfWork,
+
+              @inject(_item)
+              public readonly item: unknown
+            ) {}
+          }
+          const child = new TypedContainer({ parent: container });
+          child.bind('UnitOfWork').toConstantValue(unit);
+          child.bind(`repo-container-${index}`).to(RepoContainer);
+
+          console.log('after first repo');
+          return [key, (await child.getAsync(`repo-container-${index}`)).item];
+        })
+      )
+    ) as WithOutputs<TKey>;
+    return {
+      ...thing,
+      unitOfWork: unit,
+      eventBuffer: mockEventBuffer,
+    };
   };
 };

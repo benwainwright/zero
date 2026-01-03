@@ -27,6 +27,22 @@ export class PostgresConnectionPool {
 
   private connection: Kysely<Database> | undefined;
 
+  public async dropTables() {
+    if (process.env['NODE_ENV'] === 'production') {
+      throw new Error(`Cannot drop tables in production`);
+    }
+
+    const cx = await this.get().startTransaction().execute();
+
+    await sql`DROP TABLE IF EXISTS
+      public.user_roles,
+      public.users,
+      public.roles
+    CASCADE;`.execute(cx);
+
+    await cx.commit().execute();
+  }
+
   @postConstruct()
   public async connectPool() {
     try {
@@ -53,7 +69,7 @@ export class PostgresConnectionPool {
       });
 
       await this.connection.transaction().execute(async (tx) => {
-        sql`
+        await sql`
           CREATE TABLE IF NOT EXISTS roles (
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL UNIQUE,
@@ -62,7 +78,7 @@ export class PostgresConnectionPool {
           );
         `.execute(tx);
 
-        sql`
+        await sql`
         CREATE TABLE IF NOT EXISTS users (
           id TEXT PRIMARY KEY,
           email TEXT NOT NULL UNIQUE,
@@ -70,7 +86,7 @@ export class PostgresConnectionPool {
         );
         `.execute(tx);
 
-        sql`
+        await sql`
           CREATE TABLE IF NOT EXISTS user_roles (
             "userId" TEXT NOT NULL,
             "roleId" TEXT NOT NULL,
@@ -80,11 +96,11 @@ export class PostgresConnectionPool {
           );
         `.execute(tx);
 
-        sql`CREATE INDEX IF NOT EXISTS user_roles_user_id_idx ON user_roles ("userId");`.execute(
+        await sql`CREATE INDEX IF NOT EXISTS user_roles_user_id_idx ON user_roles ("userId");`.execute(
           tx
         );
 
-        sql`CREATE INDEX IF NOT EXISTS user_roles_role_id_idx ON user_roles ("roleId");`.execute(
+        await sql`CREATE INDEX IF NOT EXISTS user_roles_role_id_idx ON user_roles ("roleId");`.execute(
           tx
         );
 
