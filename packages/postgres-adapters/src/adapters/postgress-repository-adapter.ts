@@ -51,7 +51,17 @@ export class PostgresRepositoryAdapter
     };
 
     console.log('inserting');
-    await tx.insertInto('roles').values(values).execute();
+    await tx
+      .insertInto('roles')
+      .values(values)
+      .onConflict((oc) =>
+        oc.column('id').doUpdateSet((eb) => ({
+          name: eb.ref('excluded.name'),
+          permissions: eb.ref('excluded.permissions'),
+          routes: eb.ref('excluded.routes'),
+        }))
+      )
+      .execute();
     return role;
   }
 
@@ -77,6 +87,12 @@ export class PostgresRepositoryAdapter
         email: user.email,
         passwordHash: user.passwordHash,
       })
+      .onConflict((oc) =>
+        oc.column('id').doUpdateSet((eb) => ({
+          email: eb.ref('excluded.email'),
+          passwordHash: eb.ref('excluded.passwordHash'),
+        }))
+      )
       .execute();
 
     await tx.deleteFrom('user_roles').where('userId', '=', user.id).execute();

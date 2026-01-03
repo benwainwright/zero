@@ -329,7 +329,9 @@ export const testUserAndRoleRepository = (
       await userRepo.saveUser(updatedUser);
       await unitOfWork.commit();
 
+      await unitOfWork.begin();
       const retrieved = await userRepo.getUser(updatedUser.id);
+      await unitOfWork.commit();
 
       expect(retrieved?.roles).toEqual([viewerRole]);
       expect(retrieved?.roles).not.toEqual(originalUser.roles);

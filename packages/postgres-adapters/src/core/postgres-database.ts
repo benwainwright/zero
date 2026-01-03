@@ -32,28 +32,29 @@ export class PostgressDatabase implements IUnitOfWork {
   }
 
   public async begin(): Promise<void> {
-    console.log('begin tx', this.currentIndex);
-    if (!this._transaction) {
-      console.log('creating now');
-      this._transaction = await this.pool.get().startTransaction().execute();
-    } else {
-      console.log('old one');
+    if (this._transaction) {
+      throw new Error(`Transaction already started`);
     }
+    this._transaction = await this.pool.get().startTransaction().execute();
   }
 
   public async commit(): Promise<void> {
-    const tx = this.transaction();
-    if (tx) {
+    try {
+      const tx = this.transaction();
+      if (tx) {
+        await tx.commit().execute();
+      }
+    } finally {
       this._transaction = undefined;
-      await tx.commit().execute();
     }
   }
 
   public async rollback(): Promise<void> {
-    const tx = this.transaction();
-    if (tx) {
+    if (!this._transaction) return;
+    try {
+      await this._transaction.rollback().execute();
+    } finally {
       this._transaction = undefined;
-      await tx.rollback().execute();
     }
   }
 }
