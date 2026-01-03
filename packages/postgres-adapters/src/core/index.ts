@@ -3,3 +3,4 @@ export { PostgresConnectionPool } from './postgress-connection-pool.ts';
 export type { IInternalTypes } from './i-internal-types.ts';
 export { inject, multiInject } from './typed-inject.ts';
 export { postgresAdaptersModule } from './posgress-adapters-module.ts';
+export { json } from './json-value.ts';

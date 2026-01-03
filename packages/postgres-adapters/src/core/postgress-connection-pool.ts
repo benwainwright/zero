@@ -32,6 +32,7 @@ export class PostgresConnectionPool {
   @postConstruct()
   public async connectPool() {
     try {
+      this.logger.info(`Connection to database`);
       const pool = new Pool({
         database: await this.databaseName.value,
         host: await this.databaseHost.value,
@@ -39,19 +40,57 @@ export class PostgresConnectionPool {
         user: await this.databaseUsername.value,
       });
 
+      this.logger.info(`Connection established!`);
       this.connection = new Kysely<Database>({
         dialect: new PostgresDialect({
           pool: pool,
         }),
       });
 
-      const sqlString = await readFile(
-        join(import.meta.dirname, 'create-table.sql'),
-        'utf-8'
-      );
+      this.logger.info(`Creating database if it doesnt already exist`);
+      this.connection = new Kysely<Database>({
+        dialect: new PostgresDialect({
+          pool: pool,
+        }),
+      });
 
       await this.connection.transaction().execute(async (tx) => {
-        sql`${sqlString}`.execute(tx);
+        sql`
+          CREATE TABLE IF NOT EXISTS roles (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL UNIQUE,
+            permissions JSONB NOT NULL DEFAULT '[]'::jsonb,
+            routes JSONB NOT NULL DEFAULT '{}'::jsonb
+          );
+        `.execute(tx);
+
+        sql`
+        CREATE TABLE IF NOT EXISTS users (
+          id TEXT PRIMARY KEY,
+          email TEXT NOT NULL UNIQUE,
+          "passwordHash" TEXT NOT NULL
+        );
+        `.execute(tx);
+
+        sql`
+          CREATE TABLE IF NOT EXISTS user_roles (
+            "userId" TEXT NOT NULL,
+            "roleId" TEXT NOT NULL,
+            CONSTRAINT user_roles_pkey PRIMARY KEY ("userId", "roleId"),
+            CONSTRAINT user_roles_user_fk FOREIGN KEY ("userId") REFERENCES users (id) ON DELETE CASCADE,
+            CONSTRAINT user_roles_role_fk FOREIGN KEY ("roleId") REFERENCES roles (id) ON DELETE CASCADE
+          );
+        `.execute(tx);
+
+        sql`CREATE INDEX IF NOT EXISTS user_roles_user_id_idx ON user_roles ("userId");`.execute(
+          tx
+        );
+
+        sql`CREATE INDEX IF NOT EXISTS user_roles_role_id_idx ON user_roles ("roleId");`.execute(
+          tx
+        );
+
+        this.logger.info(`Database initialised`);
       });
     } catch (error) {
       console.log(error);

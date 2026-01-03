@@ -87,11 +87,15 @@ export class Bootstrapper implements IBootstrapper {
       LOG_CONTEXT
     );
 
+    this.logger.info(`Running final initialisation steps`);
+
     this.emitter.emit(RESOLVE_CONFIG);
     await this.bootstrappingSteps.reduce(async (last, current) => {
       await last;
       await current();
     }, Promise.resolve());
+
+    this.logger.info(`Application Initialised`);
   }
 
   public configValue<TConfigValue extends ZodType>({

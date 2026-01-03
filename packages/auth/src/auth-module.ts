@@ -20,7 +20,7 @@ export const authModule = module<
   container.bind('CurrentUserSetter').toService('CurrentUserCache');
   container.bind('SessionStore').toService('CurrentUserCache');
 
-  bootstrapInitialUsersAndPermissions(bootstrapper, container);
+  bootstrapInitialUsersAndPermissions(logger, bootstrapper, container);
   bindServices(load);
 
   bootstrapper.onRequest<IAuthExports>(async (container) => {

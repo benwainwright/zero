@@ -1,7 +1,7 @@
 import type { TypedContainer } from '@inversifyjs/strongly-typed';
 import { Role, User } from '@zero/domain';
 import type { IAuthTypes } from '@core';
-import type { IBootstrapper } from '@zero/bootstrap';
+import type { IBootstrapper, ILogger } from '@zero/bootstrap';
 import z from 'zod';
 import { adminPermissions } from './admin-permissions.ts';
 import { ADMIN_USER_ID, USER_ROLE_ID } from '@constants';
@@ -9,9 +9,11 @@ import { userPermissions } from './user-permissions.ts';
 import type { IApplicationTypes } from '@zero/application-core';
 
 export const bootstrapInitialUsersAndPermissions = (
+  logger: ILogger,
   bootstrapper: IBootstrapper,
   container: TypedContainer<IAuthTypes & IApplicationTypes>
 ) => {
+  logger.info(`Bootstrapping initial users if they arent present`);
   const adminEmail = bootstrapper.configValue({
     namespace: 'auth',
     key: 'adminEmail',
@@ -60,5 +62,6 @@ export const bootstrapInitialUsersAndPermissions = (
     });
     await userRepo.saveUser(bootstrapAdmin);
     await unitOfWork.commit();
+    logger.info(`Users bootstrapped`);
   });
 };

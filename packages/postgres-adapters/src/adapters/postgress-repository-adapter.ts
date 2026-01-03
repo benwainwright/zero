@@ -1,4 +1,4 @@
-import { inject, type PostgressDatabase } from '@core';
+import { inject, json, type PostgressDatabase } from '@core';
 import type { IUserRepository, IRoleRepository } from '@zero/auth';
 import { Role, User, type IUser } from '@zero/domain';
 import { injectable } from 'inversify';
@@ -40,7 +40,14 @@ export class PostgresRepositoryAdapter
 
   public async saveRole(role: Role): Promise<Role> {
     const tx = await this.database.transaction();
-    await tx.insertInto('roles').values(role.toObject()).execute();
+
+    const values = {
+      ...role.toObject(),
+      permissions: json(role.toObject().permissions),
+      routes: json(role.toObject().routes),
+    };
+
+    await tx.insertInto('roles').values(values).execute();
     return role;
   }
 

@@ -3,13 +3,13 @@ CREATE TABLE IF NOT EXISTS roles (
   id           TEXT PRIMARY KEY,
   name         TEXT NOT NULL UNIQUE,
   permissions  JSONB NOT NULL DEFAULT '[]'::jsonb,
-  routes       JSONB NOT NULL DEFAULT '{}'::jsonb
+  routes       JSONB NOT NULL DEFAULT '[]'::jsonb
 );
 
 CREATE TABLE IF NOT EXISTS users (
   id             TEXT PRIMARY KEY,
   email          TEXT NOT NULL UNIQUE,
-  "passwordHash" TEXT NOT NULL,
+  "passwordHash" TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_roles (
