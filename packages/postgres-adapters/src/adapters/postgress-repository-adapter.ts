@@ -39,10 +39,7 @@ export class PostgresRepositoryAdapter
   }
 
   public async saveRole(role: Role): Promise<Role> {
-    console.log('saving');
-    console.log('index', this.database.currentIndex);
     const tx = this.database.transaction();
-    console.log('get tx');
 
     const values = {
       ...role.toObject(),
@@ -50,7 +47,6 @@ export class PostgresRepositoryAdapter
       routes: json(role.toObject().routes),
     };
 
-    console.log('inserting');
     await tx
       .insertInto('roles')
       .values(values)
@@ -166,8 +162,7 @@ export class PostgresRepositoryAdapter
   public async getManyUsers(start?: number, limit?: number): Promise<User[]> {
     const query = await this.getUsersQuery();
 
-    const withOffset = start ? query.offset(start) : query;
-    const withLimit = limit ? withOffset.limit(limit) : withOffset;
+    const withLimit = query.offset(start ?? 0).limit(limit ?? 30);
 
     const result = await withLimit.execute();
 

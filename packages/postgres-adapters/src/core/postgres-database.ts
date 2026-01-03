@@ -17,7 +17,6 @@ export class PostgressDatabase implements IUnitOfWork {
     private pool: PostgresConnectionPool
   ) {
     this.currentIndex = index++;
-    console.log('constructing');
   }
 
   public async connection() {

@@ -17,7 +17,7 @@ const createCallback = async (
 ) => {
   const db = await container.getAsync('PostgresDatabase');
   const pool = await container.getAsync('PostgresConnectionPool');
-  await pool.connectPool();
+  await pool.initialise();
   await container.unbind('PostgresDatabase');
   await container.unbind('UnitOfWork');
   container.bind('PostgresDatabase').toConstantValue(db);

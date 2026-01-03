@@ -58,54 +58,7 @@ export const createRepo = async <
   const container = new TypedContainer<DataPortsWithMock & IBootstrapTypes>();
   const bootstrapper = mock<IBootstrapper>();
 
-  const logger: ILogger = {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    child: function <TContext extends object>(_context: TContext): ILogger {
-      throw new Error('Function not implemented.');
-    },
-    error: function <TData extends { context: string }>(
-      message: string,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _data?: TData
-    ): void {
-      console.log(message);
-    },
-    warn: function <TData extends { context: string }>(
-      message: string,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _data?: TData
-    ): void {
-      console.log(message);
-    },
-    info: function <TData extends { context: string }>(
-      message: string,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _data?: TData
-    ): void {
-      console.log(message);
-    },
-    debug: function <TData extends { context: string }>(
-      message: string,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _data?: TData
-    ): void {
-      console.log(message);
-    },
-    verbose: function <TData extends { context: string }>(
-      message: string,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _data?: TData
-    ): void {
-      console.log(message);
-    },
-    silly: function <TData extends { context: string }>(
-      message: string,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _data?: TData
-    ): void {
-      console.log(message);
-    },
-  };
+  const logger = mock<ILogger>();
 
   const decoratorManager = mock<IDecoratorManager>();
   container.bind('DecoratorManager').toConstantValue(decoratorManager);
@@ -121,8 +74,6 @@ export const createRepo = async <
 
   container.get('Bootstrapper');
 
-  console.log('before');
-
   afterEach(async () => {
     await afterCallback?.(container);
   });
@@ -130,7 +81,6 @@ export const createRepo = async <
   return async () => {
     await createCallback?.(container);
     const unit = await container.getAsync('UnitOfWork');
-    console.log('after  unit');
 
     const thing = Object.fromEntries(
       await Promise.all(
@@ -149,7 +99,6 @@ export const createRepo = async <
           child.bind('UnitOfWork').toConstantValue(unit);
           child.bind(`repo-container-${index}`).to(RepoContainer);
 
-          console.log('after first repo');
           return [key, (await child.getAsync(`repo-container-${index}`)).item];
         })
       )

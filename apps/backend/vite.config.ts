@@ -22,7 +22,6 @@ function injectFilenameForBadPkg() {
     name: 'inject-filename',
     transform(src: string, id: string) {
       if (badPkgRe.test(id) && /\.[tj]sx?$/.test(id)) {
-        console.log(id);
         return `const __filename = ${JSON.stringify(id)};\n` + src;
       }
       return null;

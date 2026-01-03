@@ -14,17 +14,11 @@ export const testUserAndRoleRepository = (
 ) => {
   describe('the role repository', () => {
     it('returns undefined if the role isnt found', async () => {
-      console.log('creating');
       const { roleRepo, unitOfWork } = await create();
 
-      console.log('1-');
-
       await unitOfWork.begin();
-      console.log('2-');
       const result = await roleRepo.getRole('ben');
-      console.log('3-');
       await unitOfWork.commit();
-      console.log('4-');
 
       expect(result).toBeUndefined();
     });
@@ -58,11 +52,8 @@ export const testUserAndRoleRepository = (
         ],
       });
 
-      console.log('beg');
       await unitOfWork.begin();
-      console.log('next');
       await roleRepo.saveRole(userRole);
-      console.log('next-2');
       await roleRepo.saveRole(adminRole);
       await unitOfWork.commit();
 
@@ -102,31 +93,19 @@ export const testUserAndRoleRepository = (
         ],
       });
 
-      console.log('one');
       await unitOfWork.begin();
-      console.log('two');
       await roleRepo.saveRole(userRole);
-      console.log('three');
       await roleRepo.saveRole(adminRole);
-      console.log('four');
       await unitOfWork.commit();
-      console.log('five');
 
       await unitOfWork.begin();
-      console.log('six');
       const roleOne = await roleRepo.getRole('user');
-      console.log('seven');
       await unitOfWork.commit();
-      console.log('eight');
       expect(roleOne).toEqual(userRole);
 
-      console.log('nine');
       await unitOfWork.begin();
-      console.log('ten');
       const roleTwo = await roleRepo.getRole('admin');
-      console.log('11');
       await unitOfWork.commit();
-      console.log('12');
       expect(roleTwo).toEqual(adminRole);
     });
 

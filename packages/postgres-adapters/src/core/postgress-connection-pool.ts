@@ -26,6 +26,7 @@ export class PostgresConnectionPool {
   ) {}
 
   private connection: Kysely<Database> | undefined;
+  private pool: Pool | undefined;
 
   public async dropTables() {
     if (process.env['NODE_ENV'] === 'production') {
@@ -43,33 +44,35 @@ export class PostgresConnectionPool {
     await cx.commit().execute();
   }
 
+  public async doConnect() {
+    this.logger.info(`Connection to database`);
+    this.pool = new Pool({
+      database: await this.databaseName.value,
+      host: await this.databaseHost.value,
+      password: await this.databasePassword.value,
+      user: await this.databaseUsername.value,
+    });
+
+    this.pool.on('error', (error) => {
+      this.logger.error(error.message, { error });
+    });
+  }
+
   @postConstruct()
-  public async connectPool() {
+  public async initialise() {
     try {
-      this.logger.info(`Connection to database`);
-      const pool = new Pool({
-        database: await this.databaseName.value,
-        host: await this.databaseHost.value,
-        password: await this.databasePassword.value,
-        user: await this.databaseUsername.value,
-      });
+      await this.doConnect();
 
-      this.logger.info(`Connection established!`);
-      this.connection = new Kysely<Database>({
-        dialect: new PostgresDialect({
-          pool: pool,
-        }),
-      });
+      if (this.pool) {
+        this.logger.info(`Creating database if it doesnt already exist`);
+        this.connection = new Kysely<Database>({
+          dialect: new PostgresDialect({
+            pool: this.pool,
+          }),
+        });
 
-      this.logger.info(`Creating database if it doesnt already exist`);
-      this.connection = new Kysely<Database>({
-        dialect: new PostgresDialect({
-          pool: pool,
-        }),
-      });
-
-      await this.connection.transaction().execute(async (tx) => {
-        await sql`
+        await this.connection.transaction().execute(async (tx) => {
+          await sql`
           CREATE TABLE IF NOT EXISTS roles (
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL UNIQUE,
@@ -78,7 +81,7 @@ export class PostgresConnectionPool {
           );
         `.execute(tx);
 
-        await sql`
+          await sql`
         CREATE TABLE IF NOT EXISTS users (
           id TEXT PRIMARY KEY,
           email TEXT NOT NULL UNIQUE,
@@ -86,7 +89,7 @@ export class PostgresConnectionPool {
         );
         `.execute(tx);
 
-        await sql`
+          await sql`
           CREATE TABLE IF NOT EXISTS user_roles (
             "userId" TEXT NOT NULL,
             "roleId" TEXT NOT NULL,
@@ -96,16 +99,17 @@ export class PostgresConnectionPool {
           );
         `.execute(tx);
 
-        await sql`CREATE INDEX IF NOT EXISTS user_roles_user_id_idx ON user_roles ("userId");`.execute(
-          tx
-        );
+          await sql`CREATE INDEX IF NOT EXISTS user_roles_user_id_idx ON user_roles ("userId");`.execute(
+            tx
+          );
 
-        await sql`CREATE INDEX IF NOT EXISTS user_roles_role_id_idx ON user_roles ("roleId");`.execute(
-          tx
-        );
+          await sql`CREATE INDEX IF NOT EXISTS user_roles_role_id_idx ON user_roles ("roleId");`.execute(
+            tx
+          );
 
-        this.logger.info(`Database initialised`);
-      });
+          this.logger.info(`Database initialised`);
+        });
+      }
     } catch (error) {
       console.log(error);
       throw error;
