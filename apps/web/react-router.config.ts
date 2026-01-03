@@ -5,4 +5,5 @@ export default {
   future: {
     v8_middleware: true,
   },
+  prerender: true,
 } satisfies Config;

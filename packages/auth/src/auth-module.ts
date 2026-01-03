@@ -14,7 +14,8 @@ import { bindServices } from '@services';
 
 export const authModule = module<
   IApplicationTypes & IBootstrapTypes & IAuthTypes & IAuthExports
->(async ({ load, bootstrapper, container, decorators }) => {
+>(async ({ load, bootstrapper, container, decorators, logger }) => {
+  logger.info(`Initialising auth module`);
   container.bind('CurrentUserCache').to(SessionStorage).inRequestScope();
   container.bind('CurrentUserSetter').toService('CurrentUserCache');
   container.bind('SessionStore').toService('CurrentUserCache');

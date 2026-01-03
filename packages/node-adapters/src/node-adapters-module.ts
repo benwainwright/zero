@@ -11,7 +11,8 @@ import { FlatFileObjectStore } from './adapters/flat-file-object-store.ts';
 
 export const nodeAdaptersModule = module<
   IAuthTypes & IInternalTypes & IApplicationTypes
->(({ load, bootstrapper }) => {
+>(({ load, bootstrapper, logger }) => {
+  logger.info(`Initialising node adapters module`);
   load.bind('PasswordHasher').to(NodePasswordHasher);
   load.bind('EventBusListener').toConstantValue(new EventEmitter());
   load.bind('BusNamespace').toConstantValue(`ynab-plus`);

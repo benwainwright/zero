@@ -43,7 +43,9 @@ export class SqliteDatabase implements IUnitOfWork {
     }
   }
 
-  public async rollback(): Promise<void> {}
+  public async rollback(): Promise<void> {
+    // NOOP
+  }
 
   private async getDatabase(): Promise<InstanceType<typeof BetterSqlite3>> {
     if (!this.database) {

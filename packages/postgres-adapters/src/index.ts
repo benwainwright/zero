@@ -1,0 +1,1 @@
+export { postgresAdaptersModule } from '@core';

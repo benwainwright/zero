@@ -20,4 +20,6 @@ export const useEvents =
           };
         }, [api]);
       }
-    : () => {};
+    : () => {
+        // NOOP
+      };

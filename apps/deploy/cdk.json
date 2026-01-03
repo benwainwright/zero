@@ -1,0 +1,7 @@
+{
+  "app": "pnpm exec ts-node  --project tsconfig.cdk.json src/app.ts",
+  "context": {},
+  "watch": {
+    "include": ["./src/backend/**", "./src/infrastructure/**"]
+  }
+}

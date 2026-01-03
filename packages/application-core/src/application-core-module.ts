@@ -11,7 +11,8 @@ import { module, type IBootstrapTypes } from '@zero/bootstrap';
 import { Serialiser } from '@zero/serialiser';
 
 export const applicationCoreModule = module<IApplicationTypes>(
-  async ({ load, container, decorators, bootstrapper }) => {
+  async ({ load, container, decorators, bootstrapper, logger }) => {
+    logger.info(`Initialising application core module`);
     container.bind('DomainEventBuffer').to(DomainEventStore).inRequestScope();
     container.bind('DomainEventEmitter').toService('DomainEventBuffer');
     load.bind('Serialiser').to(Serialiser);

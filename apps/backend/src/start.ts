@@ -3,7 +3,7 @@ import { TypedContainer } from '@inversifyjs/strongly-typed';
 import { bootstrapModule, type IBootstrapTypes } from '@zero/bootstrap';
 import { applicationCoreModule } from '@zero/application-core';
 import { authModule } from '@zero/auth';
-import { sqliteAdaptersModule } from '@zero/sqlite-adapters';
+import { databaseAdaptersModule } from './database.ts';
 import { websocketServerModule } from '@zero/websocket-adapter/server';
 import { nodeAdaptersModule } from '@zero/node-adapters';
 
@@ -14,7 +14,7 @@ const start = async () => {
 
   container.bind('Container').toConstantValue(container);
 
-  await container.load(sqliteAdaptersModule);
+  await container.load(databaseAdaptersModule);
   await container.load(bootstrapModule);
   await container.load(applicationCoreModule);
   await container.load(authModule);

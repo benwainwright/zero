@@ -71,7 +71,7 @@ export class Bootstrapper implements IBootstrapper {
   }
 
   public async start(): Promise<void> {
-    this.logger.debug(`Starting application`, LOG_CONTEXT);
+    this.logger.info(`Starting application`, LOG_CONTEXT);
     try {
       this.ensureNamespacesPresent();
       z.object(this.buildSchema()).parse(this._config);

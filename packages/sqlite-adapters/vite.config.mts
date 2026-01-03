@@ -53,7 +53,6 @@ export default defineConfig(() => ({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
-    ssr: true,
     lib: {
       entry: 'src/index.ts',
       name: '@zero/sqlite-adapters',

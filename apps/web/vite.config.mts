@@ -20,7 +20,7 @@ export default defineConfig(() => ({
     tsconfigPaths({
       projectDiscovery: 'lazy',
       projects: [
-        path.join(import.meta.dirname, 'tsconfig.lib.json'),
+        path.join(import.meta.dirname, 'tsconfig.app.json'),
         path.join(
           import.meta.dirname,
           '..',
@@ -43,6 +43,7 @@ export default defineConfig(() => ({
     }),
   ],
   build: {
+    ssr: false,
     outDir: './dist',
     emptyOutDir: true,
     reportCompressedSize: true,

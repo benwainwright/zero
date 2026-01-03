@@ -14,6 +14,7 @@
     "@zero/domain": "workspace:*",
     "@zero/node-adapters": "workspace:*",
     "@zero/sqlite-adapters": "workspace:*",
+    "@zero/postgres-adapters": "workspace:*",
     "@zero/websocket-adapter": "workspace:*",
     "vite-plugin-node-polyfills": "0.24.0",
     "vite-plugin-static-copy": "3.1.4"
@@ -22,6 +23,32 @@
     "vite-node": "5.2.0"
   },
   "nx": {
+    "build:postgres": {
+      "dependsOn": [
+        {
+          "target": "build",
+          "params": "forward",
+          "options": {
+            "env": {
+              "DATABASE": "postgres"
+            }
+          }
+        }
+      ]
+    },
+    "build:sqlite": {
+      "dependsOn": [
+        {
+          "target": "build",
+          "params": "forward",
+          "options": {
+            "env": {
+              "DATABASE": "sqlite"
+            }
+          }
+        }
+      ]
+    },
     "targets": {
       "dev": {
         "continuous": true,

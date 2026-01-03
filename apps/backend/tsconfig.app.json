@@ -13,13 +13,16 @@
       "path": "../../packages/websocket-adapter/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/postgres-adapters/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/sqlite-adapters/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/domain/tsconfig.lib.json"
+      "path": "../../packages/node-adapters/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/node-adapters/tsconfig.lib.json"
+      "path": "../../packages/domain/tsconfig.lib.json"
     },
     {
       "path": "../../packages/bootstrap/tsconfig.lib.json"

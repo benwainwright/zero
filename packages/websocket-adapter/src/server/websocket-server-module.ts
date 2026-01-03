@@ -8,6 +8,7 @@ import { type IServerInternalTypes } from './i-server-internal-types.ts';
 import { SessionIdHandler } from './session-id-handler.ts';
 export const websocketServerModule = module<IServerInternalTypes>(
   ({ load, container, bootstrapper, logger }) => {
+    logger.info(`Initialising websocket server module`);
     load.bind('ServerWebsocketClient').to(ServerSocketClient);
     load.bind('AppServer').to(AppServer);
 

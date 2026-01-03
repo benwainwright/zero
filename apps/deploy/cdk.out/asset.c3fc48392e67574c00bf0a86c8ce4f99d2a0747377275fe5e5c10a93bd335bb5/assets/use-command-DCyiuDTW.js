@@ -1,0 +1,1 @@
+import{a}from"./chunk-7TW6LJC6-DaDHYynL.js";import{t as s}from"./current-user-provider-CQskWHqO.js";const m=t=>{const{api:e}=a.useContext(s);return{execute:async(...o)=>{t&&await e?.executeCommand(t,...o)}}};export{m as u};

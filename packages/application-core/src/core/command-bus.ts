@@ -20,7 +20,7 @@ export class CommandBus implements ICommandBus {
 
   public async execute(command: ICommand<string>) {
     const currentUser = await this.userStore.get();
-    for (let handler of this.handlers) {
+    for (const handler of this.handlers) {
       if (await handler.tryHandle({ command, authContext: currentUser })) {
         return;
       }
