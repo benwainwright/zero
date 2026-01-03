@@ -2,8 +2,10 @@ import type { IUnitOfWork } from '@zero/application-core';
 import type { ConfigValue } from '@zero/bootstrap';
 
 import BetterSqlite3 from 'better-sqlite3';
-import { injectable } from 'inversify';
+import { injectable, postConstruct } from 'inversify';
 import { inject } from './typed-inject.ts';
+
+type TableName = 'users' | 'roles';
 
 type StoredQuery = {
   sql: string;
@@ -13,15 +15,94 @@ type StoredQuery = {
 @injectable()
 export class SqliteDatabase implements IUnitOfWork {
   private database: InstanceType<typeof BetterSqlite3> | undefined;
-  private readonly storedQueries: StoredQuery[] = [];
+  private storedQueries: StoredQuery[] = [];
 
   public constructor(
     @inject('DatabaseFilename')
-    private readonly databaseName: ConfigValue<string>
+    private readonly databaseName: ConfigValue<string>,
+
+    @inject('DatabaseTablePrefix')
+    private readonly tablePrefix: ConfigValue<string>
   ) {}
 
   public async begin(): Promise<void> {
     // NOOP - all handled by the bettersqlite3 transaction function
+  }
+
+  public async getTableName(table: TableName): Promise<string> {
+    return `${await this.tablePrefix.value}_${table}`;
+  }
+
+  public async getJoinTableName(first: TableName, second: TableName) {
+    return `${await this.getTableName(first)}_${await this.getTableName(
+      second
+    )}`;
+  }
+
+  @postConstruct()
+  public async create() {
+    await this.runQuery(`CREATE TABLE IF NOT EXISTS ${await this.getTableName(
+      'users'
+    )} (
+          id TEXT PRIMARY KEY,
+          email TEXT NOT NULL UNIQUE,
+          passwordHash TEXT NOT NULL
+      );`);
+
+    await this.runQuery(
+      `CREATE TABLE IF NOT EXISTS ${await this.getJoinTableName(
+        'users',
+        'roles'
+      )} (
+        userId TEXT NOT NULL,
+        roleId TEXT NOT NULL,
+        PRIMARY KEY (userId, roleId),
+        FOREIGN KEY (userId) references ${await this.getTableName('users')}(id),
+        FOREIGN KEY (roleId) references ${await this.getTableName('roles')}(id)
+      );`
+    );
+
+    await this.runQuery(`CREATE TABLE IF NOT EXISTS ${await this.getTableName(
+      'roles'
+    )} (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          permissions TEXT NOT NULL,
+          routes TEXT NOT NULL
+      );`);
+
+    await this.runQuery(
+      `CREATE INDEX IF NOT EXISTS idx_users_roles_roleId ON ${await this.getJoinTableName(
+        'users',
+        'roles'
+      )}(roleId);`
+    );
+    await this.runQuery(
+      `CREATE INDEX IF NOT EXISTS idx_users_roles_userId ON ${await this.getJoinTableName(
+        'users',
+        'roles'
+      )}(userId);`
+    );
+  }
+
+  public async dropTables() {
+    if (process.env['NODE_ENV'] === 'production') {
+      throw new Error(`Cannot drop tables in production`);
+    }
+
+    this.deferQueryToTransaction(`PRAGMA foreign_keys = OFF`);
+    this.deferQueryToTransaction(
+      `DROP TABLE IF EXISTS ${await this.getJoinTableName('users', 'roles')};`
+    );
+    this.deferQueryToTransaction(
+      `DROP TABLE IF EXISTS ${await this.getTableName('users')};`
+    );
+    this.deferQueryToTransaction(
+      `DROP TABLE IF EXISTS ${await this.getTableName('roles')};`
+    );
+    this.deferQueryToTransaction(`PRAGMA foreign_keys = ON;`);
+
+    await this.commit();
   }
 
   public async commit(): Promise<void> {
@@ -40,11 +121,13 @@ export class SqliteDatabase implements IUnitOfWork {
     } catch (error) {
       this.runQuerySync(db, 'ROLLBACK TRANSACTION;');
       throw error;
+    } finally {
+      this.storedQueries = [];
     }
   }
 
   public async rollback(): Promise<void> {
-    // NOOP
+    this.storedQueries = [];
   }
 
   private async getDatabase(): Promise<InstanceType<typeof BetterSqlite3>> {
@@ -80,6 +163,7 @@ export class SqliteDatabase implements IUnitOfWork {
 
   public async getFromDb<TResponse>(sql: string, ...params: unknown[]) {
     const db = await this.getDatabase();
+    console.log(sql);
     const prepared = db.prepare(sql);
     return prepared.get(...params) as TResponse;
   }

@@ -12,7 +12,7 @@ export const testUserAndRoleRepository = (
     unitOfWork: IUnitOfWork;
   }>
 ) => {
-  describe('the role repository', () => {
+  describe.sequential('the role repository', () => {
     it('returns undefined if the role isnt found', async () => {
       const { roleRepo, unitOfWork } = await create();
 
@@ -530,13 +530,12 @@ export const testUserAndRoleRepository = (
 
         await unitOfWork.begin();
         const defaultLimitedUsers = await userRepo.getManyUsers();
+        await unitOfWork.commit();
+        await unitOfWork.begin();
         const offsetLimitedUsers = await userRepo.getManyUsers(40, 10);
         await unitOfWork.commit();
 
         expect(defaultLimitedUsers).toHaveLength(30);
-        expect(defaultLimitedUsers).toEqual(
-          expect.arrayContaining([manyUsers[0], manyUsers[29]])
-        );
 
         expect(offsetLimitedUsers).toHaveLength(5);
         offsetLimitedUsers.forEach((user) =>

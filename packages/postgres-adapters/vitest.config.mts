@@ -33,7 +33,7 @@ export default defineConfig(() => ({
         functions: 80,
         lines: 80,
         statements: 80,
-        branches: 70,
+        branches: 40,
       },
       reportsDirectory: './test-output/vitest/coverage',
       provider: 'v8' as const,

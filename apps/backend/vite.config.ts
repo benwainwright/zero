@@ -88,7 +88,6 @@ export default defineConfig(({ mode }) => {
       },
       rollupOptions: {
         external: [],
-        rollupOptions: {},
       },
     },
   };

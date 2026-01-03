@@ -5,6 +5,7 @@ import { inject } from './typed-inject.ts';
 
 import { sql, Kysely, PostgresDialect } from 'kysely';
 import type { Database } from './i-database.ts';
+import { wait } from './wait.ts';
 
 @injectable()
 export class PostgresConnectionPool {
@@ -27,13 +28,16 @@ export class PostgresConnectionPool {
 
   private connection: Kysely<Database> | undefined;
   private pool: Pool | undefined;
+  private connected = false;
 
   public async dropTables() {
     if (process.env['NODE_ENV'] === 'production') {
       throw new Error(`Cannot drop tables in production`);
     }
 
-    const cx = await this.get().startTransaction().execute();
+    const connection = await this.get();
+
+    const cx = await connection.startTransaction().execute();
 
     await sql`DROP TABLE IF EXISTS
       public.user_roles,
@@ -51,6 +55,10 @@ export class PostgresConnectionPool {
       host: await this.databaseHost.value,
       password: await this.databasePassword.value,
       user: await this.databaseUsername.value,
+      connectionTimeoutMillis: 5_000,
+      idleTimeoutMillis: 10_000,
+      keepAlive: true,
+      keepAliveInitialDelayMillis: 10_000,
     });
 
     this.pool.on('error', (error) => {
@@ -62,6 +70,7 @@ export class PostgresConnectionPool {
   public async initialise() {
     try {
       await this.doConnect();
+      await this.waitForDb();
 
       if (this.pool) {
         this.logger.info(`Creating database if it doesnt already exist`);
@@ -116,9 +125,62 @@ export class PostgresConnectionPool {
     }
   }
 
-  public get() {
+  private async waitForDb() {
+    const maxAttempts = 10;
+    for (let attempt = 0; attempt <= maxAttempts; attempt++) {
+      try {
+        // ensure pool exists
+        const client = await this.pool?.connect();
+        try {
+          await client?.query('select 1');
+          this.connected = true;
+          return;
+        } finally {
+          client?.release();
+        }
+      } catch (error: unknown) {
+        if (
+          error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          typeof error.code === 'string'
+        ) {
+          const retryable =
+            error?.code === 'ECONNRESET' ||
+            error?.code === 'ETIMEDOUT' ||
+            error?.code === 'ECONNREFUSED';
+
+          if (!retryable || attempt === maxAttempts) {
+            throw error;
+          }
+          await wait(200 * attempt);
+          continue;
+        }
+        throw error;
+      }
+    }
+  }
+
+  public async close() {
+    try {
+      await this.connection?.destroy();
+      await this.pool?.end();
+    } catch {
+      // NOOp
+    } finally {
+      this.connected = false;
+      this.connection = undefined;
+      this.pool = undefined;
+    }
+  }
+
+  public async get() {
+    while (!this.connected) {
+      await wait(10);
+    }
+
     if (!this.connection) {
-      throw new Error(`Database not connected`);
+      throw new Error(`No connection found!`);
     }
 
     return this.connection;

@@ -34,7 +34,10 @@ export class PostgressDatabase implements IUnitOfWork {
     if (this._transaction) {
       throw new Error(`Transaction already started`);
     }
-    this._transaction = await this.pool.get().startTransaction().execute();
+
+    const connection = await this.pool.get();
+
+    this._transaction = await connection.startTransaction().execute();
   }
 
   public async commit(): Promise<void> {

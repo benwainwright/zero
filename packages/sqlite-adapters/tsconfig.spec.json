@@ -4,7 +4,8 @@
     "paths": {
       "@adapters": ["./src/adapters/index.ts"],
       "@core": ["./src/core/index.ts"],
-      "@types": ["./src/types/index.ts"]
+      "@types": ["./src/types/index.ts"],
+      "@test-helpers": ["./src/test-helpers/index.ts"]
     },
     "outDir": "./out-tsc/vitest",
     "types": [

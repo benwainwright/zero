@@ -115,12 +115,13 @@ describe('Bootstrapper', () => {
 
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringContaining('Missing config value: foo.bar (missing value)'),
-      { context: 'bootstrapper' }
+      { context: 'bootstrapper', error: expect.anything() }
     );
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringContaining('Missing config value: foo.baz (missing number)'),
-      { context: 'bootstrapper' }
+      { context: 'bootstrapper', error: expect.anything() }
     );
+
     expect(initStep).not.toHaveBeenCalled();
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(resolved).toBe(false);
@@ -174,7 +175,7 @@ describe('Bootstrapper', () => {
 
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringContaining('foo.bar:'),
-      { context: 'bootstrapper' }
+      { context: 'bootstrapper', error: expect.anything() }
     );
   });
 });

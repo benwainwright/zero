@@ -1,6 +1,6 @@
 export interface ILogger {
   child<TContext extends object>(context: TContext): ILogger;
-  error<TData extends { context?: string; error: Error }>(
+  error<TData extends { context?: string; error?: Error | unknown }>(
     message: string,
     data?: TData
   ): void;

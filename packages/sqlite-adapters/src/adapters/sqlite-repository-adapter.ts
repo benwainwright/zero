@@ -1,8 +1,6 @@
 import type { IRoleRepository, IUserRepository } from '@zero/auth';
 import { Role, User, permissionSchema } from '@zero/domain';
 import { inject, SqliteDatabase } from '@core';
-import type { ConfigValue } from '@zero/bootstrap';
-import { postConstruct } from 'inversify';
 import z from 'zod';
 
 interface RawUser {
@@ -19,17 +17,12 @@ interface RawRole {
   routes: string;
 }
 
-type TableName = 'users' | 'roles';
-
 export class SqliteRepositoryAdapter
   implements IUserRepository, IRoleRepository
 {
   public constructor(
     @inject('SqliteDatabase')
-    private readonly database: SqliteDatabase,
-
-    @inject('DatabaseTablePrefix')
-    private readonly tablePrefix: ConfigValue<string>
+    private readonly database: SqliteDatabase
   ) {}
 
   public async requireRole(id: string): Promise<Role> {
@@ -54,7 +47,7 @@ export class SqliteRepositoryAdapter
   public async getRole(id: string): Promise<Role | undefined> {
     const result = await this.database.getFromDb<RawRole | undefined>(
       `SELECT id, name, permissions, routes
-        FROM ${await this.getTableName('roles')}
+        FROM ${await this.database.getTableName('roles')}
         where id = ?`,
       [id]
     );
@@ -75,7 +68,7 @@ export class SqliteRepositoryAdapter
   }
 
   public async saveRole(role: Role): Promise<Role> {
-    const roleTable = await this.getTableName('roles');
+    const roleTable = await this.database.getTableName('roles');
 
     this.database.deferQueryToTransaction(
       `INSERT INTO ${roleTable} (id, name, permissions, routes)
@@ -99,70 +92,12 @@ export class SqliteRepositoryAdapter
   public async getManyRoles(offset: number, limit: number): Promise<Role[]> {
     const result = await this.database.getAllFromDatabase<RawRole[]>(
       `SELECT id, name, permissions, routes
-        FROM ${await this.getTableName('roles')}
+        FROM ${await this.database.getTableName('roles')}
         LIMIT ? OFFSET ?`,
       [limit, offset]
     );
 
     return result.map((raw) => this.mapRawRole(raw));
-  }
-
-  private async getTableName(table: TableName): Promise<string> {
-    return `${await this.tablePrefix.value}_${table}`;
-  }
-
-  private async getJoinTableName(first: TableName, second: TableName) {
-    return `${await this.getTableName(first)}_${await this.getTableName(
-      second
-    )}`;
-  }
-
-  @postConstruct()
-  public async create() {
-    await this.database
-      .runQuery(`CREATE TABLE IF NOT EXISTS ${await this.getTableName(
-      'users'
-    )} (
-          id TEXT PRIMARY KEY,
-          email TEXT NOT NULL UNIQUE,
-          passwordHash TEXT NOT NULL
-      );`);
-
-    await this.database.runQuery(
-      `CREATE TABLE IF NOT EXISTS ${await this.getJoinTableName(
-        'users',
-        'roles'
-      )} (
-        userId TEXT NOT NULL,
-        roleId TEXT NOT NULL,
-        PRIMARY KEY (userId, roleId),
-        FOREIGN KEY (userId) references ${await this.getTableName('users')}(id),
-        FOREIGN KEY (roleId) references ${await this.getTableName('roles')}(id)
-      );`
-    );
-
-    await this.database
-      .runQuery(`CREATE TABLE IF NOT EXISTS ${await this.getTableName(
-      'roles'
-    )} (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          permissions TEXT NOT NULL,
-          routes TEXT NOT NULL
-      );`);
-
-    await this.database.runQuery(
-      `CREATE INDEX IF NOT EXISTS idx_users_roles_roleId ON ${await this.getJoinTableName(
-        'users',
-        'roles'
-      )}(roleId);`
-    );
-    await this.database.runQuery(
-      `CREATE INDEX IF NOT EXISTS idx_users_roles_userId ON ${await this.getJoinTableName(
-        'users',
-        'roles'
-      )}(userId);`
-    );
   }
 
   private mapRawUser(raw: RawUser) {
@@ -174,8 +109,8 @@ export class SqliteRepositoryAdapter
   }
 
   public async saveUser(user: User): Promise<User> {
-    const joinTable = await this.getJoinTableName(`users`, `roles`);
-    const usersTable = await this.getTableName(`users`);
+    const joinTable = await this.database.getJoinTableName(`users`, `roles`);
+    const usersTable = await this.database.getTableName(`users`);
 
     this.database.deferQueryToTransaction(
       `INSERT INTO ${usersTable} (id, email, passwordHash)
@@ -215,13 +150,13 @@ export class SqliteRepositoryAdapter
           'routes', roles.routes
         )
       )
-      FROM ${await this.getJoinTableName('users', 'roles')} user_roles
-      JOIN ${await this.getTableName('roles')} roles
+      FROM ${await this.database.getJoinTableName('users', 'roles')} user_roles
+      JOIN ${await this.database.getTableName('roles')} roles
         ON roles.id = user_roles.roleId
     ),
     '[]'
   ) as roles
-  FROM ${await this.getTableName('users')} users`;
+  FROM ${await this.database.getTableName('users')} users`;
   }
 
   public async getUser(id: string): Promise<User | undefined> {
@@ -249,7 +184,7 @@ export class SqliteRepositoryAdapter
   }
   public async deleteUser(user: User): Promise<void> {
     this.database.deferQueryToTransaction(
-      `DELETE FROM ${await this.getTableName('users')}
+      `DELETE FROM ${await this.database.getTableName('users')}
       WHERE id = ?`,
       [user.id]
     );

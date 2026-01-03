@@ -4,7 +4,7 @@ import { inject } from './typed-inject.ts';
 import { priority, type ILogger } from '@zero/bootstrap';
 import type { ICommand } from '@types';
 
-const LOG_CONTEXT = { context: 'transactional-service-bus' };
+const LOG_CONTEXT = { context: 'transactional-command-bus' };
 
 @priority(10_000)
 @injectable()

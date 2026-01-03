@@ -77,7 +77,10 @@ export class Bootstrapper implements IBootstrapper {
       z.object(this.buildSchema()).parse(this._config);
     } catch (error) {
       if (error instanceof ZodError) {
-        this.logger.error(this.formatValidationError(error), LOG_CONTEXT);
+        this.logger.error(this.formatValidationError(error), {
+          ...LOG_CONTEXT,
+          error,
+        });
         return;
       }
     }

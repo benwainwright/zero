@@ -18,12 +18,14 @@ afterEach(() => {
 
 describe('the auth module', () => {
   it('bootstraps initial users and perms', async () => {
-    const { container, bootstrapper } = containerWithMockedBootstrapDepsBound();
+    const { container, bootstrapper, logger } =
+      containerWithMockedBootstrapDepsBound();
     await container.load(authModule);
 
     await container.getAsync('Bootstrapper');
 
     expect(bootstrapInitialUsersAndPermissions).toHaveBeenCalledWith(
+      logger,
       bootstrapper,
       container
     );

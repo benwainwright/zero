@@ -69,19 +69,19 @@ export class ServerSocketClient {
       }
     } catch (error) {
       if (error instanceof AbstractError) {
-        this.logger.error(
-          `${error.message}, ${String(error.stack)}`,
-          LOG_CONTEXT
-        );
+        this.logger.error(`${error.message}, ${String(error.stack)}`, {
+          ...LOG_CONTEXT,
+          error,
+        });
         error.handle(this.eventBus);
         return;
       } else if (error instanceof Error) {
-        this.logger.error(
-          `${error.message}, ${String(error.stack)}`,
-          LOG_CONTEXT
-        );
+        this.logger.error(`${error.message}, ${String(error.stack)}`, {
+          ...LOG_CONTEXT,
+          error,
+        });
       } else {
-        this.logger.error(String(error), LOG_CONTEXT);
+        this.logger.error(String(error), { ...LOG_CONTEXT, error });
       }
     }
   }
