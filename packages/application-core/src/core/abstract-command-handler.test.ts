@@ -2,7 +2,6 @@ import type { ICommandContext } from '@types';
 import { AbstractCommandHandler } from './abstract-command-handler.ts';
 import { mock } from 'vitest-mock-extended';
 import type { ILogger } from '@zero/bootstrap';
-import { unsubscribe } from 'node:diagnostics_channel';
 
 describe('abstract command handler', () => {
   describe('tryHandle', () => {

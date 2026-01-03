@@ -12,7 +12,7 @@ import type {
 import { useQuery } from './use-query.ts';
 import { useCommand } from './use-command.ts';
 import { useEvents } from './use-events.ts';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useData = <
   TQuery extends IKnownQueries,
@@ -61,23 +61,24 @@ export const useData = <
     }
   });
 
-  const update = (
-    localData: IPickCommand<TCommand, TCommandKey>['params'] | undefined
-  ) => {
-    if (!mapToLocalData) {
-      throw new Error('Need to supply a mapping function');
-    }
-    setLocalData({ mapped: localData });
-  };
+  const update = useCallback(
+    (localData: IPickCommand<TCommand, TCommandKey>['params'] | undefined) => {
+      if (!mapToLocalData) {
+        throw new Error('Need to supply a mapping function');
+      }
+      setLocalData({ mapped: localData });
+    },
+    [mapToLocalData]
+  );
 
-  const save = async () => {
+  const save = useCallback(async () => {
     if (!mapToLocalData) {
       throw new Error('Need to supply a mapping function');
     }
     if (localData && localData.mapped) {
       await execute<true>(localData.mapped);
     }
-  };
+  }, [mapToLocalData, localData, execute]);
 
   const finalData = (
     mapToLocalData ? localData?.mapped : localData?.unmapped

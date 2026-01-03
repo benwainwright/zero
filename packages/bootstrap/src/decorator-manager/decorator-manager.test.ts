@@ -475,7 +475,9 @@ describe('decorate', () => {
 
     @injectable()
     class BaseThing implements IThing {
-      doThing() {}
+      doThing() {
+        // NOOP
+      }
     }
 
     @injectable()
@@ -512,7 +514,9 @@ describe('decorate', () => {
 
     const container = new TypedContainer<ContainerTypes>();
     Object.defineProperty(container, 'moveBinding', {
-      value: async () => {},
+      value: async () => {
+        // NOOP
+      },
       configurable: true,
     });
 
@@ -645,7 +649,9 @@ describe('decorate', () => {
         private otherThing: Foo
       ) {}
 
-      doThing() {}
+      doThing() {
+        // NOOP
+      }
     }
 
     @injectable()

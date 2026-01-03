@@ -17,6 +17,7 @@ describe('serialiser', () => {
 
     const deserialised = serialiser.deserialise(result);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((deserialised as any).user).toBeInstanceOf(User);
   });
 
@@ -41,6 +42,7 @@ describe('serialiser', () => {
 
     const deserialised = serialiser.deserialise(result);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((deserialised as any).role).toBeInstanceOf(Role);
   });
 });

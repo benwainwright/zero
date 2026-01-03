@@ -56,7 +56,7 @@ export const EditUser = (): ReactNode => {
       });
       form.resetDirty();
     }
-  }, [isPending]);
+  }, [isPending, form, user]);
 
   const onSubmit = async () => {
     await saveUser();

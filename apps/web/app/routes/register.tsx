@@ -39,7 +39,7 @@ export const Register = (): ReactNode => {
         await navigate('/');
       }
     })();
-  }, [user]);
+  }, [user, navigate]);
 
   useEvent('UserCreated', () => {
     reload?.();

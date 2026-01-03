@@ -36,7 +36,7 @@ export const Login = (): ReactNode => {
         await navigate('/');
       }
     })();
-  }, [user]);
+  }, [user, navigate]);
 
   const onSubmit = async (values: FormValues) => {
     await login({

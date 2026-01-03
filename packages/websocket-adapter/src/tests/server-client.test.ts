@@ -75,7 +75,7 @@ describe('the app server', () => {
 
     uuidGenerator.v7.mockReturnValue('foo-id');
 
-    let handleMock = vi.fn();
+    const handleMock = vi.fn();
 
     class TestError extends AbstractError {
       public override handle(events: IEventEmitter): void {

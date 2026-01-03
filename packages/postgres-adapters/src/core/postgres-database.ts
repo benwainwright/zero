@@ -26,7 +26,9 @@ export class PostgressDatabase implements IUnitOfWork {
     return this._transaction;
   }
 
-  public async begin(): Promise<void> {}
+  public async begin(): Promise<void> {
+    // NOOP
+  }
 
   public async commit(): Promise<void> {
     await (await this.transaction()).commit().execute();

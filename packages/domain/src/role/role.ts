@@ -35,6 +35,7 @@ export class Role extends DomainModel<IRole> {
     return this._name;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public override toObject(_config?: { secure: boolean }): {
     id: string;
     name: string;

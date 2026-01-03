@@ -5,8 +5,6 @@ import { inject } from './typed-inject.ts';
 
 import { sql, Kysely, PostgresDialect } from 'kysely';
 import type { Database } from './i-database.ts';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
 
 @injectable()
 export class PostgresConnectionPool {

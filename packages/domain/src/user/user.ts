@@ -1,4 +1,4 @@
-import { Role, type IRole, type IRoute } from '@role';
+import { Role, type IRoute } from '@role';
 import { userSchema, type IUser } from './i-user.ts';
 import { DomainModel, type IActor, type IViewer } from '@core';
 

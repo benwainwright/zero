@@ -19,7 +19,7 @@ export class QueryBus<IQueries extends IQuery<string>> implements IQueryBus {
     query: Omit<TQuery, 'response'>
   ): Promise<TQuery['response']> {
     const currentUser = await this.userStore.get();
-    for (let handler of this.handlers) {
+    for (const handler of this.handlers) {
       const result = await handler.tryHandle({
         query,
         authContext: currentUser,

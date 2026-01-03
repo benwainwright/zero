@@ -114,7 +114,8 @@ export class DecoratorManager<TMap extends BindingMap>
   private decorationMap_ = new Map<
     keyof TMap,
     {
-      thing: Newable<unknown>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      thing: Newable<any>;
       args: ConstructorArgument[];
       isFromParent: boolean;
     }[]
@@ -138,6 +139,7 @@ export class DecoratorManager<TMap extends BindingMap>
   private getDecoratorKeyForIndex(
     token: keyof TMap,
     index: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     decorators: { thing: Newable<any>; isFromParent: boolean }[]
   ) {
     const decorator = decorators[index];
@@ -156,6 +158,7 @@ export class DecoratorManager<TMap extends BindingMap>
     token: string,
     constructorArgument: ConstructorArgument,
     serviceIndex: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     decorators: { thing: Newable<any>; isFromParent: boolean }[]
   ) {
     if (constructorArgument.value === token) {
@@ -175,6 +178,7 @@ export class DecoratorManager<TMap extends BindingMap>
     token: string,
     theThing: Newable<unknown>,
     serviceIndex: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     decorators: { thing: Newable<any>; isFromParent: boolean }[]
   ) {
     const args = this.getConstructorArguments(theThing);
@@ -190,6 +194,7 @@ export class DecoratorManager<TMap extends BindingMap>
 
   private bindDecoratorList(
     token: keyof TMap & string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     decorators: { thing: Newable<any>; isFromParent: boolean }[]
   ) {
     for (let index = 0; index < decorators.length; index++) {
@@ -254,7 +259,7 @@ export class DecoratorManager<TMap extends BindingMap>
     if (!existingDecorations) {
       return;
     }
-    for (let { thing, args } of existingDecorations) {
+    for (const { thing, args } of existingDecorations) {
       Reflect.deleteMetadata(INVERSIFY_METADATA_KEY, thing);
       args.forEach((arg, index) => {
         decorate(inversifyInject(arg.value), thing, index);
@@ -262,7 +267,8 @@ export class DecoratorManager<TMap extends BindingMap>
     }
   }
 
-  private storeDecoration(token: keyof TMap, thing: Newable<unknown>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private storeDecoration(token: keyof TMap, thing: Newable<any>) {
     const existingDecorations = this.decorationMap_.get(token);
     if (!existingDecorations) {
       this.decorationMap_.set(token, [

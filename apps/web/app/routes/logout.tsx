@@ -22,7 +22,7 @@ export const Logout = (): ReactNode => {
         await navigate('/login');
       }
     })();
-  }, [user, api]);
+  }, [user, api, navigate, logout]);
 
   useEvent('LogoutSuccessfulEvent', () => {
     reload?.();
