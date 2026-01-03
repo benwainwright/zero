@@ -1,0 +1,36 @@
+services:
+  server:
+    build:
+      context: .
+      target: server
+    environment:
+      # change to whatever your app expects
+      WS_PORT: '3001'
+      DATABASE_URL: 'postgres://postgres:postgres@db:5432/app'
+    ports:
+      - '3001:3001'
+    depends_on:
+      - db
+
+  client:
+    build:
+      context: .
+      target: client
+    ports:
+      - '8080:80'
+    depends_on:
+      - server
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -1,5 +1,6 @@
 import { auroraDsql } from '@cdklabs/generative-ai-cdk-constructs';
 import { Stack } from 'aws-cdk-lib';
+import { IpAddresses, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import type { Construct } from 'constructs';
@@ -38,6 +39,8 @@ export class ZeroStack extends Stack {
       }
     );
 
-    new auroraDsql.Cluster(this, 'TestCluster', {});
+    const vpc = new Vpc(this, `zero-app-host-${props.environment}`, {
+      ipAddresses: IpAddresses.cidr('10.0.0.0/16'),
+    });
   }
 }
