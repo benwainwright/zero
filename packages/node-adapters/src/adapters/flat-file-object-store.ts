@@ -51,34 +51,16 @@ export class FlatFileObjectStore implements IObjectStorage {
     this.logger.silly(`Path resolved at ${path}`, LOG_CONTEXT);
 
     try {
-      const fileStat = await stat(path);
-      const isFile = fileStat.isFile();
-
-      this.logger.silly(
-        `Path is a file? ${isFile ? 'yes' : 'no'}`,
-        LOG_CONTEXT
-      );
-
-      if (!fileStat.isFile()) return undefined;
-
       return await readFile(path, 'utf8');
-    } catch (err) {
-      if (
-        err &&
-        typeof err === 'object' &&
-        'code' in err &&
-        err.code === 'ENOENT'
-      ) {
-        return undefined;
-      }
-      throw err;
+    } catch {
+      return undefined;
     }
   }
 
   public async clear(namespace: string) {
     const path = await this.resolvePath(namespace);
     const dir = path.substring(0, path.lastIndexOf('/'));
-    await rm(dir, { force: true });
+    await rm(dir, { force: true, recursive: true });
   }
 
   public async set(
