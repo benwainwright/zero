@@ -26,7 +26,7 @@ export const authModule: IModule<
 }) => {
   logger.info(`Initialising auth module`);
 
-  bind('current_user_cache').to(SessionStorage).inRequestScope();
+  bind('CurrentUserCache').to(SessionStorage).inRequestScope();
   bind('CurrentUserSetter').toService('CurrentUserCache');
   bind('SessionStore').toService('CurrentUserCache');
 

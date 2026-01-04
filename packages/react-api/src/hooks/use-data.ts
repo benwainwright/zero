@@ -12,7 +12,7 @@ import type {
 import { useQuery } from './use-query.ts';
 import { useCommand } from './use-command.ts';
 import { useEvents } from './use-events.ts';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useData = <
   TQuery extends IKnownQueries,
@@ -61,6 +61,8 @@ export const useData = <
     }
   });
 
+  const hasMap = Boolean(mapToLocalData);
+
   const update = useCallback(
     (localData: IPickCommand<TCommand, TCommandKey>['params'] | undefined) => {
       if (!mapToLocalData) {
@@ -68,7 +70,7 @@ export const useData = <
       }
       setLocalData({ mapped: localData });
     },
-    [mapToLocalData]
+    [hasMap]
   );
 
   const save = useCallback(async () => {

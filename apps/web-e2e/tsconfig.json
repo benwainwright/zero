@@ -3,7 +3,12 @@
   "compilerOptions": {
     "allowJs": true,
     "outDir": "out-tsc/playwright",
-    "sourceMap": false
+    "sourceMap": false,
+    "paths": {
+      "@helpers": ["./src/helpers/index.ts"],
+      "@poms": ["./src/poms/index.ts"],
+      "@tests": ["./src/tests/index.ts"]
+    }
   },
   "include": [
     "**/*.ts",

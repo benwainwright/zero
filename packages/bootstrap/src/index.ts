@@ -14,4 +14,7 @@ export {
   DecoratorManager,
 } from '@decorator-manager';
 
-export { containerWithMockedBootstrapDepsBound } from '@test-helpers';
+export {
+  containerWithMockedBootstrapDepsBound,
+  testModule,
+} from '@test-helpers';

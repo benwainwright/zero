@@ -22,6 +22,7 @@ import {
   type ILogger,
   type IBootstrapTypes,
   type IDecoratorManager,
+  testModule,
 } from '@zero/bootstrap';
 
 import getPort from 'get-port';
@@ -42,7 +43,7 @@ export const getServerWithDepsMocked = async (): Promise<IServerWithDeps> => {
   const container = new TypedContainer<
     IServerInternalTypes & IApplicationTypes & IBootstrapTypes
   >();
-  await container.load(websocketServerModule);
+  await container.load(testModule(websocketServerModule));
 
   const freePort = await getPort();
 

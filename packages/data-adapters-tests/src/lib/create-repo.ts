@@ -1,7 +1,4 @@
-import {
-  TypedContainer,
-  type TypedContainerModule,
-} from '@inversifyjs/strongly-typed';
+import { TypedContainer } from '@inversifyjs/strongly-typed';
 import { mock } from 'vitest-mock-extended';
 
 import type {
@@ -14,9 +11,10 @@ import type { Mocked } from 'vitest';
 import {
   type ILogger,
   type IBootstrapTypes,
-  type IBootstrapper,
   type IDecoratorManager,
   type BindingMap,
+  type IModule,
+  testModule,
 } from '@zero/bootstrap';
 import type { IAuthTypes } from '@zero/auth';
 import { inject, injectable } from 'inversify';
@@ -47,7 +45,7 @@ export const createRepo = async <
   afterCallback,
 }: {
   repoKey: TKey;
-  modules: TypedContainerModule<DataPortsWithMock>[];
+  modules: IModule<DataPortsWithMock>[];
   afterCallback?: <TMap extends BindingMap>(
     container: TypedContainer<DataPortsWithMock & TMap>
   ) => Promise<void>;
@@ -56,23 +54,19 @@ export const createRepo = async <
   ) => Promise<void>;
 }): Promise<CreateFunction<TKey>> => {
   const container = new TypedContainer<DataPortsWithMock & IBootstrapTypes>();
-  const bootstrapper = mock<IBootstrapper>();
 
   const logger = mock<ILogger>();
 
   const decoratorManager = mock<IDecoratorManager>();
   container.bind('DecoratorManager').toConstantValue(decoratorManager);
-  container.bind('Bootstrapper').toConstantValue(bootstrapper);
   container.bind('Logger').toConstantValue(logger);
   container.bind('Container').toConstantValue(container);
   const mockEventBuffer = mock<IDomainEventBuffer>();
   container.bind('DomainEventBuffer').toConstantValue(mockEventBuffer);
 
   for (const module of modules) {
-    await container.load(module);
+    await container.load(testModule(module));
   }
-
-  container.get('Bootstrapper');
 
   afterEach(async () => {
     await afterCallback?.(container);

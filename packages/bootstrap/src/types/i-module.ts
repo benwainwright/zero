@@ -24,8 +24,8 @@ export interface IModuleContext<TTypeMap extends BindingMap> {
 
   onInit(callback: () => Promise<void>): void;
 
-  rebindSync: RebindSync<BindingMap>;
-  bind: Bind<BindingMap>;
+  rebindSync: RebindSync<TTypeMap>;
+  bind: Bind<TTypeMap>;
   get: <
     TBound extends ContainerBinding<TTypeMap, TKey>,
     TKey extends MappedServiceIdentifier<TTypeMap> = any

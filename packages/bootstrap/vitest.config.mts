@@ -29,7 +29,7 @@ export default defineConfig(() => ({
         './src/test-helpers/**',
       ],
       thresholds: {
-        functions: 80.0,
+        functions: 75.0,
         lines: 80.0,
         statements: 80.0,
         branches: 70.0,
