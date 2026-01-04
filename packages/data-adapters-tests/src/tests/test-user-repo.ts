@@ -147,7 +147,7 @@ export const testUserAndRoleRepository = (
     });
   });
 
-  describe('the user and role repositories', () => {
+  describe.sequential('the user and role repositories', () => {
     it('work correctly in coordination', async () => {
       const { userRepo, unitOfWork, roleRepo } = await create();
 
@@ -205,7 +205,7 @@ export const testUserAndRoleRepository = (
     });
   });
 
-  describe('the user repository', () => {
+  describe.sequential('the user repository', () => {
     it('can delete a user', async () => {
       const { userRepo, unitOfWork } = await create();
 

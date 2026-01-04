@@ -3,6 +3,7 @@ import {
   type ICommandBus,
   type IQueryBus,
   type IAllEvents,
+  type IApplicationTypes,
 } from '@zero/application-core';
 import { AbstractError, type ILogger } from '@zero/bootstrap';
 import { Serialiser } from '@zero/serialiser';
@@ -10,6 +11,7 @@ import { injectable } from 'inversify';
 import { WebSocket } from 'ws';
 import { inject } from './typed-inject.ts';
 import type { IQueryResponseEvent, IWebsocketPacket } from '@types';
+import type { TypedContainer } from '@inversifyjs/strongly-typed';
 
 export const LOG_CONTEXT = {
   context: 'websocket-server-socket-client',
@@ -18,11 +20,8 @@ export const LOG_CONTEXT = {
 @injectable()
 export class ServerSocketClient {
   public constructor(
-    @inject('CommandBus')
-    private commandBus: ICommandBus,
-
-    @inject('QueryBus')
-    private queryBus: IQueryBus,
+    @inject('Container')
+    private readonly container: TypedContainer<IApplicationTypes>,
 
     @inject('EventBus')
     private eventBus: IEventBus<IAllEvents & IQueryResponseEvent>,
@@ -46,6 +45,7 @@ export class ServerSocketClient {
   }
 
   public async onMessage(message: WebSocket.RawData) {
+    console.log('MESSAGE');
     this.logger.silly(`Message received on socket`, LOG_CONTEXT);
     try {
       const serialiser = new Serialiser();
@@ -58,10 +58,13 @@ export class ServerSocketClient {
         message: JSON.stringify(parsed),
       });
 
+      const commandBus = await this.container.getAsync('CommandBus');
+      const queryBus = await this.container.getAsync('QueryBus');
+
       if (parsed.type === 'command') {
-        await this.commandBus.execute(parsed.packet);
+        await commandBus.execute(parsed.packet);
       } else {
-        const response = await this.queryBus.execute(parsed.packet);
+        const response = await queryBus.execute(parsed.packet);
         this.eventBus.emit('QueryResponseEvent', {
           id: parsed.packet.id,
           data: response,

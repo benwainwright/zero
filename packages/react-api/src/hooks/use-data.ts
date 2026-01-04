@@ -53,7 +53,7 @@ export const useData = <
     } else {
       setLocalData({ unmapped: data });
     }
-  }, [data]);
+  }, []);
 
   useEvents((event) => {
     if (refreshOn?.includes(event.key)) {

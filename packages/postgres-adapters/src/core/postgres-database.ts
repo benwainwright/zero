@@ -16,6 +16,7 @@ export class PostgressDatabase implements IUnitOfWork {
     @inject('PostgresConnectionPool')
     private pool: PostgresConnectionPool
   ) {
+    console.log('Constructed');
     this.currentIndex = index++;
   }
 
@@ -24,6 +25,7 @@ export class PostgressDatabase implements IUnitOfWork {
   }
 
   public transaction() {
+    console.log(`tx unit`, index);
     if (!this._transaction) {
       throw new Error('No transaction started');
     }
@@ -31,6 +33,7 @@ export class PostgressDatabase implements IUnitOfWork {
   }
 
   public async begin(): Promise<void> {
+    console.log(`begin unit`, index);
     if (this._transaction) {
       throw new Error(`Transaction already started`);
     }
@@ -41,6 +44,7 @@ export class PostgressDatabase implements IUnitOfWork {
   }
 
   public async commit(): Promise<void> {
+    console.log(`commit unit`, index);
     try {
       const tx = this.transaction();
       if (tx) {

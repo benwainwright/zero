@@ -15,7 +15,7 @@ export const websocketServerModule: IModule<IServerInternalTypes> = async ({
   getAsync,
 }) => {
   logger.info(`Initialising websocket server module`);
-  bind('ServerWebsocketClient').to(ServerSocketClient);
+  bind('ServerWebsocketClient').to(ServerSocketClient).inRequestScope();
   bind('AppServer').to(AppServer);
 
   onInit(async () => {

@@ -1,4 +1,4 @@
-import { Page } from '@components';
+import { Page, Permission } from '@components';
 import {
   Card,
   Chip,
@@ -54,34 +54,10 @@ export const EditRole = () => {
         <Fieldset legend="Permissions" mt="lg">
           <Stack>
             {role?.permissions.map((perm) => (
-              <Card
-                withBorder
-                radius="md"
-                padding="md"
-                shadow="sm"
+              <Permission
+                permission={perm}
                 key={`role-perm-${JSON.stringify(perm)}`}
-              >
-                <Card.Section>
-                  <SimpleGrid
-                    cols={2}
-                    p="sm"
-                    style={{ justifyItems: 'center' }}
-                  >
-                    <Text fw={500}>Action</Text>
-                    <Text>{perm.action}</Text>
-
-                    <Text fw={500}>Capabilities</Text>
-                    <Text>{perm.capabilities.join(', ')}</Text>
-
-                    <Text fw={500}>Resource</Text>
-                    <Text>
-                      {typeof perm.resource === 'string'
-                        ? perm.resource
-                        : perm.resource.id}
-                    </Text>
-                  </SimpleGrid>
-                </Card.Section>
-              </Card>
+              />
             ))}
           </Stack>
         </Fieldset>

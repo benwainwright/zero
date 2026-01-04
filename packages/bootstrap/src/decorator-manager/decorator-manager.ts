@@ -17,6 +17,8 @@ import type { IDecoratorManager } from './i-decorator-manager.ts';
 
 const INVERSIFY_METADATA_KEY = '@inversifyjs/core/classMetadataReflectKey';
 
+type BindingScope = 'Singleton' | 'Transient' | 'Request';
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
@@ -192,6 +194,30 @@ export class DecoratorManager<TMap extends BindingMap>
     });
   }
 
+  private bind(
+    container: ContainerWithMove<TMap>,
+    token: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    thing: Newable<any>
+  ) {
+    const rootKey = this.getRootKey(token);
+    const scope = container.getBindingScope(rootKey);
+    const theBinding = container.bind(token).to(thing);
+
+    switch (scope) {
+      case 'Request':
+        theBinding.inRequestScope();
+        break;
+
+      case 'Singleton':
+        theBinding.inSingletonScope();
+        break;
+
+      case 'Transient':
+        theBinding.inTransientScope();
+    }
+  }
+
   private bindDecoratorList(
     token: keyof TMap & string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -203,9 +229,11 @@ export class DecoratorManager<TMap extends BindingMap>
         break;
       }
       const { thing: atIndex } = decorator;
+
       const containerWithMove = this.getContainerWithMove(
         decorator.isFromParent
       );
+
       if (index === 0) {
         const rootKey = this.getRootKey(token);
         if (!containerWithMove.isBound(rootKey)) {
@@ -215,7 +243,8 @@ export class DecoratorManager<TMap extends BindingMap>
         if (containerWithMove.isBound(token)) {
           containerWithMove.unbindSync(token);
         }
-        containerWithMove.bind(token).to(atIndex);
+
+        this.bind(containerWithMove, token, atIndex);
       } else {
         const decoratorKey = this.getDecoratorKeyForIndex(
           token,
@@ -225,7 +254,7 @@ export class DecoratorManager<TMap extends BindingMap>
         if (containerWithMove.isBound(decoratorKey)) {
           containerWithMove.unbindSync(decoratorKey);
         }
-        containerWithMove.bind(decoratorKey).to(atIndex);
+        this.bind(containerWithMove, decoratorKey, atIndex);
       }
       this.adjustConstructorParamDecoration(token, atIndex, index, decorators);
     }

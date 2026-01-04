@@ -16,7 +16,9 @@ export class CommandBus implements ICommandBus {
 
     @inject('CurrentUserCache')
     private readonly userStore: ICurrentUserCache
-  ) {}
+  ) {
+    console.log('CONSTRUCT ROOT COMMAND BUS');
+  }
 
   public async execute(command: ICommand<string>) {
     const currentUser = await this.userStore.get();

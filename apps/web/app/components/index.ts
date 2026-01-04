@@ -1,4 +1,5 @@
 export { Footer } from './footer/index.ts';
+export { Permission } from './permission/index.ts';
 export { NavBar } from './nav-bar/index.ts';
 export { Header } from './header/index.ts';
 export { IntegrationStatus } from './integration-status/index.ts';
