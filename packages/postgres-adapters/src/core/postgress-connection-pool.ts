@@ -50,13 +50,7 @@ export class PostgresConnectionPool {
 
   public async doConnect() {
     this.logger.info(`Connection to database!`);
-    console.log(this.databaseName.value);
-    try {
-      const db = await this.databaseName.value;
-    } catch (error) {
-      console.log(error);
-    }
-    this.logger.info(`Connection to database-2`);
+    const db = await this.databaseName.value;
 
     this.pool = new Pool({
       database: db,
