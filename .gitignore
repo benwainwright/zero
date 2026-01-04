@@ -50,3 +50,5 @@ vite.config.*.timestamp*
 **/test-output
 
 test-output
+.env.local
+.nx

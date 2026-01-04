@@ -114,5 +114,10 @@
         "linter": "eslint"
       }
     }
+  },
+  "s3": {
+    "region": "eu-west-2",
+    "bucket": "zero-build-cache-bw",
+    "localMode": "read-write"
   }
 }
