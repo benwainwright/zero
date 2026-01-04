@@ -49,9 +49,17 @@ export class PostgresConnectionPool {
   }
 
   public async doConnect() {
-    this.logger.info(`Connection to database`);
+    this.logger.info(`Connection to database!`);
+    console.log(this.databaseName.value);
+    try {
+      const db = await this.databaseName.value;
+    } catch (error) {
+      console.log(error);
+    }
+    this.logger.info(`Connection to database-2`);
+
     this.pool = new Pool({
-      database: await this.databaseName.value,
+      database: db,
       host: await this.databaseHost.value,
       password: await this.databasePassword.value,
       user: await this.databaseUsername.value,
@@ -60,6 +68,8 @@ export class PostgresConnectionPool {
       keepAlive: true,
       keepAliveInitialDelayMillis: 10_000,
     });
+
+    this.logger.info(`Connection initialised`);
 
     this.pool.on('error', (error) => {
       this.logger.error(error.message, { error });

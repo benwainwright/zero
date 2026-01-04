@@ -1,6 +1,6 @@
 import { type IAuthTypes } from '@zero/auth';
 import * as z from 'zod';
-import { module } from '@zero/bootstrap';
+import { type IModule } from '@zero/bootstrap';
 import { NodePasswordHasher } from '@adapters';
 import type { IInternalTypes } from './core/i-internal-types.ts';
 import EventEmitter from 'node:events';
@@ -9,19 +9,20 @@ import type { IApplicationTypes } from '@zero/application-core';
 import { NodeStringHasher } from './adapters/node-string-hasher.ts';
 import { FlatFileObjectStore } from './adapters/flat-file-object-store.ts';
 
-export const nodeAdaptersModule = module<
+export const nodeAdaptersModule: IModule<
   IAuthTypes & IInternalTypes & IApplicationTypes
->(({ load, bootstrapper, logger }) => {
+> = async ({ logger, bind, configValue }) => {
   logger.info(`Initialising node adapters module`);
-  load.bind('PasswordHasher').to(NodePasswordHasher);
-  load.bind('EventBusListener').toConstantValue(new EventEmitter());
-  load.bind('BusNamespace').toConstantValue(`ynab-plus`);
-  load.bind('EventBus').to(NodeEventBus);
-  load.bind('StringHasher').to(NodeStringHasher);
-  load.bind('PasswordVerifier').to(NodePasswordHasher);
-  load.bind('ObjectStore').to(FlatFileObjectStore);
 
-  const storagePath = bootstrapper.configValue({
+  bind('PasswordHasher').to(NodePasswordHasher);
+  bind('EventBusListener').toConstantValue(new EventEmitter());
+  bind('BusNamespace').toConstantValue(`ynab-plus`);
+  bind('EventBus').to(NodeEventBus);
+  bind('StringHasher').to(NodeStringHasher);
+  bind('PasswordVerifier').to(NodePasswordHasher);
+  bind('ObjectStore').to(FlatFileObjectStore);
+
+  const storagePath = configValue({
     namespace: 'storage',
     key: 'location',
     schema: z.string(),
@@ -29,5 +30,5 @@ export const nodeAdaptersModule = module<
       'Path to file storage. Used for things like session data and request cache',
   });
 
-  load.bind('StoragePath').toConstantValue(storagePath);
-});
+  bind('StoragePath').toConstantValue(storagePath);
+};

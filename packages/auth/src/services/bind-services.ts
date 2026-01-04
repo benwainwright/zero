@@ -1,4 +1,4 @@
-import type { TypedContainerModuleLoadOptions } from '@inversifyjs/strongly-typed';
+import type { Bind, TypedContainer } from '@inversifyjs/strongly-typed';
 import type { IApplicationTypes } from '@zero/application-core';
 import type { IBootstrapTypes } from '@zero/bootstrap';
 
@@ -18,19 +18,17 @@ import { GetRolesQueryHandler } from './query-handlers/get-roles-query-handler.t
 import { GetRoleQueryHandler } from './query-handlers/get-role-query-handler.ts';
 
 export const bindServices = (
-  load: TypedContainerModuleLoadOptions<
-    IApplicationTypes & IBootstrapTypes & IAuthTypes
-  >
+  bind: Bind<IApplicationTypes & IBootstrapTypes & IAuthTypes>
 ) => {
-  load.bind('CommandHandler').to(CreateUserCommandHandler);
-  load.bind('CommandHandler').to(DeleteUserCommandHandler);
-  load.bind('CommandHandler').to(LoginCommandHandler);
-  load.bind('CommandHandler').to(LogoutCommandHandler);
-  load.bind('CommandHandler').to(UpdateUserCommandHandler);
+  bind('CommandHandler').to(CreateUserCommandHandler);
+  bind('CommandHandler').to(DeleteUserCommandHandler);
+  bind('CommandHandler').to(LoginCommandHandler);
+  bind('CommandHandler').to(LogoutCommandHandler);
+  bind('CommandHandler').to(UpdateUserCommandHandler);
 
-  load.bind('QueryHandler').to(GetCurrentUserQueryHandler);
-  load.bind('QueryHandler').to(GetUsersQueryHandler);
-  load.bind('QueryHandler').to(GetUserQueryHandler);
-  load.bind('QueryHandler').to(GetRolesQueryHandler);
-  load.bind('QueryHandler').to(GetRoleQueryHandler);
+  bind('QueryHandler').to(GetCurrentUserQueryHandler);
+  bind('QueryHandler').to(GetUsersQueryHandler);
+  bind('QueryHandler').to(GetUserQueryHandler);
+  bind('QueryHandler').to(GetRolesQueryHandler);
+  bind('QueryHandler').to(GetRoleQueryHandler);
 };

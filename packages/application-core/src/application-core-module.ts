@@ -8,57 +8,59 @@ import {
 import { TypedContainer } from '@inversifyjs/strongly-typed';
 import type { ISessionIdRequester } from '@ports';
 import { type IApplicationTypes } from '@types';
-import { module, type IBootstrapTypes } from '@zero/bootstrap';
+import { type IBootstrapTypes, type IModule } from '@zero/bootstrap';
 import { Serialiser } from '@zero/serialiser';
 
-export const applicationCoreModule = module<IApplicationTypes>(
-  async ({ load, container, decorators, bootstrapper, logger }) => {
-    logger.info(`Initialising application core module`);
-    container.bind('DomainEventBuffer').to(DomainEventStore).inRequestScope();
-    container.bind('DomainEventEmitter').toService('DomainEventBuffer');
-    load.bind('Serialiser').to(Serialiser);
-    load.bind('CommandBus').to(CommandBus).inRequestScope();
-    load.bind('QueryBus').to(QueryBus).inRequestScope();
-    decorators.decorate('CommandBus', TransactionalCommandBus);
-    decorators.decorate('QueryBus', TransactionalQueryBus);
+export const applicationCoreModule: IModule<
+  IApplicationTypes & IBootstrapTypes
+> = async ({ decorate, logger, bind, container, getAsync }) => {
+  logger.info(`Initialising application core module`);
+  bind('DomainEventBuffer').to(DomainEventStore).inRequestScope();
+  bind('DomainEventEmitter').toService('DomainEventBuffer');
+  bind('Serialiser').to(Serialiser);
+  bind('CommandBus').to(CommandBus).inRequestScope();
+  bind('QueryBus').to(QueryBus).inRequestScope();
 
-    load.bind('ContainerFactory').toFactory(() => {
-      return async (sessionIdRequester: ISessionIdRequester) => {
-        const requestContainer = new TypedContainer<
-          IApplicationTypes & IBootstrapTypes
-        >({
-          parent: container,
-          defaultScope: 'Request',
-        });
+  decorate('CommandBus', TransactionalCommandBus);
+  decorate('QueryBus', TransactionalQueryBus);
 
-        await bootstrapper.executeRequestCallbacks(requestContainer);
+  bind('ContainerFactory').toFactory(() => {
+    return async (sessionIdRequester: ISessionIdRequester) => {
+      const requestContainer = new TypedContainer<
+        IApplicationTypes & IBootstrapTypes
+      >({
+        parent: container,
+        defaultScope: 'Request',
+      });
 
-        const parentEventBus = await container.getAsync('EventBus');
+      const requestExecutor = await getAsync('RequestExecutor');
+      await requestExecutor.executeRequestCallbacks(requestContainer);
 
-        requestContainer
-          .bind('SessionIdRequester')
-          .toConstantValue(sessionIdRequester);
+      const parentEventBus = await getAsync('EventBus');
 
-        const hasher = await container.getAsync('StringHasher');
-        const logger = await container.getAsync('Logger');
-        const sessionId = await sessionIdRequester.getSessionId();
+      requestContainer
+        .bind('SessionIdRequester')
+        .toConstantValue(sessionIdRequester);
 
-        requestContainer
-          .rebindSync('Container')
-          .toConstantValue(requestContainer);
+      const hasher = await getAsync('StringHasher');
+      const logger = await getAsync('Logger');
+      const sessionId = await sessionIdRequester.getSessionId();
 
-        requestContainer.bind('Logger').toConstantValue(
-          logger.child({
-            session: hasher.md5(sessionId),
-          })
-        );
+      requestContainer
+        .rebindSync('Container')
+        .toConstantValue(requestContainer);
 
-        requestContainer
-          .bind('EventBus')
-          .toConstantValue(parentEventBus.child(sessionId));
+      requestContainer.bind('Logger').toConstantValue(
+        logger.child({
+          session: hasher.md5(sessionId),
+        })
+      );
 
-        return requestContainer;
-      };
-    });
-  }
-);
+      requestContainer
+        .bind('EventBus')
+        .toConstantValue(parentEventBus.child(sessionId));
+
+      return requestContainer;
+    };
+  });
+};

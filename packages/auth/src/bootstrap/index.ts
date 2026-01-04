@@ -1,1 +1,1 @@
-export { bootstrapInitialUsersAndPermissions } from './bootstrap-initial-users-and-permissions.ts';
+export { AuthBootstrapper } from './auth-bootstrapper.ts';

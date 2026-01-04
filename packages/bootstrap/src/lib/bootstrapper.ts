@@ -10,11 +10,13 @@ import {
   type IBootstrapper,
   type IBootstrapTypes,
   type RequestCallback,
+  type IModule,
 } from '@types';
-import { injectable, type ServiceIdentifier } from 'inversify';
+import { injectable, type Newable, type ServiceIdentifier } from 'inversify';
 import { inject } from '@inversify';
-import type { TypedContainer } from '@inversifyjs/strongly-typed';
-import type { BindingMap } from '@decorator-manager';
+import { type Bind, type TypedContainer } from '@inversifyjs/strongly-typed';
+import type { BindingMap, IDecoratorManager } from '@decorator-manager';
+import type { ContainerBinding } from '../decorator-manager/inversify-types.ts';
 
 export const LOG_CONTEXT = { context: 'bootstrapper' };
 
@@ -34,14 +36,18 @@ export class Bootstrapper implements IBootstrapper {
 
   private _config: Record<string, unknown>;
 
-  private requestCallbacks: RequestCallback<BindingMap>[] = [];
-
   public constructor(
     @inject('ConfigFile')
     private configFile: string,
 
     @inject('Logger')
-    private logger: ILogger
+    public readonly logger: ILogger,
+
+    @inject('DecoratorManager')
+    private readonly decorator: IDecoratorManager,
+
+    @inject('Container')
+    private container: TypedContainer
   ) {
     this.logger.silly('Initialising bootstrapper', {
       context: 'bootstrapper',
@@ -51,9 +57,30 @@ export class Bootstrapper implements IBootstrapper {
     const rawConfig = JSON.parse(fs.readFileSync(configFilePath, 'utf-8'));
     this._config = this.ensureRecord(rawConfig);
   }
-
-  public addInitStep(callback: () => Promise<void>) {
+  public onInit(callback: () => Promise<void>): void {
     this.bootstrappingSteps.push(callback);
+  }
+
+  public decorate<TKey extends string>(
+    token: TKey,
+    thing: Newable<ContainerBinding<Partial<BindingMap>, TKey>>
+  ): void {
+    this.decorate(token, thing);
+  }
+
+  private modules: IModule<BindingMap>[] = [];
+  private requestCallbacks: RequestCallback<BindingMap>[] = [];
+
+  public addModule<TTypeMap extends BindingMap>(
+    callback: IModule<TTypeMap>
+  ): void {
+    this.modules.push(callback);
+  }
+
+  public onRequest<TTypeMap extends BindingMap>(
+    callback: RequestCallback<TTypeMap>
+  ) {
+    this.requestCallbacks.push(callback);
   }
 
   public async executeRequestCallbacks<TTypeMap extends BindingMap>(
@@ -64,12 +91,6 @@ export class Bootstrapper implements IBootstrapper {
     }
   }
 
-  public onRequest<TTypeMap extends BindingMap>(
-    callback: RequestCallback<TTypeMap>
-  ) {
-    this.requestCallbacks.push(callback);
-  }
-
   public async start(): Promise<void> {
     this.logger.info(`Starting application`, LOG_CONTEXT);
     try {
@@ -77,10 +98,7 @@ export class Bootstrapper implements IBootstrapper {
       z.object(this.buildSchema()).parse(this._config);
     } catch (error) {
       if (error instanceof ZodError) {
-        this.logger.error(this.formatValidationError(error), {
-          ...LOG_CONTEXT,
-          error,
-        });
+        this.logger.error(this.formatValidationError(error), LOG_CONTEXT);
         return;
       }
     }
@@ -90,13 +108,28 @@ export class Bootstrapper implements IBootstrapper {
       LOG_CONTEXT
     );
 
-    this.logger.info(`Running final initialisation steps`);
-
     this.emitter.emit(RESOLVE_CONFIG);
-    await this.bootstrappingSteps.reduce(async (last, current) => {
-      await last;
-      await current();
-    }, Promise.resolve());
+
+    this.logger.info(`Loading modules`);
+    for (const module of this.modules) {
+      await module({
+        bind: this.container.bind.bind<Bind<BindingMap>>(this.container),
+        configValue: this.configValue.bind(this),
+        container: this.container,
+        onInit: this.onInit.bind(this),
+        onRequest: this.onRequest.bind(this),
+        logger: this.logger,
+        decorate: this.decorator.decorate.bind(this.decorator),
+        rebindSync: this.container.rebindSync.bind(this.container),
+        get: this.container.get.bind(this.container),
+        getAsync: this.container.getAsync.bind(this.container),
+      });
+    }
+
+    this.logger.info(`Running initialisation hooks`);
+    for (const initStep of this.bootstrappingSteps) {
+      await initStep();
+    }
 
     this.logger.info(`Application Initialised`);
   }

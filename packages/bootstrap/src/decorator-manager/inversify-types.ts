@@ -13,14 +13,16 @@ type ServiceIdentifier<TInstance = unknown> =
   | string
   | symbol
   | Newable<TInstance>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   | Function;
 
 type BindingMapProperty = string | symbol;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type BindingMap = Record<BindingMapProperty, any>;
 
 type IfAny<T, TYes, TNo> = 0 extends 1 & T ? TYes : TNo;
 
-type MappedServiceIdentifier<T extends BindingMap> = IfAny<
+export type MappedServiceIdentifier<T extends BindingMap> = IfAny<
   T,
   ServiceIdentifier,
   keyof T
@@ -28,12 +30,14 @@ type MappedServiceIdentifier<T extends BindingMap> = IfAny<
 
 export type ContainerBinding<
   TBindingMap extends BindingMap,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TKey extends MappedServiceIdentifier<TBindingMap> = any
 > = TKey extends keyof TBindingMap
   ? TBindingMap[TKey]
   : TKey extends Newable<infer C>
   ? C
-  : TKey extends Function
+  : // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  TKey extends Function
   ? unknown
   : never;
 

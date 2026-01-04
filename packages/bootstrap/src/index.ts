@@ -1,5 +1,11 @@
-export { module, AbstractError, ConfigValue, bootstrapModule } from '@lib';
-export type { IBootstrapTypes, IBootstrapper, ILogger } from '@types';
+export { AbstractError, ConfigValue, getBootstrapper } from '@lib';
+export type {
+  IModule,
+  IBootstrapTypes,
+  IBootstrapper,
+  ILogger,
+  IHooks,
+} from '@types';
 
 export {
   type IDecoratorManager,

@@ -1,6 +1,4 @@
-import { TypedContainer } from '@inversifyjs/strongly-typed';
-
-import { bootstrapModule, type IBootstrapTypes } from '@zero/bootstrap';
+import { getBootstrapper } from '@zero/bootstrap';
 import { applicationCoreModule } from '@zero/application-core';
 import { authModule } from '@zero/auth';
 import { databaseAdaptersModule } from './database.ts';
@@ -8,20 +6,13 @@ import { websocketServerModule } from '@zero/websocket-adapter/server';
 import { nodeAdaptersModule } from '@zero/node-adapters';
 
 const start = async () => {
-  const container = new TypedContainer<IBootstrapTypes>({
-    defaultScope: 'Request',
-  });
+  const bootstrapper = await getBootstrapper();
 
-  container.bind('Container').toConstantValue(container);
-
-  await container.load(databaseAdaptersModule);
-  await container.load(bootstrapModule);
-  await container.load(applicationCoreModule);
-  await container.load(authModule);
-  await container.load(websocketServerModule);
-  await container.load(nodeAdaptersModule);
-
-  const bootstrapper = await container.getAsync('Bootstrapper');
+  bootstrapper.addModule(databaseAdaptersModule);
+  bootstrapper.addModule(applicationCoreModule);
+  bootstrapper.addModule(nodeAdaptersModule);
+  bootstrapper.addModule(authModule);
+  bootstrapper.addModule(websocketServerModule);
 
   await bootstrapper.start();
 };
