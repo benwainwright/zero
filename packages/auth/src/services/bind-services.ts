@@ -1,4 +1,4 @@
-import type { Bind, TypedContainer } from '@inversifyjs/strongly-typed';
+import type { Bind } from '@inversifyjs/strongly-typed';
 import type { IApplicationTypes } from '@zero/application-core';
 import type { IBootstrapTypes } from '@zero/bootstrap';
 

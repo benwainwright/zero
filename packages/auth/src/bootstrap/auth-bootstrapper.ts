@@ -2,13 +2,7 @@ import { ADMIN_USER_ID, USER_ROLE_ID } from '@constants';
 import { inject } from '@core';
 import type { IPasswordHasher, IRoleRepository, IUserRepository } from '@ports';
 import type { IUnitOfWork } from '@zero/application-core';
-import type {
-  BindingMap,
-  ConfigValue,
-  IBootstrapper,
-  IHooks,
-  ILogger,
-} from '@zero/bootstrap';
+import type { ConfigValue, IBootstrapper, ILogger } from '@zero/bootstrap';
 import { Role, User } from '@zero/domain';
 import { injectable } from 'inversify';
 import { adminPermissions } from './admin-permissions.ts';

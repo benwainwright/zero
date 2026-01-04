@@ -8,19 +8,19 @@ import { WebsocketEventListener } from './websocket-event-listener.ts';
 import { v7 } from 'uuid';
 import type { IClientTypes } from './i-client-types.ts';
 import { WebsocketApi } from './websocket-api.ts';
-import type { IModule } from '@zero/bootstrap';
+import { TypedContainerModule } from '@inversifyjs/strongly-typed';
 
-export const websocketClientModule: IModule<
+export const websocketClientModule = new TypedContainerModule<
   IClientInternalTypes & IClientTypes
-> = async ({ bind }) => {
-  bind('CommandClient').to(WebsocketCommandClient);
-  bind('QueryClient').to(WebsocketQueryClient);
-  bind('EventListener').to(WebsocketEventListener);
-  bind('ApiSurface').to(WebsocketApi);
+>((load) => {
+  load.bind('CommandClient').to(WebsocketCommandClient);
+  load.bind('QueryClient').to(WebsocketQueryClient);
+  load.bind('EventListener').to(WebsocketEventListener);
+  load.bind('ApiSurface').to(WebsocketApi);
 
   const uuidGenerator = {
     v7,
   };
 
-  bind('UUIDGenerator').toConstantValue(uuidGenerator);
-};
+  load.bind('UUIDGenerator').toConstantValue(uuidGenerator);
+});

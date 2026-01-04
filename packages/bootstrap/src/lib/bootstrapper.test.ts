@@ -5,6 +5,8 @@ import { Bootstrapper } from './bootstrapper.ts';
 import z from 'zod';
 import { mock } from 'vitest-mock-extended';
 import type { ILogger } from '@types';
+import type { IDecoratorManager } from '@decorator-manager';
+import type { TypedContainer } from '@inversifyjs/strongly-typed';
 
 describe('Bootstrapper', () => {
   const tempDirectories: string[] = [];
@@ -36,7 +38,14 @@ describe('Bootstrapper', () => {
     });
 
     const logger = mock<ILogger>();
-    const bootstrapper = new Bootstrapper(configPath, logger);
+    const decorator = mock<IDecoratorManager>();
+    const container = mock<TypedContainer>();
+    const bootstrapper = new Bootstrapper(
+      configPath,
+      logger,
+      decorator,
+      container
+    );
 
     const order: string[] = [];
     const barValue = bootstrapper.configValue({
@@ -60,10 +69,10 @@ describe('Bootstrapper', () => {
       description: 'other value',
     });
 
-    bootstrapper.addInitStep(async () => {
+    bootstrapper.onInit(async () => {
       order.push('first');
     });
-    bootstrapper.addInitStep(async () => {
+    bootstrapper.onInit(async () => {
       order.push('second');
     });
 
@@ -87,7 +96,14 @@ describe('Bootstrapper', () => {
   it('logs validation errors and does not resolve values or run init steps when config is invalid', async () => {
     const configPath = createConfigFile({});
     const logger = mock<ILogger>();
-    const bootstrapper = new Bootstrapper(configPath, logger);
+    const decorator = mock<IDecoratorManager>();
+    const container = mock<TypedContainer>();
+    const bootstrapper = new Bootstrapper(
+      configPath,
+      logger,
+      decorator,
+      container
+    );
 
     const pendingValue = bootstrapper.configValue({
       namespace: 'foo',
@@ -109,7 +125,7 @@ describe('Bootstrapper', () => {
     const initStep = vi.fn(async () => {
       resolved = true;
     });
-    bootstrapper.addInitStep(initStep);
+    bootstrapper.onInit(initStep);
 
     await bootstrapper.start();
 
@@ -133,7 +149,14 @@ describe('Bootstrapper', () => {
 
     const configPath = createConfigFile({});
     const logger = mock<ILogger>();
-    const bootstrapper = new Bootstrapper(configPath, logger);
+    const decorator = mock<IDecoratorManager>();
+    const container = mock<TypedContainer>();
+    const bootstrapper = new Bootstrapper(
+      configPath,
+      logger,
+      decorator,
+      container
+    );
 
     const value = bootstrapper.configValue({
       namespace: 'foo',
@@ -143,7 +166,7 @@ describe('Bootstrapper', () => {
     });
 
     const initStep = vi.fn();
-    bootstrapper.addInitStep(initStep);
+    bootstrapper.onInit(initStep);
 
     try {
       await bootstrapper.start();
@@ -162,7 +185,14 @@ describe('Bootstrapper', () => {
       },
     });
     const logger = mock<ILogger>();
-    const bootstrapper = new Bootstrapper(configPath, logger);
+    const decorator = mock<IDecoratorManager>();
+    const container = mock<TypedContainer>();
+    const bootstrapper = new Bootstrapper(
+      configPath,
+      logger,
+      decorator,
+      container
+    );
 
     bootstrapper.configValue({
       namespace: 'foo',

@@ -1,12 +1,14 @@
-import { ConfigValue, module } from '@zero/bootstrap';
+import { ConfigValue, type IModule } from '@zero/bootstrap';
 import type { IInternalTypes } from './i-internal-types.ts';
 
-export const testOverridesModule = module<IInternalTypes>(({ load }) => {
-  load
-    .rebindSync('DatabaseFilename')
-    .toConstantValue(new ConfigValue(Promise.resolve(':memory:')));
+export const testOverridesModule: IModule<IInternalTypes> = async ({
+  rebindSync,
+}) => {
+  rebindSync('DatabaseFilename').toConstantValue(
+    new ConfigValue(Promise.resolve(':memory:'))
+  );
 
-  load
-    .rebindSync('DatabaseTablePrefix')
-    .toConstantValue(new ConfigValue(Promise.resolve('zero')));
-});
+  rebindSync('DatabaseTablePrefix').toConstantValue(
+    new ConfigValue(Promise.resolve('zero'))
+  );
+};

@@ -93,6 +93,21 @@ export class Bootstrapper implements IBootstrapper {
 
   public async start(): Promise<void> {
     this.logger.info(`Starting application`, LOG_CONTEXT);
+    for (const module of this.modules) {
+      await module({
+        bind: this.container.bind.bind<Bind<BindingMap>>(this.container),
+        configValue: this.configValue.bind(this),
+        container: this.container,
+        onInit: this.onInit.bind(this),
+        onRequest: this.onRequest.bind(this),
+        logger: this.logger,
+        decorate: this.decorator.decorate.bind(this.decorator),
+        rebindSync: this.container.rebindSync.bind(this.container),
+        get: this.container.get.bind(this.container),
+        getAsync: this.container.getAsync.bind(this.container),
+      });
+    }
+
     try {
       this.ensureNamespacesPresent();
       z.object(this.buildSchema()).parse(this._config);
@@ -109,22 +124,6 @@ export class Bootstrapper implements IBootstrapper {
     );
 
     this.emitter.emit(RESOLVE_CONFIG);
-
-    this.logger.info(`Loading modules`);
-    for (const module of this.modules) {
-      await module({
-        bind: this.container.bind.bind<Bind<BindingMap>>(this.container),
-        configValue: this.configValue.bind(this),
-        container: this.container,
-        onInit: this.onInit.bind(this),
-        onRequest: this.onRequest.bind(this),
-        logger: this.logger,
-        decorate: this.decorator.decorate.bind(this.decorator),
-        rebindSync: this.container.rebindSync.bind(this.container),
-        get: this.container.get.bind(this.container),
-        getAsync: this.container.getAsync.bind(this.container),
-      });
-    }
 
     this.logger.info(`Running initialisation hooks`);
     for (const initStep of this.bootstrappingSteps) {

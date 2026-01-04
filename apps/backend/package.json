@@ -32,31 +32,13 @@
           }
         }
       },
-      "build:postgres": {
-        "dependsOn": [
-          {
-            "target": "build",
-            "params": "forward",
-            "options": {
-              "env": {
-                "DATABASE": "postgres"
-              }
-            }
-          }
-        ]
-      },
-      "build:sqlite": {
-        "dependsOn": [
-          {
-            "target": "build",
-            "params": "forward",
-            "options": {
-              "env": {
-                "DATABASE": "sqlite"
-              }
-            }
-          }
-        ]
+      "start:database": {
+        "continuous": true,
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker-compose up",
+          "cwd": "apps/backend"
+        }
       },
       "dev": {
         "continuous": true,
@@ -66,6 +48,19 @@
           "commands": [
             "vite-node  src/start.ts"
           ]
+        },
+        "configurations": {
+          "postgres": {
+            "env": {
+              "DATABASE": "postgres",
+              "ZERO_CONFIG_POSTGRES_PORT": "5432"
+            }
+          },
+          "sqlite": {
+            "env": {
+              "DATABASE": "sqlite"
+            }
+          }
         }
       }
     }

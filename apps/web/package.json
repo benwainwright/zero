@@ -42,6 +42,12 @@
               "@zero/backend"
             ],
             "target": "dev"
+          },
+          {
+            "projects": [
+              "@zero/backend"
+            ],
+            "target": "start:database"
           }
         ]
       }
