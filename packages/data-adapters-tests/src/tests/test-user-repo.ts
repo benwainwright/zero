@@ -10,7 +10,7 @@ export const testUserAndRoleRepository = (
     unitOfWork: IUnitOfWork;
   }>
 ) => {
-  describe.sequential('the role repository', () => {
+  describe('the role repository', () => {
     it('returns undefined if the role isnt found', async () => {
       const { roleRepo, unitOfWork } = await create();
 
@@ -142,7 +142,7 @@ export const testUserAndRoleRepository = (
     });
   });
 
-  describe.sequential('the user and role repositories', () => {
+  describe('the user and role repositories', () => {
     it('work correctly in coordination', async () => {
       const { userRepo, unitOfWork, roleRepo } = await create();
 
@@ -200,7 +200,7 @@ export const testUserAndRoleRepository = (
     });
   });
 
-  describe.sequential('the user repository', () => {
+  describe('the user repository', () => {
     it('can delete a user', async () => {
       const { userRepo, unitOfWork } = await create();
 

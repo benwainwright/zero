@@ -37,7 +37,9 @@
         "packages/node-adapters/*",
         "packages/react-api/*",
         "packages/postgres-adapters/*",
-        "packages/accounts/*"
+        "packages/accounts/*",
+        "packages/http-client/*",
+        "packages/integration-adapters/*"
       ]
     },
     {

@@ -15,6 +15,7 @@
     "@zero/node-adapters": "workspace:*",
     "@zero/sqlite-adapters": "workspace:*",
     "@zero/postgres-adapters": "workspace:*",
+    "@zero/integration-adapters": "workspace:*",
     "@zero/websocket-adapter": "workspace:*",
     "vite-plugin-node-polyfills": "0.24.0",
     "vite-plugin-static-copy": "3.1.4"

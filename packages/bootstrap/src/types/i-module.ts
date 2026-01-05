@@ -28,6 +28,7 @@ export interface IModuleContext<TTypeMap extends BindingMap> {
   bind: Bind<TTypeMap>;
   get: <
     TBound extends ContainerBinding<TTypeMap, TKey>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     TKey extends MappedServiceIdentifier<TTypeMap> = any
   >(
     serviceIdentifier: TKey,
@@ -37,6 +38,7 @@ export interface IModuleContext<TTypeMap extends BindingMap> {
 
   getAsync: <
     TBound extends ContainerBinding<TTypeMap, TKey>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     TKey extends MappedServiceIdentifier<TTypeMap> = any
   >(
     serviceIdentifier: TKey,

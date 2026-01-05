@@ -16,6 +16,8 @@
       "@transaction": ["./src/transaction/index.ts"],
       "@bank-connection": ["./src/bank-connection/index.ts"],
       "@user/*": ["./src/user/*"],
+      "@errors":  ["./src/errors/index.ts"],
+      "@oauth-token": ["./src/oauth-token/index.ts"],
       "@role": ["./src/role/index.ts"],
       "@role/*": ["./src/role/*"],
       "@types": ["./src/types/index.ts"],

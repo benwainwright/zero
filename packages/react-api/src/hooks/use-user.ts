@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useData } from './use-data.ts';
 
 export const useUser = (username: string) => {

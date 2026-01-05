@@ -29,3 +29,5 @@ export {
   type ITransaction,
   transactionSchema,
 } from '@transaction';
+
+export { OauthToken, type IOauthToken, oAuthTokenSchema } from '@oauth-token';

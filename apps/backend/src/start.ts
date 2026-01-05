@@ -1,9 +1,11 @@
+import { databaseAdaptersModule } from './database.ts';
+
 import { getBootstrapper } from '@zero/bootstrap';
 import { applicationCoreModule } from '@zero/application-core';
 import { authModule } from '@zero/auth';
-import { databaseAdaptersModule } from './database.ts';
 import { websocketServerModule } from '@zero/websocket-adapter/server';
 import { nodeAdaptersModule } from '@zero/node-adapters';
+import { integrationsModule } from '@zero/integration-adapters';
 
 const start = async () => {
   const bootstrapper = await getBootstrapper();
@@ -12,6 +14,7 @@ const start = async () => {
   bootstrapper.addModule(applicationCoreModule);
   bootstrapper.addModule(nodeAdaptersModule);
   bootstrapper.addModule(authModule);
+  bootstrapper.addModule(integrationsModule);
   bootstrapper.addModule(websocketServerModule);
 
   await bootstrapper.start();

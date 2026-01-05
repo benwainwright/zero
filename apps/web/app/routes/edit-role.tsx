@@ -1,14 +1,5 @@
 import { Page, Permission } from '@components';
-import {
-  Card,
-  Chip,
-  Fieldset,
-  Group,
-  Stack,
-  TextInput,
-  Text,
-  SimpleGrid,
-} from '@mantine/core';
+import { Chip, Fieldset, Group, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { IRole } from '@zero/domain';
 import { useRole } from '@zero/react-api';
@@ -35,7 +26,8 @@ export const EditRole = () => {
       form.setValues(role);
       form.resetDirty();
     }
-  }, [isPending]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPending, JSON.stringify(role)]);
 
   const onSubmit = async () => {
     await saveRole();

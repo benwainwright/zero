@@ -3,7 +3,7 @@ import type { IDomainEvents } from './domain-events.ts';
 import type { IEvent } from './i-event.ts';
 
 export abstract class DomainModel<TShape> {
-  public abstract readonly id: string;
+  public abstract id: string;
 
   private events: IEvent<IDomainEvents, keyof IDomainEvents>[] = [];
 

@@ -10,7 +10,8 @@
     "types": ["node"],
     "paths": {
       "@ports": ["./src/ports/index.ts"],
-      "@types": ["./src/types/index.ts"]
+      "@types": ["./src/types/index.ts"],
+      "@core": ["./src/core/index.ts"]
     }
   },
   "include": ["src/**/*.ts"],

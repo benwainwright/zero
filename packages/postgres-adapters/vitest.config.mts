@@ -14,12 +14,13 @@ export default defineConfig(() => ({
     }),
   ],
   test: {
-    name: '@zero/',
+    name: '@zero/postgres-adapters',
     globalSetup: './src/test-helpers/global-setup.ts',
     watch: false,
     globals: true,
     environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    fileParallelism: false,
     reporters: ['default'],
     coverage: {
       enabled: true,

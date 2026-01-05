@@ -1,2 +1,9 @@
 export type { IAccountRepository } from './i-account-repository.ts';
 export type { ITransactionRepository } from './i-transaction-repository.ts';
+export type { IBankConnectionCreator } from './i-bank-connection-creator.ts';
+export type { IRequisitionAccountsFetcher as IRequesitionAccountFetcher } from './i-requisition-accounts-fetcher.ts';
+export type { IInstitutionAuthPageLinkFetcher } from './i-institution-auth-page-link-fetcher.ts';
+export type { IOpenBankingTokenFetcher } from './i-open-banking-token-fetcher.ts';
+export type { IOpenBankingAccountBalanceFetcher } from './i-open-banking-balance-fetcher.ts';
+export type { IOpenBankingAccountDetailsFetcher } from './i-open-banking-account-details-fetcher.ts';
+export type { IOpenBankingTokenRefresher } from './i-open-banking-token-refresher.ts';

@@ -53,6 +53,9 @@
     },
     {
       "path": "./packages/accounts"
+    },
+    {
+      "path": "./packages/integration-adapters"
     }
   ]
 }

@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@zero/domain": "workspace:*",
+    "@zero/accounts": "workspace:*",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
     "@inversifyjs/strongly-typed": "catalog:"

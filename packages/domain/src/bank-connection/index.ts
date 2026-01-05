@@ -4,4 +4,3 @@ export {
   bankConnectionSchema,
 } from './i-bank-connection.ts';
 export { BankConnection } from './bank-connection.ts';
-export { type BankConnectionCommands } from './bank-connection-commands.ts';
