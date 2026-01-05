@@ -13,6 +13,7 @@ export {
   type IEventEmitter,
   type IUnitOfWork,
   type IStringHasher,
+  type IUUIDGenerator,
   type IEventListener,
   type IListener,
   type IQueryBus,

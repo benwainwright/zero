@@ -14,6 +14,7 @@ import type {
   IStringHasher,
   IQueryBus,
   ICurrentUserCache,
+  IUUIDGenerator,
 } from '@ports';
 
 import type { User } from '@zero/domain';
@@ -26,6 +27,7 @@ export interface IApplicationTypes {
   CommandHandler: AbstractCommandHandler<ICommand<string>, string>;
   CurrentUserCache: ICurrentUserCache;
   QueryHandler: AbstractQueryHandler<IQuery<string>, string>;
+  UUIDGenerator: IUUIDGenerator;
   CommandBus: ICommandBus;
   Serialiser: Serialiser;
   QueryBus: IQueryBus;

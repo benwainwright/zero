@@ -9,6 +9,7 @@ export { type ICommandBus } from './i-command-bus.ts';
 export { type IQueryClient } from './i-query-client.ts';
 export { type IApiSurface } from './i-api-surface.ts';
 export { type ICommandClient } from './i-command-client.ts';
+export { type IUUIDGenerator } from './i-uuid-generator.ts';
 export { type IUnitOfWork } from './i-unit-of-work.ts';
 export { type IObjectStorage } from './i-object-storage.ts';
 export { type IStringHasher } from './i-string-hasher.ts';

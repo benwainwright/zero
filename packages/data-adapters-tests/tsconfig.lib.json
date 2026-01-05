@@ -36,6 +36,9 @@
   ],
   "references": [
     {
+      "path": "../accounts/tsconfig.lib.json"
+    },
+    {
       "path": "../auth/tsconfig.lib.json"
     },
     {

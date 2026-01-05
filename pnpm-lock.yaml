@@ -404,6 +404,12 @@ importers:
       '@zero/accounts':
         specifier: workspace:*
         version: 'link:'
+      '@zero/application-core':
+        specifier: workspace:*
+        version: link:../application-core
+      '@zero/bootstrap':
+        specifier: workspace:*
+        version: link:../bootstrap
       '@zero/domain':
         specifier: workspace:*
         version: link:../domain

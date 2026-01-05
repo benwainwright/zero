@@ -13,6 +13,9 @@
       "path": "../../packages/websocket-adapter/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/integration-adapters/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/postgres-adapters/tsconfig.lib.json"
     },
     {
