@@ -4,9 +4,14 @@
     "paths": {
       "@core": ["./src/core/index.ts"],
       "@user": ["./src/user/index.ts"],
+      "@category": ["./src/category/index.ts"],
+      "@budget": ["./src/budget/index.ts"],
+      "@account": ["./src/account/index.ts"],
+      "@transaction": ["./src/transaction/index.ts"],
       "@bank-connection": ["./src/bank-connection/index.ts"],
       "@user/*": ["./src/user/*"],
       "@role": ["./src/role/index.ts"],
+      "@role/*": ["./src/role/*"],
       "@types": ["./src/types/index.ts"],
       "@permission": ["./src/permission/index.ts"]
     },

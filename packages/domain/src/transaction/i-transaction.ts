@@ -1,0 +1,16 @@
+import z from 'zod';
+
+export type ITransaction = z.output<typeof transactionSchema>;
+
+export const transactionSchema = z.object({
+  id: z.string(),
+  accountId: z.string(),
+  userId: z.string(),
+  date: z
+    .union([z.date(), z.string()])
+    .transform((date) => (typeof date === 'string' ? new Date(date) : date)),
+
+  payee: z.string(),
+  amount: z.number(),
+  categoryId: z.string().optional(),
+});

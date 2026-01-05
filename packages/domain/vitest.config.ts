@@ -26,9 +26,9 @@ export default defineConfig(() => ({
       exclude: ['./src/**/*.test.ts', '*./src/**/*.spec.ts'],
       thresholds: {
         autoUpdate: true,
-        functions: 75.67,
-        lines: 86.66,
-        statements: 87.01,
+        functions: 81.33,
+        lines: 88.88,
+        statements: 89.09,
         branches: 70,
       },
       reportsDirectory: './test-output/vitest/coverage',

@@ -12,7 +12,7 @@ import type {
 import { useQuery } from './use-query.ts';
 import { useCommand } from './use-command.ts';
 import { useEvents } from './use-events.ts';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useData = <
   TQuery extends IKnownQueries,

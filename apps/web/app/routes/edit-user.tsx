@@ -100,6 +100,7 @@ export const EditUser = (): ReactNode => {
           <Stack>
             {roles &&
               roles?.map((role) => {
+                console.log(form.getValues());
                 return (
                   <Checkbox
                     checked={

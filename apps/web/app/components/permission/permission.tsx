@@ -1,4 +1,4 @@
-import { Card, Group, Stack, Table } from '@mantine/core';
+import { Card, Stack, Table } from '@mantine/core';
 import type { IPermission } from '@zero/domain';
 
 interface PermissionProps {
@@ -22,7 +22,11 @@ export const Permission = ({ permission }: PermissionProps) => {
               </Table.Tr>
               <Table.Tr>
                 <Table.Th>Resource</Table.Th>
-                <Table.Td>{permission.resource}</Table.Td>
+                <Table.Td>
+                  {typeof permission.resource === 'string'
+                    ? permission.resource
+                    : permission.resource.id}
+                </Table.Td>
               </Table.Tr>
             </Table.Tbody>
           </Table>
