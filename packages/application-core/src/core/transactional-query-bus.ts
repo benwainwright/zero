@@ -16,9 +16,7 @@ export class TransactionalQueryBus implements IQueryBus {
 
     @inject('Logger')
     private logger: ILogger
-  ) {
-    console.log('Constructed tx query bus');
-  }
+  ) {}
 
   public async execute<TQuery extends IQuery<string>>(
     query: Omit<TQuery, 'response'>

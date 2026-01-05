@@ -48,20 +48,12 @@ export const useData = <
   }>();
 
   useEffect(() => {
-    setLocalData((previous) => {
-      if (mapToLocalData) {
-        const mapped = mapToLocalData(data);
-        if (previous?.mapped === mapped && previous?.unmapped === undefined) {
-          return previous;
-        }
-        return { mapped };
-      }
-      if (previous?.unmapped === data && previous?.mapped === undefined) {
-        return previous;
-      }
-      return { unmapped: data };
-    });
-  }, [data, mapToLocalData]);
+    if (mapToLocalData) {
+      setLocalData({ mapped: mapToLocalData(data) });
+    } else {
+      setLocalData({ unmapped: data });
+    }
+  }, [JSON.stringify(data)]);
 
   useEvents((event) => {
     if (refreshOn?.includes(event.key)) {
@@ -78,7 +70,7 @@ export const useData = <
       }
       setLocalData({ mapped: localData });
     },
-    [mapToLocalData]
+    [hasMap]
   );
 
   const save = useCallback(async () => {

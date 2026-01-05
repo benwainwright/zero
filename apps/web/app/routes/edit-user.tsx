@@ -49,14 +49,15 @@ export const EditUser = (): ReactNode => {
   });
 
   useEffect(() => {
-    if (!isPending && user) {
+    if (!isPending && user && form) {
       form.setValues({
         email: user.email,
         roles: user.roles,
       });
       form.resetDirty();
     }
-  }, [isPending, form, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPending, JSON.stringify(user)]);
 
   const onSubmit = async () => {
     await saveUser();
@@ -99,7 +100,6 @@ export const EditUser = (): ReactNode => {
           <Stack>
             {roles &&
               roles?.map((role) => {
-                console.log(form.getValues());
                 return (
                   <Checkbox
                     checked={

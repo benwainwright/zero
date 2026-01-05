@@ -1,1 +1,0 @@
-import{a as o}from"./chunk-7TW6LJC6-DaDHYynL.js";import{t as n}from"./current-user-provider-CQskWHqO.js";const i=typeof window<"u"?r=>{const{api:t}=o.useContext(n),e=o.useRef(void 0);o.useEffect(()=>(t&&(e.current=t.onAll(r)),()=>{e.current&&t?.off(e.current)}),[t])}:()=>{};export{i as u};

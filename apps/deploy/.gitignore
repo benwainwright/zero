@@ -2,3 +2,4 @@ zero.config.json
 combined.log
 error.log
 zero.sqlite
+cdk.out

@@ -1,7 +1,5 @@
 import {
   type IEventBus,
-  type ICommandBus,
-  type IQueryBus,
   type IAllEvents,
   type IApplicationTypes,
 } from '@zero/application-core';
@@ -45,7 +43,6 @@ export class ServerSocketClient {
   }
 
   public async onMessage(message: WebSocket.RawData) {
-    console.log('MESSAGE');
     this.logger.silly(`Message received on socket`, LOG_CONTEXT);
     try {
       const serialiser = new Serialiser();

@@ -11,9 +11,7 @@ export class PostgresRepositoryAdapter
   public constructor(
     @inject('PostgresDatabase')
     private readonly database: PostgressDatabase
-  ) {
-    console.log('CONSTRUCT DB');
-  }
+  ) {}
 
   public async getRole(id: string): Promise<Role | undefined> {
     const tx = await this.database.connection();
