@@ -7,17 +7,9 @@
     "emitDeclarationOnly": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "types": [
-      "node",
-      "vitest/globals",
-      "vitest/importMeta",
-      "vite/client",
-      "node",
-      "vitest"
-    ],
+    "types": ["node"],
     "paths": {
-      "@lib": ["./src/lib/index.ts"],
-      "@tests": ["./src/tests/index.ts"],
+      "@ports": ["./src/ports/index.ts"],
       "@types": ["./src/types/index.ts"]
     }
   },
@@ -36,19 +28,7 @@
   ],
   "references": [
     {
-      "path": "../accounts/tsconfig.lib.json"
-    },
-    {
-      "path": "../auth/tsconfig.lib.json"
-    },
-    {
-      "path": "../bootstrap/tsconfig.lib.json"
-    },
-    {
       "path": "../domain/tsconfig.lib.json"
-    },
-    {
-      "path": "../application-core/tsconfig.lib.json"
     }
   ]
 }

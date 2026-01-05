@@ -36,7 +36,8 @@
         "packages/websocket-adapter/*",
         "packages/node-adapters/*",
         "packages/react-api/*",
-        "packages/postgres-adapters/*"
+        "packages/postgres-adapters/*",
+        "packages/accounts/*"
       ]
     },
     {

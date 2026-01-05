@@ -1,5 +1,5 @@
 {
-  "name": "@zero/data-adapters-tests",
+  "name": "@zero/accounts",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -18,11 +18,7 @@
     "vitest-when": "catalog:"
   },
   "dependencies": {
-    "@zero/application-core": "workspace:*",
     "@zero/domain": "workspace:*",
-    "@zero/bootstrap": "workspace:*",
-    "@zero/auth": "workspace:*",
-    "@zero/accounts": "workspace:*",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
     "@inversifyjs/strongly-typed": "catalog:"

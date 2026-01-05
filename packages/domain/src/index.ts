@@ -20,4 +20,12 @@ export {
   permissionSchema,
 } from '@permission';
 
+export { Account, type IAccount, accountSchema } from '@account';
+
 export { Role, type IRole, roleSchema, type IRoute, routes } from '@role';
+
+export {
+  Transaction,
+  type ITransaction,
+  transactionSchema,
+} from '@transaction';

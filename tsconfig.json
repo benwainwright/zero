@@ -50,6 +50,9 @@
     },
     {
       "path": "./packages/postgres-adapters"
+    },
+    {
+      "path": "./packages/accounts"
     }
   ]
 }

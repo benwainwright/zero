@@ -1,12 +1,10 @@
-import type { IDomainEventBuffer, IUnitOfWork } from '@zero/application-core';
+import type { IUnitOfWork } from '@zero/application-core';
 
-import type { Mocked } from 'vitest';
 import type { IRoleRepository, IUserRepository } from '@zero/auth';
 import { Role, User } from '@zero/domain';
 
 export const testUserAndRoleRepository = (
   create: () => Promise<{
-    eventBuffer: Mocked<IDomainEventBuffer>;
     userRepo: IUserRepository;
     roleRepo: IRoleRepository;
     unitOfWork: IUnitOfWork;
@@ -55,9 +53,6 @@ export const testUserAndRoleRepository = (
       await unitOfWork.begin();
       await roleRepo.saveRole(userRole);
       await roleRepo.saveRole(adminRole);
-      await unitOfWork.commit();
-
-      await unitOfWork.begin();
       const roles = await roleRepo.getManyRoles(0, 30);
       await unitOfWork.commit();
 
