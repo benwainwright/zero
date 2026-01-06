@@ -1,16 +1,30 @@
 import type { IAccountRepository } from '@zero/accounts';
 import type { IUnitOfWork } from '@zero/application-core';
-import { Account } from '@zero/domain';
+import type { IUserRepository } from '@zero/auth';
+import { Account, User } from '@zero/domain';
 
 export const testAccountsRepo = (
   create: () => Promise<{
-    repo: IAccountRepository;
+    accountsRepo: IAccountRepository;
+    userRepo: IUserRepository;
     unitOfWork: IUnitOfWork;
   }>
 ) => {
   describe('the account repository', () => {
     it('can delete accounts', async () => {
-      const { repo, unitOfWork } = await create();
+      const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+
+      const ben = User.reconstitute({
+        email: 'bwainwright28@gmail.com',
+        id: 'ben',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
+
+      await unitOfWork.begin();
+      await userRepo.saveUser(ben);
+      await unitOfWork.commit();
 
       const accountOne = Account.reconstitute({
         id: 'one',
@@ -38,14 +52,26 @@ export const testAccountsRepo = (
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const result = await repo.getAccounts('one');
+      const result = await repo.getAccount('one');
       await unitOfWork.commit();
 
       expect(result).toBeUndefined();
     });
 
     it('can save multiple accounts', async () => {
-      const { repo, unitOfWork } = await create();
+      const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+
+      const ben = User.reconstitute({
+        email: 'bwainwright28@gmail.com',
+        id: 'ben',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
+
+      await unitOfWork.begin();
+      await userRepo.saveUser(ben);
+      await unitOfWork.commit();
 
       const accountOne = Account.reconstitute({
         id: 'one',
@@ -79,7 +105,19 @@ export const testAccountsRepo = (
       expect(accounts[1]).toEqual(accountTwo);
     });
     it('can update and return an account', async () => {
-      const { repo, unitOfWork } = await create();
+      const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+
+      const ben = User.reconstitute({
+        email: 'bwainwright28@gmail.com',
+        id: 'ben',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
+
+      await unitOfWork.begin();
+      await userRepo.saveUser(ben);
+      await unitOfWork.commit();
 
       const accountOne = Account.reconstitute({
         id: 'one',
@@ -107,14 +145,35 @@ export const testAccountsRepo = (
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const token = await repo.getAccounts('two');
+      const token = await repo.getAccount('two');
       await unitOfWork.commit();
 
       expect(token).toEqual(accountTwo);
     });
 
     it('can return all of the current accounts for a user', async () => {
-      const { repo, unitOfWork } = await create();
+      const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+
+      const ben = User.reconstitute({
+        email: 'bwainwright28@gmail.com',
+        id: 'ben',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
+
+      const fred = User.reconstitute({
+        email: 'a@b.c',
+        id: 'fred',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
+
+      await unitOfWork.begin();
+      await userRepo.saveUser(ben);
+      await userRepo.saveUser(fred);
+      await unitOfWork.commit();
 
       const accountOne = Account.reconstitute({
         id: 'one',

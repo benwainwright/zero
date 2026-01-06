@@ -1,5 +1,5 @@
-import { Kysely, PostgresDialect } from 'kysely';
-import { Pool } from 'pg';
+import { PostgresConnectionPool } from '@core';
+import { ConfigValue, type ILogger } from '@zero/bootstrap';
 
 export interface ConnectConfig {
   host?: string | undefined;
@@ -9,28 +9,33 @@ export interface ConnectConfig {
   database?: string | undefined;
 }
 
-export const connect = ({
+const logger: ILogger = {
+  info: console.log,
+  child: () => logger,
+  error: console.error,
+  warn: console.log,
+  debug: console.log,
+  verbose: console.log,
+  silly: console.log,
+};
+
+export const connect = async ({
   host,
   port,
   user,
   password,
   database,
 }: ConnectConfig) => {
-  const pool = new Pool({
-    database,
-    host,
-    port,
-    user,
-    password,
-    connectionTimeoutMillis: 5_000,
-    idleTimeoutMillis: 10_000,
-    keepAlive: true,
-    keepAliveInitialDelayMillis: 10_000,
-  });
+  const pool = new PostgresConnectionPool(
+    new ConfigValue(Promise.resolve(database ?? 'postgres')),
+    new ConfigValue(Promise.resolve(host ?? 'localhost')),
+    new ConfigValue(Promise.resolve(password ?? 'password')),
+    new ConfigValue(Promise.resolve(user ?? 'postgres')),
+    new ConfigValue(Promise.resolve(port ?? 5433)),
+    logger
+  );
 
-  return new Kysely({
-    dialect: new PostgresDialect({
-      pool,
-    }),
-  });
+  await pool.initialise();
+
+  return pool;
 };

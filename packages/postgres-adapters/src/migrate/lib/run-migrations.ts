@@ -1,19 +1,14 @@
-import { Migrator, FileMigrationProvider } from 'kysely';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { connect, type ConnectConfig } from './connect.ts';
-const migrationFolder = path.join(__dirname, '../migrations');
+import { type ConnectConfig } from './connect.ts';
+import { logResults } from './log-results.ts';
+import { migrator as getMigrator } from './migrator.ts';
+
+import  waitPort from "wait-port"
 
 export const runMigrations = async (config: ConnectConfig) => {
-  const db = connect(config);
-  const migrator = new Migrator({
-    db,
-    provider: new FileMigrationProvider({
-      fs,
-      path,
-      migrationFolder,
-    }),
-  });
+  await waitPort({ host: 'localhost', port: 5433 });
+  await using migrator = await getMigrator(config);
 
-  await migrator.migrateToLatest();
+  const result = await migrator.migrateToLatest();
+
+  logResults(result);
 };

@@ -33,6 +33,9 @@
       "path": "../domain/tsconfig.lib.json"
     },
     {
+      "path": "../accounts/tsconfig.lib.json"
+    },
+    {
       "path": "../data-adapters-tests/tsconfig.lib.json"
     },
     {

@@ -6,9 +6,10 @@ import { PostgressDatabase } from './postgres-database.ts';
 import type { IInternalTypes } from '../types/i-internal-types.ts';
 import z from 'zod';
 import { PostgresConnectionPool } from './postgress-connection-pool.ts';
+import type { IAccountsTypes } from '@zero/accounts';
 
 export const postgresAdaptersModule: IModule<
-  IApplicationTypes & IAuthTypes & IInternalTypes
+  IApplicationTypes & IAuthTypes & IInternalTypes & IAccountsTypes
 > = async ({ logger, configValue, bind }) => {
   logger.info(`Initialising postgres module`);
   const host = configValue({
@@ -48,6 +49,7 @@ export const postgresAdaptersModule: IModule<
 
   bind('UserRepository').to(PostgresRepositoryAdapter).inRequestScope();
   bind('RoleRepository').to(PostgresRepositoryAdapter).inRequestScope();
+  bind('AccountRepository').to(PostgresRepositoryAdapter).inRequestScope();
   bind('PostgresDatabase').to(PostgressDatabase).inRequestScope();
   bind('UnitOfWork').toService('PostgresDatabase');
   bind('PostgressUsername').toConstantValue(databaseUser);

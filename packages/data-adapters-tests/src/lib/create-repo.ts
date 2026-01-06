@@ -18,8 +18,12 @@ import {
 } from '@zero/bootstrap';
 import type { IAuthTypes } from '@zero/auth';
 import { inject, injectable } from 'inversify';
+import type { IAccountsTypes } from '@zero/accounts';
 
-type DataPortsWithMock = IBootstrapTypes & IAuthTypes & IApplicationTypes;
+type DataPortsWithMock = IBootstrapTypes &
+  IAuthTypes &
+  IApplicationTypes &
+  IAccountsTypes;
 
 type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 

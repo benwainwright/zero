@@ -27,6 +27,7 @@
     "@zero/auth": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "@zero/data-adapters-tests": "workspace:*",
+    "@zero/accounts": "workspace:*",
     "@zero/domain": "workspace:*",
     "inversify": "catalog:",
     "kysely": "^0.28.9",

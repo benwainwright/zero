@@ -1,4 +1,5 @@
 import type {
+  IAccountRepository,
   IBankConnectionCreator,
   IInstitutionAuthPageLinkFetcher,
   IOauthTokenRepository,
@@ -15,6 +16,7 @@ export interface IAccountsTypes {
   OpenBankingTokenRefresher: IOpenBankingTokenRefresher;
   BankConnectionTokenFetcher: IOpenBankingTokenFetcher;
   OpenBankingAccountBalanceFetcher: IOpenBankingAccountBalanceFetcher;
+  AccountRepository: IAccountRepository;
   BankConnectionCreator: IBankConnectionCreator;
   RequestionAccountFetcher: IRequesitionAccountFetcher;
   InstitutionAuthPageLinkFetcher: IInstitutionAuthPageLinkFetcher;

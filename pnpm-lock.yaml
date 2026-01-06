@@ -642,6 +642,9 @@ importers:
       '@types/pg':
         specifier: ^8.16.0
         version: 8.16.0
+      '@zero/accounts':
+        specifier: workspace:*
+        version: link:../accounts
       '@zero/application-core':
         specifier: workspace:*
         version: link:../application-core

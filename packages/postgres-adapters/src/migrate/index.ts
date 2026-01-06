@@ -1,1 +1,1 @@
-export { runMigrations } from './lib/index.ts';
+export { runMigrations, dropAllMigrations } from './lib/index.ts';

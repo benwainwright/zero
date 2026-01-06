@@ -8,8 +8,8 @@ export class Role extends DomainModel<IRole> {
   public static key = 'role';
   public override readonly id: string;
   private readonly _name: string;
-  private readonly _permissions: IPermission[];
-  private readonly _routes: ReadonlyArray<IRoute>;
+  private _permissions: IPermission[];
+  private _routes: IRoute[];
 
   public static reconstitute(config: unknown) {
     return new Role(roleSchema.parse(config));
@@ -40,7 +40,7 @@ export class Role extends DomainModel<IRole> {
     id: string;
     name: string;
     permissions: IPermission[];
-    routes: readonly IRoute[];
+    routes: IRoute[];
   } {
     return {
       routes: this.routes,

@@ -3,7 +3,7 @@
  * Please do not edit it manually.
  */
 
-import type { ColumnType } from 'kysely';
+import type { ColumnType } from "kysely";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
@@ -11,7 +11,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export type Json = JsonValue;
 
-export type JsonArray = readonly JsonValue[];
+export type JsonArray = JsonValue[];
 
 export type JsonObject = {
   [x: string]: JsonValue | undefined;
@@ -20,6 +20,16 @@ export type JsonObject = {
 export type JsonPrimitive = boolean | number | string | null;
 
 export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
+
+export interface Accounts {
+  balance: number;
+  closed: boolean;
+  deleted: boolean;
+  id: string;
+  name: string;
+  ownerId: string;
+  type: string;
+}
 
 export interface Roles {
   id: string;
@@ -40,6 +50,7 @@ export interface Users {
 }
 
 export interface DB {
+  accounts: Accounts;
   roles: Roles;
   user_roles: UserRoles;
   users: Users;

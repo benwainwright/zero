@@ -82,7 +82,7 @@ export class Account
     };
   }
 
-  public static reconstitute(config: IAccount) {
+  public static reconstitute(config: unknown) {
     return new Account(accountSchema.parse(config));
   }
 
