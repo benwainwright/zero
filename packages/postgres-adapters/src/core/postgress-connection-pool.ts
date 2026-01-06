@@ -22,6 +22,9 @@ export class PostgresConnectionPool {
     @inject('PostgressUsername')
     private readonly databaseUsername: ConfigValue<string>,
 
+    @inject('PostgresDatabasePort')
+    private readonly databasePort: ConfigValue<number>,
+
     @inject('Logger')
     private readonly logger: ILogger
   ) {}
@@ -55,6 +58,7 @@ export class PostgresConnectionPool {
     this.pool = new Pool({
       database: db,
       host: await this.databaseHost.value,
+      port: await this.databasePort.value,
       password: await this.databasePassword.value,
       user: await this.databaseUsername.value,
       connectionTimeoutMillis: 5_000,

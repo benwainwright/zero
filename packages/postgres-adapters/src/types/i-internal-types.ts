@@ -6,6 +6,7 @@ export interface IInternalTypes {
   PostgresDatabaseName: ConfigValue<string>;
   PostgresDatabaseHost: ConfigValue<string>;
   PostgresDatabasePassword: ConfigValue<string>;
+  PostgresDatabasePort: ConfigValue<number>;
   PostgressUsername: ConfigValue<string>;
   PostgresConnectionPool: PostgresConnectionPool;
   PostgresDatabase: PostgressDatabase;

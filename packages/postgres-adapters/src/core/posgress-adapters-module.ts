@@ -25,6 +25,13 @@ export const postgresAdaptersModule: IModule<
     schema: z.string(),
   });
 
+  const port = configValue({
+    namespace: 'postgres',
+    key: 'port',
+    description: 'The port that the postgres server will be available on',
+    schema: z.number(),
+  });
+
   const databasePassword = configValue({
     namespace: 'postgres',
     key: 'password',
@@ -41,12 +48,12 @@ export const postgresAdaptersModule: IModule<
 
   bind('UserRepository').to(PostgresRepositoryAdapter).inRequestScope();
   bind('RoleRepository').to(PostgresRepositoryAdapter).inRequestScope();
-
   bind('PostgresDatabase').to(PostgressDatabase).inRequestScope();
   bind('UnitOfWork').toService('PostgresDatabase');
   bind('PostgressUsername').toConstantValue(databaseUser);
   bind('PostgresDatabaseHost').toConstantValue(host);
   bind('PostgresDatabaseName').toConstantValue(databaseName);
   bind('PostgresDatabasePassword').toConstantValue(databasePassword);
+  bind('PostgresDatabasePort').toConstantValue(port);
   bind('PostgresConnectionPool').to(PostgresConnectionPool).inSingletonScope();
 };

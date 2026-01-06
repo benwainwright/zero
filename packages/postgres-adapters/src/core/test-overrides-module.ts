@@ -16,6 +16,10 @@ export const testOverridesModule: IModule<IInternalTypes> = async ({
     new ConfigValue(Promise.resolve('password'))
   );
 
+  rebindSync('PostgresDatabasePort').toConstantValue(
+    new ConfigValue(Promise.resolve(5433))
+  );
+
   rebindSync('PostgressUsername').toConstantValue(
     new ConfigValue(Promise.resolve('postgres'))
   );
