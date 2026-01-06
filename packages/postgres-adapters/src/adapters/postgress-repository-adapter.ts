@@ -1,18 +1,81 @@
 import { inject, json, type PostgressDatabase } from '@core';
 import type { IUserRepository, IRoleRepository } from '@zero/auth';
-import type { IAccountRepository } from '@zero/accounts';
-import { Account, Role, User, type IUser } from '@zero/domain';
+import type { IAccountRepository, IOauthTokenRepository } from '@zero/accounts';
+import { Account, OauthToken, Role, User, type IUser } from '@zero/domain';
 import { injectable } from 'inversify';
 import { sql } from 'kysely';
 
 @injectable()
 export class PostgresRepositoryAdapter
-  implements IUserRepository, IRoleRepository, IAccountRepository
+  implements
+    IUserRepository,
+    IRoleRepository,
+    IAccountRepository,
+    IOauthTokenRepository
 {
   public constructor(
     @inject('PostgresDatabase')
     private readonly database: PostgressDatabase
   ) {}
+
+  public async getToken(
+    userId: string,
+    provider: string
+  ): Promise<OauthToken | undefined> {
+    const tx = this.database.transaction();
+
+    const result = await tx
+      .selectFrom('oauth_tokens')
+      .selectAll()
+      .where((eb) =>
+        eb.and([eb('ownerId', '=', userId), eb('provider', '=', provider)])
+      )
+      .executeTakeFirst();
+
+    if (!result) {
+      return undefined;
+    }
+
+    return OauthToken.reconstitute(result);
+  }
+
+  public async saveToken(token: OauthToken): Promise<OauthToken> {
+    const tx = this.database.transaction();
+
+    await tx
+      .insertInto('oauth_tokens')
+      .values(token.toObject())
+      .onConflict((oc) =>
+        oc.column('id').doUpdateSet((eb) => ({
+          expiry: eb.ref('excluded.expiry'),
+          token: eb.ref('excluded.token'),
+          refreshToken: eb.ref('excluded.refreshToken'),
+          provider: eb.ref('excluded.provider'),
+          ownerId: eb.ref('excluded.ownerId'),
+          refreshExpiry: eb.ref('excluded.refreshExpiry'),
+          lastUse: eb.ref('excluded.lastUse'),
+          refreshed: eb.ref('excluded.refreshed'),
+          created: eb.ref('excluded.created'),
+        }))
+      )
+      .execute();
+
+    return token;
+  }
+
+  public async deleteToken(token: OauthToken): Promise<void> {
+    const tx = this.database.transaction();
+
+    await tx
+      .deleteFrom('oauth_tokens')
+      .where((eb) =>
+        eb.and([
+          eb('ownerId', '=', token.ownerId),
+          eb('provider', '=', token.provider),
+        ])
+      )
+      .execute();
+  }
 
   public async getAccount(id: string): Promise<Account | undefined> {
     const tx = this.database.transaction();

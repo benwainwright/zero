@@ -50,6 +50,7 @@ export const postgresAdaptersModule: IModule<
   bind('UserRepository').to(PostgresRepositoryAdapter).inRequestScope();
   bind('RoleRepository').to(PostgresRepositoryAdapter).inRequestScope();
   bind('AccountRepository').to(PostgresRepositoryAdapter).inRequestScope();
+  bind('OauthTokenRepository').to(PostgresRepositoryAdapter).inRequestScope();
   bind('PostgresDatabase').to(PostgressDatabase).inRequestScope();
   bind('UnitOfWork').toService('PostgresDatabase');
   bind('PostgressUsername').toConstantValue(databaseUser);

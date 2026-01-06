@@ -34,7 +34,7 @@ export class OpenBankingTokenManager {
     return Object.assign(token, {
       [Symbol.asyncDispose]: async () => {
         if (token.hasEvents()) {
-          await this.oauthTokenRepository.save(token);
+          await this.oauthTokenRepository.saveToken(token);
         }
       },
     });
@@ -42,7 +42,7 @@ export class OpenBankingTokenManager {
 
   public async getToken(currentUserId: string) {
     this.logger.debug(`Fetching token for ${currentUserId}`, LOG_CONTEXT);
-    const token = await this.oauthTokenRepository.get(
+    const token = await this.oauthTokenRepository.getToken(
       currentUserId,
       'open-banking'
     );
@@ -59,7 +59,7 @@ export class OpenBankingTokenManager {
           token.refreshExpiry
         );
 
-        await this.oauthTokenRepository.save(token);
+        await this.oauthTokenRepository.saveToken(token);
         return this.returnDisposable(token);
       }
       return this.returnDisposable(token);
@@ -80,7 +80,7 @@ export class OpenBankingTokenManager {
       ),
     });
 
-    await this.oauthTokenRepository.save(newToken);
+    await this.oauthTokenRepository.saveToken(newToken);
     return this.returnDisposable(newToken);
   }
 }

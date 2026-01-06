@@ -16,7 +16,7 @@ export const migrator = async (config: ConnectConfig) => {
   });
 
   return Object.assign(migrator, {
-    [Symbol.asyncDispose]: async () => {
+    close: async () => {
       await db.close();
     },
   });

@@ -21,6 +21,8 @@ export type JsonPrimitive = boolean | number | string | null;
 
 export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
+export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
 export interface Accounts {
   balance: number;
   closed: boolean;
@@ -29,6 +31,19 @@ export interface Accounts {
   name: string;
   ownerId: string;
   type: string;
+}
+
+export interface OauthTokens {
+  created: Timestamp;
+  expiry: Timestamp;
+  id: string;
+  lastUse: Timestamp | null;
+  ownerId: string;
+  provider: string;
+  refreshed: Timestamp | null;
+  refreshExpiry: Timestamp | null;
+  refreshToken: string | null;
+  token: string | null;
 }
 
 export interface Roles {
@@ -51,6 +66,7 @@ export interface Users {
 
 export interface DB {
   accounts: Accounts;
+  oauth_tokens: OauthTokens;
   roles: Roles;
   user_roles: UserRoles;
   users: Users;

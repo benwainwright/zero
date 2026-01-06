@@ -1,2 +1,6 @@
-export { testUserAndRoleRepository, testAccountsRepo } from '@tests';
+export {
+  testUserAndRoleRepository,
+  testAccountsRepo,
+  testOauthRepository,
+} from '@tests';
 export { createRepo } from '@lib';

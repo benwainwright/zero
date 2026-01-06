@@ -2,6 +2,7 @@ import {
   testUserAndRoleRepository,
   createRepo,
   testAccountsRepo,
+  testOauthRepository,
 } from '@zero/data-adapters-tests';
 
 import { createCallback, afterCallback } from '@test-helpers';
@@ -24,3 +25,12 @@ const accountRepoCreator = await createRepo({
 });
 
 testAccountsRepo(accountRepoCreator);
+
+const oauthTokenRepoCreator = await createRepo({
+  repoKey: { repo: 'OauthTokenRepository', userRepo: 'UserRepository' },
+  modules: [postgresAdaptersModule, testOverridesModule],
+  createCallback,
+  afterCallback,
+});
+
+testOauthRepository(oauthTokenRepoCreator);

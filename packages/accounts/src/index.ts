@@ -8,6 +8,7 @@ export type {
   IOpenBankingAccountBalanceFetcher,
   IOpenBankingAccountDetailsFetcher,
   IOpenBankingTokenFetcher,
+  IOauthTokenRepository,
 } from '@ports';
 
 export type { IAccountsTypes } from '@core';
