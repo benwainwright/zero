@@ -1,7 +1,7 @@
 import type { IPermission } from '@permission';
 import { DomainModel } from '@core';
 
-import type { IRole } from './i-role.ts';
+import { roleSchema, type IRole } from './i-role.ts';
 import type { IRoute } from './i-route.ts';
 
 export class Role extends DomainModel<IRole> {
@@ -11,8 +11,8 @@ export class Role extends DomainModel<IRole> {
   private readonly _permissions: IPermission[];
   private readonly _routes: ReadonlyArray<IRoute>;
 
-  public static reconstitute(config: IRole) {
-    return new Role(config);
+  public static reconstitute(config: unknown) {
+    return new Role(roleSchema.parse(config));
   }
 
   private constructor(config: IRole) {

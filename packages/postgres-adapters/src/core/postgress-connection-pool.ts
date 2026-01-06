@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 import { inject } from './typed-inject.ts';
 
 import { sql, Kysely, PostgresDialect } from 'kysely';
-import type { Database } from './i-database.ts';
+import type { DB } from './database.ts';
 import { wait } from './wait.ts';
 
 @injectable()
@@ -29,7 +29,7 @@ export class PostgresConnectionPool {
     private readonly logger: ILogger
   ) {}
 
-  private connection: Kysely<Database> | undefined;
+  private connection: Kysely<DB> | undefined;
   private pool: Pool | undefined;
   private connected = false;
 
@@ -82,49 +82,10 @@ export class PostgresConnectionPool {
 
       if (this.pool) {
         this.logger.info(`Creating database if it doesnt already exist`);
-        this.connection = new Kysely<Database>({
+        this.connection = new Kysely<DB>({
           dialect: new PostgresDialect({
             pool: this.pool,
           }),
-        });
-
-        await this.connection.transaction().execute(async (tx) => {
-          await sql`
-          CREATE TABLE IF NOT EXISTS roles (
-            id TEXT PRIMARY KEY,
-            name TEXT NOT NULL UNIQUE,
-            permissions JSONB NOT NULL DEFAULT '[]'::jsonb,
-            routes JSONB NOT NULL DEFAULT '{}'::jsonb
-          );
-        `.execute(tx);
-
-          await sql`
-        CREATE TABLE IF NOT EXISTS users (
-          id TEXT PRIMARY KEY,
-          email TEXT NOT NULL UNIQUE,
-          "passwordHash" TEXT NOT NULL
-        );
-        `.execute(tx);
-
-          await sql`
-          CREATE TABLE IF NOT EXISTS user_roles (
-            "userId" TEXT NOT NULL,
-            "roleId" TEXT NOT NULL,
-            CONSTRAINT user_roles_pkey PRIMARY KEY ("userId", "roleId"),
-            CONSTRAINT user_roles_user_fk FOREIGN KEY ("userId") REFERENCES users (id) ON DELETE CASCADE,
-            CONSTRAINT user_roles_role_fk FOREIGN KEY ("roleId") REFERENCES roles (id) ON DELETE CASCADE
-          );
-        `.execute(tx);
-
-          await sql`CREATE INDEX IF NOT EXISTS user_roles_user_id_idx ON user_roles ("userId");`.execute(
-            tx
-          );
-
-          await sql`CREATE INDEX IF NOT EXISTS user_roles_role_id_idx ON user_roles ("roleId");`.execute(
-            tx
-          );
-
-          this.logger.info(`Database initialised`);
         });
       }
     } catch (error) {

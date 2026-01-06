@@ -41,15 +41,13 @@ export class PostgresRepositoryAdapter
   public async saveRole(role: Role): Promise<Role> {
     const tx = this.database.transaction();
 
-    const values = {
-      ...role.toObject(),
-      permissions: json(role.toObject().permissions),
-      routes: json(role.toObject().routes),
-    };
-
     await tx
       .insertInto('roles')
-      .values(values)
+      .values({
+        ...role.toObject(),
+        permissions: json(role.toObject().permissions),
+        routes: json(role.toObject().routes),
+      })
       .onConflict((oc) =>
         oc.column('id').doUpdateSet((eb) => ({
           name: eb.ref('excluded.name'),

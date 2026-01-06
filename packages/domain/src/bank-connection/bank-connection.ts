@@ -1,5 +1,8 @@
 import { DomainModel, type IOwnedBy } from '@core';
-import type { IBankConnection } from './i-bank-connection.ts';
+import {
+  bankConnectionSchema,
+  type IBankConnection,
+} from './i-bank-connection.ts';
 
 export class BankConnection
   extends DomainModel<IBankConnection>
@@ -70,7 +73,7 @@ export class BankConnection
   }
 
   public static reconstitute(config: IBankConnection) {
-    return new BankConnection(config);
+    return new BankConnection(bankConnectionSchema.parse(config));
   }
 
   public saveRequisitionId(id: string) {

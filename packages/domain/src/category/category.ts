@@ -1,5 +1,5 @@
 import { DomainModel, type IOwnedBy } from '@core';
-import type { ICategory } from './i-category.ts';
+import { categorySchema, type ICategory } from './i-category.ts';
 
 export class Category
   extends DomainModel<ICategory>
@@ -20,8 +20,8 @@ export class Category
     return new Category(config);
   }
 
-  public static create(config: ICategory) {
-    return new Category(config);
+  public static create(config: unknown) {
+    return new Category(categorySchema.parse(config));
   }
 
   public readonly id: string;

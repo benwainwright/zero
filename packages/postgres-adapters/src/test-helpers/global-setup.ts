@@ -2,13 +2,15 @@ import { upAll, downAll, type IDockerComposeResult } from 'docker-compose';
 import waitPort from 'wait-port';
 
 import path from 'path';
+import { runMigrations } from '@migrate';
+
+const PORT = 5433;
 
 export const setup = async () => {
   // oxlint-disable eslint/no-misused-promises
   await new Promise<IDockerComposeResult>((accept, reject) =>
     upAll({ cwd: path.join(__dirname, '..'), log: true }).then(
       async (result) => {
-        await waitPort({ host: 'localhost', port: 5432 });
         accept(result);
       },
       (err: unknown) => {
@@ -18,6 +20,14 @@ export const setup = async () => {
       }
     )
   );
+  await waitPort({ host: 'localhost', port: PORT });
+
+  await runMigrations({
+    host: 'localhost',
+    port: PORT,
+    database: 'zero',
+    password: 'password',
+  });
 };
 
 export const teardown = async () => {

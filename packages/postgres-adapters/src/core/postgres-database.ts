@@ -2,12 +2,12 @@ import type { IUnitOfWork } from '@zero/application-core';
 import type { PostgresConnectionPool } from './postgress-connection-pool.ts';
 import { inject } from './typed-inject.ts';
 import type { ControlledTransaction } from 'kysely';
-import type { Database } from './i-database.ts';
+import type { DB } from './database.ts';
 import { injectable } from 'inversify';
 
 @injectable()
 export class PostgressDatabase implements IUnitOfWork {
-  private _transaction: ControlledTransaction<Database, []> | undefined;
+  private _transaction: ControlledTransaction<DB, []> | undefined;
 
   public constructor(
     @inject('PostgresConnectionPool')

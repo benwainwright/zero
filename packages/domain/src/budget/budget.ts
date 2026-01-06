@@ -1,5 +1,5 @@
 import { Category } from '@category';
-import type { IBudget } from './i-budget.ts';
+import { budgetSchema, type IBudget } from './i-budget.ts';
 import type { ICategoryBalance } from './i-category-balance.ts';
 import type { ICategoryMove } from './i-category-move.ts';
 import { DomainModel, type IOwnedBy } from '@core';
@@ -22,8 +22,8 @@ export class Budget extends DomainModel<IBudget> implements IOwnedBy {
     return new Budget(config);
   }
 
-  public static reconstitute(config: IBudget) {
-    return new Budget(config);
+  public static reconstitute(config: unknown) {
+    return new Budget(budgetSchema.parse(config));
   }
 
   public override toObject(): IBudget {

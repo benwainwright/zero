@@ -36,7 +36,7 @@ export class OauthToken
     return theToken;
   }
 
-  public static reconstitute(config: IOauthToken) {
+  public static reconstitute(config: unknown) {
     return new OauthToken(oAuthTokenSchema.parse(config));
   }
 

@@ -5,7 +5,8 @@
       "@core": ["./src/core/index.ts"],
       "@adapters": ["./src/adapters/index.ts"],
       "@types": ["./src/types/index.ts"],
-      "@test-helpers": ["./src/test-helpers/index.ts"]
+      "@test-helpers": ["./src/test-helpers/index.ts"],
+      "@migrate": ["./src/migrations/index.ts"],
     },
     "outDir": "./out-tsc/vitest",
     "types": [

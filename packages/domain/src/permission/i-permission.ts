@@ -12,7 +12,7 @@ export const permissionSchema = z.object({
     )
     .readonly(),
   action: z.union([z.literal('ALLOW'), z.literal(['DENY'])]),
-  resource: z.union([z.instanceof(DomainModel), z.literal('*')]),
+  resource: z.union([z.object({ id: z.string() }), z.literal('*')]),
 });
 
 export type IPermission = z.output<typeof permissionSchema>;

@@ -9,6 +9,7 @@
     "importHelpers": true,
     "types": ["node"],
     "paths": {
+      "@migrate": ["./src/migrate/index.ts"],
       "@core": ["./src/core/index.ts"],
       "@adapters": ["./src/adapters/index.ts"],
       "@types": ["./src/types/index.ts"]

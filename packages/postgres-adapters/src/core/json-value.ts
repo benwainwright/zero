@@ -15,5 +15,6 @@ class JsonValue<T> implements Expression<T> {
     return sql`CAST(${json} AS JSONB)`.toOperationNode();
   }
 }
+//ValueExpression<DB, "roles", string | number | boolean | JsonArray | JsonObject | null | undefined>
 
 export const json = <T>(value: T) => new JsonValue(value);
