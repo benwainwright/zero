@@ -53,6 +53,8 @@ export const testUserAndRoleRepository = (
       await unitOfWork.begin();
       await roleRepo.saveRole(userRole);
       await roleRepo.saveRole(adminRole);
+      await unitOfWork.commit();
+      await unitOfWork.begin();
       const roles = await roleRepo.getManyRoles(0, 30);
       await unitOfWork.commit();
 

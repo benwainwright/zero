@@ -3,6 +3,7 @@ import { userSchema, type IUser } from './i-user.ts';
 import { DomainModel, type IActor, type IViewer } from '@core';
 
 export class User extends DomainModel<IUser> implements IActor, IViewer {
+  public static key = 'user';
   public readonly id: string;
   private _passwordHash: string;
   private _email: string;

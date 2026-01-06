@@ -222,7 +222,7 @@ export class GocardlessClient
   }
 
   public async getConnections(
-    userId: string,
+    ownerId: string,
     token: OauthToken
   ): Promise<BankConnection[]> {
     return await this.client.get({
@@ -249,7 +249,7 @@ export class GocardlessClient
           data.map((item) =>
             BankConnection.create({
               id: item.id,
-              userId,
+              ownerId,
               bankName: item.name,
               logo: item.logo,
             })

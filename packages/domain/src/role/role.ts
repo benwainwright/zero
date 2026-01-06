@@ -5,8 +5,8 @@ import type { IRole } from './i-role.ts';
 import type { IRoute } from './i-route.ts';
 
 export class Role extends DomainModel<IRole> {
+  public static key = 'role';
   public override readonly id: string;
-
   private readonly _name: string;
   private readonly _permissions: IPermission[];
   private readonly _routes: ReadonlyArray<IRoute>;
@@ -15,7 +15,7 @@ export class Role extends DomainModel<IRole> {
     return new Role(config);
   }
 
-  public constructor(config: IRole) {
+  private constructor(config: IRole) {
     super();
     this.id = config.id;
     this._name = config.name;

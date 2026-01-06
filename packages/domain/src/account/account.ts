@@ -1,10 +1,14 @@
-import { DomainModel } from '@core';
+import { DomainModel, type IOwnedBy } from '@core';
 import { accountSchema, type IAccount } from './i-account.ts';
 
-export class Account extends DomainModel<IAccount> implements IAccount {
+export class Account
+  extends DomainModel<IAccount>
+  implements IAccount, IOwnedBy
+{
   public readonly id: string;
 
-  public readonly userId: string;
+  public static key = 'account';
+
   public readonly name: string;
   public readonly closed: boolean;
   public readonly note: string | undefined;
@@ -16,15 +20,15 @@ export class Account extends DomainModel<IAccount> implements IAccount {
   private constructor(config: IAccount) {
     super();
     this.id = config.id;
-    this.userId = config.userId;
     this.name = config.name;
     this.type = config.type;
     this.closed = config.closed;
-    this.note = config.note;
     this.deleted = config.deleted;
+    this.ownerId = config.ownerId;
     this._balance = config.balance;
     this._linkedOpenBankingAccount = config.linkedOpenBankingAccount;
   }
+  public readonly ownerId: string;
 
   public delete() {
     this.raiseEvent({ event: 'AccountDeleted', data: this });
@@ -68,20 +72,17 @@ export class Account extends DomainModel<IAccount> implements IAccount {
 
   public override toObject(): IAccount {
     return {
+      ownerId: this.ownerId,
       balance: this._balance,
       id: this.id,
-      userId: this.userId,
       name: this.name,
       type: this.type,
       closed: this.closed,
       deleted: this.deleted,
-      note: this.note,
     };
   }
 
-  public static reconstitute(
-    config: Omit<IAccount, 'note'> & { note?: string | undefined | null }
-  ) {
+  public static reconstitute(config: IAccount) {
     return new Account(accountSchema.parse(config));
   }
 

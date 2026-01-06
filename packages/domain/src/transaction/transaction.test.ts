@@ -5,7 +5,7 @@ describe('the account model', () => {
       const date = new Date();
       const newTx = Transaction.reconstitute({
         payee: 'foo',
-        userId: 'ben',
+        ownerId: 'ben',
         id: 'foo',
         accountId: 'bar',
         amount: 1000,
@@ -15,7 +15,7 @@ describe('the account model', () => {
       const dried = newTx.toObject();
       expect(dried).toEqual({
         payee: 'foo',
-        userId: 'ben',
+        ownerId: 'ben',
         id: 'foo',
         accountId: 'bar',
         amount: 1000,
@@ -31,7 +31,7 @@ describe('the account model', () => {
       amount: 1000,
       payee: 'foo',
       date: new Date(),
-      userId: 'ben',
+      ownerId: 'ben',
     });
 
     expect(newTx.pullEvents()).toEqual([
@@ -45,7 +45,7 @@ describe('the account model', () => {
   it('emits a domain event on delete', () => {
     const newTx = Transaction.reconstitute({
       payee: 'foo',
-      userId: 'ben',
+      ownerId: 'ben',
       id: 'foo',
       accountId: 'bar',
       amount: 1000,

@@ -1,35 +1,12 @@
-import { DomainModel } from '@core';
+import { DomainModel, type IOwnedBy } from '@core';
 import { oAuthTokenSchema, type IOauthToken } from './i-outh-token.ts';
 import { TokenExpiredError } from '@errors';
 
 export class OauthToken
   extends DomainModel<IOauthToken>
-  implements IOauthToken
+  implements IOauthToken, IOwnedBy
 {
-  public override toObject(config?: { secure: boolean }): IOauthToken {
-    return {
-      id: this.id,
-      provider: this.provider,
-      created: this.created,
-      userId: this.userId,
-      expiry: this.expiry,
-      token: config?.secure ? this.token : ``,
-      refreshToken: config?.secure ? this.refreshToken : ``,
-      refreshed: this.refreshed,
-      lastUse: this.lastUse,
-      refreshExpiry: this.refreshExpiry,
-    };
-  }
-  public readonly provider: string;
-  public readonly created: Date;
-  public readonly userId: string;
-  public expiry: Date;
-  public token: string;
-  public id: string;
-  public refreshToken: string;
-  public refreshExpiry: Date | undefined;
-  public refreshed: Date | undefined;
-  public lastUse: Date | undefined;
+  public static key = 'oauth-token';
 
   private constructor(config: IOauthToken) {
     super();
@@ -38,11 +15,11 @@ export class OauthToken
     this.id = config.id;
     this.refreshToken = config.refreshToken;
     this.provider = config.provider;
-    this.userId = config.userId;
     this.lastUse = config.lastUse;
     this.refreshExpiry = config.refreshExpiry;
     this.refreshed = config.refreshed;
     this.created = config.created;
+    this.ownerId = config.ownerId;
   }
 
   public static create(
@@ -62,6 +39,31 @@ export class OauthToken
   public static reconstitute(config: IOauthToken) {
     return new OauthToken(oAuthTokenSchema.parse(config));
   }
+
+  public override toObject(config?: { secure: boolean }): IOauthToken {
+    return {
+      id: this.id,
+      provider: this.provider,
+      created: this.created,
+      ownerId: this.ownerId,
+      expiry: this.expiry,
+      token: config?.secure ? this.token : ``,
+      refreshToken: config?.secure ? this.refreshToken : ``,
+      refreshed: this.refreshed,
+      lastUse: this.lastUse,
+      refreshExpiry: this.refreshExpiry,
+    };
+  }
+  public readonly provider: string;
+  public readonly ownerId: string;
+  public readonly created: Date;
+  public expiry: Date;
+  public token: string;
+  public id: string;
+  public refreshToken: string;
+  public refreshExpiry: Date | undefined;
+  public refreshed: Date | undefined;
+  public lastUse: Date | undefined;
 
   public delete() {
     this.raiseEvent({ event: 'OauthTokenDeleted', data: this });

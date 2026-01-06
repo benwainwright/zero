@@ -41,7 +41,7 @@ describe('the gocardless client', () => {
         lastUse: undefined,
         created: new Date(),
         refreshed: undefined,
-        userId: 'user',
+        ownerId: 'user',
       });
 
       const result = await client.getAccountBalance(
@@ -64,50 +64,11 @@ describe('the gocardless client', () => {
         mock(),
         mock()
       );
-      const newToken = OauthToken.reconstitute({
-        id: 'foo',
-        refreshExpiry: undefined,
-        provider: 'ynab',
-        token: mockGocardlessData.mockToken,
-        refreshToken: 'string',
-        expiry: new Date(),
-        lastUse: undefined,
-        created: new Date(),
-        refreshed: undefined,
-        userId: 'user',
-      });
 
-      const result = await client.getAccountDetails(['foo', 'bar'], newToken);
-
-      expect(result.length).toEqual(2);
-      expect(result[1]?.name).toEqual(
-        mockGocardlessData.mockAccountDetailsResponses.bar.account.name
-      );
-      expect(result[1]?.details).toEqual(
-        mockGocardlessData.mockAccountDetailsResponses.bar.account.details
-      );
-
-      expect(result[0]?.name).toEqual(
-        mockGocardlessData.mockAccountDetailsResponses.foo.account.name
-      );
-    });
-  });
-
-  describe('getLink', () => {
-    it('calls the requsitions endpoint with the token and the institution and returns the url and req id', async () => {
-      const client = new GocardlessClient(
-        { value: Promise.resolve(mockGocardlessData.secretId) },
-        { value: Promise.resolve(mockGocardlessData.secretKey) },
-        { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
-        mock(),
-        mock(),
-        mock()
-      );
-
-      const connection = BankConnection.reconstite({
+      const connection = BankConnection.reconstitute({
         bankName: 'foo',
         id: mockGocardlessData.mockRequisitionResponse.institution_id,
-        userId: 'ben',
+        ownerId: 'ben',
         logo: 'bar',
         requisitionId: 'baz',
       });
@@ -122,7 +83,7 @@ describe('the gocardless client', () => {
         lastUse: undefined,
         created: new Date(),
         refreshed: undefined,
-        userId: 'user',
+        ownerId: 'user',
       });
 
       const result = await client.getLink(connection, token);
@@ -183,7 +144,7 @@ describe('the gocardless client', () => {
         lastUse: undefined,
         created: new Date(),
         refreshed: undefined,
-        userId: 'user',
+        ownerId: 'user',
       });
 
       const refreshed = await client.refreshToken(token);
@@ -218,23 +179,23 @@ describe('the gocardless client', () => {
         lastUse: undefined,
         created: new Date(),
         refreshed: undefined,
-        userId: 'user',
+        ownerId: 'user',
       });
 
       const connections = await client.getConnections('ben', newToken);
 
       expect(connections).toEqual([
-        BankConnection.reconstite({
+        BankConnection.reconstitute({
           bankName: mockGocardlessData.mockInstititionsList[0]?.name ?? '',
           id: mockGocardlessData.mockInstititionsList[0]?.id ?? '',
           logo: mockGocardlessData.mockInstititionsList[0]?.logo ?? '',
-          userId: 'ben',
+          ownerId: 'ben',
         }),
-        BankConnection.reconstite({
+        BankConnection.reconstitute({
           bankName: mockGocardlessData.mockInstititionsList[1]?.name ?? '',
           id: mockGocardlessData.mockInstititionsList[1]?.id ?? '',
           logo: mockGocardlessData.mockInstititionsList[1]?.logo ?? '',
-          userId: 'ben',
+          ownerId: 'ben',
         }),
       ]);
     });

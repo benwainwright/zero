@@ -1,15 +1,15 @@
-import { DomainModel } from '@core';
+import { DomainModel, type IOwnedBy } from '@core';
 import { transactionSchema, type ITransaction } from './i-transaction.ts';
 
 export class Transaction
   extends DomainModel<ITransaction>
-  implements ITransaction
+  implements ITransaction, IOwnedBy
 {
   public override toObject(): ITransaction {
     return {
       id: this.id,
       accountId: this.accountId,
-      userId: this.userId,
+      ownerId: this.ownerId,
       date: this.date,
       payee: this.payee,
       amount: this.amount,
@@ -18,7 +18,7 @@ export class Transaction
   }
 
   public readonly id: string;
-  public readonly userId: string;
+  public readonly ownerId: string;
   public readonly accountId: string;
   public readonly date: Date;
   public readonly amount: number;
@@ -28,7 +28,7 @@ export class Transaction
   private constructor(config: ITransaction) {
     super();
     this.id = config.id;
-    this.userId = config.userId;
+    this.ownerId = config.ownerId;
     this.amount = config.amount;
     this.payee = config.payee;
     this.accountId = config.accountId;

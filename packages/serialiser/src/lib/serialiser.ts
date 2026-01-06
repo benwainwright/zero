@@ -1,6 +1,15 @@
-import { type IRole, type IUser, Role, User } from '@zero/domain';
+import {
+  Account,
+  BankConnection,
+  Budget,
+  Category,
+  OauthToken,
+  Role,
+  User,
+} from '@zero/domain';
 import { Typeson } from 'typeson';
 import { injectable } from 'inversify';
+import { modelSerialiser } from './model-serialiser.ts';
 
 @injectable()
 export class Serialiser {
@@ -8,16 +17,13 @@ export class Serialiser {
 
   public constructor() {
     this.registry.register({
-      role: [
-        (thing) => thing instanceof Role,
-        (user: Role) => user.toObject(),
-        (raw: IRole) => Role.reconstitute(raw),
-      ],
-      user: [
-        (thing) => thing instanceof User,
-        (user: User) => user.toObject(),
-        (raw: IUser) => User.reconstitute(raw),
-      ],
+      ...modelSerialiser(Role),
+      ...modelSerialiser(User),
+      ...modelSerialiser(BankConnection),
+      ...modelSerialiser(Account),
+      ...modelSerialiser(Budget),
+      ...modelSerialiser(OauthToken),
+      ...modelSerialiser(Category),
     });
   }
 

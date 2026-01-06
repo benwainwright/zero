@@ -14,7 +14,7 @@ export const testAccountsRepo = (
 
       const accountOne = Account.reconstitute({
         id: 'one',
-        userId: 'ben',
+        ownerId: 'ben',
         balance: 0,
         name: 'hello',
         type: 'checking',
@@ -24,7 +24,7 @@ export const testAccountsRepo = (
 
       const accountTwo = Account.reconstitute({
         id: 'two',
-        userId: 'ben',
+        ownerId: 'ben',
         balance: 0,
         name: 'hello',
         type: 'checking',
@@ -46,7 +46,7 @@ export const testAccountsRepo = (
 
       const accountOne = Account.reconstitute({
         id: 'one',
-        userId: 'ben',
+        ownerId: 'ben',
         name: 'hello',
         type: 'checking',
         closed: false,
@@ -56,7 +56,7 @@ export const testAccountsRepo = (
 
       const accountTwo = Account.reconstitute({
         id: 'two',
-        userId: 'ben',
+        ownerId: 'ben',
         name: 'hello',
         type: 'checking',
         closed: false,
@@ -76,7 +76,7 @@ export const testAccountsRepo = (
 
       const accountOne = Account.reconstitute({
         id: 'one',
-        userId: 'ben',
+        ownerId: 'ben',
         name: 'hello',
         type: 'checking',
         closed: false,
@@ -86,7 +86,7 @@ export const testAccountsRepo = (
 
       const accountTwo = Account.reconstitute({
         id: 'two',
-        userId: 'ben',
+        ownerId: 'ben',
         name: 'hello',
         type: 'checking',
         closed: false,
@@ -107,7 +107,7 @@ export const testAccountsRepo = (
 
       const accountOne = Account.reconstitute({
         id: 'one',
-        userId: 'ben',
+        ownerId: 'ben',
         name: 'hello',
         type: 'checking',
         closed: false,
@@ -117,7 +117,7 @@ export const testAccountsRepo = (
 
       const accountTwo = Account.reconstitute({
         id: 'two',
-        userId: 'ben',
+        ownerId: 'ben',
         name: 'hello',
         type: 'checking',
         closed: false,
@@ -127,7 +127,7 @@ export const testAccountsRepo = (
 
       const accountThree = Account.reconstitute({
         id: 'three',
-        userId: 'fred',
+        ownerId: 'fred',
         name: 'hello',
         type: 'checking',
         closed: false,

@@ -3,8 +3,8 @@ describe('the account model', () => {
   describe('freeze dry', () => {
     it('returns an object based on the instance properties', () => {
       const newAccount = Account.reconstitute({
+        ownerId: 'foo',
         id: 'id',
-        userId: 'userId',
         name: 'account name',
         type: 'accont_type',
         closed: false,
@@ -17,7 +17,7 @@ describe('the account model', () => {
       expect(frozen).not.toBeInstanceOf(Account);
       expect(frozen).toEqual({
         id: 'id',
-        userId: 'userId',
+        ownerId: 'foo',
         name: 'account name',
         type: 'accont_type',
         closed: false,
@@ -30,7 +30,7 @@ describe('the account model', () => {
   it('emits a domain event on create', () => {
     const newAccount = Account.create({
       id: 'id',
-      userId: 'userId',
+      ownerId: 'foo',
       name: 'account name',
       type: 'accont_type',
       closed: false,
@@ -48,8 +48,8 @@ describe('the account model', () => {
 
   it('emits a domain event on delete', () => {
     const newAccount = Account.reconstitute({
+      ownerId: 'foo',
       id: 'id',
-      userId: 'userId',
       name: 'account name',
       type: 'accont_type',
       closed: false,
@@ -69,8 +69,8 @@ describe('the account model', () => {
 
   it('allows you to link an account id', () => {
     const newAccount = Account.reconstitute({
+      ownerId: 'foo',
       id: 'id',
-      userId: 'userId',
       name: 'account name',
       type: 'accont_type',
       closed: false,
@@ -85,8 +85,8 @@ describe('the account model', () => {
         event: 'AccountLinked',
         data: {
           old: Account.reconstitute({
+            ownerId: 'foo',
             id: 'id',
-            userId: 'userId',
             name: 'account name',
             type: 'accont_type',
             closed: false,
@@ -94,8 +94,8 @@ describe('the account model', () => {
             deleted: false,
           }),
           new: Account.reconstitute({
+            ownerId: 'foo',
             id: 'id',
-            userId: 'userId',
             name: 'account name',
             type: 'accont_type',
             closed: false,
@@ -112,8 +112,8 @@ describe('the account model', () => {
 
   it('allows you to remove an a account link', () => {
     const newAccount = Account.reconstitute({
+      ownerId: 'foo',
       id: 'id',
-      userId: 'userId',
       name: 'account name',
       type: 'accont_type',
       closed: false,
@@ -129,8 +129,8 @@ describe('the account model', () => {
         event: 'AccountLinkRemoved',
         data: {
           old: Account.reconstitute({
+            ownerId: 'foo',
             id: 'id',
-            userId: 'userId',
             name: 'account name',
             type: 'accont_type',
             closed: false,
@@ -139,8 +139,8 @@ describe('the account model', () => {
             deleted: false,
           }),
           new: Account.reconstitute({
+            ownerId: 'foo',
             id: 'id',
-            userId: 'userId',
             name: 'account name',
             type: 'accont_type',
             closed: false,
@@ -157,8 +157,8 @@ describe('the account model', () => {
 
   it('allows you to update the balances', () => {
     const newAccount = Account.reconstitute({
+      ownerId: 'foo',
       id: 'id',
-      userId: 'userId',
       name: 'account name',
       type: 'accont_type',
       closed: false,
@@ -175,8 +175,8 @@ describe('the account model', () => {
         event: 'AccountBalanceUpdated',
         data: {
           old: Account.reconstitute({
+            ownerId: 'foo',
             id: 'id',
-            userId: 'userId',
             name: 'account name',
             type: 'accont_type',
             closed: false,
@@ -184,8 +184,8 @@ describe('the account model', () => {
             deleted: false,
           }),
           new: Account.reconstitute({
+            ownerId: 'foo',
             id: 'id',
-            userId: 'userId',
             name: 'account name',
             type: 'accont_type',
             closed: false,

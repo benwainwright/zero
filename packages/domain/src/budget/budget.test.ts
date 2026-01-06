@@ -4,6 +4,8 @@ describe('the budget', () => {
   describe('getCategoryBalance', () => {
     it('returns the correct amounts for the ready to assign cat if there has been no txs', () => {
       const budget = Budget.create({
+        id: 'foo',
+        ownerId: 'ben',
         description: '',
         month: 12,
         year: 2024,
@@ -22,6 +24,8 @@ describe('the budget', () => {
 
     it('returns zero if no values are stored for the given category', () => {
       const budget = Budget.create({
+        ownerId: 'ben',
+        id: 'foo',
         description: '',
         month: 12,
         year: 2024,
@@ -34,6 +38,7 @@ describe('the budget', () => {
       });
 
       const testCat = Category.reconstitute({
+        ownerId: 'foo',
         id: '1',
         name: 'thing',
         description: 'other thing',
@@ -46,6 +51,7 @@ describe('the budget', () => {
 
     it('returns the aggregate total of all transactions assigned to a given category if no balance has been assigned to the cat', () => {
       const testCat = Category.reconstitute({
+        ownerId: 'foo',
         id: '1',
         name: 'thing',
         description: 'other thing',
@@ -79,6 +85,8 @@ describe('the budget', () => {
       ];
 
       const budget = Budget.create({
+        ownerId: 'ben',
+        id: 'foo',
         description: '',
         month: 12,
         year: 2024,
@@ -97,12 +105,14 @@ describe('the budget', () => {
 
     it('combines the balances of the categories with the transactions if balances have been assigned', () => {
       const testCat = Category.reconstitute({
+        ownerId: 'foo',
         id: '1',
         name: 'thing',
         description: 'other thing',
       });
 
       const testCatTwo = Category.reconstitute({
+        ownerId: 'foo',
         id: '2',
         name: 'other-thing',
         description: 'fee',
@@ -136,6 +146,8 @@ describe('the budget', () => {
       ];
 
       const budget = Budget.create({
+        ownerId: 'ben',
+        id: 'foo',
         description: '',
         month: 12,
         year: 2024,
@@ -159,12 +171,14 @@ describe('the budget', () => {
 
     it('ready to assign txs combine with the initial ready to assign amounts', () => {
       const testCat = Category.reconstitute({
+        ownerId: 'foo',
         id: '1',
         name: 'thing',
         description: 'other thing',
       });
 
       const testCatTwo = Category.reconstitute({
+        ownerId: 'foo',
         id: '2',
         name: 'other-thing',
         description: 'fee',
@@ -206,6 +220,8 @@ describe('the budget', () => {
       ];
 
       const budget = Budget.create({
+        ownerId: 'ben',
+        id: 'foo',
         description: '',
         month: 12,
         year: 2024,
@@ -227,12 +243,14 @@ describe('the budget', () => {
 
     it('transactions that come in with the ready to assign cat actually go into the ready to assign assigned balance', () => {
       const testCat = Category.reconstitute({
+        ownerId: 'foo',
         id: '1',
         name: 'thing',
         description: 'other thing',
       });
 
       const testCatTwo = Category.reconstitute({
+        ownerId: 'foo',
         id: '2',
         name: 'other-thing',
         description: 'fee',
@@ -274,6 +292,8 @@ describe('the budget', () => {
       ];
 
       const budget = Budget.create({
+        ownerId: 'ben',
+        id: 'foo',
         description: '',
         month: 12,
         year: 2024,
@@ -300,17 +320,21 @@ describe('the budget', () => {
   describe('move category balance', () => {
     it('does not effect the getInitialBalance method', () => {
       const testCat = Category.reconstitute({
+        ownerId: 'foo',
         id: '1',
         name: 'thing',
         description: 'other thing',
       });
 
       const testCatTwo = Category.reconstitute({
+        ownerId: 'foo',
         id: '2',
         name: 'other-thing',
         description: 'fee',
       });
       const budget = Budget.create({
+        ownerId: 'ben',
+        id: 'foo',
         description: '',
         month: 12,
         year: 2024,
@@ -338,15 +362,19 @@ describe('the budget', () => {
       const testCat = Category.reconstitute({
         id: '1',
         name: 'thing',
+        ownerId: 'foo',
         description: 'other thing',
       });
 
       const testCatTwo = Category.reconstitute({
         id: '2',
+        ownerId: 'foo',
         name: 'other-thing',
         description: 'fee',
       });
       const budget = Budget.create({
+        ownerId: 'ben',
+        id: 'foo',
         description: '',
         month: 12,
         year: 2024,

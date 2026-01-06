@@ -71,7 +71,7 @@ export class OpenBankingTokenManager {
     const newToken = OauthToken.create({
       id: this.uuidGenerator.v7(),
       provider: 'open-banking',
-      userId: currentUserId,
+      ownerId: currentUserId,
       token: tokenResponse.token,
       refreshToken: tokenResponse.refreshToken,
       expiry: new Date(Date.now() + tokenResponse.tokenExpiresIn * 1000),

@@ -8,7 +8,7 @@ export const oAuthTokenSchema = z.object({
   token: z.string(),
   refreshToken: z.string(),
   provider: z.string(),
-  userId: z.string(),
+  ownerId: z.string(),
   refreshExpiry: z.union([
     z
       .union([z.string(), z.date()])

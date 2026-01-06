@@ -11,10 +11,10 @@ afterEach(() => {
 describe('the bank connection', () => {
   describe('delete', () => {
     it('emits a delete event', () => {
-      const connection = BankConnection.reconstite({
+      const connection = BankConnection.reconstitute({
         bankName: 'foo',
         id: 'foo',
-        userId: 'ben',
+        ownerId: 'ben',
         logo: 'bar',
         requisitionId: 'baz',
       });
@@ -32,10 +32,10 @@ describe('the bank connection', () => {
 
   describe('reconstitute', () => {
     it('creates a hydrated bank connection without emitting any events', () => {
-      const connection = BankConnection.reconstite({
+      const connection = BankConnection.reconstitute({
         bankName: 'foo',
         id: 'foo',
-        userId: 'ben',
+        ownerId: 'ben',
         logo: 'bar',
         requisitionId: 'baz',
       });
@@ -51,7 +51,7 @@ describe('the bank connection', () => {
     it('creates a bank connection and emits an event', () => {
       const connection = BankConnection.create({
         id: 'foo',
-        userId: 'ben',
+        ownerId: 'ben',
         bankName: 'foo',
         logo: 'bar',
       });
@@ -71,9 +71,9 @@ describe('the bank connection', () => {
 
   describe('save account ids', () => {
     it('saves the account id and raises the correct event', () => {
-      const connection = BankConnection.reconstite({
+      const connection = BankConnection.reconstitute({
         id: 'foo',
-        userId: 'ben',
+        ownerId: 'ben',
         bankName: 'foo',
         logo: 'bar',
       });
@@ -86,15 +86,15 @@ describe('the bank connection', () => {
         {
           event: 'BankAccountIdsSaved',
           data: {
-            old: BankConnection.reconstite({
+            old: BankConnection.reconstitute({
               id: 'foo',
-              userId: 'ben',
+              ownerId: 'ben',
               bankName: 'foo',
               logo: 'bar',
             }),
-            new: BankConnection.reconstite({
+            new: BankConnection.reconstitute({
               id: 'foo',
-              userId: 'ben',
+              ownerId: 'ben',
               bankName: 'foo',
               accounts: ['foo', 'bar'],
               logo: 'bar',
@@ -107,9 +107,9 @@ describe('the bank connection', () => {
 
   describe('save requisition id', () => {
     it('saves the req id and raises the correct event', () => {
-      const connection = BankConnection.reconstite({
+      const connection = BankConnection.reconstitute({
         id: 'foo',
-        userId: 'ben',
+        ownerId: 'ben',
         bankName: 'foo',
         logo: 'bar',
       });
@@ -122,15 +122,15 @@ describe('the bank connection', () => {
         {
           event: 'BankConnectionRequisitionSaved',
           data: {
-            old: BankConnection.reconstite({
+            old: BankConnection.reconstitute({
               id: 'foo',
-              userId: 'ben',
+              ownerId: 'ben',
               bankName: 'foo',
               logo: 'bar',
             }),
-            new: BankConnection.reconstite({
+            new: BankConnection.reconstitute({
               id: 'foo',
-              userId: 'ben',
+              ownerId: 'ben',
               bankName: 'foo',
               requisitionId: 'foo',
               logo: 'bar',

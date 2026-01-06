@@ -21,7 +21,7 @@ describe('the oauth token', () => {
         lastUse: undefined,
         created: new Date(),
         refreshed: undefined,
-        userId: 'user',
+        ownerId: 'user',
       });
 
       newToken.delete();
@@ -46,7 +46,7 @@ describe('the oauth token', () => {
       refreshToken: 'string',
       expiry: new Date(),
       refreshExpiry: new Date(),
-      userId: 'user',
+      ownerId: 'user',
     });
 
     expect(newToken.pullEvents()).toEqual([
@@ -76,7 +76,7 @@ describe('the oauth token', () => {
         lastUse: undefined,
         created: new Date(),
         refreshed: undefined,
-        userId: 'user',
+        ownerId: 'user',
       });
 
       const token = newToken.use();
@@ -102,7 +102,7 @@ describe('the oauth token', () => {
           lastUse: undefined,
           created: new Date(),
           refreshed: undefined,
-          userId: 'user',
+          ownerId: 'user',
           id: 'foo',
         });
 
@@ -119,7 +119,8 @@ describe('the oauth token', () => {
           lastUse: undefined,
           created: new Date(),
           refreshed: undefined,
-          userId: 'user',
+          ownerId: 'user',
+          id: 'foo',
         });
       });
 
@@ -134,7 +135,7 @@ describe('the oauth token', () => {
           lastUse: undefined,
           created: new Date(),
           refreshed: undefined,
-          userId: 'user',
+          ownerId: 'user',
         });
 
         expect(newToken.toObject({ secure: true })).toEqual({
@@ -147,7 +148,7 @@ describe('the oauth token', () => {
           lastUse: undefined,
           created: new Date(),
           refreshed: undefined,
-          userId: 'user',
+          ownerId: 'user',
         });
       });
     });
@@ -167,7 +168,7 @@ describe('the oauth token', () => {
           lastUse: undefined,
           created: new Date(),
           refreshed: undefined,
-          userId: 'user',
+          ownerId: 'user',
         });
 
         const expiry = new Date('2025-11-22T13:18:27.377Z');
@@ -193,7 +194,7 @@ describe('the oauth token', () => {
                 lastUse: undefined,
                 created: new Date(),
                 refreshed: undefined,
-                userId: 'user',
+                ownerId: 'user',
               }),
               new: OauthToken.reconstitute({
                 id: 'foo',
@@ -205,7 +206,7 @@ describe('the oauth token', () => {
                 lastUse: undefined,
                 created: new Date(),
                 refreshed: new Date(),
-                userId: 'user',
+                ownerId: 'user',
               }),
             },
           },

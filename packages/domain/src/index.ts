@@ -31,3 +31,7 @@ export {
 } from '@transaction';
 
 export { OauthToken, type IOauthToken, oAuthTokenSchema } from '@oauth-token';
+
+export { Budget, budgetSchema, type IBudget } from '@budget';
+
+export { Category, type ICategory, categorySchema } from '@category';

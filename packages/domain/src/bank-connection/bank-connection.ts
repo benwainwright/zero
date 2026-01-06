@@ -1,31 +1,32 @@
-import { DomainModel } from '@core';
+import { DomainModel, type IOwnedBy } from '@core';
 import type { IBankConnection } from './i-bank-connection.ts';
 
 export class BankConnection
   extends DomainModel<IBankConnection>
-  implements IBankConnection
+  implements IBankConnection, IOwnedBy
 {
+  public static key = 'bank-connection';
   public readonly id: string;
-  public readonly userId: string;
+  public readonly ownerId: string;
   public readonly bankName: string;
   public readonly logo: string;
   private _requisitionId: string | undefined;
   private _accounts: string[] | undefined;
 
-  private constructor(config: IBankConnection) {
+  public constructor(config: IBankConnection) {
     super();
     this.id = config.id;
-    this.userId = config.userId;
+    this.ownerId = config.ownerId;
     this.bankName = config.bankName;
     this.logo = config.logo;
     this._requisitionId = config.requisitionId;
     this._accounts = config.accounts;
   }
 
-  public override toObject(_config?: { secure: boolean }): IBankConnection {
+  public override toObject(): IBankConnection {
     return {
       id: this.id,
-      userId: this.userId,
+      ownerId: this.ownerId,
       logo: this.logo,
       bankName: this.bankName,
       requisitionId: this._requisitionId,
@@ -45,7 +46,7 @@ export class BankConnection
   }
 
   public saveAccounts(ids: string[]) {
-    const old = BankConnection.reconstite(this.toObject({ secure: true }));
+    const old = BankConnection.reconstitute(this.toObject());
     this._accounts = ids;
     this.raiseEvent({
       event: 'BankAccountIdsSaved',
@@ -68,12 +69,12 @@ export class BankConnection
     });
   }
 
-  public static reconstite(config: IBankConnection) {
+  public static reconstitute(config: IBankConnection) {
     return new BankConnection(config);
   }
 
   public saveRequisitionId(id: string) {
-    const old = BankConnection.reconstite(this.toObject({ secure: true }));
+    const old = BankConnection.reconstitute(this.toObject());
     this._requisitionId = id;
     this.raiseEvent({
       event: 'BankConnectionRequisitionSaved',
