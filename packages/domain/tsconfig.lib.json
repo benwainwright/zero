@@ -12,6 +12,7 @@
       "@user": ["./src/user/index.ts"],
       "@category": ["./src/category/index.ts"],
       "@budget": ["./src/budget/index.ts"],
+      "@sync-details": ["./src/sync-details/index.ts"],
       "@account": ["./src/account/index.ts"],
       "@transaction": ["./src/transaction/index.ts"],
       "@bank-connection": ["./src/bank-connection/index.ts"],

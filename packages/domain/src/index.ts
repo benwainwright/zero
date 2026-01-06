@@ -15,6 +15,13 @@ export {
 } from '@core';
 
 export {
+  type ISyncDetails,
+  syncDetailsSchema,
+  type SyncDetailsEvents,
+  SyncDetails,
+} from '@sync-details';
+
+export {
   type IPermission,
   type ICapability,
   permissionSchema,
