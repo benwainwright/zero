@@ -38,15 +38,32 @@
   },
   "nx": {
     "targets": {
+      "drop-migrations": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "packages/postgres-adapters",
+          "command": "vite-node src/migrate/run-cli.ts drop-all --host localhost --port 5433 --database zero --password password --user postgres"
+        }
+      },
       "run-migrations": {
         "executor": "nx:run-commands",
         "options": {
           "cwd": "packages/postgres-adapters",
-          "command": "vite-node src/migrate/migrate-command.ts migrate --host localhost --port 5433 --database zero --password password --user postgres"
+          "command": "vite-node src/migrate/run-cli.ts migrate --host localhost --port 5433 --database zero --password password --user postgres"
+        }
+      },
+      "reload-migrations": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "packages/postgres-adapters",
+          "command": "vite-node src/migrate/run-cli.ts drop-all --host localhost --port 5433 --database zero --password password --user postgres && vite-node src/migrate/run-cli.ts migrate --host localhost --port 5433 --database zero --password password --user postgres"
         }
       },
       "gen-types": {
         "executor": "nx:run-commands",
+        "dependsOn": [
+          "reload-migrations"
+        ],
         "options": {
           "cwd": "packages/postgres-adapters",
           "command": "kysely-codegen --out-file ./src/core/database.ts"

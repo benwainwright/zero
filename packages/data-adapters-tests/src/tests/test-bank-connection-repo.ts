@@ -22,11 +22,18 @@ export const testBankConnectionRepository = (
         roles: [],
       });
 
-      await unitOfWork.begin();
-      await userRepo.saveUser(ben);
-      await unitOfWork.commit();
+      const fred = User.reconstitute({
+        email: 'a@b.c',
+        id: 'fred',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
 
       await unitOfWork.begin();
+      await userRepo.saveUser(ben);
+      await userRepo.saveUser(fred);
+      await unitOfWork.commit();
 
       const connectionOne = BankConnection.reconstitute({
         bankName: 'foo',
@@ -68,8 +75,17 @@ export const testBankConnectionRepository = (
         roles: [],
       });
 
+      const fred = User.reconstitute({
+        email: 'a@b.c',
+        id: 'fred',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
+
       await unitOfWork.begin();
       await userRepo.saveUser(ben);
+      await userRepo.saveUser(fred);
       await unitOfWork.commit();
 
       const connectionOne = BankConnection.reconstitute({

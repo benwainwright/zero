@@ -1,8 +1,8 @@
 import { command, string, number } from '@drizzle-team/brocli';
-import { runMigrations } from './lib/run-migrations.ts';
+import { dropAllMigrations } from './lib/drop-all.ts';
 
-export const migrateCommand = command({
-  name: 'migrate',
+export const dropAllCommand = command({
+  name: 'drop-all',
   options: {
     host: string(),
     port: number(),
@@ -12,6 +12,6 @@ export const migrateCommand = command({
   },
 
   handler: async (opts) => {
-    await runMigrations(opts);
+    await dropAllMigrations(opts);
   },
 });

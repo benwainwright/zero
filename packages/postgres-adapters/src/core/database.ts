@@ -33,6 +33,22 @@ export interface Accounts {
   type: string;
 }
 
+export interface BankConnections {
+  accounts: Generated<Json>;
+  bankName: string;
+  id: string;
+  logo: string;
+  ownerId: string;
+  requisitionId: string | null;
+}
+
+export interface Categories {
+  description: string | null;
+  id: string;
+  name: string;
+  ownerId: string | null;
+}
+
 export interface OauthTokens {
   created: Timestamp;
   expiry: Timestamp;
@@ -42,8 +58,8 @@ export interface OauthTokens {
   provider: string;
   refreshed: Timestamp | null;
   refreshExpiry: Timestamp | null;
-  refreshToken: string | null;
-  token: string | null;
+  refreshToken: string;
+  token: string;
 }
 
 export interface Roles {
@@ -51,6 +67,24 @@ export interface Roles {
   name: string;
   permissions: Generated<Json>;
   routes: Generated<Json>;
+}
+
+export interface SyncDetails {
+  checkpoint: string | null;
+  id: string;
+  lastSync: Timestamp | null;
+  ownerId: string;
+  provider: string;
+}
+
+export interface Transactions {
+  accountId: string;
+  amount: number;
+  categoryId: string | null;
+  date: Timestamp;
+  id: string;
+  ownerId: string;
+  payee: string;
 }
 
 export interface UserRoles {
@@ -66,8 +100,12 @@ export interface Users {
 
 export interface DB {
   accounts: Accounts;
+  bank_connections: BankConnections;
+  categories: Categories;
   oauth_tokens: OauthTokens;
   roles: Roles;
+  sync_details: SyncDetails;
+  transactions: Transactions;
   user_roles: UserRoles;
   users: Users;
 }

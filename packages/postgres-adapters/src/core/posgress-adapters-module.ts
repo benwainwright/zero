@@ -1,4 +1,12 @@
-import { PostgresRepositoryAdapter } from '@adapters';
+import {
+  PostgresAccountRepository,
+  PostgresBankConnectionRepository,
+  PostgresOauthTokenRepository,
+  PostgresRoleRepository,
+  PostgresSyncDetailsRepository,
+  PostgresTransactionRepository,
+  PostgresUserRepository,
+} from '@adapters';
 import type { IApplicationTypes } from '@zero/application-core';
 import type { IAuthTypes } from '@zero/auth';
 import { type IModule } from '@zero/bootstrap';
@@ -47,10 +55,25 @@ export const postgresAdaptersModule: IModule<
     schema: z.string(),
   });
 
-  bind('UserRepository').to(PostgresRepositoryAdapter).inRequestScope();
-  bind('RoleRepository').to(PostgresRepositoryAdapter).inRequestScope();
-  bind('AccountRepository').to(PostgresRepositoryAdapter).inRequestScope();
-  bind('OauthTokenRepository').to(PostgresRepositoryAdapter).inRequestScope();
+  bind('UserRepository').to(PostgresUserRepository).inRequestScope();
+  bind('RoleRepository').to(PostgresRoleRepository).inRequestScope();
+  bind('AccountRepository').to(PostgresAccountRepository).inRequestScope();
+  bind('BankConnectionRepository')
+    .to(PostgresBankConnectionRepository)
+    .inRequestScope();
+
+  bind('SyncDetailsRepository')
+    .to(PostgresSyncDetailsRepository)
+    .inRequestScope();
+
+  bind('OauthTokenRepository')
+    .to(PostgresOauthTokenRepository)
+    .inRequestScope();
+
+  bind('TransactionRepository')
+    .to(PostgresTransactionRepository)
+    .inRequestScope();
+
   bind('PostgresDatabase').to(PostgressDatabase).inRequestScope();
   bind('UnitOfWork').toService('PostgresDatabase');
   bind('PostgressUsername').toConstantValue(databaseUser);

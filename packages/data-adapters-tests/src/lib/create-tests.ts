@@ -71,7 +71,7 @@ export const createTests = async ({
   testBankConnectionRepository(bankConnectionRepoCreator);
 
   const syncDetailsRepository = await createRepo({
-    repoKey: { repo: 'SyncDetailsRepository' },
+    repoKey: { repo: 'SyncDetailsRepository', userRepo: 'UserRepository' },
     modules,
     createCallback,
     afterCallback,
@@ -80,7 +80,11 @@ export const createTests = async ({
   testSyncDetailsRepository(syncDetailsRepository);
 
   const transactionRepoCreator = await createRepo({
-    repoKey: { repo: 'TransactionRepository', userRepo: 'UserRepository' },
+    repoKey: {
+      repo: 'TransactionRepository',
+      userRepo: 'UserRepository',
+      accountRepo: 'AccountRepository',
+    },
     modules,
     createCallback,
     afterCallback,

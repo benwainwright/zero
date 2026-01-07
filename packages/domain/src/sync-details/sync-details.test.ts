@@ -13,6 +13,7 @@ describe('sync-details', () => {
     it('returns object version of model', () => {
       const details = SyncDetails.reconstitute({
         id: 'foo',
+        ownerId: 'ben',
         provider: 'bar',
         lastSync: new Date(),
         checkpoint: 'foo',
@@ -23,6 +24,7 @@ describe('sync-details', () => {
       expect(dried).not.toBeInstanceOf(SyncDetails);
       expect(dried).toEqual({
         id: 'foo',
+        ownerId: 'ben',
         provider: 'bar',
         lastSync: new Date(),
         checkpoint: 'foo',
@@ -35,6 +37,7 @@ describe('sync-details', () => {
       const details = SyncDetails.reconstitute({
         id: 'foo',
         provider: 'bar',
+        ownerId: 'ben',
         lastSync: new Date(),
         checkpoint: 'foo',
       });
@@ -46,12 +49,14 @@ describe('sync-details', () => {
           event: 'SyncDetailsNewSyncCheckpointSet',
           data: {
             old: SyncDetails.reconstitute({
+              ownerId: 'ben',
               id: 'foo',
               provider: 'bar',
               lastSync: new Date(),
               checkpoint: 'foo',
             }),
             new: SyncDetails.reconstitute({
+              ownerId: 'ben',
               id: 'foo',
               provider: 'bar',
               lastSync: new Date(),
@@ -65,7 +70,11 @@ describe('sync-details', () => {
 
   describe('create', () => {
     it('emits a domain event and populates internal data correctly', () => {
-      const details = SyncDetails.create({ id: 'foo', provider: 'ynab' });
+      const details = SyncDetails.create({
+        id: 'foo',
+        provider: 'ynab',
+        ownerId: 'ben',
+      });
 
       expect(details.checkpoint).toEqual(undefined);
       expect(details.lastSync).toEqual(undefined);

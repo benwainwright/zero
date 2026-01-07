@@ -34,12 +34,14 @@ export const sqliteAdaptersModule: IModule<
   });
 
   bind('DatabaseTablePrefix').toConstantValue(tablePrefix);
+
   bind('UserRepository').to(SqliteUserRepository);
   bind('RoleRepository').to(SqliteRoleRepository);
   bind('BankConnectionRepository').to(SqliteBankConnectionRepository);
   bind('TransactionRepository').to(SqliteTransactionRepository);
   bind('OauthTokenRepository').to(SqliteOauthTokenRepository);
   bind('SyncDetailsRepository').to(SqliteSyncDetailsRepository);
+
   bind('DatabaseFilename').toConstantValue(databaseFilename);
   bind('SqliteDatabase').to(SqliteDatabase).inSingletonScope();
   bind('UnitOfWork').toService('SqliteDatabase');

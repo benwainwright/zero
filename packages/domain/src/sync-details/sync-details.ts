@@ -1,17 +1,19 @@
-import { DomainModel } from '@core';
+import { DomainModel, type IOwnedBy } from '@core';
 import { syncDetailsSchema, type ISyncDetails } from './i-sync-details.ts';
 
 export class SyncDetails
   extends DomainModel<ISyncDetails>
-  implements ISyncDetails
+  implements ISyncDetails, IOwnedBy
 {
   public override toObject(): {
     id: string;
+    ownerId: string;
     provider: string;
     lastSync: Date | undefined;
     checkpoint?: string | undefined;
   } {
     return {
+      ownerId: this.ownerId,
       id: this.id,
       provider: this.provider,
       lastSync: this.lastSync,
@@ -19,6 +21,7 @@ export class SyncDetails
     };
   }
 
+  public readonly ownerId: string;
   public readonly provider: string;
   public readonly id: string;
   private _checkpoint: string | undefined;
@@ -26,6 +29,7 @@ export class SyncDetails
 
   private constructor(config: ISyncDetails) {
     super();
+    this.ownerId = config.ownerId;
     this.id = config.id;
     this.provider = config.provider;
     this._checkpoint = config.checkpoint;
@@ -36,7 +40,11 @@ export class SyncDetails
     return new SyncDetails(syncDetailsSchema.parse(config));
   }
 
-  public static create(config: { id: string; provider: string }) {
+  public static create(config: {
+    id: string;
+    provider: string;
+    ownerId: string;
+  }) {
     const details = new SyncDetails({ ...config, lastSync: undefined });
     details.raiseEvent({ event: 'SyncDetailsCreated', data: details });
     return details;

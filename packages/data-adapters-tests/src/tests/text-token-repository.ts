@@ -116,6 +116,7 @@ export const testOauthRepository = (
       await unitOfWork.begin();
       const token = await repo.getToken('ben', 'monzo');
       await unitOfWork.commit();
+
       await unitOfWork.begin();
       const isPresentToken = await repo.getToken('ben', 'ynab');
       await unitOfWork.commit();
