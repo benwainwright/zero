@@ -1,8 +1,12 @@
 import { createTests } from '@zero/data-adapters-tests';
 
-import { afterCallback, createCallback } from '@test-helpers';
+import {
+  afterCallback,
+  createCallback,
+  testOverridesModule,
+} from '@test-helpers';
 
-import { sqliteAdaptersModule, testOverridesModule } from '@core';
+import { sqliteAdaptersModule } from '@core';
 
 await createTests({
   modules: [sqliteAdaptersModule, testOverridesModule],
