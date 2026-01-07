@@ -3,13 +3,21 @@ import { type IModule } from '@zero/bootstrap';
 import type { IInternalTypes } from './i-internal-types.ts';
 import * as z from 'zod';
 import { SqliteDatabase } from './sqlite-database.ts';
-import { SqliteRepositoryAdapter } from '@adapters';
 import type { IApplicationTypes } from '@zero/application-core';
+import {
+  SqliteBankConnectionRepository,
+  SqliteOauthTokenRepository,
+  SqliteRoleRepository,
+  SqliteSyncDetailsRepository,
+  SqliteTransactionRepository,
+  SqliteUserRepository,
+} from '@adapters';
+import type { IAccountsTypes } from '@zero/accounts';
 
 export const CONFIG_NAMESPACE = 'sqlite';
 
 export const sqliteAdaptersModule: IModule<
-  IAuthTypes & IInternalTypes & IApplicationTypes
+  IAuthTypes & IInternalTypes & IApplicationTypes & IAccountsTypes
 > = async ({ bind, configValue }) => {
   const tablePrefix = configValue({
     namespace: CONFIG_NAMESPACE,
@@ -26,9 +34,13 @@ export const sqliteAdaptersModule: IModule<
   });
 
   bind('DatabaseTablePrefix').toConstantValue(tablePrefix);
-  bind('UserRepository').to(SqliteRepositoryAdapter);
+  bind('UserRepository').to(SqliteUserRepository);
+  bind('RoleRepository').to(SqliteRoleRepository);
+  bind('BankConnectionRepository').to(SqliteBankConnectionRepository);
+  bind('TransactionRepository').to(SqliteTransactionRepository);
+  bind('OauthTokenRepository').to(SqliteOauthTokenRepository);
+  bind('SyncDetailsRepository').to(SqliteSyncDetailsRepository);
   bind('DatabaseFilename').toConstantValue(databaseFilename);
-  bind('RoleRepository').to(SqliteRepositoryAdapter);
   bind('SqliteDatabase').to(SqliteDatabase).inSingletonScope();
   bind('UnitOfWork').toService('SqliteDatabase');
 };
