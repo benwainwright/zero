@@ -16,6 +16,7 @@ export {
   type IUUIDGenerator,
   type IEventListener,
   type IListener,
+  type ISyncDetailsRepository,
   type IQueryBus,
   type IQueryClient,
   type IApiSurface,

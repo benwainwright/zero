@@ -50,12 +50,16 @@ export const createRepo = async <
 }: {
   repoKey: TKey;
   modules: IModule<DataPortsWithMock>[];
-  afterCallback?: <TMap extends BindingMap>(
-    container: TypedContainer<DataPortsWithMock & TMap>
-  ) => Promise<void>;
-  createCallback?: <TMap extends BindingMap>(
-    container: TypedContainer<DataPortsWithMock & TMap>
-  ) => Promise<void>;
+  afterCallback?:
+    | (<TMap extends BindingMap>(
+        container: TypedContainer<DataPortsWithMock & TMap>
+      ) => Promise<void>)
+    | undefined;
+  createCallback?:
+    | (<TMap extends BindingMap>(
+        container: TypedContainer<DataPortsWithMock & TMap>
+      ) => Promise<void>)
+    | undefined;
 }): Promise<CreateFunction<TKey>> => {
   const container = new TypedContainer<DataPortsWithMock & IBootstrapTypes>();
 

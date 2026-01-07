@@ -14,4 +14,5 @@ export { type IUnitOfWork } from './i-unit-of-work.ts';
 export { type IObjectStorage } from './i-object-storage.ts';
 export { type IStringHasher } from './i-string-hasher.ts';
 export { type IQueryBus } from './i-query-bus.ts';
+export { type ISyncDetailsRepository } from './i-sync-details-repository.ts';
 export { type ICurrentUserCache } from './i-current-user-cache.ts';

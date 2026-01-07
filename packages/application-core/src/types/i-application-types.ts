@@ -15,6 +15,7 @@ import type {
   IQueryBus,
   ICurrentUserCache,
   IUUIDGenerator,
+  ISyncDetailsRepository,
 } from '@ports';
 
 import type { User } from '@zero/domain';
@@ -36,6 +37,7 @@ export interface IApplicationTypes {
   DomainEventBuffer: IDomainEventBuffer;
   DomainEventEmitter: IDomainEventStore;
   ContainerFactory: Factory<TypedContainer>;
+  SyncDetailsRepository: ISyncDetailsRepository;
   SessionStore: ISingleItemStore<User>;
   StringHasher: IStringHasher;
   SessionIdRequester: ISessionIdRequester;

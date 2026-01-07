@@ -1,6 +1,7 @@
 import type {
   IAccountRepository,
   IBankConnectionCreator,
+  IBankConnectionRepository,
   IInstitutionAuthPageLinkFetcher,
   IOauthTokenRepository,
   IOpenBankingAccountBalanceFetcher,
@@ -8,14 +9,17 @@ import type {
   IOpenBankingTokenFetcher,
   IOpenBankingTokenRefresher,
   IRequesitionAccountFetcher,
+  ITransactionRepository,
 } from '@ports';
 
 export interface IAccountsTypes {
   OpenBankingAccountDetailsFetcher: IOpenBankingAccountDetailsFetcher;
   OauthTokenRepository: IOauthTokenRepository;
+  BankConnectionRepository: IBankConnectionRepository;
   OpenBankingTokenRefresher: IOpenBankingTokenRefresher;
   BankConnectionTokenFetcher: IOpenBankingTokenFetcher;
   OpenBankingAccountBalanceFetcher: IOpenBankingAccountBalanceFetcher;
+  TransactionRepository: ITransactionRepository;
   AccountRepository: IAccountRepository;
   BankConnectionCreator: IBankConnectionCreator;
   RequestionAccountFetcher: IRequesitionAccountFetcher;
