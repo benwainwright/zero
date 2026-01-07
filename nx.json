@@ -39,7 +39,8 @@
         "packages/postgres-adapters/*",
         "packages/accounts/*",
         "packages/http-client/*",
-        "packages/integration-adapters/*"
+        "packages/integration-adapters/*",
+        "packages/test-helpers/*"
       ]
     },
     {

@@ -8,17 +8,12 @@ import { AuthorisingCommandBus } from './authorising-command-bus.ts';
 import { type IGrantManager } from '@ports';
 import { when } from 'vitest-when';
 import type { User } from '@zero/domain';
+import { buildInstance } from '@zero/test-helpers';
 
 describe('authorising command bus', () => {
   it('delegates to the other command bus, sets the actor and calls done on the grant service', async () => {
-    const parentCommandBus = mock<ICommandBus>();
-    const mockCurrentUserCache = mock<ICurrentUserCache>();
-    const grantService = mock<IGrantManager>();
-
-    const bus = new AuthorisingCommandBus(
-      parentCommandBus,
-      grantService,
-      mockCurrentUserCache
+    const [bus, , grantService, mockCurrentUserCache] = await buildInstance(
+      AuthorisingCommandBus
     );
 
     const mockCommand = mock<ICommand<string>>();
@@ -34,14 +29,8 @@ describe('authorising command bus', () => {
   });
 
   it('does not error if there is no user', async () => {
-    const parentCommandBus = mock<ICommandBus>();
-    const mockCurrentUserCache = mock<ICurrentUserCache>();
-    const grantService = mock<IGrantManager>();
-
-    const bus = new AuthorisingCommandBus(
-      parentCommandBus,
-      grantService,
-      mockCurrentUserCache
+    const [bus, , grantService, mockCurrentUserCache] = await buildInstance(
+      AuthorisingCommandBus
     );
 
     const mockCommand = mock<ICommand<string>>();

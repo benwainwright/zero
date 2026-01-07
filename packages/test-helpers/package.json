@@ -1,5 +1,5 @@
 {
-  "name": "@zero/auth",
+  "name": "@zero/test-helpers",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -14,19 +14,13 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
-    "@suites/unit": "catalog:",
-    "@suites/doubles.vitest": "catalog:",
+    "vitest-mock-extended": "catalog:",
     "vitest-when": "catalog:"
   },
   "dependencies": {
-    "inversify": "catalog:",
-    "reflect-metadata": "catalog:",
+    "@inversifyjs/plugin": "catalog:",
     "@inversifyjs/strongly-typed": "catalog:",
-    "zod": "catalog:",
-    "@zero/application-core": "workspace:*",
-    "@zero/test-helpers": "workspace:*",
-    "@zero/bootstrap": "workspace:*",
-    "@zero/serialiser": "workspace:*",
-    "@zero/domain": "workspace:*"
+    "inversify": "catalog:",
+    "reflect-metadata": "catalog:"
   }
 }

@@ -1,0 +1,1 @@
+export { buildInstance } from '@lib';
