@@ -9,8 +9,8 @@ export type AccountsQueries =
     }
   | {
       id: string;
-      key: 'GetAccountsQuery';
-      params: { limit: number; offset: number };
+      key: 'ListUserAccountsQuery';
+      params: undefined;
       response: Account[];
     }
   | {
@@ -26,4 +26,5 @@ export type AccountsQueries =
         limit: number;
         offset: number;
       };
+      response: Transaction[];
     };

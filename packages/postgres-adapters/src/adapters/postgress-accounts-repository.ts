@@ -1,14 +1,32 @@
-import { inject, type PostgressDatabase } from '@core';
+import { inject, type Accounts } from '@core';
 import type { IAccountRepository } from '@zero/accounts';
 import { Account } from '@zero/domain';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import { injectable } from 'inversify';
+import type { Selectable } from 'kysely';
+import type { DB } from '../core/database.ts';
 
 @injectable()
 export class PostgresAccountRepository implements IAccountRepository {
   public constructor(
-    @inject('PostgresDatabase')
-    private readonly database: PostgressDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
+  public async requireAccount(id: string): Promise<Account> {
+    const account = await this.getAccount(id);
+    if (!account) {
+      throw new Error('No account found!');
+    }
+
+    return account;
+  }
+
+  private mapRaw(raw: Selectable<Accounts>) {
+    return Account.reconstitute({
+      ...raw,
+      description: raw.description ?? undefined,
+    });
+  }
 
   public async getAccount(id: string): Promise<Account | undefined> {
     const tx = this.database.transaction();
@@ -23,7 +41,7 @@ export class PostgresAccountRepository implements IAccountRepository {
       return undefined;
     }
 
-    return Account.reconstitute(result);
+    return this.mapRaw(result);
   }
 
   public async getUserAccounts(userId: string): Promise<Account[]> {
@@ -32,10 +50,12 @@ export class PostgresAccountRepository implements IAccountRepository {
     const result = await tx
       .selectFrom('accounts')
       .selectAll()
-      .where('ownerId', '=', userId)
+      .where((eb) =>
+        eb.and([eb('ownerId', '=', userId), eb('deleted', '=', false)])
+      )
       .execute();
 
-    return result.map((row) => Account.reconstitute(row));
+    return result.map(this.mapRaw);
   }
 
   public async saveAccount(account: Account): Promise<Account> {
@@ -50,6 +70,7 @@ export class PostgresAccountRepository implements IAccountRepository {
           type: eb.ref('excluded.type'),
           closed: eb.ref('excluded.closed'),
           balance: eb.ref('excluded.balance'),
+          description: eb.ref('excluded.description'),
           deleted: eb.ref('excluded.deleted'),
           ownerId: eb.ref('excluded.ownerId'),
         }))

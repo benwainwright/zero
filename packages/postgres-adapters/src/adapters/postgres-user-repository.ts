@@ -1,36 +1,35 @@
 import type { IUserRepository } from '@zero/auth';
-import { Role, User, permissionSchema, type IUser } from '@zero/domain';
-import { inject, PostgressDatabase } from '@core';
+import {
+  Role,
+  User,
+  permissionSchema,
+  roleSchema,
+  routesSchema,
+} from '@zero/domain';
+import { inject } from '@core';
 import z from 'zod';
-import type { RawRole } from './postgres-role-repository.ts';
-import { sql } from 'kysely';
-
-interface RawUser {
-  id: string;
-  passwordHash: string;
-  email: string;
-  roles: string;
-}
+import { sql, type Selectable } from 'kysely';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import type { DB, Roles, Users } from '../core/database.ts';
 
 export class PostgresUserRepository implements IUserRepository {
   public constructor(
-    @inject('PostgresDatabase')
-    private readonly database: PostgressDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
 
-  public mapRawRole(raw: RawRole) {
+  public mapRawRole(raw: Selectable<Roles>) {
     return Role.reconstitute({
       ...raw,
-      permissions: z.array(permissionSchema).parse(JSON.parse(raw.permissions)),
-      routes: JSON.parse(raw.routes),
+      permissions: z.array(permissionSchema).parse(raw.permissions),
+      routes: routesSchema.parse(raw.routes),
     });
   }
 
-  private mapRawUser(raw: RawUser) {
-    const rawRoles = JSON.parse(raw.roles) as RawRole[];
+  private mapRawUser(raw: Selectable<Users> & { roles: unknown }) {
     return User.reconstitute({
       ...raw,
-      roles: rawRoles.map((role) => this.mapRawRole(role).toObject()),
+      roles: z.array(roleSchema).parse(raw.roles),
     });
   }
 
@@ -85,7 +84,7 @@ export class PostgresUserRepository implements IUserRepository {
       return undefined;
     }
 
-    return User.reconstitute(result as IUser);
+    return this.mapRawUser(result);
   }
 
   public async getManyUsers(start?: number, limit?: number): Promise<User[]> {
@@ -95,7 +94,7 @@ export class PostgresUserRepository implements IUserRepository {
 
     const result = await withLimit.execute();
 
-    return result.map((row) => User.reconstitute(row as IUser));
+    return result.map((row) => this.mapRawUser(row));
   }
 
   public async deleteUser(user: User): Promise<void> {

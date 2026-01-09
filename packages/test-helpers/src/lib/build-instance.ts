@@ -2,8 +2,8 @@ import { Container } from 'inversify';
 import { StubPlugin } from './stub-plugin.ts';
 import { getConstructorArguments } from './get-constructor-arguments.ts';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const buildInstance = async <
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TConstructor extends new (...args: any[]) => unknown
 >(
   thing: TConstructor,

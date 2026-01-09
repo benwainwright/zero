@@ -1,7 +1,10 @@
 import type { IRoleRepository } from '@zero/auth';
-import { Role, permissionSchema } from '@zero/domain';
-import { inject, SqliteDatabase } from '@core';
+import { Role, permissionSchema, routesSchema } from '@zero/domain';
+import { inject, type DB } from '@core';
 import z from 'zod';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import type { Selectable } from 'kysely';
+import type { Roles } from '../core/database.ts';
 
 export interface RawRole {
   id: string;
@@ -12,9 +15,19 @@ export interface RawRole {
 
 export class SqliteRoleRepository implements IRoleRepository {
   public constructor(
-    @inject('SqliteDatabase')
-    private readonly database: SqliteDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
+
+  private mapRaw(role: Selectable<Roles>) {
+    return Role.reconstitute({
+      ...role,
+      permissions: z
+        .array(permissionSchema)
+        .parse(JSON.parse(role.permissions)),
+      routes: routesSchema.parse(JSON.parse(role.routes)),
+    });
+  }
 
   public async requireRole(id: string): Promise<Role> {
     const role = await this.getRole(id);
@@ -26,18 +39,23 @@ export class SqliteRoleRepository implements IRoleRepository {
   }
 
   public async getRole(id: string): Promise<Role | undefined> {
-    const result = await this.database.getFromDb<RawRole | undefined>(
-      `SELECT id, name, permissions, routes
-        FROM ${await this.database.getTableName('roles')}
-        where id = ?`,
-      [id]
-    );
+    console.log('befor-tx');
+    const tx = this.database.transaction();
+    console.log('aftertx');
+
+    const result = await tx
+      .selectFrom('roles')
+      .where('id', '=', id)
+      .selectAll()
+      .executeTakeFirst();
+
+    console.log('done');
 
     if (!result) {
       return undefined;
     }
 
-    return this.mapRawRole(result);
+    return this.mapRaw(result);
   }
 
   public mapRawRole(raw: RawRole) {
@@ -49,35 +67,36 @@ export class SqliteRoleRepository implements IRoleRepository {
   }
 
   public async saveRole(role: Role): Promise<Role> {
-    const roleTable = await this.database.getTableName('roles');
+    const tx = this.database.transaction();
 
-    this.database.deferQueryToTransaction(
-      `INSERT INTO ${roleTable} (id, name, permissions, routes)
-        VALUES (?, ?, ?, ?)
-        ON CONFLICT(id) DO UPDATE SET
-          name = excluded.name,
-          permissions = excluded.permissions,
-          routes = excluded.routes
-          `,
-      [
-        role.id,
-        role.name,
-        JSON.stringify(role.permissions),
-        JSON.stringify(role.routes),
-      ]
-    );
-
+    await tx
+      .insertInto('roles')
+      .values({
+        ...role.toObject(),
+        permissions: JSON.stringify(role.toObject().permissions),
+        routes: JSON.stringify(role.toObject().routes),
+      })
+      .onConflict((oc) =>
+        oc.column('id').doUpdateSet((eb) => ({
+          name: eb.ref('excluded.name'),
+          permissions: eb.ref('excluded.permissions'),
+          routes: eb.ref('excluded.routes'),
+        }))
+      )
+      .execute();
     return role;
   }
 
   public async getManyRoles(offset: number, limit: number): Promise<Role[]> {
-    const result = await this.database.getAllFromDatabase<RawRole[]>(
-      `SELECT id, name, permissions, routes
-        FROM ${await this.database.getTableName('roles')}
-        LIMIT ? OFFSET ?`,
-      [limit, offset]
-    );
+    const tx = this.database.transaction();
 
-    return result.map((raw) => this.mapRawRole(raw));
+    const result = await tx
+      .selectFrom('roles')
+      .selectAll()
+      .offset(offset)
+      .limit(limit)
+      .execute();
+
+    return result.map((role) => this.mapRaw(role));
   }
 }

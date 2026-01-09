@@ -11,7 +11,7 @@ export class Role extends DomainModel<IRole> {
   private _permissions: IPermission[];
   private _routes: IRoute[];
 
-  public static reconstitute(config: unknown) {
+  public static reconstitute(config: IRole) {
     return new Role(roleSchema.parse(config));
   }
 

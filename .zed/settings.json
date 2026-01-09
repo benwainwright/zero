@@ -3,5 +3,33 @@
     "show_parameter_hints": false,
     "show_type_hints": false,
     "show_value_hints": false
+  },
+  "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "preferences": {
+            "importModuleSpecifier": "non-relative",
+            "preferTypeOnlyAutoImports": true,
+            "useAliasesForRenames": false,
+            "preferGoToSourceDefinition": true,
+            "updateImportsOnFileMove": {
+              "enabled": "always"
+            }
+          }
+        },
+
+        "javascript": {
+          "preferences": {
+            "importModuleSpecifier": "non-relative",
+            "preferGoToSourceDefinition": true,
+            "useAliasesForRenames": false,
+            "updateImportsOnFileMove": {
+              "enabled": "always"
+            }
+          }
+        }
+      }
+    }
   }
 }

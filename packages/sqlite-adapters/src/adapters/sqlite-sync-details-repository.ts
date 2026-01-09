@@ -1,17 +1,79 @@
+import { inject, type DB } from '@core';
 import type { ISyncDetailsRepository } from '@zero/application-core';
-import type { SyncDetails } from '@zero/domain';
+import { SyncDetails } from '@zero/domain';
+import type { SyncDetails as DBSyncDetails } from '../core/database.ts';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import type { Selectable } from 'kysely';
 
 export class SqliteSyncDetailsRepository implements ISyncDetailsRepository {
+  public constructor(
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
+  ) {}
+
   public async saveSyncDetails(details: SyncDetails): Promise<SyncDetails> {
-    throw new Error('Method not implemented.');
+    const tx = this.database.transaction();
+    const values = details.toObject();
+
+    await tx
+      .insertInto('sync_details')
+      .values({
+        ...values,
+        lastSync: values.lastSync ? values.lastSync.toISOString() : null,
+      })
+      .onConflict((oc) =>
+        oc.column('id').doUpdateSet((eb) => ({
+          ownerId: eb.ref('excluded.ownerId'),
+          lastSync: eb.ref('excluded.lastSync'),
+          checkpoint: eb.ref('excluded.checkpoint'),
+        }))
+      )
+      .execute();
+
+    return details;
   }
   public async updateSyncDetails(details: SyncDetails): Promise<SyncDetails> {
-    throw new Error('Method not implemented.');
+    const tx = this.database.transaction();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, ...values } = details.toObject();
+
+    await tx
+      .updateTable('sync_details')
+      .set({
+        ...values,
+        lastSync: values.lastSync ? values.lastSync.toISOString() : null,
+      })
+      .where('id', '=', details.id)
+      .execute();
+
+    return details;
+  }
+
+  private mapRaw(raw: Selectable<DBSyncDetails>) {
+    return SyncDetails.reconstitute({
+      ...raw,
+      lastSync: raw.lastSync ? new Date(raw.lastSync) : undefined,
+      checkpoint: raw.checkpoint ?? undefined,
+    });
   }
   public async deleteSyncDetails(details: SyncDetails): Promise<void> {
-    throw new Error('Method not implemented.');
+    const tx = this.database.transaction();
+    await tx.deleteFrom('sync_details').where('id', '=', details.id).execute();
   }
-  public async getSyncDetails(id: string): Promise<SyncDetails> {
-    throw new Error('Method not implemented.');
+  public async getSyncDetails(id: string): Promise<SyncDetails | undefined> {
+    const tx = this.database.transaction();
+
+    const result = await tx
+      .selectFrom('sync_details')
+      .selectAll()
+      .where('id', '=', id)
+      .executeTakeFirst();
+
+    if (!result) {
+      return undefined;
+    }
+
+    return this.mapRaw(result);
   }
 }

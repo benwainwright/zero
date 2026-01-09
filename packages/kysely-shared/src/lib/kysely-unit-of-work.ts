@@ -1,21 +1,32 @@
 import type { IUnitOfWork } from '@zero/application-core';
-import type { PostgresConnectionPool } from './postgress-connection-pool.ts';
 import { inject } from './typed-inject.ts';
 import type { ControlledTransaction } from 'kysely';
-import type { DB } from './database.ts';
 import { injectable } from 'inversify';
+import type { IKyselyDataSource } from './i-kysely-data-source.ts';
+import type { IKyselyTransactionManager } from '@lib';
 
 @injectable()
-export class PostgressDatabase implements IUnitOfWork {
+export class KyselyUnitOfWork<DB>
+  implements IUnitOfWork, IKyselyTransactionManager<DB>
+{
   private _transaction: ControlledTransaction<DB, []> | undefined;
 
   public constructor(
-    @inject('PostgresConnectionPool')
-    private pool: PostgresConnectionPool
+    @inject('KyselyDataSource')
+    private database: IKyselyDataSource<DB>
   ) {}
+  public async executeAtomically(callback: () => Promise<void>): Promise<void> {
+    try {
+      await this.begin();
+      await callback();
+      await this.commit();
+    } catch {
+      await this.rollback();
+    }
+  }
 
   public async connection() {
-    return this.pool.get();
+    return this.database.get();
   }
 
   public transaction() {
@@ -30,7 +41,7 @@ export class PostgressDatabase implements IUnitOfWork {
       throw new Error(`Transaction already started`);
     }
 
-    const connection = await this.pool.get();
+    const connection = await this.database.get();
 
     this._transaction = await connection.startTransaction().execute();
   }

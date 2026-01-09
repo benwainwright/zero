@@ -1,11 +1,11 @@
-import type { IInternalTypes } from '@core';
 import type { TypedContainer } from '@inversifyjs/strongly-typed';
-import type { IApplicationTypes } from '@zero/application-core';
+import { dropAllMigrations } from '../migrate/index.ts';
+import type { IKyselySharedTypes } from '@zero/kysely-shared';
+import type { DB } from '@core';
 
 export const afterCallback = async (
-  container: TypedContainer<IInternalTypes & IApplicationTypes>
+  container: TypedContainer<IKyselySharedTypes<DB>>
 ) => {
-  const adapter = await container.getAsync('SqliteDatabase');
-
-  await adapter.dropTables();
+  const sqlite = await container.getAsync('KyselyDataSource');
+  await dropAllMigrations(sqlite);
 };

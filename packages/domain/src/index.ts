@@ -29,7 +29,14 @@ export {
 
 export { Account, type IAccount, accountSchema } from '@account';
 
-export { Role, type IRole, roleSchema, type IRoute, routes } from '@role';
+export {
+  Role,
+  type IRole,
+  roleSchema,
+  type IRoute,
+  routes,
+  routesSchema,
+} from '@role';
 
 export {
   Transaction,

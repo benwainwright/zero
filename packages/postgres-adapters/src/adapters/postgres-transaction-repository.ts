@@ -1,12 +1,14 @@
-import { inject, PostgressDatabase, type Transactions } from '@core';
+import { inject, type Transactions } from '@core';
 import type { ITransactionRepository } from '@zero/accounts';
 import { Transaction } from '@zero/domain';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
+import type { DB } from '../core/database.ts';
 
 export class PostgresTransactionRepository implements ITransactionRepository {
   public constructor(
-    @inject('PostgresDatabase')
-    private readonly database: PostgressDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
 
   private mapRaw(raw: Selectable<Transactions>) {

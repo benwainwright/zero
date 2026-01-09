@@ -6,6 +6,7 @@ export const accountSchema = z.object({
   type: z.string(),
   closed: z.boolean(),
   balance: z.number(),
+  description: z.string().optional(),
   linkedOpenBankingAccount: z.string().optional(),
   deleted: z.boolean(),
   ownerId: z.string(),

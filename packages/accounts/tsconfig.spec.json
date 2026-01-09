@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
+      "@services": ["./src/services/index.ts"],
       "@ports": ["./src/ports/index.ts"],
       "@types": ["./src/types/index.ts"],
       "@core": ["./src/core/index.ts"]
@@ -28,7 +29,7 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
     "src/**/*.d.ts"
-  ],
+, "src/services/query-handlers/list-user-accounts-query-handler.ts"  ],
   "references": [
     {
       "path": "./tsconfig.lib.json"

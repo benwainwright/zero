@@ -1,10 +1,11 @@
-import { buildQueryHandler, getMockQueryContext } from '@test-helpers';
+import { getMockQueryContext } from '@test-helpers';
 import { GetCurrentUserQueryHandler } from './get-current-user-query-handler.ts';
 import { User } from '@zero/domain';
+import { buildInstance } from '@zero/test-helpers';
 
 describe('get current user query handler', () => {
   it('returns the current authcontext if it is a user', async () => {
-    const { handler } = buildQueryHandler(GetCurrentUserQueryHandler);
+    const [handler] = await buildInstance(GetCurrentUserQueryHandler);
     const context = getMockQueryContext('GetCurrentUser', undefined, 'ben');
 
     const result = await handler.tryHandle(context);
@@ -17,7 +18,7 @@ describe('get current user query handler', () => {
   });
 
   it('returns undefined ifd not', async () => {
-    const { handler } = buildQueryHandler(GetCurrentUserQueryHandler);
+    const [handler] = await buildInstance(GetCurrentUserQueryHandler);
 
     const context = getMockQueryContext('GetCurrentUser', undefined);
 

@@ -5,9 +5,8 @@ export type AccountsCommands =
       id: string;
       key: 'CreateAccountCommand';
       params: {
-        username: string;
-        password: string;
-        email: string;
+        name: string;
+        description: string;
       };
     }
   | {
@@ -19,9 +18,9 @@ export type AccountsCommands =
       id: string;
       key: 'UpdateAccountCommand';
       params: {
-        username: string;
-        password: string;
-        email: string;
+        id: string;
+        name: string;
+        description: string;
       };
     }
   | {

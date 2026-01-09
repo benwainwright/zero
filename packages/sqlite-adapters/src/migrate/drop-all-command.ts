@@ -1,17 +1,18 @@
-import { command, string, number } from '@drizzle-team/brocli';
+import { command, string } from '@drizzle-team/brocli';
 import { dropAllMigrations } from './lib/drop-all.ts';
+import { ConfigValue } from '@zero/bootstrap';
+import { KyselySqliteDatabase } from '@core';
 
 export const dropAllCommand = command({
   name: 'drop-all',
   options: {
-    host: string(),
-    port: number(),
-    user: string(),
-    password: string(),
-    database: string(),
+    file: string().required(),
   },
 
   handler: async (opts) => {
-    await dropAllMigrations(opts);
+    const sqlite = new KyselySqliteDatabase(
+      new ConfigValue(Promise.resolve(opts.file))
+    );
+    await dropAllMigrations(sqlite);
   },
 });

@@ -60,7 +60,7 @@ export const createRepo = async <
         container: TypedContainer<DataPortsWithMock & TMap>
       ) => Promise<void>)
     | undefined;
-}): Promise<CreateFunction<TKey>> => {
+}): Promise<{ creator: CreateFunction<TKey>; after: () => Promise<void> }> => {
   const container = new TypedContainer<DataPortsWithMock & IBootstrapTypes>();
 
   const logger = mock<ILogger>();
@@ -76,39 +76,45 @@ export const createRepo = async <
     await container.load(testModule(module));
   }
 
-  afterEach(async () => {
+  const after = async () => {
     await afterCallback?.(container);
-  });
+  };
 
-  return async () => {
-    await createCallback?.(container);
-    const unit = await container.getAsync('UnitOfWork');
+  return {
+    after,
+    creator: async () => {
+      await createCallback?.(container);
+      const unit = await container.getAsync('UnitOfWork');
 
-    const thing = Object.fromEntries(
-      await Promise.all(
-        Object.entries(repoKey).map(async ([key, _item], index) => {
-          @injectable()
-          class RepoContainer {
-            public constructor(
-              @inject('UnitOfWork')
-              public readonly unitOfWork: IUnitOfWork,
+      const thing = Object.fromEntries(
+        await Promise.all(
+          Object.entries(repoKey).map(async ([key, _item], index) => {
+            @injectable()
+            class RepoContainer {
+              public constructor(
+                @inject('UnitOfWork')
+                public readonly unitOfWork: IUnitOfWork,
 
-              @inject(_item)
-              public readonly item: unknown
-            ) {}
-          }
-          const child = new TypedContainer({ parent: container });
-          child.bind('UnitOfWork').toConstantValue(unit);
-          child.bind(`repo-container-${index}`).to(RepoContainer);
+                @inject(_item)
+                public readonly item: unknown
+              ) {}
+            }
+            const child = new TypedContainer({ parent: container });
+            child.bind('UnitOfWork').toConstantValue(unit);
+            child.bind(`repo-container-${index}`).to(RepoContainer);
 
-          return [key, (await child.getAsync(`repo-container-${index}`)).item];
-        })
-      )
-    ) as WithOutputs<TKey>;
-    return {
-      ...thing,
-      unitOfWork: unit,
-      eventBuffer: mockEventBuffer,
-    };
+            return [
+              key,
+              (await child.getAsync(`repo-container-${index}`)).item,
+            ];
+          })
+        )
+      ) as WithOutputs<TKey>;
+      return {
+        ...thing,
+        unitOfWork: unit,
+        eventBuffer: mockEventBuffer,
+      };
+    },
   };
 };

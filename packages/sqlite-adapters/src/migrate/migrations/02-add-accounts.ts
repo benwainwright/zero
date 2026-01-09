@@ -4,12 +4,13 @@ export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .createTable('accounts')
     .ifNotExists()
-    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('id', 'text', (col) => col.primaryKey().notNull().unique())
     .addColumn('name', 'text', (col) => col.notNull())
     .addColumn('type', 'text', (col) => col.notNull())
-    .addColumn('closed', 'boolean', (col) => col.notNull())
+    .addColumn('closed', 'text', (col) => col.notNull())
     .addColumn('balance', 'integer', (col) => col.notNull())
-    .addColumn('deleted', 'boolean', (col) => col.notNull())
+    .addColumn('deleted', 'text', (col) => col.notNull())
+    .addColumn('description', 'text')
     .addColumn('ownerId', 'text', (col) => col.notNull())
 
     .addForeignKeyConstraint(
@@ -30,5 +31,5 @@ export const up = async (db: Kysely<unknown>) => {
 };
 
 export const down = async (db: Kysely<unknown>) => {
-  await db.schema.dropTable('accounts').ifExists().cascade().execute();
+  await db.schema.dropTable('accounts').ifExists().execute();
 };

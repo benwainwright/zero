@@ -1,6 +1,6 @@
 import { Account } from './account.ts';
 describe('the account model', () => {
-  describe('freeze dry', () => {
+  describe('toObject', () => {
     it('returns an object based on the instance properties', () => {
       const newAccount = Account.reconstitute({
         ownerId: 'foo',
@@ -32,10 +32,7 @@ describe('the account model', () => {
       id: 'id',
       ownerId: 'foo',
       name: 'account name',
-      type: 'accont_type',
-      closed: false,
-      deleted: false,
-      balance: 1000,
+      description: 'foo',
     });
 
     expect(newAccount.pullEvents()).toEqual([
@@ -57,14 +54,139 @@ describe('the account model', () => {
       deleted: false,
     });
 
-    newAccount.delete();
+    newAccount.deleteAccount();
 
     expect(newAccount.pullEvents()).toEqual([
       {
         event: 'AccountDeleted',
+        data: Account.reconstitute({
+          ownerId: 'foo',
+          id: 'id',
+          name: 'account name',
+          type: 'accont_type',
+          closed: false,
+          balance: 1000,
+          deleted: true,
+        }),
+      },
+    ]);
+
+    expect(newAccount.deleted).toEqual(true);
+  });
+
+  it('emits a domain event on update of the note', () => {
+    const newAccount = Account.reconstitute({
+      ownerId: 'foo',
+      id: 'id',
+      name: 'account name',
+      type: 'accont_type',
+      closed: false,
+      balance: 1000,
+      deleted: false,
+    });
+
+    newAccount.update({
+      description: 'foobar',
+    });
+
+    expect(newAccount.pullEvents()).toEqual([
+      {
+        event: 'AccountUpdated',
+        data: {
+          old: Account.reconstitute({
+            ownerId: 'foo',
+            id: 'id',
+            name: 'account name',
+            type: 'accont_type',
+            closed: false,
+            balance: 1000,
+            deleted: false,
+          }),
+          new: Account.reconstitute({
+            ownerId: 'foo',
+            description: 'foobar',
+            id: 'id',
+            name: 'account name',
+            type: 'accont_type',
+            closed: false,
+            balance: 1000,
+            deleted: false,
+          }),
+        },
+      },
+    ]);
+
+    expect(newAccount.description).toEqual('foobar');
+  });
+
+  it('emits a domain event on update of the name', () => {
+    const newAccount = Account.reconstitute({
+      ownerId: 'foo',
+      id: 'id',
+      name: 'account name',
+      type: 'accont_type',
+      closed: false,
+      balance: 1000,
+      deleted: false,
+      description: 'bar',
+    });
+
+    newAccount.update({
+      name: 'foo',
+    });
+
+    expect(newAccount.pullEvents()).toEqual([
+      {
+        event: 'AccountUpdated',
+        data: {
+          old: Account.reconstitute({
+            ownerId: 'foo',
+            id: 'id',
+            name: 'account name',
+            type: 'accont_type',
+            description: 'bar',
+            closed: false,
+            balance: 1000,
+            deleted: false,
+          }),
+          new: Account.reconstitute({
+            ownerId: 'foo',
+            description: 'bar',
+            id: 'id',
+            name: 'foo',
+            type: 'accont_type',
+            closed: false,
+            balance: 1000,
+            deleted: false,
+          }),
+        },
+      },
+    ]);
+
+    expect(newAccount.name).toEqual('foo');
+  });
+
+  it('emits a domain event on close', () => {
+    const newAccount = Account.reconstitute({
+      ownerId: 'foo',
+      id: 'id',
+      name: 'account name',
+      type: 'accont_type',
+      closed: false,
+      balance: 1000,
+      deleted: false,
+    });
+
+    newAccount.closeAccount();
+
+    expect(newAccount.pullEvents()).toEqual([
+      {
+        event: 'AccountClosed',
         data: newAccount,
       },
     ]);
+
+    expect(newAccount.closed).toEqual(true);
   });
 
   it('allows you to link an account id', () => {

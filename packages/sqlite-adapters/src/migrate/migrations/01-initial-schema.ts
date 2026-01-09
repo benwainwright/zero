@@ -1,23 +1,19 @@
-import { sql, type Kysely } from 'kysely';
+import { type Kysely } from 'kysely';
 
 export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .createTable('roles')
     .ifNotExists()
-    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('id', 'text', (col) => col.primaryKey().notNull().unique())
     .addColumn('name', 'text', (col) => col.notNull())
-    .addColumn('permissions', 'jsonb', (col) =>
-      col.notNull().defaultTo(sql`'[]'::jsonb`)
-    )
-    .addColumn('routes', 'jsonb', (col) =>
-      col.notNull().defaultTo(sql`'[]'::jsonb`)
-    )
+    .addColumn('permissions', 'text', (col) => col.notNull().defaultTo('[]'))
+    .addColumn('routes', 'text', (col) => col.notNull().defaultTo('[]'))
     .execute();
 
   await db.schema
     .createTable('users')
     .ifNotExists()
-    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('id', 'text', (col) => col.primaryKey().notNull().unique())
     .addColumn('email', 'text', (col) => col.notNull().unique())
     .addColumn('passwordHash', 'text', (col) => col.notNull())
     .execute();
@@ -61,7 +57,7 @@ export const up = async (db: Kysely<unknown>) => {
 };
 
 export const down = async (db: Kysely<unknown>) => {
-  await db.schema.dropTable('user_roles').ifExists().cascade().execute();
-  await db.schema.dropTable('users').ifExists().cascade().execute();
-  await db.schema.dropTable('roles').ifExists().cascade().execute();
+  await db.schema.dropTable('user_roles').ifExists().execute();
+  await db.schema.dropTable('users').ifExists().execute();
+  await db.schema.dropTable('roles').ifExists().execute();
 };

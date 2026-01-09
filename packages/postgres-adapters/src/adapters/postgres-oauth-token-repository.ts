@@ -1,12 +1,14 @@
-import { inject, PostgressDatabase, type OauthTokens } from '@core';
+import { inject, type OauthTokens } from '@core';
 import type { IOauthTokenRepository } from '@zero/accounts';
 import { OauthToken } from '@zero/domain';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
+import type { DB } from '../core/database.ts';
 
 export class PostgresOauthTokenRepository implements IOauthTokenRepository {
   public constructor(
-    @inject('PostgresDatabase')
-    private readonly database: PostgressDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
 
   private mapRaw(raw: Selectable<OauthTokens>) {

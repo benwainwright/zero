@@ -22,9 +22,11 @@ export class AuthorisingCommandBus implements ICommandBus {
 
   public async execute(command: ICommand<string>): Promise<void> {
     const user = await this.userStore.get();
+
     if (user) {
       this.grantService.setActor(user);
     }
+
     await this.nextBus.execute(command);
     this.grantService.done();
   }

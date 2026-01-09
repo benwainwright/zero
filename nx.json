@@ -40,7 +40,8 @@
         "packages/accounts/*",
         "packages/http-client/*",
         "packages/integration-adapters/*",
-        "packages/test-helpers/*"
+        "packages/test-helpers/*",
+        "packages/data-adapter-shared/*"
       ]
     },
     {

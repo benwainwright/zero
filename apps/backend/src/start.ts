@@ -4,6 +4,7 @@ import { getBootstrapper } from '@zero/bootstrap';
 import { applicationCoreModule } from '@zero/application-core';
 import { authModule } from '@zero/auth';
 import { websocketServerModule } from '@zero/websocket-adapter/server';
+import { accountsModule } from '@zero/accounts';
 import { nodeAdaptersModule } from '@zero/node-adapters';
 import { integrationsModule } from '@zero/integration-adapters';
 
@@ -15,6 +16,7 @@ const start = async () => {
   bootstrapper.addModule(nodeAdaptersModule);
   bootstrapper.addModule(authModule);
   bootstrapper.addModule(integrationsModule);
+  bootstrapper.addModule(accountsModule);
   bootstrapper.addModule(websocketServerModule);
 
   await bootstrapper.start();

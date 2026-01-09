@@ -2,6 +2,7 @@ import type { AbstractCommandHandler, ICommand } from '@zero/application-core';
 import { containerWithAuthDepsMocked } from './container-with-auth-deps-mocked.ts';
 
 export const buildCommandHandler = <
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   THandler extends new (...args: any[]) => AbstractCommandHandler<
     ICommand<string>,
     string

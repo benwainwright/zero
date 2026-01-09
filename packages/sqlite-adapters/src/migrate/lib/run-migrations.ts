@@ -1,16 +1,12 @@
-import { type ConnectConfig } from './connect.ts';
+import type { IKyselyDataSource } from '@zero/kysely-shared';
 import { logResults } from './log-results.ts';
 import { migrator as getMigrator } from './migrator.ts';
+import type { DB } from '@core';
 
-import waitPort from 'wait-port';
-
-export const runMigrations = async (config: ConnectConfig) => {
-  await waitPort({ host: 'localhost', port: 5433 });
-  const migrator = await getMigrator(config);
+export const runMigrations = async (sqlite: IKyselyDataSource<DB>) => {
+  const migrator = await getMigrator(sqlite);
 
   const result = await migrator.migrateToLatest();
-
-  await migrator.close();
 
   logResults(result);
 };

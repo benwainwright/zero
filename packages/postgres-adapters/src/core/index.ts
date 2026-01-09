@@ -1,4 +1,3 @@
-export { PostgressDatabase } from './postgres-database.ts';
 export { PostgresConnectionPool } from './postgress-connection-pool.ts';
 export type { IInternalTypes } from '../types/i-internal-types.ts';
 export { inject, multiInject } from './typed-inject.ts';
@@ -9,4 +8,5 @@ export type {
   BankConnections,
   SyncDetails,
   Transactions,
+  Accounts,
 } from './database.ts';

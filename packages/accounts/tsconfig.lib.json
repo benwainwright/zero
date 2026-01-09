@@ -11,6 +11,7 @@
     "paths": {
       "@ports": ["./src/ports/index.ts"],
       "@types": ["./src/types/index.ts"],
+      "@services": ["./src/services/index.ts"],
       "@core": ["./src/core/index.ts"]
     }
   },
@@ -32,7 +33,13 @@
       "path": "../bootstrap/tsconfig.lib.json"
     },
     {
+      "path": "../auth/tsconfig.lib.json"
+    },
+    {
       "path": "../application-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../test-helpers/tsconfig.lib.json"
     },
     {
       "path": "../domain/tsconfig.lib.json"

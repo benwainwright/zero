@@ -1,10 +1,8 @@
 import type { ConfigValue } from '@zero/bootstrap';
-import type { SqliteDatabase } from './sqlite-database.ts';
-import type { SqliteRepositoryAdapter } from '@adapters';
+import type { KyselySqliteDatabase } from './kysely-sqlite-database.ts';
 
 export interface IInternalTypes {
-  SqliteDatabase: SqliteDatabase;
-  SqliteRepoAdapter: SqliteRepositoryAdapter;
   DatabaseFilename: ConfigValue<string>;
   DatabaseTablePrefix: ConfigValue<string>;
+  KyselySqliteDatabase: KyselySqliteDatabase;
 }

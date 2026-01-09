@@ -23,7 +23,11 @@ export default defineConfig(() => ({
     coverage: {
       enabled: true,
       include: ['./src/**/*.ts'],
-      exclude: ['./src/**/*.test.ts', '*./src/**/*.spec.ts'],
+      exclude: [
+        './src/**/*.test.ts',
+        '*./src/**/*.spec.ts',
+        './src/migrate/**/*',
+      ],
       thresholds: {
         functions: 80,
         lines: 80,

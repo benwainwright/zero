@@ -1,11 +1,11 @@
-import { sql, type Kysely } from 'kysely';
+import { type Kysely } from 'kysely';
 
 export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .createTable('sync_details')
-    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('id', 'text', (col) => col.primaryKey().notNull().unique())
     .addColumn('provider', 'text', (col) => col.notNull())
-    .addColumn('lastSync', 'timestamp')
+    .addColumn('lastSync', 'text')
     .addColumn('ownerId', 'text', (col) => col.notNull())
     .addColumn('checkpoint', 'text')
     .addForeignKeyConstraint(
@@ -20,14 +20,12 @@ export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .createTable('bank_connections')
     .ifNotExists()
-    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('id', 'text', (col) => col.primaryKey().notNull().unique())
     .addColumn('logo', 'text', (col) => col.notNull())
     .addColumn('requisitionId', 'text')
     .addColumn('ownerId', 'text', (col) => col.notNull())
     .addColumn('bankName', 'text', (col) => col.notNull())
-    .addColumn('accounts', 'jsonb', (col) =>
-      col.notNull().defaultTo(sql`'[]'::jsonb`)
-    )
+    .addColumn('accounts', 'text')
     .addForeignKeyConstraint(
       'bank_connections_owner_id_pkey',
       ['ownerId'],
@@ -47,7 +45,7 @@ export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .createTable('categories')
     .ifNotExists()
-    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('id', 'text', (col) => col.primaryKey().notNull())
     .addColumn('name', 'text', (col) => col.notNull())
     .addColumn('description', 'text')
     .addColumn('ownerId', 'text')
@@ -63,9 +61,9 @@ export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .createTable('transactions')
     .ifNotExists()
-    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('id', 'text', (col) => col.primaryKey().notNull().unique())
     .addColumn('accountId', 'text', (col) => col.notNull())
-    .addColumn('date', 'timestamp', (col) => col.notNull())
+    .addColumn('date', 'text', (col) => col.notNull())
     .addColumn('amount', 'integer', (col) => col.notNull())
     .addColumn('payee', 'text', (col) => col.notNull())
     .addColumn('ownerId', 'text', (col) => col.notNull())
@@ -95,8 +93,8 @@ export const up = async (db: Kysely<unknown>) => {
 };
 
 export const down = async (db: Kysely<unknown>) => {
-  await db.schema.dropTable('sync_details').ifExists().cascade().execute();
-  await db.schema.dropTable('categories').ifExists().cascade().execute();
-  await db.schema.dropTable('bank_connections').ifExists().cascade().execute();
-  await db.schema.dropTable('transactions').ifExists().cascade().execute();
+  await db.schema.dropTable('sync_details').ifExists().execute();
+  await db.schema.dropTable('categories').ifExists().execute();
+  await db.schema.dropTable('bank_connections').ifExists().execute();
+  await db.schema.dropTable('transactions').ifExists().execute();
 };

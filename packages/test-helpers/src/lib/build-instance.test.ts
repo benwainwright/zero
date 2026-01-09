@@ -27,7 +27,7 @@ describe('build instance', () => {
 
     const container = new Container();
 
-    const [foo] = await buildInstance(container, Foo);
+    const [foo] = await buildInstance(Foo, container);
 
     expect(foo).toBeInstanceOf(Foo);
     expect(
@@ -63,7 +63,7 @@ describe('build instance', () => {
 
     const container = new Container();
 
-    const [theInstance, , bar] = await buildInstance(container, Foo);
+    const [theInstance, , bar] = await buildInstance(Foo, container);
 
     when(bar.theCall).calledWith().thenReturn('hello');
 

@@ -13,3 +13,4 @@ export type {
 } from '@ports';
 
 export type { IAccountsTypes } from '@core';
+export { accountsModule } from '@core';

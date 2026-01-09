@@ -35,6 +35,9 @@
       "path": "../data-adapters-tests/tsconfig.lib.json"
     },
     {
+      "path": "../kysely-shared/tsconfig.lib.json"
+    },
+    {
       "path": "../accounts/tsconfig.lib.json"
     },
     {

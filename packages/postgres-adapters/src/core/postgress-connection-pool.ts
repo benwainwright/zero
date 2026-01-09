@@ -1,5 +1,6 @@
 import { injectable, postConstruct } from 'inversify';
 import type { ConfigValue, ILogger } from '@zero/bootstrap';
+import type { IKyselyDataSource } from '@zero/kysely-shared';
 import { Pool } from 'pg';
 import { inject } from './typed-inject.ts';
 
@@ -8,7 +9,7 @@ import type { DB } from './database.ts';
 import { wait } from './wait.ts';
 
 @injectable()
-export class PostgresConnectionPool {
+export class PostgresConnectionPool implements IKyselyDataSource<DB> {
   public constructor(
     @inject('PostgresDatabaseName')
     private readonly databaseName: ConfigValue<string>,

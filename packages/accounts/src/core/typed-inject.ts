@@ -12,11 +12,12 @@ import type {
 
 import type { IAccountsTypes } from './i-accounts-types.ts';
 import type { IBootstrapTypes } from '@zero/bootstrap';
+import type { IAuthExports } from '@zero/auth';
 
 export const inject = inversifyInject as TypedInject<
-  IAccountsTypes & IBootstrapTypes & IApplicationTypes
+  IAccountsTypes & IBootstrapTypes & IApplicationTypes & IAuthExports
 >;
 
 export const multiInject = inversifyMultiInject as TypedMultiInject<
-  IAccountsTypes & IBootstrapTypes & IApplicationTypes
+  IAccountsTypes & IBootstrapTypes & IApplicationTypes & IAuthExports
 >;

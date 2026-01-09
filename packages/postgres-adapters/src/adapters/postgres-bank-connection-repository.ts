@@ -1,14 +1,16 @@
-import { inject, json, PostgressDatabase, type BankConnections } from '@core';
+import { inject, json, type BankConnections } from '@core';
 import type { IBankConnectionRepository } from '@zero/accounts';
 import { BankConnection } from '@zero/domain';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import z from 'zod';
+import type { DB } from '../core/database.ts';
 export class PostgresBankConnectionRepository
   implements IBankConnectionRepository
 {
   public constructor(
-    @inject('PostgresDatabase')
-    private readonly database: PostgressDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
 
   private mapRaw(raw: Selectable<BankConnections>) {

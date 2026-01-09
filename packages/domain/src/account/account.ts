@@ -9,33 +9,72 @@ export class Account
 
   public static key = 'account';
 
-  public readonly name: string;
-  public readonly closed: boolean;
-  public readonly note: string | undefined;
+  private _name: string;
+  private _closed: boolean;
+  private _description: string | undefined;
   public readonly type: string;
-  public readonly deleted: boolean;
+  private _deleted: boolean;
   private _balance: number;
   private _linkedOpenBankingAccount: string | undefined;
 
   private constructor(config: IAccount) {
     super();
     this.id = config.id;
-    this.name = config.name;
+    this._name = config.name;
     this.type = config.type;
-    this.closed = config.closed;
-    this.deleted = config.deleted;
+    this._closed = config.closed;
+    this._deleted = config.deleted;
     this.ownerId = config.ownerId;
     this._balance = config.balance;
     this._linkedOpenBankingAccount = config.linkedOpenBankingAccount;
   }
+
   public readonly ownerId: string;
 
-  public delete() {
-    this.raiseEvent({ event: 'AccountDeleted', data: this });
+  public get name() {
+    return this._name;
+  }
+
+  public get description() {
+    return this._description;
+  }
+
+  public deleteAccount() {
+    this._deleted = true;
+    this.raiseEvent({
+      event: 'AccountDeleted',
+      data: Account.reconstitute(this.toObject()),
+    });
+  }
+
+  public closeAccount() {
+    this._closed = true;
+    this.raiseEvent({
+      event: 'AccountClosed',
+      data: Account.reconstitute(this.toObject()),
+    });
   }
 
   public get linkedOpenBankingAccount() {
     return this._linkedOpenBankingAccount;
+  }
+
+  public update(config: { description?: string; name?: string }) {
+    const old = Account.reconstitute(this);
+    this._name = config.name ?? this._name;
+    this._description = config.description ?? this._description;
+    this.raiseEvent({
+      event: 'AccountUpdated',
+      data: { old, new: Account.reconstitute(this) },
+    });
+  }
+
+  public get deleted() {
+    return this._deleted;
+  }
+
+  public get closed() {
+    return this._closed;
   }
 
   public linkAccount(id: string) {
@@ -75,19 +114,31 @@ export class Account
       ownerId: this.ownerId,
       balance: this._balance,
       id: this.id,
-      name: this.name,
+      name: this._name,
       type: this.type,
-      closed: this.closed,
-      deleted: this.deleted,
+      description: this._description,
+      closed: this._closed,
+      deleted: this._deleted,
     };
   }
 
-  public static reconstitute(config: unknown) {
+  public static reconstitute(config: IAccount) {
     return new Account(accountSchema.parse(config));
   }
 
-  public static create(config: IAccount) {
-    const theAccount = new Account(config);
+  public static create(config: {
+    id: string;
+    name: string;
+    ownerId: string;
+    description: string;
+  }) {
+    const theAccount = new Account({
+      ...config,
+      type: 'current',
+      closed: false,
+      deleted: false,
+      balance: 0,
+    });
     theAccount.raiseEvent({ event: 'AccountCreated', data: theAccount });
     return theAccount;
   }

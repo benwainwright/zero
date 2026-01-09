@@ -3,16 +3,16 @@ import type { Kysely } from 'kysely';
 export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .createTable('oauth_tokens')
-    .addColumn('expiry', 'timestamp', (col) => col.notNull())
+    .addColumn('expiry', 'text', (col) => col.notNull())
     .addColumn('id', 'text', (col) => col.notNull().unique())
     .addColumn('token', 'text', (col) => col.notNull())
     .addColumn('refreshToken', 'text', (col) => col.notNull())
     .addColumn('provider', 'text', (col) => col.notNull())
     .addColumn('ownerId', 'text', (col) => col.notNull())
-    .addColumn('refreshExpiry', 'timestamp')
-    .addColumn('lastUse', 'timestamp')
-    .addColumn('refreshed', 'timestamp')
-    .addColumn('created', 'timestamp', (col) => col.notNull())
+    .addColumn('refreshExpiry', 'text')
+    .addColumn('lastUse', 'text')
+    .addColumn('refreshed', 'text')
+    .addColumn('created', 'text', (col) => col.notNull())
     .addPrimaryKeyConstraint('oauth_tokens_pkey', ['provider', 'ownerId'])
     .addForeignKeyConstraint(
       'accounts_owner_id_pkey',
@@ -25,5 +25,5 @@ export const up = async (db: Kysely<unknown>) => {
 };
 
 export const down = async (db: Kysely<unknown>) => {
-  await db.schema.dropTable('oauth_tokens').ifExists().cascade().execute();
+  await db.schema.dropTable('oauth_tokens').ifExists().execute();
 };

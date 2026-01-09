@@ -1,7 +1,10 @@
 import type { IRoleRepository } from '@zero/auth';
-import { Role, permissionSchema } from '@zero/domain';
-import { inject, json, PostgressDatabase } from '@core';
+import { Role, permissionSchema, routesSchema } from '@zero/domain';
+import { inject, json } from '@core';
 import z from 'zod';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import type { DB, Roles } from '../core/database.ts';
+import type { Selectable } from 'kysely';
 
 export interface RawRole {
   id: string;
@@ -12,8 +15,8 @@ export interface RawRole {
 
 export class PostgresRoleRepository implements IRoleRepository {
   public constructor(
-    @inject('PostgresDatabase')
-    private readonly database: PostgressDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
 
   public async requireRole(id: string): Promise<Role> {
@@ -25,9 +28,19 @@ export class PostgresRoleRepository implements IRoleRepository {
     return role;
   }
 
-  public async getRole(id: string): Promise<Role | undefined> {
-    const tx = await this.database.connection();
+  private mapRaw(role: Selectable<Roles>) {
+    return Role.reconstitute({
+      ...role,
+      permissions: z.array(permissionSchema).parse(role.permissions),
+      routes: routesSchema.parse(role.routes),
+    });
+  }
 
+  public async getRole(id: string): Promise<Role | undefined> {
+    console.log('beforetx');
+    const tx = this.database.transaction();
+
+    console.log('select');
     const result = await tx
       .selectFrom('roles')
       .where('id', '=', id)
@@ -38,7 +51,7 @@ export class PostgresRoleRepository implements IRoleRepository {
       return undefined;
     }
 
-    return Role.reconstitute(result);
+    return this.mapRaw(result);
   }
 
   public mapRawRole(raw: RawRole) {
@@ -79,6 +92,6 @@ export class PostgresRoleRepository implements IRoleRepository {
       .limit(limit)
       .execute();
 
-    return result.map((role) => Role.reconstitute(role));
+    return result.map((role) => this.mapRaw(role));
   }
 }

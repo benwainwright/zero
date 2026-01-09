@@ -27,6 +27,7 @@ export interface Accounts {
   balance: number;
   closed: boolean;
   deleted: boolean;
+  description: string | null;
   id: string;
   name: string;
   ownerId: string;

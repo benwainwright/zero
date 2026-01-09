@@ -59,6 +59,9 @@
     },
     {
       "path": "./packages/test-helpers"
+    },
+    {
+      "path": "./packages/kysely-shared"
     }
   ]
 }

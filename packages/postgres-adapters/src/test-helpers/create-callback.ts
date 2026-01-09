@@ -2,9 +2,13 @@ import type { IInternalTypes } from '@core';
 import type { TypedContainer } from '@inversifyjs/strongly-typed';
 import { runMigrations } from '@migrate';
 import type { IApplicationTypes } from '@zero/application-core';
+import type { IKyselySharedTypes } from '@zero/kysely-shared';
+import type { DB } from '../core/database.ts';
 
 export const createCallback = async (
-  container: TypedContainer<IInternalTypes & IApplicationTypes>
+  container: TypedContainer<
+    IInternalTypes & IApplicationTypes & IKyselySharedTypes<DB>
+  >
 ) => {
   await runMigrations({
     host: 'localhost',
@@ -13,11 +17,12 @@ export const createCallback = async (
     password: 'password',
     user: 'postgres',
   });
-  const db = await container.getAsync('PostgresDatabase');
+
+  const db = await container.getAsync('KyselyTransactionManager');
   const pool = await container.getAsync('PostgresConnectionPool');
   await pool.initialise();
-  await container.unbind('PostgresDatabase');
+  await container.unbind('KyselyTransactionManager');
   await container.unbind('UnitOfWork');
-  container.bind('PostgresDatabase').toConstantValue(db);
-  container.bind('UnitOfWork').toConstantValue(db);
+  container.bind('KyselyTransactionManager').toConstantValue(db);
+  container.bind('UnitOfWork').toService('KyselyTransactionManager');
 };

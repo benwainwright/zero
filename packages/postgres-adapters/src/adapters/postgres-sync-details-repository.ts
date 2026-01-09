@@ -1,13 +1,15 @@
-import { inject, PostgressDatabase } from '@core';
+import { inject } from '@core';
 import type { ISyncDetailsRepository } from '@zero/application-core';
 import { SyncDetails } from '@zero/domain';
 import type { SyncDetails as DBSyncDetails } from '@core';
 import type { Selectable } from 'kysely';
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import type { DB } from '../core/database.ts';
 
 export class PostgresSyncDetailsRepository implements ISyncDetailsRepository {
   public constructor(
-    @inject('PostgresDatabase')
-    private readonly database: PostgressDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
 
   public async saveSyncDetails(details: SyncDetails): Promise<SyncDetails> {

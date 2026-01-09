@@ -45,6 +45,9 @@
       "path": "../auth/tsconfig.lib.json"
     },
     {
+      "path": "../kysely-shared/tsconfig.lib.json"
+    },
+    {
       "path": "../application-core/tsconfig.lib.json"
     }
   ]

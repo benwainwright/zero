@@ -55,6 +55,7 @@ export const testUserAndRoleRepository = (
       await roleRepo.saveRole(adminRole);
       await unitOfWork.commit();
       await unitOfWork.begin();
+      await roleRepo.saveRole(adminRole);
       const roles = await roleRepo.getManyRoles(0, 30);
       await unitOfWork.commit();
 
@@ -187,18 +188,29 @@ export const testUserAndRoleRepository = (
         roles: [userRole.toObject(), adminRole.toObject()],
       });
 
-      await unitOfWork.begin();
-      await userRepo.saveUser(data);
-      await unitOfWork.commit();
+      try {
+        await unitOfWork.begin();
+        await userRepo.saveUser(data);
+        await unitOfWork.commit();
+      } catch (error) {
+        console.log(error);
+        await unitOfWork.rollback();
+      }
 
-      await unitOfWork.begin();
-      const user = await userRepo.getUser(data.id);
-      await unitOfWork.commit();
+      try {
+        await unitOfWork.begin();
+        const user = await userRepo.getUser(data.id);
+        await unitOfWork.commit();
 
-      expect(user?.roles).toEqual(expect.arrayContaining(data.roles));
-      expect(user?.id).toEqual(data.id);
-      expect(user?.email).toEqual(data.email);
-      expect(user?.passwordHash).toEqual(data.passwordHash);
+        expect(user?.roles).toEqual(expect.arrayContaining(data.roles));
+        expect(user?.id).toEqual(data.id);
+        expect(user?.email).toEqual(data.email);
+        expect(user?.passwordHash).toEqual(data.passwordHash);
+      } catch (error) {
+        await unitOfWork.rollback();
+        console.log(error);
+        assert.fail('Failed');
+      }
     });
   });
 

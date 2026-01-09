@@ -1,1 +1,5 @@
-export { buildInstance } from '@lib';
+export {
+  buildInstance,
+  getCommandContextBuilder,
+  getQueryContextBuilder,
+} from '@lib';

@@ -10,14 +10,19 @@ import {
 import type { IApplicationTypes } from '@zero/application-core';
 import type { IAuthTypes } from '@zero/auth';
 import { type IModule } from '@zero/bootstrap';
-import { PostgressDatabase } from './postgres-database.ts';
 import type { IInternalTypes } from '../types/i-internal-types.ts';
 import z from 'zod';
 import { PostgresConnectionPool } from './postgress-connection-pool.ts';
 import type { IAccountsTypes } from '@zero/accounts';
+import { KyselyUnitOfWork, type IKyselySharedTypes } from '@zero/kysely-shared';
+import type { DB } from './database.ts';
 
 export const postgresAdaptersModule: IModule<
-  IApplicationTypes & IAuthTypes & IInternalTypes & IAccountsTypes
+  IApplicationTypes &
+    IAuthTypes &
+    IInternalTypes &
+    IAccountsTypes &
+    IKyselySharedTypes<DB>
 > = async ({ logger, configValue, bind }) => {
   logger.info(`Initialising postgres module`);
   const host = configValue({
@@ -74,12 +79,13 @@ export const postgresAdaptersModule: IModule<
     .to(PostgresTransactionRepository)
     .inRequestScope();
 
-  bind('PostgresDatabase').to(PostgressDatabase).inRequestScope();
-  bind('UnitOfWork').toService('PostgresDatabase');
   bind('PostgressUsername').toConstantValue(databaseUser);
   bind('PostgresDatabaseHost').toConstantValue(host);
   bind('PostgresDatabaseName').toConstantValue(databaseName);
   bind('PostgresDatabasePassword').toConstantValue(databasePassword);
   bind('PostgresDatabasePort').toConstantValue(port);
-  bind('PostgresConnectionPool').to(PostgresConnectionPool).inSingletonScope();
+  bind('UnitOfWork').to(KyselyUnitOfWork).inRequestScope();
+  bind('KyselyTransactionManager').to(KyselyUnitOfWork).inRequestScope();
+  bind('KyselyDataSource').to(PostgresConnectionPool).inSingletonScope();
+  bind('PostgresConnectionPool').toService('KyselyDataSource');
 };

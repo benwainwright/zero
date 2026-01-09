@@ -4,9 +4,10 @@ export {
   type IRoleRepository,
   type IPasswordHasher,
   type IPasswordVerifier,
+  type IGrantManager,
 } from '@ports';
 
-export { type IAuthTypes } from '@core';
+export { type IAuthTypes, type IAuthExports } from '@core';
 
 export {
   type AuthCommands,

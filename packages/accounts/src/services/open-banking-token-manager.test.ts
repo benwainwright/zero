@@ -29,7 +29,7 @@ describe("Open banking token manager", () => {
 
     const mockToken = mock<OauthToken>();
 
-    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockToken);
+    when(repo.getToken).calledWith("foo", "open-banking").thenResolve(mockToken);
 
     const token = await manager.getToken("foo");
     expect(token).toEqual(mockToken);
@@ -46,13 +46,13 @@ describe("Open banking token manager", () => {
 
     const mockToken = mock<OauthToken>();
 
-    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockToken);
+    when(repo.getToken).calledWith("foo", "open-banking").thenResolve(mockToken);
 
     {
       await using token = await manager.getToken("foo");
       void token;
     }
-    expect(repo.save).not.toHaveBeenCalled();
+    expect(repo.saveToken).not.toHaveBeenCalled();
   });
 
   it("saves the returned token in the repo if an event has been raised", async () => {
@@ -67,13 +67,13 @@ describe("Open banking token manager", () => {
     const mockToken = mock<OauthToken>();
     when(mockToken.hasEvents).calledWith().thenReturn(true);
 
-    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockToken);
+    when(repo.getToken).calledWith("foo", "open-banking").thenResolve(mockToken);
 
     {
       await using token = await manager.getToken("foo");
       void token;
     }
-    expect(repo.save).toHaveBeenCalledWith(mockToken);
+    expect(repo.saveToken).toHaveBeenCalledWith(mockToken);
   });
 
   it("refreshes the token and saves it in the repo if it is out of date", async () => {
@@ -92,7 +92,7 @@ describe("Open banking token manager", () => {
     mockToken.refreshExpiry = new Date();
 
     when(mockToken.isOutOfDate).calledWith().thenReturn(true);
-    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockToken);
+    when(repo.getToken).calledWith("foo", "open-banking").thenResolve(mockToken);
     when(refresher.refreshToken)
       .calledWith(mockToken)
       .thenResolve({ token: "refreshed-token", tokenExpiresIn: 10 });
@@ -105,6 +105,6 @@ describe("Open banking token manager", () => {
       new Date()
     );
     expect(token).toEqual(mockToken);
-    expect(repo.save).toHaveBeenCalledWith(mockToken);
+    expect(repo.saveToken).toHaveBeenCalledWith(mockToken);
   });
 });

@@ -1,21 +1,71 @@
 import type { IUserRepository } from '@zero/auth';
-import { Role, User, permissionSchema } from '@zero/domain';
-import { inject, SqliteDatabase } from '@core';
+import {
+  Role,
+  User,
+  permissionSchema,
+  roleSchema,
+  routesSchema,
+  type IRole,
+} from '@zero/domain';
+import { inject, type DB } from '@core';
 import z from 'zod';
-import type { RawRole } from './sqlite-role-repository.ts';
-
-interface RawUser {
-  id: string;
-  passwordHash: string;
-  email: string;
-  roles: string;
-}
+import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { sql, type Selectable } from 'kysely';
+import type { Roles, Users } from '../core/database.ts';
 
 export class SqliteUserRepository implements IUserRepository {
   public constructor(
-    @inject('SqliteDatabase')
-    private readonly database: SqliteDatabase
+    @inject('KyselyTransactionManager')
+    private readonly database: IKyselyTransactionManager<DB>
   ) {}
+
+  public mapRawRole(raw: Selectable<Roles>) {
+    return Role.reconstitute({
+      ...raw,
+      permissions: z.array(permissionSchema).parse(JSON.parse(raw.permissions)),
+      routes: routesSchema.parse(JSON.parse(raw.routes)),
+    });
+  }
+
+  private mapRawUser(raw: Selectable<Users> & { roles: unknown }) {
+    const roles = JSON.parse(raw.roles as string) as Selectable<Roles>[];
+    return User.reconstitute({
+      ...raw,
+      roles: roles.map(this.mapRawRole),
+    });
+  }
+
+  public async saveUser(user: User): Promise<User> {
+    const tx = this.database.transaction();
+
+    await tx
+      .insertInto('users')
+      .values({
+        id: user.id,
+        email: user.email,
+        passwordHash: user.passwordHash,
+      })
+      .onConflict((oc) =>
+        oc.column('id').doUpdateSet((eb) => ({
+          email: eb.ref('excluded.email'),
+          passwordHash: eb.ref('excluded.passwordHash'),
+        }))
+      )
+      .execute();
+
+    await tx.deleteFrom('user_roles').where('userId', '=', user.id).execute();
+
+    await Promise.all(
+      user.roles.map(async (role) => {
+        await tx
+          .insertInto('user_roles')
+          .values({ userId: user.id, roleId: role.id })
+          .execute();
+      })
+    );
+
+    return user;
+  }
 
   public async requireUser(id: string): Promise<User> {
     const user = await this.getUser(id);
@@ -27,80 +77,26 @@ export class SqliteUserRepository implements IUserRepository {
     return user;
   }
 
-  public mapRawRole(raw: RawRole) {
-    return Role.reconstitute({
-      ...raw,
-      permissions: z.array(permissionSchema).parse(JSON.parse(raw.permissions)),
-      routes: JSON.parse(raw.routes),
-    });
+  public async getManyUsers(start?: number, limit?: number): Promise<User[]> {
+    const query = await this.getUsersQuery();
+
+    const withLimit = query.offset(start ?? 0).limit(limit ?? 30);
+
+    const result = await withLimit.execute();
+
+    return result.map((row) => this.mapRawUser(row));
   }
 
-  private mapRawUser(raw: RawUser) {
-    const rawRoles = JSON.parse(raw.roles) as RawRole[];
-    return User.reconstitute({
-      ...raw,
-      roles: rawRoles.map((role) => this.mapRawRole(role).toObject()),
-    });
-  }
+  public async deleteUser(user: User): Promise<void> {
+    const tx = this.database.transaction();
 
-  public async saveUser(user: User): Promise<User> {
-    const joinTable = await this.database.getJoinTableName(`users`, `roles`);
-    const usersTable = await this.database.getTableName(`users`);
-
-    this.database.deferQueryToTransaction(
-      `INSERT INTO ${usersTable} (id, email, passwordHash)
-        VALUES (?, ?, ?)
-        ON CONFLICT(id) DO UPDATE SET
-          email    = excluded.email,
-          passwordHash    = excluded.passwordHash`,
-      [user.id, user.email, user.passwordHash]
-    );
-
-    this.database.deferQueryToTransaction(
-      `DELETE FROM ${joinTable}
-      WHERE userId = ?`,
-      [user.id]
-    );
-
-    user.roles.forEach((role) =>
-      this.database.deferQueryToTransaction(
-        `INSERT INTO ${joinTable} (userId, roleId)
-      VALUES (?, ?)`,
-        [user.id, role.id]
-      )
-    );
-
-    return user;
-  }
-
-  private async getUserQuery() {
-    return `SELECT users.id, users.email, users.passwordHash,
-    COALESCE(
-    (
-      SELECT json_group_array(
-        json_object(
-          'id', roles.id,
-          'name', roles.name,
-          'permissions', roles.permissions,
-          'routes', roles.routes
-        )
-      )
-      FROM ${await this.database.getJoinTableName('users', 'roles')} user_roles
-      JOIN ${await this.database.getTableName('roles')} roles
-        ON roles.id = user_roles.roleId
-    ),
-    '[]'
-  ) as roles
-  FROM ${await this.database.getTableName('users')} users`;
+    await tx.deleteFrom('users').where('id', '=', user.id).execute();
   }
 
   public async getUser(id: string): Promise<User | undefined> {
-    const result = await this.database.getFromDb<RawUser | undefined>(
-      `${await this.getUserQuery()}
-      WHERE users.id = ?
-    `,
-      [id]
-    );
+    const query = await this.getUsersQuery();
+
+    const result = await query.where('users.id', '=', id).executeTakeFirst();
 
     if (!result) {
       return undefined;
@@ -108,20 +104,37 @@ export class SqliteUserRepository implements IUserRepository {
 
     return this.mapRawUser(result);
   }
-  public async getManyUsers(start?: number, limit?: number): Promise<User[]> {
-    const result = await this.database.getAllFromDatabase<RawUser[]>(
-      `${await this.getUserQuery()}
-      LIMIT ? OFFSET ?`,
-      [limit ?? 30, start ?? 0]
-    );
 
-    return result.map((raw) => this.mapRawUser(raw));
-  }
-  public async deleteUser(user: User): Promise<void> {
-    this.database.deferQueryToTransaction(
-      `DELETE FROM ${await this.database.getTableName('users')}
-      WHERE id = ?`,
-      [user.id]
-    );
+  private async getUsersQuery() {
+    const tx = this.database.transaction();
+
+    return tx.selectFrom('users').select(({ selectFrom, eb }) => [
+      'users.email',
+      'users.id',
+      'users.passwordHash',
+      eb
+        .fn('coalesce', [
+          selectFrom('user_roles as ur')
+            .leftJoin('roles', 'roles.id', 'ur.roleId')
+            .select(({ fn, eb }) =>
+              fn('json_group_array', [
+                fn('json_object', [
+                  eb.val('id'),
+                  'roles.id',
+                  eb.val('name'),
+                  'roles.name',
+                  eb.val('permissions'),
+                  'roles.permissions',
+                  eb.val('routes'),
+                  'roles.routes',
+                ]),
+              ]).as('roj')
+            )
+            .whereRef('ur.userId', '=', 'users.id')
+            .orderBy('roles.name'),
+          sql`'[]'`,
+        ])
+        .as('roles'),
+    ]);
   }
 }
