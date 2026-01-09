@@ -10,9 +10,7 @@ export class KyselySqliteDatabase implements IKyselyDataSource<DB> {
   public constructor(
     @inject('DatabaseFilename')
     private readonly databaseName: ConfigValue<string>
-  ) {
-    console.log('CONSTRUCTING DB');
-  }
+  ) {}
 
   private connection: Kysely<DB> | undefined;
   private db: InstanceType<typeof BetterSqlite3> | undefined;

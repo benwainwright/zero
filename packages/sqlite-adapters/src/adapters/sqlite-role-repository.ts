@@ -39,17 +39,13 @@ export class SqliteRoleRepository implements IRoleRepository {
   }
 
   public async getRole(id: string): Promise<Role | undefined> {
-    console.log('befor-tx');
     const tx = this.database.transaction();
-    console.log('aftertx');
 
     const result = await tx
       .selectFrom('roles')
       .where('id', '=', id)
       .selectAll()
       .executeTakeFirst();
-
-    console.log('done');
 
     if (!result) {
       return undefined;

@@ -1,12 +1,5 @@
 import type { IUserRepository } from '@zero/auth';
-import {
-  Role,
-  User,
-  permissionSchema,
-  roleSchema,
-  routesSchema,
-  type IRole,
-} from '@zero/domain';
+import { Role, User, permissionSchema, routesSchema } from '@zero/domain';
 import { inject, type DB } from '@core';
 import z from 'zod';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';

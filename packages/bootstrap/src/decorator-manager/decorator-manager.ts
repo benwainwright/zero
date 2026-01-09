@@ -17,8 +17,6 @@ import type { IDecoratorManager } from './i-decorator-manager.ts';
 
 const INVERSIFY_METADATA_KEY = '@inversifyjs/core/classMetadataReflectKey';
 
-type BindingScope = 'Singleton' | 'Transient' | 'Request';
-
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 

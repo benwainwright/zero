@@ -15,7 +15,7 @@ describe('get account query handler', () => {
 
     const account = mock<Account>();
 
-    when(accountsRepo.getAccount).calledWith('foo').thenResolve(account);
+    when(accountsRepo.requireAccount).calledWith('foo').thenResolve(account);
 
     const result = await handler.tryHandle(context);
 

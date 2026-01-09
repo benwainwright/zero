@@ -25,10 +25,12 @@ describe('delete account handler', () => {
       'ben'
     );
     const mockAccount = mock<Account>();
-    when(accounts.getAccount).calledWith('foo-bar').thenResolve(mockAccount);
+    when(accounts.requireAccount)
+      .calledWith('foo-bar')
+      .thenResolve(mockAccount);
     const result = await handler.tryHandle(context);
     expect(result).toEqual(true);
     expect(mockAccount.deleteAccount).toHaveBeenCalled();
-    expect(accounts.saveAccount).toHaveBeenCalledWith(mockAccount);
+    expect(accounts.deleteAccount).toHaveBeenCalledWith(mockAccount);
   });
 });

@@ -30,7 +30,7 @@ export class UpdateAccountCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle({
-    command: { id },
+    command: { id, name, description },
   }: ICommandContext<{
     id: string;
     key: 'UpdateAccountCommand';
@@ -41,6 +41,8 @@ export class UpdateAccountCommandHandler extends AbstractCommandHandler<
     this.grants.requires({
       capability: 'account:update',
     });
+
+    account.update({ name, description });
 
     await this.accounts.saveAccount(account);
   }
