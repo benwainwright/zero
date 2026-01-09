@@ -14,3 +14,5 @@ export type {
 
 export type { IAccountsTypes } from '@core';
 export { accountsModule } from '@core';
+
+export type { AccountsCommands, AccountsQueries } from '@services';

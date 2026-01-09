@@ -5,7 +5,10 @@ import { migrator as getMigrator } from './migrator.ts';
 import waitPort from 'wait-port';
 
 export const runMigrations = async (config: ConnectConfig) => {
-  await waitPort({ host: 'localhost', port: 5433 });
+  await waitPort({
+    host: config.host ?? 'localhost',
+    port: config.port ?? 5432,
+  });
   const migrator = await getMigrator(config);
 
   const result = await migrator.migrateToLatest();

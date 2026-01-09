@@ -2,6 +2,7 @@ import z from 'zod';
 
 export const routes = [
   'home',
+  'accounts',
   'register',
   'login',
   'logout',

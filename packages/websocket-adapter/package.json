@@ -25,6 +25,7 @@
   "dependencies": {
     "@inversifyjs/strongly-typed": "catalog:",
     "@zero/auth": "workspace:*",
+    "@zero/accounts": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "@zero/application-core": "workspace:*",
     "@zero/domain": "workspace:*",

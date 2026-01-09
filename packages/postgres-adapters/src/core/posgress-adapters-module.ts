@@ -85,7 +85,7 @@ export const postgresAdaptersModule: IModule<
   bind('PostgresDatabasePassword').toConstantValue(databasePassword);
   bind('PostgresDatabasePort').toConstantValue(port);
   bind('UnitOfWork').to(KyselyUnitOfWork).inRequestScope();
-  bind('KyselyTransactionManager').to(KyselyUnitOfWork).inRequestScope();
+  bind('KyselyTransactionManager').toService('UnitOfWork');
   bind('KyselyDataSource').to(PostgresConnectionPool).inSingletonScope();
   bind('PostgresConnectionPool').toService('KyselyDataSource');
 };

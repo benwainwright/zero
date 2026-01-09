@@ -6,6 +6,7 @@ import {
   IconLogout,
   IconUsers,
   IconUsersGroup,
+  IconPig,
 } from '@tabler/icons-react';
 import type { IRoute } from '@zero/domain';
 
@@ -27,6 +28,11 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     isIndex: true,
     authFailRedirect: '/login',
     sidebarIcon: <IconHome size={16} stroke={1.5} />,
+  },
+  accounts: {
+    component: 'routes/accounts.tsx',
+    authFailRedirect: '/',
+    sidebarIcon: <IconPig size={16} stroke={1.5} />,
   },
   roles: {
     component: 'routes/roles.tsx',

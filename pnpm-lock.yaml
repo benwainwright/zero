@@ -270,6 +270,9 @@ importers:
       '@zero/integration-adapters':
         specifier: workspace:*
         version: link:../../packages/integration-adapters
+      '@zero/kysely-shared':
+        specifier: workspace:*
+        version: link:../../packages/kysely-shared
       '@zero/node-adapters':
         specifier: workspace:*
         version: link:../../packages/node-adapters
@@ -893,6 +896,9 @@ importers:
       '@inversifyjs/strongly-typed':
         specifier: 'catalog:'
         version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      '@zero/accounts':
+        specifier: workspace:*
+        version: link:../accounts
       '@zero/application-core':
         specifier: workspace:*
         version: link:../application-core

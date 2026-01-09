@@ -26,6 +26,7 @@ export class Account
     this._deleted = config.deleted;
     this.ownerId = config.ownerId;
     this._balance = config.balance;
+    this._description = config.description;
     this._linkedOpenBankingAccount = config.linkedOpenBankingAccount;
   }
 

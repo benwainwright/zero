@@ -10,3 +10,4 @@ export { Page } from './page/index.ts';
 export { Currency } from './currency/index.ts';
 export { BalanceCheckButton } from './balance-check-button/index.ts';
 export { LinkAccountButton } from './link-account-button/index.ts';
+export { CreateNewAccountModal } from './create-new-account-modal/index.ts';

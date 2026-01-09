@@ -60,5 +60,6 @@ export class CreateAccountCommandHandler extends AbstractCommandHandler<
 
     await this.accounts.saveAccount(newAccount);
   }
+
   public override readonly name = 'CreateAccountCommand';
 }

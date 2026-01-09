@@ -10,6 +10,7 @@ export {
   useQuery,
   useRoles,
   useRole,
+  useAccounts,
 } from '@hooks';
 
 export {

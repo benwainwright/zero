@@ -8,3 +8,6 @@ export {
   ListUserAccountsQueryHandler,
   GetAccountQueryHandler,
 } from './query-handlers/index.ts';
+
+export type { AccountsCommands } from './accounts-commands.ts';
+export type { AccountsQueries } from './accounts-queries.ts';
