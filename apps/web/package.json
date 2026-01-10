@@ -10,6 +10,7 @@
     "@mantine/dates": "^8.3.12",
     "@mantine/form": "8.3.8",
     "@mantine/hooks": "8.3.8",
+    "@mantine/modals": "^8.3.12",
     "@mantine/notifications": "8.3.8",
     "@react-router/node": "7.9.6-pre.0",
     "@react-router/serve": "7.9.6-pre.0",

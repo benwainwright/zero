@@ -19,7 +19,7 @@ interface FormValues {
 
 export const Login = (): ReactNode => {
   const { user, reload } = useContext(CurrentUserContext);
-  const { execute: login } = useCommand('LoginCommand');
+  const { createAccount: login } = useCommand('LoginCommand');
 
   const navigate = useNavigate();
 

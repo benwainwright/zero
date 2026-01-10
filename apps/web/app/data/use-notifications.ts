@@ -18,6 +18,13 @@ export const useNotifications = () => {
         });
         break;
 
+      case 'AccountDeleted':
+        showNotification({
+          type: 'success',
+          message: 'Account deleted',
+        });
+        break;
+
       case 'LoginSuccessfulEvent':
         showNotification({
           type: 'success',

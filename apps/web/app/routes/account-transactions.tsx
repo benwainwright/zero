@@ -5,18 +5,21 @@ import {
   NewTransactionRow,
   Page,
 } from '@components';
-import { Table, Button, Paper } from '@mantine/core';
+import { Table, Button, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useAccount, useCommand, useTransactions } from '@zero/react-api';
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import { modals } from '@mantine/modals';
 
 const AccountTransactions = () => {
   const { accountId } = useParams<{ accountId: string }>();
   const { account } = useAccount(accountId);
   const maybeResponse = useTransactions(accountId, 0, 30);
   const [creatingNewTx, setCreatingNewTx] = useState(false);
-  const { execute } = useCommand('CreateTransactionCommand');
+  const { execute: createAccount } = useCommand('CreateTransactionCommand');
+  const { execute: deleteAccount } = useCommand('DeleteAccountCommand');
+  const navigate = useNavigate();
   const form = useForm({
     initialValues: {
       payee: '',
@@ -24,6 +27,22 @@ const AccountTransactions = () => {
       amount: '',
     },
   });
+
+  const confirmDeleteAccount = () =>
+    modals.openConfirmModal({
+      title: 'Are you sure?',
+      children: (
+        <Text size="sm">
+          This action will delete this account along with all its associated
+          transactions. Click 'confirm' if you are sure...
+        </Text>
+      ),
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: async () => {
+        await deleteAccount({ account: accountId ?? '' });
+        await navigate('/accounts');
+      },
+    });
 
   if (!accountId) {
     throw new Error(`Account id missing!`);
@@ -34,9 +53,18 @@ const AccountTransactions = () => {
       routeName="accountTransactions"
       title={account?.name ?? ''}
       headerActions={
-        <Button onClick={() => setCreatingNewTx(true)} variant="subtle">
-          New Transaction
-        </Button>
+        <>
+          <Button onClick={() => setCreatingNewTx(true)} variant="subtle">
+            New Transaction
+          </Button>
+          <Button
+            variant="subtle"
+            color="red"
+            onClick={() => confirmDeleteAccount()}
+          >
+            Delete Account
+          </Button>
+        </>
       }
     >
       <Loader data={maybeResponse}>
@@ -45,7 +73,7 @@ const AccountTransactions = () => {
             <form
               method="post"
               onSubmit={form.onSubmit(async (values) => {
-                await execute({
+                await createAccount({
                   accountId,
                   ...values,
                   amount: Number(values.amount) * 1000,

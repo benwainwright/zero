@@ -13,7 +13,7 @@ export const Users = (): ReactNode => {
       routeName="accounts"
       headerActions={
         <Button onClick={open} variant="subtle">
-          New
+          Create Account
         </Button>
       }
     >
@@ -32,7 +32,7 @@ export const Users = (): ReactNode => {
                 <Table.Tr key={`${account.id}-account-row`}>
                   <Table.Td>
                     <Link to={`/accounts/${account.id}/transactions`}>
-                      {account.name}
+                      {account.name ? account.name : 'No name'}
                     </Link>
                   </Table.Td>
                   <Table.Td>{account.description}</Table.Td>

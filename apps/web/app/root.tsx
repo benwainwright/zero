@@ -15,6 +15,7 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 
 // import type { Route } from "./+types/root.ts";
 import { Notifications } from '@mantine/notifications';
@@ -35,10 +36,12 @@ export function Layout({ children }: { children: React.ReactNode }): ReactNode {
       </head>
       <body>
         <MantineProvider>
-          <Notifications />
-          <ApiProvider url={`ws://localhost:3000`}>
-            <CurrentUserProvider>{children}</CurrentUserProvider>
-          </ApiProvider>
+          <ModalsProvider>
+            <Notifications />
+            <ApiProvider url={`ws://localhost:3000`}>
+              <CurrentUserProvider>{children}</CurrentUserProvider>
+            </ApiProvider>
+          </ModalsProvider>
         </MantineProvider>
         <ScrollRestoration />
         <Scripts />

@@ -39,7 +39,7 @@ export const useData = <
   },
   ...params: IQueryParams<IPickQuery<TQuery, TQueryKey>>
 ) => {
-  const { execute } = useCommand<TCommand, TCommandKey>(command);
+  const { createAccount } = useCommand<TCommand, TCommandKey>(command);
   const { data, refresh, isPending } = useQuery<TQuery, TQueryKey>(
     query,
     load,
@@ -81,9 +81,9 @@ export const useData = <
       throw new Error('Need to supply a mapping function');
     }
     if (localData && localData.mapped) {
-      await execute<true>(localData.mapped);
+      await createAccount<true>(localData.mapped);
     }
-  }, [mapToLocalData, localData, execute]);
+  }, [mapToLocalData, localData, createAccount]);
 
   const finalData = (
     mapToLocalData ? localData?.mapped : localData?.unmapped

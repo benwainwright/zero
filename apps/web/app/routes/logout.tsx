@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router';
 export const Logout = (): ReactNode => {
   const navigate = useNavigate();
   const { user, reload } = useContext(CurrentUserContext);
-  const { execute: logout } = useCommand('LogoutCommand');
+  const { createAccount: logout } = useCommand('LogoutCommand');
   const { api } = useContext(ApiContext);
 
   useEffect(() => {

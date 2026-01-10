@@ -39,13 +39,15 @@ export const Page = ({
 
   return initialLoadComplete ? (
     <>
-      <Title order={2} mb="xl" mt="xl">
+      <Title order={2}>
         <Group align="start">
-          {title ?? capitalisedHeader}
+          <Box style={{ flexGrow: 2 }}>{title ?? capitalisedHeader}</Box>
           {headerActions}
         </Group>
       </Title>
-      <Box mt="xl">{children}</Box>
+      <Paper shadow="sm" p="lg" mt="lg" withBorder>
+        {children}
+      </Paper>
     </>
   ) : null;
 };

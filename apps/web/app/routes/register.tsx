@@ -16,7 +16,7 @@ interface FormValues {
 export const Register = (): ReactNode => {
   const navigate = useNavigate();
   const { user, reload } = useContext(CurrentUserContext);
-  const { execute: createUser } = useCommand('CreateUserCommand');
+  const { createAccount: createUser } = useCommand('CreateUserCommand');
 
   const form = useForm({
     initialValues: {
