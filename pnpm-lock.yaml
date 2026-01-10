@@ -437,6 +437,9 @@ importers:
       '@zero/domain':
         specifier: workspace:*
         version: link:../domain
+      '@zero/serialiser':
+        specifier: workspace:*
+        version: link:../serialiser
       '@zero/test-helpers':
         specifier: workspace:*
         version: link:../test-helpers

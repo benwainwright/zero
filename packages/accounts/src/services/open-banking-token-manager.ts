@@ -5,6 +5,7 @@ import type {
   IOpenBankingTokenRefresher,
 } from '@ports';
 import type { IUUIDGenerator, IWriteRepository } from '@zero/application-core';
+import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import { OauthToken } from '@zero/domain';
 import { injectable } from 'inversify';
@@ -29,6 +30,9 @@ export class OpenBankingTokenManager {
     @inject('UUIDGenerator')
     private uuidGenerator: IUUIDGenerator,
 
+    @inject('GrantService')
+    private grants: IGrantManager,
+
     @inject('Logger')
     private logger: ILogger
   ) {}
@@ -44,6 +48,9 @@ export class OpenBankingTokenManager {
   }
 
   public async getToken(currentUserId: string) {
+    this.grants.requires({
+      capability: 'token:read',
+    });
     this.logger.debug(`Fetching token for ${currentUserId}`, LOG_CONTEXT);
     const token = await this.oauthTokenRepository.get(
       currentUserId,
@@ -54,6 +61,9 @@ export class OpenBankingTokenManager {
       this.logger.debug(`Token found`, LOG_CONTEXT);
       if (token.isOutOfDate()) {
         this.logger.debug(`Token is out of date - refreshing...`, LOG_CONTEXT);
+        this.grants.requires({
+          capability: 'token:refresh',
+        });
         const refreshedToken = await this.tokenRefresher.refreshToken(token);
         token.refresh(
           refreshedToken.token,
@@ -62,6 +72,9 @@ export class OpenBankingTokenManager {
           token.refreshExpiry
         );
 
+        this.grants.requires({
+          capability: 'token:update',
+        });
         await this.tokenWriter.save(token);
         return this.returnDisposable(token);
       }
@@ -69,6 +82,9 @@ export class OpenBankingTokenManager {
     }
 
     this.logger.debug(`No token found, creating a new one`, LOG_CONTEXT);
+    this.grants.requires({
+      capability: 'token:create',
+    });
     const tokenResponse = await this.bankingTokenFetcher.getNewToken();
 
     const newToken = OauthToken.create({

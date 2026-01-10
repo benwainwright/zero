@@ -3,4 +3,5 @@ export {
   type IBankConnection,
   bankConnectionSchema,
 } from './i-bank-connection.ts';
+export { bankConnectionCaps } from './bank-connection-capabilities.ts';
 export { BankConnection } from './bank-connection.ts';

@@ -1,6 +1,33 @@
-import type { Account, Transaction } from '@zero/domain';
+import type { Account, BankConnection, Transaction } from '@zero/domain';
 
 export type AccountsQueries =
+  | {
+      id: string;
+      key: 'GetBankAuthLinkQuery';
+      params: undefined;
+      response: { url: string | undefined };
+    }
+  | {
+      id: string;
+      key: 'CheckBankConnectionQuery';
+      params: undefined;
+      response:
+        | {
+            status: 'connected';
+            logo: string;
+            bankName: string;
+            connected: Date;
+            refreshed: Date | undefined;
+            expires: Date;
+          }
+        | { status: 'not_connected' };
+    }
+  | {
+      id: string;
+      key: 'GetOpenBankingInstitutionList';
+      paramse: undefined;
+      response: BankConnection[] | undefined;
+    }
   | {
       id: string;
       key: 'GetAccountQuery';

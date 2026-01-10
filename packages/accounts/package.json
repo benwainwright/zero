@@ -22,6 +22,7 @@
     "@zero/accounts": "workspace:*",
     "@zero/test-helpers": "workspace:*",
     "@zero/application-core": "workspace:*",
+    "@zero/serialiser": "workspace:*",
     "@zero/auth": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "inversify": "catalog:",

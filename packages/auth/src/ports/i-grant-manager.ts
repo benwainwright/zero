@@ -5,6 +5,10 @@ export interface IGrantManager {
 
   done(): void;
 
+  assertLogin(
+    authContext: { id: string } | undefined
+  ): asserts authContext is { id: string };
+
   requiresNoPermissions(): void;
 
   requires(config: {

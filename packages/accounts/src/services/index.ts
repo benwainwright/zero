@@ -15,3 +15,5 @@ export {
 
 export type { AccountsCommands } from './accounts-commands.ts';
 export type { AccountsQueries } from './accounts-queries.ts';
+
+export { OpenBankingTokenManager } from './open-banking-token-manager.ts';

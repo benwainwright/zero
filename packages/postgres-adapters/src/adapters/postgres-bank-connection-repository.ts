@@ -6,11 +6,11 @@ import z from 'zod';
 import type { DB } from '../core/database.ts';
 import type { IWriteRepository } from '@zero/application-core';
 import { BaseRepo } from './base-repo.ts';
-import type { IBankConnectionRepository } from '@zero/accounts';
+import type { IInstitutionListFetcher } from '@zero/accounts';
 
 export class PostgresBankConnectionRepository
   extends BaseRepo<BankConnection, [string]>
-  implements IBankConnectionRepository, IWriteRepository<BankConnection>
+  implements IInstitutionListFetcher, IWriteRepository<BankConnection>
 {
   public constructor(
     @inject('KyselyTransactionManager')

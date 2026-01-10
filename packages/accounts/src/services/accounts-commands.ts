@@ -1,6 +1,21 @@
-import type { ITransaction } from '@zero/domain';
+import type { BankConnection, ITransaction } from '@zero/domain';
 
 export type AccountsCommands =
+  | {
+      id: string;
+      key: 'SaveRequisitionAccountsCommand';
+      params: undefined;
+    }
+  | {
+      id: string;
+      key: 'CreateBankConnectionCommand';
+      params: BankConnection;
+    }
+  | {
+      id: string;
+      key: 'FetchOpenBankingInstitutionListCommand';
+      params: undefined;
+    }
   | {
       id: string;
       key: 'CreateAccountCommand';

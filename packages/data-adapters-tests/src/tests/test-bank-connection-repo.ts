@@ -1,10 +1,10 @@
-import type { IBankConnectionRepository } from '@zero/accounts';
+import type { IInstitutionListFetcher } from '@zero/accounts';
 import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
 import { BankConnection, User } from '@zero/domain';
 
 export const testBankConnectionRepository = (
   create: () => Promise<{
-    repo: IBankConnectionRepository;
+    repo: IInstitutionListFetcher;
     writer: IWriteRepository<BankConnection>;
     userRepo: IWriteRepository<User>;
     unitOfWork: IUnitOfWork;

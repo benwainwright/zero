@@ -1,7 +1,8 @@
 export type { IAccountRepository } from './i-account-repository.ts';
 export type { ITransactionRepository } from './i-transaction-repository.ts';
-export type { IBankConnectionCreator } from './i-bank-connection-creator.ts';
+export type { ICategoryRepository } from './i-category-repository.ts';
 export type { IRequisitionAccountsFetcher as IRequesitionAccountFetcher } from './i-requisition-accounts-fetcher.ts';
+export type { IInstitutionListFetcher } from './i-institituion-list-fetcher.ts';
 export type { IInstitutionAuthPageLinkFetcher } from './i-institution-auth-page-link-fetcher.ts';
 export type { IOauthTokenRepository } from './i-oauth-token-repository.ts';
 export type { IOpenBankingTokenFetcher } from './i-open-banking-token-fetcher.ts';

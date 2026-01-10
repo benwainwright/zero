@@ -1,7 +1,7 @@
 import { inject } from '@core';
 import { HttpClient, type IResponseCache } from '@http-client';
 import {
-  type IBankConnectionCreator,
+  type IInstitutionListFetcher,
   type IInstitutionAuthPageLinkFetcher,
   type IOpenBankingAccountBalanceFetcher,
   type IOpenBankingAccountDetailsFetcher,
@@ -19,7 +19,7 @@ import z from 'zod';
 @injectable()
 export class GocardlessClient
   implements
-    IBankConnectionCreator,
+    IInstitutionListFetcher,
     IInstitutionAuthPageLinkFetcher,
     IOpenBankingTokenFetcher,
     IOpenBankingAccountBalanceFetcher,

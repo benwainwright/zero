@@ -17,6 +17,14 @@ export class GrantService {
     this.permissionsSet = false;
   }
 
+  public assertLogin(
+    authContext: { id: string } | undefined
+  ): asserts authContext is { id: string } {
+    if (!authContext) {
+      throw new AuthError(`Login required`);
+    }
+  }
+
   private isThereAMatchingPermission(
     entity: DomainModel<unknown> | undefined,
     capability: ICapability,
