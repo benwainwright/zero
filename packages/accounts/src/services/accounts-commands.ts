@@ -26,10 +26,15 @@ export type AccountsCommands =
   | {
       id: string;
       key: 'CreateTransactionCommand';
-      params: Omit<ITransaction, 'id'>;
+      params: Omit<ITransaction, 'id' | 'categoryId'>;
+    }
+  | {
+      id: string;
+      key: 'DeleteTransactionCommand';
+      params: { transaction: string };
     }
   | {
       id: string;
       key: 'UpdateTransactionCommand';
-      params: ITransaction;
+      params: Partial<Omit<ITransaction, 'ownerId' | 'id'>> & { id: string };
     };

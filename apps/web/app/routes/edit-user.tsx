@@ -33,7 +33,7 @@ export const EditUser = (): ReactNode => {
     initialValues: {
       email: user?.email ?? '',
       password: '',
-      roles: user?.roles,
+      roles: user?.roles ?? [],
       validatePassword: '',
     } satisfies FormValues,
 

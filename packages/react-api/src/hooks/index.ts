@@ -10,3 +10,4 @@ export { useUsers } from './use-users.ts';
 export { useRoles } from './use-roles.tsx';
 export { useRole } from './use-role.tsx';
 export { useAccounts } from './use-accounts.tsx';
+export { useAccount } from './use-account.tsx';

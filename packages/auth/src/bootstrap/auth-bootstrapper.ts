@@ -1,6 +1,6 @@
 import { ADMIN_USER_ID, USER_ROLE_ID } from '@constants';
 import { inject } from '@core';
-import type { IPasswordHasher } from '@ports';
+import type { IPasswordHasher, IRoleRepository, IUserRepository } from '@ports';
 import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
 import type { ConfigValue, ILogger } from '@zero/bootstrap';
 import { Role, User } from '@zero/domain';
@@ -15,6 +15,8 @@ export class AuthBootstrapper {
     private readonly logger: ILogger,
 
     @inject('UnitOfWork') private readonly unit: IUnitOfWork,
+    @inject('UserRepository') private readonly users: IUserRepository,
+    @inject('RoleRepository') private readonly roles: IRoleRepository,
     @inject('UserWriter') private readonly userWriter: IWriteRepository<User>,
     @inject('RoleWriter') private readonly roleWriter: IWriteRepository<Role>,
 
@@ -48,8 +50,25 @@ export class AuthBootstrapper {
       });
 
       await this.unit.begin();
-      await this.roleWriter.save(adminRole);
-      await this.roleWriter.save(userRole);
+      const adminRoleIsPresent = Boolean(await this.roles.get(adminRole.id));
+      await this.unit.commit();
+
+      await this.unit.begin();
+      const userRoleIsPresent = Boolean(await this.roles.get(userRole.id));
+      await this.unit.commit();
+
+      await this.unit.begin();
+      const adminUserIsPresent = Boolean(await this.users.get(ADMIN_USER_ID));
+      await this.unit.commit();
+
+      await this.unit.begin();
+      if (!adminRoleIsPresent) {
+        await this.roleWriter.save(adminRole);
+      }
+
+      if (!userRoleIsPresent) {
+        await this.roleWriter.save(userRole);
+      }
 
       const bootstrapAdmin = User.reconstitute({
         id: 'admin',
@@ -58,8 +77,10 @@ export class AuthBootstrapper {
         roles: [adminRole.toObject()],
       });
 
-      await this.userWriter.save(bootstrapAdmin);
-      this.logger.info(`Users bootstrapped`);
+      if (!adminUserIsPresent) {
+        await this.userWriter.save(bootstrapAdmin);
+        this.logger.info(`Users bootstrapped`);
+      }
       await this.unit.commit();
     } catch (error) {
       await this.unit.rollback();

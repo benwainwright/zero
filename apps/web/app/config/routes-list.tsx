@@ -23,6 +23,12 @@ export interface RouteSpec {
 }
 
 export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
+  accountTransactions: {
+    component: 'routes/account-transactions.tsx',
+    path: 'accounts/:accountId/transactions',
+    authFailRedirect: '/login',
+    hideFromMenu: true,
+  },
   home: {
     component: 'routes/home.tsx',
     isIndex: true,

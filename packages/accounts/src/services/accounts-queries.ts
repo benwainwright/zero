@@ -21,8 +21,9 @@ export type AccountsQueries =
     }
   | {
       id: string;
-      key: 'LiistTransactionsQuery';
+      key: 'ListTransactionsQuery';
       params: {
+        accountId: string;
         limit: number;
         offset: number;
       };

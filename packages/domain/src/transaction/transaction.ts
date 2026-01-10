@@ -19,25 +19,59 @@ export class Transaction
 
   public readonly id: string;
   public readonly ownerId: string;
-  public readonly accountId: string;
-  public readonly date: Date;
-  public readonly amount: number;
-  public readonly payee: string;
-  public readonly categoryId: string | undefined;
+
+  private _accountId: string;
+  public get accountId() {
+    return this._accountId;
+  }
+
+  private _date: Date;
+  public get date() {
+    return this._date;
+  }
+
+  private _amount: number;
+  public get amount() {
+    return this._amount;
+  }
+
+  public _payee: string;
+  public get payee() {
+    return this._payee;
+  }
+
+  public _categoryId: string | undefined;
+  public get categoryId() {
+    return this._categoryId;
+  }
 
   private constructor(config: ITransaction) {
     super();
     this.id = config.id;
     this.ownerId = config.ownerId;
-    this.amount = config.amount;
-    this.payee = config.payee;
-    this.accountId = config.accountId;
-    this.date = config.date;
-    this.categoryId = config.categoryId;
+    this._amount = config.amount;
+    this._payee = config.payee;
+    this._accountId = config.accountId;
+    this._date = config.date;
+    this._categoryId = config.categoryId;
   }
 
   public delete() {
     this.raiseEvent({ event: 'TransactionDeleted', data: this });
+  }
+
+  public update(config: Partial<Omit<ITransaction, 'id' | 'ownerId'>>) {
+    const old = Transaction.reconstitute(this);
+    this._amount = config.amount ?? this._amount;
+    this._categoryId = config.categoryId ?? this._categoryId;
+    this._accountId = config.accountId ?? this._accountId;
+    this._date = config.date ?? this._date;
+    this._payee = config.payee ?? this._payee;
+    this._amount = config.amount ?? this._amount;
+    this.raiseEvent({
+      event: 'TransactionUpdated',
+      data: { old, new: Transaction.reconstitute(this) },
+    });
   }
 
   public static create(config: ITransaction) {

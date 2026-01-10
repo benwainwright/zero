@@ -84,9 +84,11 @@ export const useData = <
 
   const finalData = (
     mapToLocalData ? localData?.mapped : localData?.unmapped
-  ) as IExtractParams<IKnownCommands> extends TLocalData
-    ? IPickQuery<TQuery, TQueryKey>['response']
-    : IPickCommand<TCommand, TCommandKey>['params'];
+  ) as
+    | (IExtractParams<IKnownCommands> extends TLocalData
+        ? IPickQuery<TQuery, TQueryKey>['response']
+        : IPickCommand<TCommand, TCommandKey>['params'])
+    | undefined;
 
   return {
     save,

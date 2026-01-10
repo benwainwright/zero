@@ -27,7 +27,9 @@ export const Users = (): ReactNode => {
               {data.map((account) => (
                 <Table.Tr key={`${account.id}-account-row`}>
                   <Table.Td>
-                    <Link to={`/accounts/${account.id}`}>{account.name}</Link>
+                    <Link to={`/accounts/${account.id}/transactions`}>
+                      {account.name}
+                    </Link>
                   </Table.Td>
                   <Table.Td>{account.description}</Table.Td>
                 </Table.Tr>
