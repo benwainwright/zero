@@ -40,7 +40,7 @@ export class GetAccountQueryHandler extends AbstractQueryHandler<
       capability: 'account:read',
     });
 
-    return await this.accounts.requireAccount(id);
+    return await this.accounts.require(id);
   }
   public override readonly name = 'GetAccountQuery';
 }

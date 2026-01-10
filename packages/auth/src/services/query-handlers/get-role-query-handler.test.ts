@@ -12,7 +12,7 @@ describe('get role query handler', () => {
 
     const role = mock<Role>();
 
-    when(roleRepo.requireRole).calledWith('role').thenResolve(role);
+    when(roleRepo.require).calledWith('role').thenResolve(role);
 
     const result = await handler.tryHandle(context);
 

@@ -1,15 +1,41 @@
 import { inject, type Transactions } from '@core';
-import type { ITransactionRepository } from '@zero/accounts';
 import { Transaction } from '@zero/domain';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import type { DB } from '../core/database.ts';
+import type { IWriteRepository } from '@zero/application-core';
+import { BaseRepo } from './base-repo.ts';
+import type { ITransactionRepository } from '@zero/accounts';
 
-export class PostgresTransactionRepository implements ITransactionRepository {
+export class PostgresTransactionRepository
+  extends BaseRepo<Transaction, [txId: string]>
+  implements IWriteRepository<Transaction>, ITransactionRepository
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
+
+  public async update(transaction: Transaction): Promise<Transaction> {
+    const tx = this.database.transaction();
+    await tx
+      .updateTable('transactions')
+      .set(transaction.toObject())
+      .where('id', '=', transaction.id)
+      .execute();
+    return transaction;
+  }
+
+  public async delete(transaction: Transaction): Promise<void> {
+    const tx = this.database.transaction();
+
+    await tx
+      .deleteFrom('transactions')
+      .where('id', '=', transaction.id)
+      .execute();
+  }
 
   private mapRaw(raw: Selectable<Transactions>) {
     return Transaction.reconstitute({
@@ -18,7 +44,7 @@ export class PostgresTransactionRepository implements ITransactionRepository {
     });
   }
 
-  public async getTransaction(id: string): Promise<Transaction | undefined> {
+  public async get(id: string): Promise<Transaction | undefined> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -33,31 +59,25 @@ export class PostgresTransactionRepository implements ITransactionRepository {
 
     return this.mapRaw(result);
   }
-  public async saveTransaction(transaction: Transaction): Promise<Transaction> {
+
+  public async save(transaction: Transaction): Promise<Transaction> {
     const tx = this.database.transaction();
 
     await tx
       .insertInto('transactions')
       .values(transaction.toObject())
-      .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
-          ownerId: eb.ref('excluded.ownerId'),
-          amount: eb.ref('excluded.amount'),
-          payee: eb.ref('excluded.payee'),
-          accountId: eb.ref('excluded.accountId'),
-          date: eb.ref('excluded.date'),
-          categoryId: eb.ref('excluded.categoryId'),
-        }))
-      )
       .execute();
 
     return transaction;
   }
 
-  public async getAccountTransactionCount(
-    userId: string,
-    accountId: string
-  ): Promise<number> {
+  public async count({
+    userId,
+    accountId,
+  }: {
+    userId: string;
+    accountId: string;
+  }): Promise<number> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -70,12 +90,17 @@ export class PostgresTransactionRepository implements ITransactionRepository {
 
     return Number(result.transaction_count);
   }
-  public async getAccountTransactions(
-    userId: string,
-    accountId: string,
-    offset: number,
-    limit: number
-  ): Promise<Transaction[]> {
+  public async list({
+    userId,
+    accountId,
+    start,
+    limit,
+  }: {
+    userId: string;
+    accountId: string;
+    start: number;
+    limit: number;
+  }): Promise<Transaction[]> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -84,19 +109,10 @@ export class PostgresTransactionRepository implements ITransactionRepository {
       .where((eb) =>
         eb.and([eb('ownerId', '=', userId), eb('accountId', '=', accountId)])
       )
-      .offset(offset)
+      .offset(start)
       .limit(limit)
       .execute();
 
     return result.map((row) => this.mapRaw(row));
-  }
-  public async saveTransactions(
-    transactions: Transaction[]
-  ): Promise<Transaction[]> {
-    for (const tx of transactions) {
-      await this.saveTransaction(tx);
-    }
-
-    return transactions;
   }
 }

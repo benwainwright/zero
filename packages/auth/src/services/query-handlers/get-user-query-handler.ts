@@ -33,7 +33,7 @@ export class GetUserQueryHandler extends AbstractQueryHandler<
     params: { username: string };
     response: User;
   }>): Promise<User> {
-    const user = await this.users.requireUser(username);
+    const user = await this.users.require(username);
 
     this.grant.requires({
       capability: 'user:read',

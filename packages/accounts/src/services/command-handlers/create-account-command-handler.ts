@@ -3,12 +3,12 @@ import {
   AppError,
   type ICommandContext,
   type IUUIDGenerator,
+  type IWriteRepository,
 } from '@zero/application-core';
 import type { AccountsCommands } from '../accounts-commands.ts';
 import { injectable } from 'inversify';
 import type { ILogger } from '@zero/bootstrap';
 import { inject } from '@core';
-import type { IAccountRepository } from '@ports';
 import { Account } from '@zero/domain';
 import type { IGrantManager } from '@zero/auth';
 
@@ -21,8 +21,8 @@ export class CreateAccountCommandHandler extends AbstractCommandHandler<
     @inject('UUIDGenerator')
     private readonly uuidGenerator: IUUIDGenerator,
 
-    @inject('AccountRepository')
-    private readonly accounts: IAccountRepository,
+    @inject('AccountWriter')
+    private readonly writer: IWriteRepository<Account>,
 
     @inject('GrantService')
     private readonly grants: IGrantManager,
@@ -58,7 +58,7 @@ export class CreateAccountCommandHandler extends AbstractCommandHandler<
       ownerId: authContext.id,
     });
 
-    await this.accounts.saveAccount(newAccount);
+    await this.writer.save(newAccount);
   }
 
   public override readonly name = 'CreateAccountCommand';

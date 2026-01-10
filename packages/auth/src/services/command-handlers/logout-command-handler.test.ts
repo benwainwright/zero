@@ -1,10 +1,12 @@
+import { buildInstance } from '@zero/test-helpers';
 import { LogoutCommandHandler } from './logout-command-handler.ts';
 import { buildCommandHandler, getMockCommandContext } from '@test-helpers';
 
 describe('logout command handler', () => {
   it('sets the current user to undefined', async () => {
-    const { currentUserSetter, handler } =
-      buildCommandHandler(LogoutCommandHandler);
+    const [handler, currentUserSetter] = await buildInstance(
+      LogoutCommandHandler
+    );
 
     const context = getMockCommandContext('LogoutCommand', undefined);
 

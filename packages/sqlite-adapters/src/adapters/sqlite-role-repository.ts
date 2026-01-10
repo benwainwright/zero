@@ -1,23 +1,40 @@
 import type { IRoleRepository } from '@zero/auth';
 import { Role, permissionSchema, routesSchema } from '@zero/domain';
+
 import { inject, type DB } from '@core';
 import z from 'zod';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import type { Roles } from '../core/database.ts';
+import type { IWriteRepository } from '@zero/application-core';
+import { BaseRepo } from './base-repo.ts';
 
-export interface RawRole {
-  id: string;
-  name: string;
-  permissions: string;
-  routes: string;
-}
-
-export class SqliteRoleRepository implements IRoleRepository {
+export class SqliteRoleRepository
+  extends BaseRepo<Role, [string]>
+  implements IRoleRepository, IWriteRepository<Role>
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
+
+  public async update(role: Role): Promise<Role> {
+    const tx = this.database.transaction();
+    await tx
+      .updateTable('roles')
+      .set(this.mapValues(role))
+      .where('id', '=', role.id)
+      .execute();
+    return role;
+  }
+
+  public async delete(role: Role): Promise<void> {
+    const tx = this.database.transaction();
+
+    await tx.deleteFrom('roles').where('id', '=', role.id).execute();
+  }
 
   private mapRaw(role: Selectable<Roles>) {
     return Role.reconstitute({
@@ -29,16 +46,7 @@ export class SqliteRoleRepository implements IRoleRepository {
     });
   }
 
-  public async requireRole(id: string): Promise<Role> {
-    const role = await this.getRole(id);
-
-    if (!role) {
-      throw new Error(`Role '${id}' was not found`);
-    }
-    return role;
-  }
-
-  public async getRole(id: string): Promise<Role | undefined> {
+  public async get(id: string): Promise<Role | undefined> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -54,7 +62,7 @@ export class SqliteRoleRepository implements IRoleRepository {
     return this.mapRaw(result);
   }
 
-  public mapRawRole(raw: RawRole) {
+  public mapRawRole(raw: Selectable<Roles>) {
     return Role.reconstitute({
       ...raw,
       permissions: z.array(permissionSchema).parse(JSON.parse(raw.permissions)),
@@ -62,34 +70,34 @@ export class SqliteRoleRepository implements IRoleRepository {
     });
   }
 
-  public async saveRole(role: Role): Promise<Role> {
-    const tx = this.database.transaction();
+  private mapValues(role: Role) {
+    const values = role.toObject();
+    return {
+      ...values,
+      permissions: JSON.stringify(values.permissions),
+      routes: JSON.stringify(values.routes),
+    };
+  }
 
-    await tx
-      .insertInto('roles')
-      .values({
-        ...role.toObject(),
-        permissions: JSON.stringify(role.toObject().permissions),
-        routes: JSON.stringify(role.toObject().routes),
-      })
-      .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
-          name: eb.ref('excluded.name'),
-          permissions: eb.ref('excluded.permissions'),
-          routes: eb.ref('excluded.routes'),
-        }))
-      )
-      .execute();
+  public async save(role: Role): Promise<Role> {
+    const tx = this.database.transaction();
+    await tx.insertInto('roles').values(this.mapValues(role)).execute();
     return role;
   }
 
-  public async getManyRoles(offset: number, limit: number): Promise<Role[]> {
+  public async list({
+    start,
+    limit,
+  }: {
+    start: number;
+    limit: number;
+  }): Promise<Role[]> {
     const tx = this.database.transaction();
 
     const result = await tx
       .selectFrom('roles')
       .selectAll()
-      .offset(offset)
+      .offset(start)
       .limit(limit)
       .execute();
 

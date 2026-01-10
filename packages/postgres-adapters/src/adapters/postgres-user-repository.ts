@@ -1,4 +1,3 @@
-import type { IUserRepository } from '@zero/auth';
 import {
   Role,
   User,
@@ -11,12 +10,52 @@ import z from 'zod';
 import { sql, type Selectable } from 'kysely';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { DB, Roles, Users } from '../core/database.ts';
+import { BaseRepo } from './base-repo.ts';
+import type { IUserRepository } from '@zero/auth';
+import type { IWriteRepository } from '@zero/application-core';
 
-export class PostgresUserRepository implements IUserRepository {
+export class PostgresUserRepository
+  extends BaseRepo<User, [string]>
+  implements IUserRepository, IWriteRepository<User>
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
+
+  public async update(user: User): Promise<User> {
+    const tx = this.database.transaction();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, roles, ...values } = user.toObject();
+
+    await tx
+      .updateTable('users')
+      .set(values)
+      .where('id', '=', user.id)
+      .execute();
+
+    await tx.deleteFrom('user_roles').where('userId', '=', user.id).execute();
+
+    await Promise.all(
+      user.roles.map(async (role) => {
+        await tx
+          .insertInto('user_roles')
+          .values({ userId: user.id, roleId: role.id })
+          .execute();
+      })
+    );
+
+    return user;
+  }
+
+  public async delete(user: User): Promise<void> {
+    const tx = this.database.transaction();
+
+    await tx.deleteFrom('users').where('id', '=', user.id).execute();
+  }
 
   public mapRawRole(raw: Selectable<Roles>) {
     return Role.reconstitute({
@@ -33,7 +72,7 @@ export class PostgresUserRepository implements IUserRepository {
     });
   }
 
-  public async saveUser(user: User): Promise<User> {
+  public async save(user: User): Promise<User> {
     const tx = this.database.transaction();
 
     await tx
@@ -65,17 +104,7 @@ export class PostgresUserRepository implements IUserRepository {
     return user;
   }
 
-  public async requireUser(id: string): Promise<User> {
-    const user = await this.getUser(id);
-
-    if (!user) {
-      throw new Error(`User '${id}' was not found!`);
-    }
-
-    return user;
-  }
-
-  public async getUser(id: string): Promise<User | undefined> {
+  public async get(id: string): Promise<User | undefined> {
     const query = await this.getUsersQuery();
 
     const result = await query.where('u.id', '=', id).executeTakeFirst();
@@ -87,7 +116,13 @@ export class PostgresUserRepository implements IUserRepository {
     return this.mapRawUser(result);
   }
 
-  public async getManyUsers(start?: number, limit?: number): Promise<User[]> {
+  public async list({
+    start,
+    limit,
+  }: {
+    start: number;
+    limit: number;
+  }): Promise<User[]> {
     const query = await this.getUsersQuery();
 
     const withLimit = query.offset(start ?? 0).limit(limit ?? 30);

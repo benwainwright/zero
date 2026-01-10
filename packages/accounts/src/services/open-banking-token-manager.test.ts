@@ -1,12 +1,8 @@
 import { mock } from "vitest-mock-extended";
 import { OpenBankingTokenManager } from "./open-banking-token-manager.ts";
-import {
-  type IOauthTokenRepository,
-  type IOpenBankingTokenFetcher,
-  type IOpenBankingTokenRefresher
-} from "@ports";
 import { when } from "vitest-when";
 import { OauthToken } from "@zero/domain";
+import { buildInstance } from "@zero/test-helpers";
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -21,15 +17,11 @@ describe("Open banking token manager", () => {
   it("just returns the token from the repo if it is in date", async () => {
     const today = new Date("2025-11-23T19:14:37.986Z");
     vi.setSystemTime(today);
-    const repo = mock<IOauthTokenRepository>();
-    const refresher = mock<IOpenBankingTokenRefresher>();
-    const tokenFetcher = mock<IOpenBankingTokenFetcher>();
-
-    const manager = new OpenBankingTokenManager(repo, refresher, tokenFetcher, mock(), mock());
+    const [manager, repo] = await buildInstance(OpenBankingTokenManager);
 
     const mockToken = mock<OauthToken>();
 
-    when(repo.getToken).calledWith("foo", "open-banking").thenResolve(mockToken);
+    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockToken);
 
     const token = await manager.getToken("foo");
     expect(token).toEqual(mockToken);
@@ -38,52 +30,41 @@ describe("Open banking token manager", () => {
   it("usinig statement does not if no events have been raised", async () => {
     const today = new Date("2025-11-23T19:14:37.986Z");
     vi.setSystemTime(today);
-    const repo = mock<IOauthTokenRepository>();
-    const refresher = mock<IOpenBankingTokenRefresher>();
-    const tokenFetcher = mock<IOpenBankingTokenFetcher>();
-
-    const manager = new OpenBankingTokenManager(repo, refresher, tokenFetcher, mock(), mock());
+    const [manager, repo, writer] = await buildInstance(OpenBankingTokenManager);
 
     const mockToken = mock<OauthToken>();
 
-    when(repo.getToken).calledWith("foo", "open-banking").thenResolve(mockToken);
+    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockToken);
 
     {
       await using token = await manager.getToken("foo");
       void token;
     }
-    expect(repo.saveToken).not.toHaveBeenCalled();
+    expect(writer.save).not.toHaveBeenCalled();
   });
 
   it("saves the returned token in the repo if an event has been raised", async () => {
     const today = new Date("2025-11-23T19:14:37.986Z");
     vi.setSystemTime(today);
-    const repo = mock<IOauthTokenRepository>();
-    const refresher = mock<IOpenBankingTokenRefresher>();
-    const tokenFetcher = mock<IOpenBankingTokenFetcher>();
-
-    const manager = new OpenBankingTokenManager(repo, refresher, tokenFetcher, mock(), mock());
+    const [manager, repo, writer] = await buildInstance(OpenBankingTokenManager);
 
     const mockToken = mock<OauthToken>();
     when(mockToken.hasEvents).calledWith().thenReturn(true);
 
-    when(repo.getToken).calledWith("foo", "open-banking").thenResolve(mockToken);
+    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockToken);
 
     {
       await using token = await manager.getToken("foo");
       void token;
     }
-    expect(repo.saveToken).toHaveBeenCalledWith(mockToken);
+    expect(writer.save).toHaveBeenCalledWith(mockToken);
   });
 
   it("refreshes the token and saves it in the repo if it is out of date", async () => {
     const today = new Date("2025-11-23T19:14:37.986Z");
     vi.setSystemTime(today);
-    const repo = mock<IOauthTokenRepository>();
-    const refresher = mock<IOpenBankingTokenRefresher>();
-    const tokenFetcher = mock<IOpenBankingTokenFetcher>();
+    const [manager, repo, writer, refresher] = await buildInstance(OpenBankingTokenManager);
 
-    const manager = new OpenBankingTokenManager(repo, refresher, tokenFetcher, mock(), mock());
 
     const mockToken = mock<OauthToken>({
       refreshToken: "refresh"
@@ -92,7 +73,7 @@ describe("Open banking token manager", () => {
     mockToken.refreshExpiry = new Date();
 
     when(mockToken.isOutOfDate).calledWith().thenReturn(true);
-    when(repo.getToken).calledWith("foo", "open-banking").thenResolve(mockToken);
+    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockToken);
     when(refresher.refreshToken)
       .calledWith(mockToken)
       .thenResolve({ token: "refreshed-token", tokenExpiresIn: 10 });
@@ -105,6 +86,6 @@ describe("Open banking token manager", () => {
       new Date()
     );
     expect(token).toEqual(mockToken);
-    expect(repo.saveToken).toHaveBeenCalledWith(mockToken);
+    expect(writer.save).toHaveBeenCalledWith(mockToken);
   });
 });

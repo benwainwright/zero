@@ -11,16 +11,27 @@ import type {
   IRequesitionAccountFetcher,
   ITransactionRepository,
 } from '@ports';
+import type { IWriteRepository } from '@zero/application-core';
+import type {
+  Account,
+  BankConnection,
+  OauthToken,
+  Transaction,
+} from '@zero/domain';
 
 export interface IAccountsTypes {
   OpenBankingAccountDetailsFetcher: IOpenBankingAccountDetailsFetcher;
   OauthTokenRepository: IOauthTokenRepository;
+  OauthTokenWriter: IWriteRepository<OauthToken>;
   BankConnectionRepository: IBankConnectionRepository;
+  BankConnectionWriter: IWriteRepository<BankConnection>;
   OpenBankingTokenRefresher: IOpenBankingTokenRefresher;
   BankConnectionTokenFetcher: IOpenBankingTokenFetcher;
   OpenBankingAccountBalanceFetcher: IOpenBankingAccountBalanceFetcher;
   TransactionRepository: ITransactionRepository;
+  TransactionWriter: IWriteRepository<Transaction>;
   AccountRepository: IAccountRepository;
+  AccountWriter: IWriteRepository<Account>;
   BankConnectionCreator: IBankConnectionCreator;
   RequestionAccountFetcher: IRequesitionAccountFetcher;
   InstitutionAuthPageLinkFetcher: IInstitutionAuthPageLinkFetcher;

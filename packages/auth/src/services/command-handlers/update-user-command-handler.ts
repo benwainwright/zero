@@ -2,6 +2,7 @@ import {
   AbstractCommandHandler,
   type ICommandContext,
   type IPickCommand,
+  type IWriteRepository,
 } from '@zero/application-core';
 import type { AuthCommands } from '../auth-commands.ts';
 import type {
@@ -13,6 +14,7 @@ import type {
 import { injectable } from 'inversify';
 import { inject, UserNotFoundError } from '@core';
 import type { ILogger } from '@zero/bootstrap';
+import type { User } from '@zero/domain';
 
 @injectable()
 export class UpdateUserCommandHandler extends AbstractCommandHandler<
@@ -34,6 +36,9 @@ export class UpdateUserCommandHandler extends AbstractCommandHandler<
     @inject('RoleRepository')
     private roleRepo: IRoleRepository,
 
+    @inject('UserWriter')
+    private userWriter: IWriteRepository<User>,
+
     @inject('Logger')
     logger: ILogger
   ) {
@@ -45,10 +50,10 @@ export class UpdateUserCommandHandler extends AbstractCommandHandler<
   }: ICommandContext<
     IPickCommand<AuthCommands, 'UpdateUserCommand'>
   >): Promise<void> {
-    const user = await this.userRepo.getUser(username);
+    const user = await this.userRepo.get(username);
 
     const allRoles = await Promise.all(
-      roles.map(async (role) => await this.roleRepo.requireRole(role))
+      roles.map(async (role) => await this.roleRepo.require(role))
     );
 
     this.grants.requires({
@@ -77,6 +82,6 @@ export class UpdateUserCommandHandler extends AbstractCommandHandler<
       roles: allRoles,
     });
 
-    await this.userRepo.saveUser(user);
+    await this.userWriter.save(user);
   }
 }

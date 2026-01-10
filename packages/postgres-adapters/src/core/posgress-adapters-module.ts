@@ -7,7 +7,7 @@ import {
   PostgresTransactionRepository,
   PostgresUserRepository,
 } from '@adapters';
-import type { IApplicationTypes } from '@zero/application-core';
+import { eventStager, type IApplicationTypes } from '@zero/application-core';
 import type { IAuthTypes } from '@zero/auth';
 import { type IModule } from '@zero/bootstrap';
 import type { IInternalTypes } from '../types/i-internal-types.ts';
@@ -23,7 +23,7 @@ export const postgresAdaptersModule: IModule<
     IInternalTypes &
     IAccountsTypes &
     IKyselySharedTypes<DB>
-> = async ({ logger, configValue, bind }) => {
+> = async ({ logger, configValue, bind, decorate }) => {
   logger.info(`Initialising postgres module`);
   const host = configValue({
     namespace: 'postgres',
@@ -60,24 +60,47 @@ export const postgresAdaptersModule: IModule<
     schema: z.string(),
   });
 
+  const stager = eventStager<IAuthTypes & IAccountsTypes & IApplicationTypes>();
+
   bind('UserRepository').to(PostgresUserRepository).inRequestScope();
+  bind('UserWriter').to(PostgresUserRepository).inRequestScope();
+  decorate('UserWriter', stager('UserWriter'));
+
   bind('RoleRepository').to(PostgresRoleRepository).inRequestScope();
+  bind('RoleWriter').to(PostgresRoleRepository).inRequestScope();
+  decorate('RoleWriter', stager('RoleWriter'));
+
   bind('AccountRepository').to(PostgresAccountRepository).inRequestScope();
+  bind('AccountWriter').to(PostgresAccountRepository).inRequestScope();
+  decorate('AccountWriter', stager('AccountWriter'));
+
   bind('BankConnectionRepository')
     .to(PostgresBankConnectionRepository)
     .inRequestScope();
+  bind('BankConnectionWriter')
+    .to(PostgresBankConnectionRepository)
+    .inRequestScope();
+  decorate('BankConnectionWriter', stager('BankConnectionWriter'));
 
   bind('SyncDetailsRepository')
     .to(PostgresSyncDetailsRepository)
     .inRequestScope();
 
+  bind('SyncDetailsWriter').to(PostgresSyncDetailsRepository).inRequestScope();
+  decorate('SyncDetailsWriter', stager('SyncDetailsWriter'));
+
   bind('OauthTokenRepository')
     .to(PostgresOauthTokenRepository)
     .inRequestScope();
+  bind('OauthTokenWriter').to(PostgresOauthTokenRepository).inRequestScope();
+  decorate('OauthTokenWriter', stager('OauthTokenWriter'));
 
   bind('TransactionRepository')
     .to(PostgresTransactionRepository)
     .inRequestScope();
+
+  bind('TransactionWriter').to(PostgresTransactionRepository).inRequestScope();
+  decorate('TransactionWriter', stager('TransactionWriter'));
 
   bind('PostgressUsername').toConstantValue(databaseUser);
   bind('PostgresDatabaseHost').toConstantValue(host);

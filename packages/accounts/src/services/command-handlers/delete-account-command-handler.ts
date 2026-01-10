@@ -1,6 +1,7 @@
 import {
   AbstractCommandHandler,
   type ICommandContext,
+  type IWriteRepository,
 } from '@zero/application-core';
 import type { AccountsCommands } from '../accounts-commands.ts';
 import { injectable } from 'inversify';
@@ -8,6 +9,7 @@ import type { IAccountRepository } from '@ports';
 import { inject } from '@core';
 import type { ILogger } from '@zero/bootstrap';
 import type { IGrantManager } from '@zero/auth';
+import type { Account } from '@zero/domain';
 
 @injectable()
 export class DeleteAccountCommandHandler extends AbstractCommandHandler<
@@ -19,6 +21,9 @@ export class DeleteAccountCommandHandler extends AbstractCommandHandler<
   public constructor(
     @inject('AccountRepository')
     private readonly accounts: IAccountRepository,
+
+    @inject('AccountWriter')
+    private readonly writer: IWriteRepository<Account>,
 
     @inject('GrantService')
     private readonly grants: IGrantManager,
@@ -36,7 +41,7 @@ export class DeleteAccountCommandHandler extends AbstractCommandHandler<
     key: 'DeleteAccountCommand';
     params: { account: string };
   }>): Promise<void> {
-    const theAccount = await this.accounts.requireAccount(account);
+    const theAccount = await this.accounts.require(account);
 
     this.grants.requires({
       capability: 'account:delete',
@@ -44,6 +49,6 @@ export class DeleteAccountCommandHandler extends AbstractCommandHandler<
     });
 
     theAccount.deleteAccount();
-    await this.accounts.deleteAccount(theAccount);
+    await this.writer.delete(theAccount);
   }
 }

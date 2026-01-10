@@ -1,17 +1,17 @@
 import type { IAccountRepository } from '@zero/accounts';
-import type { IUnitOfWork } from '@zero/application-core';
-import type { IUserRepository } from '@zero/auth';
+import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
 import { Account, User } from '@zero/domain';
 
 export const testAccountsRepo = (
   create: () => Promise<{
     accountsRepo: IAccountRepository;
-    userRepo: IUserRepository;
+    writer: IWriteRepository<Account>;
+    userRepo: IWriteRepository<User>;
     unitOfWork: IUnitOfWork;
   }>
 ) => {
   it('can delete accounts', async () => {
-    const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+    const { accountsRepo: repo, unitOfWork, userRepo, writer } = await create();
 
     const ben = User.reconstitute({
       email: 'bwainwright28@gmail.com',
@@ -22,7 +22,7 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await userRepo.saveUser(ben);
+    await userRepo.save(ben);
     await unitOfWork.commit();
 
     const accountOne = Account.reconstitute({
@@ -46,19 +46,19 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await repo.saveAccounts([accountOne, accountTwo]);
-    await repo.deleteAccount(accountOne);
+    await writer.saveAll([accountOne, accountTwo]);
+    await writer.delete(accountOne);
     await unitOfWork.commit();
 
     await unitOfWork.begin();
-    const result = await repo.getAccount('one');
+    const result = await repo.get('one');
     await unitOfWork.commit();
 
     expect(result).toBeUndefined();
   });
 
   it('does not return accounts marked as deleted when getting user accounts but does return them when requested by id', async () => {
-    const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+    const { accountsRepo: repo, unitOfWork, userRepo, writer } = await create();
 
     const ben = User.reconstitute({
       email: 'bwainwright28@gmail.com',
@@ -69,7 +69,7 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await userRepo.saveUser(ben);
+    await userRepo.save(ben);
     await unitOfWork.commit();
 
     const accountOne = Account.reconstitute({
@@ -93,23 +93,23 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await repo.saveAccount(accountOne);
-    await repo.saveAccount(accountTwo);
+    await writer.save(accountOne);
+    await writer.save(accountTwo);
     await unitOfWork.commit();
 
     await unitOfWork.begin();
-    const accounts = await repo.getUserAccounts('ben');
+    const accounts = await repo.list({ start: 0, limit: 30, userId: 'ben' });
     await unitOfWork.commit();
     expect(accounts).toHaveLength(1);
 
     await unitOfWork.begin();
-    const account = await repo.getAccount('two');
+    const account = await repo.get('two');
     await unitOfWork.commit();
     expect(account).toEqual(accountTwo);
   });
 
   it('can save multiple accounts', async () => {
-    const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+    const { accountsRepo: repo, unitOfWork, userRepo, writer } = await create();
 
     const ben = User.reconstitute({
       email: 'bwainwright28@gmail.com',
@@ -120,7 +120,7 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await userRepo.saveUser(ben);
+    await userRepo.save(ben);
     await unitOfWork.commit();
 
     const accountOne = Account.reconstitute({
@@ -144,18 +144,18 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await repo.saveAccounts([accountOne, accountTwo]);
+    await writer.saveAll([accountOne, accountTwo]);
     await unitOfWork.commit();
 
     await unitOfWork.begin();
-    const accounts = await repo.getUserAccounts('ben');
+    const accounts = await repo.list({ start: 0, limit: 30, userId: 'ben' });
     await unitOfWork.commit();
 
     expect(accounts[0]).toEqual(accountOne);
     expect(accounts[1]).toEqual(accountTwo);
   });
   it('can update and return an account', async () => {
-    const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+    const { accountsRepo: repo, unitOfWork, userRepo, writer } = await create();
 
     const ben = User.reconstitute({
       email: 'bwainwright28@gmail.com',
@@ -166,7 +166,7 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await userRepo.saveUser(ben);
+    await userRepo.save(ben);
     await unitOfWork.commit();
 
     const accountOne = Account.reconstitute({
@@ -190,19 +190,19 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await repo.saveAccount(accountOne);
-    await repo.saveAccount(accountTwo);
+    await writer.save(accountOne);
+    await writer.save(accountTwo);
     await unitOfWork.commit();
 
     await unitOfWork.begin();
-    const token = await repo.getAccount('two');
+    const token = await repo.get('two');
     await unitOfWork.commit();
 
     expect(token).toEqual(accountTwo);
   });
 
   it('can return all of the current accounts for a user', async () => {
-    const { accountsRepo: repo, unitOfWork, userRepo } = await create();
+    const { accountsRepo: repo, unitOfWork, userRepo, writer } = await create();
 
     const ben = User.reconstitute({
       email: 'bwainwright28@gmail.com',
@@ -221,8 +221,8 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await userRepo.saveUser(ben);
-    await userRepo.saveUser(fred);
+    await userRepo.save(ben);
+    await userRepo.save(fred);
     await unitOfWork.commit();
 
     const accountOne = Account.reconstitute({
@@ -256,13 +256,13 @@ export const testAccountsRepo = (
     });
 
     await unitOfWork.begin();
-    await repo.saveAccount(accountOne);
-    await repo.saveAccount(accountTwo);
-    await repo.saveAccount(accountThree);
+    await writer.save(accountOne);
+    await writer.save(accountTwo);
+    await writer.save(accountThree);
     await unitOfWork.commit();
 
     await unitOfWork.begin();
-    const accounts = await repo.getUserAccounts('ben');
+    const accounts = await repo.list({ start: 0, limit: 30, userId: 'ben' });
     await unitOfWork.commit();
 
     expect(accounts).toHaveLength(2);

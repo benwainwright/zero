@@ -1,7 +1,6 @@
 import { type IBootstrapTypes, type IModule } from '@zero/bootstrap';
 import type { IApplicationTypes } from '@zero/application-core';
 import {
-  UserRepositoryAuthEventStager,
   AuthorisingCommandBus,
   AuthorisingQueryBus,
   GrantService,
@@ -62,5 +61,4 @@ export const authModule: IModule<
 
   decorate('QueryBus', AuthorisingQueryBus);
   decorate('CommandBus', AuthorisingCommandBus);
-  decorate('UserRepository', UserRepositoryAuthEventStager);
 };

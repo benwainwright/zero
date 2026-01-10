@@ -1,12 +1,14 @@
-import type { IUnitOfWork } from '@zero/application-core';
-
+import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
 import type { IRoleRepository, IUserRepository } from '@zero/auth';
+
 import { Role, User } from '@zero/domain';
 
 export const testUserAndRoleRepository = (
   create: () => Promise<{
     userRepo: IUserRepository;
+    userWriter: IWriteRepository<User>;
     roleRepo: IRoleRepository;
+    roleWriter: IWriteRepository<Role>;
     unitOfWork: IUnitOfWork;
   }>
 ) => {
@@ -15,14 +17,14 @@ export const testUserAndRoleRepository = (
       const { roleRepo, unitOfWork } = await create();
 
       await unitOfWork.begin();
-      const result = await roleRepo.getRole('ben');
+      const result = await roleRepo.get('ben');
       await unitOfWork.commit();
 
       expect(result).toBeUndefined();
     });
 
     it('allows you to get a series of roles', async () => {
-      const { unitOfWork, roleRepo } = await create();
+      const { unitOfWork, roleRepo, roleWriter } = await create();
 
       const adminRole = Role.reconstitute({
         id: 'admin',
@@ -50,20 +52,25 @@ export const testUserAndRoleRepository = (
         ],
       });
 
+      try {
+        await unitOfWork.begin();
+        await roleWriter.save(userRole);
+        await roleWriter.save(adminRole);
+        await unitOfWork.commit();
+      } catch (error) {
+        await unitOfWork.rollback();
+        console.log(error);
+      }
+
       await unitOfWork.begin();
-      await roleRepo.saveRole(userRole);
-      await roleRepo.saveRole(adminRole);
-      await unitOfWork.commit();
-      await unitOfWork.begin();
-      await roleRepo.saveRole(adminRole);
-      const roles = await roleRepo.getManyRoles(0, 30);
+      const roles = await roleRepo.list({ start: 0, limit: 30 });
       await unitOfWork.commit();
 
       expect(roles).toEqual(expect.arrayContaining([userRole, adminRole]));
     });
 
     it('can independently save and retreive roles', async () => {
-      const { unitOfWork, roleRepo } = await create();
+      const { unitOfWork, roleRepo, roleWriter } = await create();
 
       const adminRole = Role.reconstitute({
         id: 'admin',
@@ -92,23 +99,23 @@ export const testUserAndRoleRepository = (
       });
 
       await unitOfWork.begin();
-      await roleRepo.saveRole(userRole);
-      await roleRepo.saveRole(adminRole);
+      await roleWriter.save(userRole);
+      await roleWriter.save(adminRole);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const roleOne = await roleRepo.getRole('user');
+      const roleOne = await roleRepo.get('user');
       await unitOfWork.commit();
       expect(roleOne).toEqual(userRole);
 
       await unitOfWork.begin();
-      const roleTwo = await roleRepo.getRole('admin');
+      const roleTwo = await roleRepo.get('admin');
       await unitOfWork.commit();
       expect(roleTwo).toEqual(adminRole);
     });
 
     it('can respect pagination when fetching many roles', async () => {
-      const { unitOfWork, roleRepo } = await create();
+      const { unitOfWork, roleRepo, roleWriter } = await create();
 
       const roles = Array.from({ length: 8 }, (_, index) =>
         Role.reconstitute({
@@ -127,13 +134,13 @@ export const testUserAndRoleRepository = (
 
       await unitOfWork.begin();
       for (const role of roles) {
-        await roleRepo.saveRole(role);
+        await roleWriter.save(role);
       }
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const limitedRoles = await roleRepo.getManyRoles(2, 3);
-      const overflowingRoles = await roleRepo.getManyRoles(20, 5);
+      const limitedRoles = await roleRepo.list({ start: 2, limit: 3 });
+      const overflowingRoles = await roleRepo.list({ start: 20, limit: 5 });
       await unitOfWork.commit();
 
       expect(limitedRoles).toHaveLength(3);
@@ -147,7 +154,7 @@ export const testUserAndRoleRepository = (
 
   describe('the user and role repositories', () => {
     it('work correctly in coordination', async () => {
-      const { userRepo, unitOfWork, roleRepo } = await create();
+      const { userRepo, unitOfWork, roleWriter, userWriter } = await create();
 
       const adminRole = Role.reconstitute({
         routes: ['home'],
@@ -176,8 +183,8 @@ export const testUserAndRoleRepository = (
       });
 
       await unitOfWork.begin();
-      await roleRepo.saveRole(userRole);
-      await roleRepo.saveRole(adminRole);
+      await roleWriter.save(userRole);
+      await roleWriter.save(adminRole);
       await unitOfWork.commit();
 
       const data = User.reconstitute({
@@ -190,7 +197,7 @@ export const testUserAndRoleRepository = (
 
       try {
         await unitOfWork.begin();
-        await userRepo.saveUser(data);
+        await userWriter.save(data);
         await unitOfWork.commit();
       } catch (error) {
         console.log(error);
@@ -199,7 +206,7 @@ export const testUserAndRoleRepository = (
 
       try {
         await unitOfWork.begin();
-        const user = await userRepo.getUser(data.id);
+        const user = await userRepo.get(data.id);
         await unitOfWork.commit();
 
         expect(user?.roles).toEqual(expect.arrayContaining(data.roles));
@@ -216,7 +223,7 @@ export const testUserAndRoleRepository = (
 
   describe('the user repository', () => {
     it('can delete a user', async () => {
-      const { userRepo, unitOfWork } = await create();
+      const { userRepo, unitOfWork, userWriter } = await create();
 
       const data = User.reconstitute({
         email: 'bwainwright28@gmail.com',
@@ -227,22 +234,22 @@ export const testUserAndRoleRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(data);
+      await userWriter.save(data);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      await userRepo.deleteUser(data);
+      await userWriter.delete(data);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const result = await userRepo.getUser('ben');
+      const result = await userRepo.get('ben');
       await unitOfWork.commit();
 
       expect(result).toEqual(undefined);
     });
 
     it('can update and return a user', async () => {
-      const { userRepo, unitOfWork } = await create();
+      const { userRepo, unitOfWork, userWriter } = await create();
 
       const data = User.reconstitute({
         email: 'bwainwright28@gmail.com',
@@ -253,18 +260,18 @@ export const testUserAndRoleRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(data);
+      await userWriter.save(data);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const user = await userRepo.getUser(data.id);
+      const user = await userRepo.get(data.id);
       await unitOfWork.commit();
 
       expect(user).toEqual(data);
     });
 
     it('replaces role assignments when updating a user', async () => {
-      const { userRepo, roleRepo, unitOfWork } = await create();
+      const { userRepo, unitOfWork, userWriter, roleWriter } = await create();
 
       const adminRole = Role.reconstitute({
         routes: ['home'],
@@ -292,11 +299,17 @@ export const testUserAndRoleRepository = (
         ],
       });
 
+      console.log('foo');
+
       await unitOfWork.begin();
-      await roleRepo.saveRole(adminRole);
-      await roleRepo.saveRole(viewerRole);
+      console.log('foo-1');
+      await roleWriter.save(adminRole);
+      console.log('foo2');
+      await roleWriter.save(viewerRole);
+      console.log('foo4');
       await unitOfWork.commit();
 
+      console.log('foo5');
       const originalUser = User.reconstitute({
         email: 'user@example.com',
         id: 'changing-roles',
@@ -304,21 +317,26 @@ export const testUserAndRoleRepository = (
         roles: [adminRole.toObject()],
       });
 
-      await unitOfWork.begin();
-      await userRepo.saveUser(originalUser);
-      await unitOfWork.commit();
-
       const updatedUser = User.reconstitute({
         ...originalUser.toObject(),
         roles: [viewerRole.toObject()],
       });
 
-      await unitOfWork.begin();
-      await userRepo.saveUser(updatedUser);
-      await unitOfWork.commit();
+      try {
+        await unitOfWork.begin();
+        await userWriter.save(originalUser);
+        await unitOfWork.commit();
+
+        await unitOfWork.begin();
+        await userWriter.update(updatedUser);
+        await unitOfWork.commit();
+      } catch (error) {
+        console.log(error);
+        await unitOfWork.rollback();
+      }
 
       await unitOfWork.begin();
-      const retrieved = await userRepo.getUser(updatedUser.id);
+      const retrieved = await userRepo.get(updatedUser.id);
       await unitOfWork.commit();
 
       expect(retrieved?.roles).toEqual([viewerRole]);
@@ -326,7 +344,7 @@ export const testUserAndRoleRepository = (
     });
 
     it('if someone tries to insert an email twice in a tx will fail due to uniqueness constraint and rollback the tx', async () => {
-      const { userRepo, unitOfWork } = await create();
+      const { userRepo, unitOfWork, userWriter } = await create();
 
       const data = User.reconstitute({
         email: 'bwainwright28@gmail.com',
@@ -346,8 +364,8 @@ export const testUserAndRoleRepository = (
 
       try {
         await unitOfWork.begin();
-        await userRepo.saveUser(data);
-        await userRepo.saveUser(data2);
+        await userWriter.save(data);
+        await userWriter.save(data2);
         await unitOfWork.commit();
       } catch {
         // This is fine. I just want to test that there is no users inserted
@@ -356,14 +374,14 @@ export const testUserAndRoleRepository = (
       }
 
       await unitOfWork.begin();
-      const user = await userRepo.getUser(data.id);
+      const user = await userRepo.get(data.id);
       await unitOfWork.commit();
 
       expect(user).toEqual(undefined);
     });
 
     it('rolls back conflicting updates that violate unique email constraints', async () => {
-      const { userRepo, unitOfWork } = await create();
+      const { userRepo, unitOfWork, userWriter } = await create();
 
       const userOne = User.reconstitute({
         email: 'first@example.com',
@@ -380,8 +398,8 @@ export const testUserAndRoleRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(userOne);
-      await userRepo.saveUser(userTwo);
+      await userWriter.save(userOne);
+      await userWriter.save(userTwo);
       await unitOfWork.commit();
 
       const conflictingUserTwo = User.reconstitute({
@@ -391,15 +409,15 @@ export const testUserAndRoleRepository = (
 
       try {
         await unitOfWork.begin();
-        await userRepo.saveUser(conflictingUserTwo);
+        await userWriter.save(conflictingUserTwo);
         await unitOfWork.commit();
       } catch {
         await unitOfWork.rollback();
       }
 
       await unitOfWork.begin();
-      const persistedUserOne = await userRepo.getUser(userOne.id);
-      const persistedUserTwo = await userRepo.getUser(userTwo.id);
+      const persistedUserOne = await userRepo.get(userOne.id);
+      const persistedUserTwo = await userRepo.get(userTwo.id);
       await unitOfWork.commit();
 
       expect(persistedUserOne?.email).toBe(userOne.email);
@@ -408,7 +426,7 @@ export const testUserAndRoleRepository = (
 
     describe('requireUser', () => {
       it('returns a user if present', async () => {
-        const { userRepo, unitOfWork } = await create();
+        const { userRepo, unitOfWork, userWriter } = await create();
 
         const data = User.reconstitute({
           email: 'bwainwright28@gmail.com',
@@ -419,17 +437,18 @@ export const testUserAndRoleRepository = (
         });
 
         await unitOfWork.begin();
-        await userRepo.saveUser(data);
+        await userWriter.save(data);
         await unitOfWork.commit();
 
         await unitOfWork.begin();
-        const user = await userRepo.requireUser('ben');
+        const user = await userRepo.require('ben');
         await unitOfWork.commit();
 
         expect(user).toEqual(data);
       });
+
       it('throws if not present', async () => {
-        const { userRepo, unitOfWork } = await create();
+        const { userRepo, unitOfWork, userWriter } = await create();
 
         const data = User.reconstitute({
           email: 'bwainwright28@gmail.com',
@@ -440,10 +459,10 @@ export const testUserAndRoleRepository = (
         });
 
         await unitOfWork.begin();
-        await userRepo.saveUser(data);
+        await userWriter.save(data);
         await unitOfWork.commit();
 
-        await expect(userRepo.requireUser('another-user')).rejects.toThrow();
+        await expect(userRepo.require('another-user')).rejects.toThrow();
       });
     });
 
@@ -451,10 +470,10 @@ export const testUserAndRoleRepository = (
       it('throws an error one is not present', async () => {
         const { roleRepo } = await create();
 
-        await expect(roleRepo.requireRole('viewer')).rejects.toThrow();
+        await expect(roleRepo.require('viewer')).rejects.toThrow();
       });
       it('returns a role if one is present', async () => {
-        const { roleRepo, unitOfWork } = await create();
+        const { roleRepo, unitOfWork, roleWriter } = await create();
 
         const viewerRole = Role.reconstitute({
           routes: ['home'],
@@ -470,17 +489,17 @@ export const testUserAndRoleRepository = (
         });
 
         await unitOfWork.begin();
-        await roleRepo.saveRole(viewerRole);
+        await roleWriter.save(viewerRole);
         await unitOfWork.commit();
         await unitOfWork.begin();
-        expect(await roleRepo.requireRole('viewer')).toEqual(viewerRole);
+        expect(await roleRepo.require('viewer')).toEqual(viewerRole);
         await unitOfWork.commit();
       });
     });
 
     describe('getMany', () => {
       it('can return many users', async () => {
-        const { userRepo, unitOfWork } = await create();
+        const { userRepo, unitOfWork, userWriter } = await create();
 
         const data = User.reconstitute({
           email: 'bwainwright28@gmail.com',
@@ -507,20 +526,20 @@ export const testUserAndRoleRepository = (
         });
 
         await unitOfWork.begin();
-        await userRepo.saveUser(data);
-        await userRepo.saveUser(data2);
-        await userRepo.saveUser(data3);
+        await userWriter.save(data);
+        await userWriter.save(data2);
+        await userWriter.save(data3);
         await unitOfWork.commit();
 
         await unitOfWork.begin();
-        const users = await userRepo.getManyUsers();
+        const users = await userRepo.list({ start: 0, limit: 30 });
         await unitOfWork.commit();
 
         expect(users).toEqual(expect.arrayContaining([data, data2, data3]));
       });
 
       it('respects limits when returning many users', async () => {
-        const { userRepo, unitOfWork } = await create();
+        const { userRepo, unitOfWork, userWriter } = await create();
 
         const manyUsers = Array.from({ length: 45 }, (_, index) =>
           User.reconstitute({
@@ -533,18 +552,16 @@ export const testUserAndRoleRepository = (
 
         await unitOfWork.begin();
         for (const user of manyUsers) {
-          await userRepo.saveUser(user);
+          await userWriter.save(user);
         }
         await unitOfWork.commit();
 
         await unitOfWork.begin();
-        const defaultLimitedUsers = await userRepo.getManyUsers();
+        const offsetLimitedUsers = await userRepo.list({
+          start: 40,
+          limit: 10,
+        });
         await unitOfWork.commit();
-        await unitOfWork.begin();
-        const offsetLimitedUsers = await userRepo.getManyUsers(40, 10);
-        await unitOfWork.commit();
-
-        expect(defaultLimitedUsers).toHaveLength(30);
 
         expect(offsetLimitedUsers).toHaveLength(5);
         offsetLimitedUsers.forEach((user) =>
@@ -557,7 +574,7 @@ export const testUserAndRoleRepository = (
       const { userRepo, unitOfWork } = await create();
 
       await unitOfWork.begin();
-      const user = await userRepo.getUser('foo');
+      const user = await userRepo.get('foo');
       await unitOfWork.commit();
 
       expect(user).toBeUndefined();

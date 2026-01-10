@@ -14,7 +14,7 @@ describe('get users query handler', () => {
     );
 
     const users = [mock<User>(), mock<User>()];
-    when(userRepo.getManyUsers).calledWith(0, 30).thenResolve(users);
+    when(userRepo.list).calledWith({ start: 0, limit: 30 }).thenResolve(users);
 
     const result = await handler.tryHandle(context);
 

@@ -31,10 +31,11 @@ export class ListUserAccountsQueryHandler extends AbstractQueryHandler<
 
   protected override async handle({
     authContext,
+    query: { limit, offset },
   }: IQueryContext<{
     id: string;
     key: 'ListUserAccountsQuery';
-    params: undefined;
+    params: { limit: number; offset: number };
     response: Account[];
   }>): Promise<Account[]> {
     this.grants.requires({
@@ -45,7 +46,11 @@ export class ListUserAccountsQueryHandler extends AbstractQueryHandler<
       throw new AppError('Must be logged in');
     }
 
-    return await this.accounts.getUserAccounts(authContext.id);
+    return await this.accounts.list({
+      userId: authContext.id,
+      limit,
+      start: offset,
+    });
   }
 
   public override readonly name = 'ListUserAccountsQuery';

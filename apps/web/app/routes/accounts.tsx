@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import { useDisclosure } from '@mantine/hooks';
 
 export const Users = (): ReactNode => {
-  const accounts = useAccounts();
+  const accounts = useAccounts(0, 30);
   const [opened, { open, close }] = useDisclosure(false);
   return (
     <Page

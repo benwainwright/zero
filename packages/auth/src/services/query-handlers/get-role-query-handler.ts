@@ -33,7 +33,7 @@ export class GetRoleQueryHandler extends AbstractQueryHandler<
     params: { id: string };
     response: Role;
   }>): Promise<Role> {
-    const theRole = await this.roleRepo.requireRole(id);
+    const theRole = await this.roleRepo.require(id);
     this.grants.requires({ capability: 'role:read', for: theRole });
     return theRole;
   }

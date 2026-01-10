@@ -1,17 +1,23 @@
 import { inject, json, type BankConnections } from '@core';
-import type { IBankConnectionRepository } from '@zero/accounts';
 import { BankConnection } from '@zero/domain';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import z from 'zod';
 import type { DB } from '../core/database.ts';
+import type { IWriteRepository } from '@zero/application-core';
+import { BaseRepo } from './base-repo.ts';
+import type { IBankConnectionRepository } from '@zero/accounts';
+
 export class PostgresBankConnectionRepository
-  implements IBankConnectionRepository
+  extends BaseRepo<BankConnection, [string]>
+  implements IBankConnectionRepository, IWriteRepository<BankConnection>
 {
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
 
   private mapRaw(raw: Selectable<BankConnections>) {
     return BankConnection.reconstitute({
@@ -21,9 +27,7 @@ export class PostgresBankConnectionRepository
     });
   }
 
-  public async getConnection(
-    userId: string
-  ): Promise<BankConnection | undefined> {
+  public async get(userId: string): Promise<BankConnection | undefined> {
     const tx = this.database.transaction();
     const result = await tx
       .selectFrom('bank_connections')
@@ -38,34 +42,39 @@ export class PostgresBankConnectionRepository
     return this.mapRaw(result);
   }
 
-  public async saveConnection(
-    connection: BankConnection
-  ): Promise<BankConnection> {
+  private mapValues(connection: BankConnection) {
+    const values = connection.toObject();
+    return {
+      ...values,
+      accounts: connection.toObject().accounts
+        ? json(connection.toObject().accounts)
+        : undefined,
+    };
+  }
+
+  public async save(connection: BankConnection): Promise<BankConnection> {
     const tx = this.database.transaction();
 
     await tx
       .insertInto('bank_connections')
-      .values({
-        ...connection.toObject(),
-        accounts: connection.toObject().accounts
-          ? json(connection.toObject().accounts)
-          : undefined,
-      })
-      .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
-          bankName: eb.ref('excluded.bankName'),
-          ownerId: eb.ref('excluded.ownerId'),
-          requisitionId: eb.ref('excluded.requisitionId'),
-          logo: eb.ref('excluded.logo'),
-          accounts: eb.ref('excluded.accounts'),
-        }))
-      )
+      .values(this.mapValues(connection))
       .execute();
 
     return connection;
   }
 
-  public async deleteConnection(connection: BankConnection): Promise<void> {
+  public async update(entity: BankConnection): Promise<BankConnection> {
+    const tx = this.database.transaction();
+    await tx
+      .updateTable('bank_connections')
+      .set(this.mapValues(entity))
+      .where('id', '=', entity.id)
+      .execute();
+
+    return entity;
+  }
+
+  public async delete(connection: BankConnection): Promise<void> {
     const tx = this.database.transaction();
 
     await tx

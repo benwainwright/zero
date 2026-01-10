@@ -1,6 +1,7 @@
 export { type ISingleItemStore } from './i-single-item-store.ts';
 export { type ISessionIdRequester } from './i-session-id-requester.ts';
 export { type IDomainEventStore } from './i-domain-event-store.ts';
+export { type ISyncDetailsRepository } from './i-sync-details-repository.ts';
 export { type IDomainEventBuffer } from './i-domain-event-buffer.ts';
 export { type IEventBus } from './i-event-bus.ts';
 export { type IEventListener, type IListener } from './i-event-listener.ts';
@@ -14,5 +15,9 @@ export { type IUnitOfWork } from './i-unit-of-work.ts';
 export { type IObjectStorage } from './i-object-storage.ts';
 export { type IStringHasher } from './i-string-hasher.ts';
 export { type IQueryBus } from './i-query-bus.ts';
-export { type ISyncDetailsRepository } from './i-sync-details-repository.ts';
 export { type ICurrentUserCache } from './i-current-user-cache.ts';
+export { type IReadRepository } from './i-read-repository.ts';
+export { type IScopedService } from './i-scoped-service.ts';
+export { type IWriteRepository } from './i-write-repository.ts';
+export { type ICountableRepository } from './i-countable-repository.ts';
+export { type IListRepository } from './i-list-repository.ts';

@@ -1,35 +1,34 @@
 import { inject } from '@core';
-import type { ISyncDetailsRepository } from '@zero/application-core';
+import type {
+  ISyncDetailsRepository,
+  IWriteRepository,
+} from '@zero/application-core';
 import { SyncDetails } from '@zero/domain';
 import type { SyncDetails as DBSyncDetails } from '@core';
 import type { Selectable } from 'kysely';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { DB } from '../core/database.ts';
+import { BaseRepo } from './base-repo.ts';
 
-export class PostgresSyncDetailsRepository implements ISyncDetailsRepository {
+export class PostgresSyncDetailsRepository
+  extends BaseRepo<SyncDetails, [string]>
+  implements IWriteRepository<SyncDetails>, ISyncDetailsRepository
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
 
-  public async saveSyncDetails(details: SyncDetails): Promise<SyncDetails> {
+  public async save(details: SyncDetails): Promise<SyncDetails> {
     const tx = this.database.transaction();
 
-    await tx
-      .insertInto('sync_details')
-      .values(details.toObject())
-      .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
-          ownerId: eb.ref('excluded.ownerId'),
-          lastSync: eb.ref('excluded.lastSync'),
-          checkpoint: eb.ref('excluded.checkpoint'),
-        }))
-      )
-      .execute();
+    await tx.insertInto('sync_details').values(details.toObject()).execute();
 
     return details;
   }
-  public async updateSyncDetails(details: SyncDetails): Promise<SyncDetails> {
+  public async update(details: SyncDetails): Promise<SyncDetails> {
     const tx = this.database.transaction();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,11 +50,12 @@ export class PostgresSyncDetailsRepository implements ISyncDetailsRepository {
       checkpoint: raw.checkpoint ?? undefined,
     });
   }
-  public async deleteSyncDetails(details: SyncDetails): Promise<void> {
+  public async delete(details: SyncDetails): Promise<void> {
     const tx = this.database.transaction();
     await tx.deleteFrom('sync_details').where('id', '=', details.id).execute();
   }
-  public async getSyncDetails(id: string): Promise<SyncDetails | undefined> {
+
+  public async get(id: string): Promise<SyncDetails | undefined> {
     const tx = this.database.transaction();
 
     const result = await tx

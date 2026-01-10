@@ -1,22 +1,20 @@
-import type {
-  IAccountRepository,
-  ITransactionRepository,
-} from '@zero/accounts';
-import type { IUnitOfWork } from '@zero/application-core';
-import type { IUserRepository } from '@zero/auth';
+import type { ITransactionRepository } from '@zero/accounts';
+import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
 import { Account, Transaction, User } from '@zero/domain';
 
 export const testTransactionRepository = (
   create: () => Promise<{
     repo: ITransactionRepository;
-    userRepo: IUserRepository;
+    writer: IWriteRepository<Transaction>;
+    userRepo: IWriteRepository<User>;
     unitOfWork: IUnitOfWork;
-    accountRepo: IAccountRepository;
+    accountRepo: IWriteRepository<Account>;
   }>
 ) => {
   describe('The transaction repository', () => {
     it('allows you to save and retrieve individual transactions', async () => {
-      const { repo, unitOfWork, userRepo, accountRepo } = await create();
+      const { repo, unitOfWork, userRepo, accountRepo, writer } =
+        await create();
 
       const ben = User.reconstitute({
         email: 'bwainwright28@gmail.com',
@@ -46,9 +44,9 @@ export const testTransactionRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(ben);
-      await accountRepo.saveAccount(barAccount);
-      await accountRepo.saveAccount(bopAccount);
+      await userRepo.save(ben);
+      await accountRepo.save(barAccount);
+      await accountRepo.save(bopAccount);
       await unitOfWork.commit();
 
       const transaction1 = Transaction.reconstitute({
@@ -70,19 +68,20 @@ export const testTransactionRepository = (
       });
 
       await unitOfWork.begin();
-      await repo.saveTransaction(transaction1);
-      await repo.saveTransaction(transaction2);
+      await writer.save(transaction1);
+      await writer.save(transaction2);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const result = await repo.getTransaction('foo');
+      const result = await repo.get('foo');
       await unitOfWork.commit();
 
       expect(result).toEqual(transaction1);
     });
 
     it('allows you to save and retrieve transacions by account', async () => {
-      const { repo, unitOfWork, userRepo, accountRepo } = await create();
+      const { repo, unitOfWork, userRepo, accountRepo, writer } =
+        await create();
       const barAccount = Account.reconstitute({
         id: 'bar',
         ownerId: 'ben',
@@ -129,11 +128,11 @@ export const testTransactionRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(ben);
-      await userRepo.saveUser(fred);
-      await accountRepo.saveAccount(barAccount);
-      await accountRepo.saveAccount(bipAccount);
-      await accountRepo.saveAccount(bofAccount);
+      await userRepo.save(ben);
+      await userRepo.save(fred);
+      await accountRepo.save(barAccount);
+      await accountRepo.save(bipAccount);
+      await accountRepo.save(bofAccount);
       await unitOfWork.commit();
 
       const fredTransaction = Transaction.reconstitute({
@@ -175,7 +174,7 @@ export const testTransactionRepository = (
       ];
 
       await unitOfWork.begin();
-      await repo.saveTransactions([...accountTransactions, fredTransaction]);
+      await writer.saveAll([...accountTransactions, fredTransaction]);
 
       const separateAccountTransaction = Transaction.reconstitute({
         id: 'barp2',
@@ -186,9 +185,9 @@ export const testTransactionRepository = (
         date: new Date(),
       });
 
-      await repo.saveTransaction(separateAccountTransaction);
+      await writer.save(separateAccountTransaction);
 
-      await repo.saveTransactions([
+      await writer.saveAll([
         Transaction.reconstitute({
           ownerId: 'ben',
           id: 'barp',
@@ -210,7 +209,12 @@ export const testTransactionRepository = (
 
       await unitOfWork.commit();
       await unitOfWork.begin();
-      const result = await repo.getAccountTransactions('ben', 'bar', 0, 30);
+      const result = await repo.list({
+        start: 0,
+        limit: 30,
+        accountId: 'bar',
+        userId: 'ben',
+      });
       await unitOfWork.commit();
       expect(result).toHaveLength(4);
 
@@ -225,7 +229,8 @@ export const testTransactionRepository = (
     });
 
     it('allows you to retrieve a total count of txs in a given account', async () => {
-      const { repo, unitOfWork, userRepo, accountRepo } = await create();
+      const { repo, unitOfWork, userRepo, accountRepo, writer } =
+        await create();
 
       const barAccount = Account.reconstitute({
         id: 'bar',
@@ -274,11 +279,11 @@ export const testTransactionRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(ben);
-      await userRepo.saveUser(fred);
-      await accountRepo.saveAccount(barAccount);
-      await accountRepo.saveAccount(bofAccount);
-      await accountRepo.saveAccount(bipAccount);
+      await userRepo.save(ben);
+      await userRepo.save(fred);
+      await accountRepo.save(barAccount);
+      await accountRepo.save(bofAccount);
+      await accountRepo.save(bipAccount);
       await unitOfWork.commit();
 
       const accountTransactions = [
@@ -317,7 +322,7 @@ export const testTransactionRepository = (
       ];
 
       await unitOfWork.begin();
-      await repo.saveTransactions(accountTransactions);
+      await writer.saveAll(accountTransactions);
 
       const separateAccountTransaction = Transaction.reconstitute({
         id: 'barp2',
@@ -328,9 +333,9 @@ export const testTransactionRepository = (
         ownerId: 'ben',
       });
 
-      await repo.saveTransaction(separateAccountTransaction);
+      await writer.save(separateAccountTransaction);
 
-      await repo.saveTransactions([
+      await writer.saveAll([
         Transaction.reconstitute({
           ownerId: 'ben',
           id: 'barp',
@@ -342,7 +347,7 @@ export const testTransactionRepository = (
 
         Transaction.reconstitute({
           ownerId: 'ben',
-          id: 'burpie',
+          id: 'burpie-2',
           accountId: 'bof',
           amount: 100,
           payee: 'foo',
@@ -352,7 +357,7 @@ export const testTransactionRepository = (
 
       await unitOfWork.commit();
       await unitOfWork.begin();
-      const result = await repo.getAccountTransactionCount('ben', 'bar');
+      const result = await repo.count({ userId: 'ben', accountId: 'bar' });
       await unitOfWork.commit();
       expect(result).toEqual(4);
     });

@@ -3,11 +3,12 @@ import { mock } from 'vitest-mock-extended';
 import { when } from 'vitest-when';
 import type { User } from '@zero/domain';
 import { buildCommandHandler, getMockCommandContext } from '@test-helpers';
+import { buildInstance } from '@zero/test-helpers';
 
 describe('login command handler', async () => {
   it('checks the password and sets the current user if it is successful', async () => {
-    const { handler, userRepo, passwordVerifier, eventBus, currentUserSetter } =
-      buildCommandHandler(LoginCommandHandler);
+    const [handler, userRepo, passwordVerifier, currentUserSetter, eventBus] =
+      await buildInstance(LoginCommandHandler);
 
     const context = getMockCommandContext('LoginCommand', {
       username: 'ben',
@@ -18,7 +19,7 @@ describe('login command handler', async () => {
       passwordHash: 'mockHash',
     });
 
-    when(userRepo.getUser).calledWith('ben').thenResolve(user);
+    when(userRepo.get).calledWith('ben').thenResolve(user);
 
     when(passwordVerifier.verifyPassword)
       .calledWith('foo', 'mockHash')
@@ -34,8 +35,8 @@ describe('login command handler', async () => {
   });
 
   it('checks does not set the current user if it fails, also emits loginfailedevent', async () => {
-    const { handler, userRepo, passwordVerifier, eventBus, currentUserSetter } =
-      buildCommandHandler(LoginCommandHandler);
+    const [handler, userRepo, passwordVerifier, currentUserSetter, eventBus] =
+      await buildInstance(LoginCommandHandler);
 
     const context = getMockCommandContext('LoginCommand', {
       username: 'ben',
@@ -46,7 +47,7 @@ describe('login command handler', async () => {
       passwordHash: 'mockHash',
     });
 
-    when(userRepo.getUser).calledWith('ben').thenResolve(user);
+    when(userRepo.get).calledWith('ben').thenResolve(user);
 
     when(passwordVerifier.verifyPassword)
       .calledWith('foo', 'mockHash')
@@ -67,7 +68,7 @@ describe('login command handler', async () => {
       password: 'foo',
     });
 
-    when(userRepo.getUser).calledWith('ben').thenResolve(undefined);
+    when(userRepo.get).calledWith('ben').thenResolve(undefined);
 
     await handler.tryHandle(context);
 

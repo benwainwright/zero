@@ -1,18 +1,18 @@
 import type { IBankConnectionRepository } from '@zero/accounts';
-import type { IUnitOfWork } from '@zero/application-core';
-import type { IUserRepository } from '@zero/auth';
+import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
 import { BankConnection, User } from '@zero/domain';
 
 export const testBankConnectionRepository = (
   create: () => Promise<{
     repo: IBankConnectionRepository;
-    userRepo: IUserRepository;
+    writer: IWriteRepository<BankConnection>;
+    userRepo: IWriteRepository<User>;
     unitOfWork: IUnitOfWork;
   }>
 ) => {
   describe('the connection repository', () => {
     it('can update and return a connection', async () => {
-      const { repo, unitOfWork, userRepo } = await create();
+      const { repo, unitOfWork, userRepo, writer } = await create();
       try {
         const ben = User.reconstitute({
           email: 'bwainwright28@gmail.com',
@@ -31,8 +31,8 @@ export const testBankConnectionRepository = (
         });
 
         await unitOfWork.begin();
-        await userRepo.saveUser(ben);
-        await userRepo.saveUser(fred);
+        await userRepo.save(ben);
+        await userRepo.save(fred);
         await unitOfWork.commit();
 
         const connectionOne = BankConnection.reconstitute({
@@ -53,12 +53,12 @@ export const testBankConnectionRepository = (
         });
 
         await unitOfWork.begin();
-        await repo.saveConnection(connectionOne);
-        await repo.saveConnection(connectionTwo);
+        await writer.save(connectionOne);
+        await writer.save(connectionTwo);
         await unitOfWork.commit();
 
         await unitOfWork.begin();
-        const recieved = await repo.getConnection('ben');
+        const recieved = await repo.get('ben');
         await unitOfWork.commit();
 
         expect(recieved).toEqual(connectionOne);
@@ -70,7 +70,7 @@ export const testBankConnectionRepository = (
     });
 
     it('can delete a token', async () => {
-      const { repo, unitOfWork, userRepo } = await create();
+      const { repo, unitOfWork, userRepo, writer } = await create();
       try {
         const ben = User.reconstitute({
           email: 'bwainwright28@gmail.com',
@@ -89,8 +89,8 @@ export const testBankConnectionRepository = (
         });
 
         await unitOfWork.begin();
-        await userRepo.saveUser(ben);
-        await userRepo.saveUser(fred);
+        await userRepo.save(ben);
+        await userRepo.save(fred);
         await unitOfWork.commit();
 
         const connectionOne = BankConnection.reconstitute({
@@ -110,16 +110,16 @@ export const testBankConnectionRepository = (
         });
 
         await unitOfWork.begin();
-        await repo.saveConnection(connectionOne);
-        await repo.saveConnection(connectionTwo);
+        await writer.save(connectionOne);
+        await writer.save(connectionTwo);
         await unitOfWork.commit();
 
         await unitOfWork.begin();
-        await repo.deleteConnection(connectionOne);
+        await writer.delete(connectionOne);
         await unitOfWork.commit();
 
         await unitOfWork.begin();
-        const empty = await repo.getConnection('ben');
+        const empty = await repo.get('ben');
         await unitOfWork.commit();
 
         expect(empty).toEqual(undefined);

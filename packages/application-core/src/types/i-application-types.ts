@@ -15,10 +15,12 @@ import type {
   IQueryBus,
   ICurrentUserCache,
   IUUIDGenerator,
+  IWriteRepository,
+  IReadRepository,
   ISyncDetailsRepository,
 } from '@ports';
 
-import type { User } from '@zero/domain';
+import type { SyncDetails, User } from '@zero/domain';
 import type { ICommand } from './i-command.ts';
 import type { IQuery } from '@types';
 import type { Serialiser } from '@zero/serialiser';
@@ -38,6 +40,7 @@ export interface IApplicationTypes {
   DomainEventEmitter: IDomainEventStore;
   ContainerFactory: Factory<TypedContainer>;
   SyncDetailsRepository: ISyncDetailsRepository;
+  SyncDetailsWriter: IWriteRepository<SyncDetails>;
   SessionStore: ISingleItemStore<User>;
   StringHasher: IStringHasher;
   SessionIdRequester: ISessionIdRequester;

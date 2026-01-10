@@ -2,7 +2,7 @@ import { type IAuthTypes } from '@zero/auth';
 import { type IModule } from '@zero/bootstrap';
 import type { IInternalTypes } from './i-internal-types.ts';
 import * as z from 'zod';
-import type { IApplicationTypes } from '@zero/application-core';
+import { eventStager, type IApplicationTypes } from '@zero/application-core';
 import {
   SqliteAccountsRepository,
   SqliteBankConnectionRepository,
@@ -25,7 +25,7 @@ export const sqliteAdaptersModule: IModule<
     IApplicationTypes &
     IAccountsTypes &
     IKyselySharedTypes<DB>
-> = async ({ bind, configValue }) => {
+> = async ({ bind, configValue, decorate }) => {
   const tablePrefix = configValue({
     namespace: CONFIG_NAMESPACE,
     key: 'tablePrefix',
@@ -41,13 +41,37 @@ export const sqliteAdaptersModule: IModule<
   });
 
   bind('DatabaseTablePrefix').toConstantValue(tablePrefix);
+
+  const stager = eventStager<IAuthTypes & IAccountsTypes & IApplicationTypes>();
+
   bind('UserRepository').to(SqliteUserRepository);
+  bind('UserWriter').to(SqliteUserRepository);
+  decorate('UserWriter', stager('UserWriter'));
+
   bind('RoleRepository').to(SqliteRoleRepository);
+  bind('RoleWriter').to(SqliteRoleRepository);
+  decorate('RoleWriter', stager('RoleWriter'));
+
   bind('AccountRepository').to(SqliteAccountsRepository);
+  bind('AccountWriter').to(SqliteAccountsRepository);
+  decorate('AccountWriter', stager('AccountWriter'));
+
   bind('BankConnectionRepository').to(SqliteBankConnectionRepository);
+  bind('BankConnectionWriter').to(SqliteBankConnectionRepository);
+  decorate('BankConnectionWriter', stager('BankConnectionWriter'));
+
   bind('TransactionRepository').to(SqliteTransactionRepository);
+  bind('TransactionWriter').to(SqliteTransactionRepository);
+  decorate('TransactionWriter', stager('TransactionWriter'));
+
   bind('OauthTokenRepository').to(SqliteOauthTokenRepository);
+  bind('OauthTokenWriter').to(SqliteOauthTokenRepository);
+  decorate('OauthTokenWriter', stager('OauthTokenWriter'));
+
   bind('SyncDetailsRepository').to(SqliteSyncDetailsRepository);
+  bind('SyncDetailsWriter').to(SqliteSyncDetailsRepository);
+  decorate('SyncDetailsWriter', stager('SyncDetailsWriter'));
+
   bind('DatabaseFilename').toConstantValue(databaseFilename);
   bind('UnitOfWork').to(KyselyUnitOfWork).inRequestScope();
   bind('KyselyTransactionManager').toService('UnitOfWork');

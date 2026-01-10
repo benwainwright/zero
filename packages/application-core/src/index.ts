@@ -3,6 +3,7 @@ export {
   AbstractCommand,
   AbstractQuery,
   AbstractQueryHandler,
+  eventStager,
   type IAllEvents,
 } from '@core';
 
@@ -15,8 +16,10 @@ export {
   type IStringHasher,
   type IUUIDGenerator,
   type IEventListener,
+  type IWriteRepository,
   type IListener,
-  type ISyncDetailsRepository,
+  type IReadRepository,
+  type IScopedService,
   type IQueryBus,
   type IQueryClient,
   type IApiSurface,
@@ -25,6 +28,9 @@ export {
   type ICurrentUserCache,
   type ISessionIdRequester,
   type IObjectStorage,
+  type IListRepository,
+  type ICountableRepository,
+  type ISyncDetailsRepository,
 } from '@ports';
 
 export { AppError } from '@errors';

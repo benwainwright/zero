@@ -2,13 +2,9 @@ import {
   AbstractCommandHandler,
   type ICommandContext,
   type IPickCommand,
+  type IWriteRepository,
 } from '@zero/application-core';
-import type {
-  IGrantManager,
-  IPasswordHasher,
-  IRoleRepository,
-  IUserRepository,
-} from '@ports';
+import type { IGrantManager, IPasswordHasher, IRoleRepository } from '@ports';
 import { injectable } from 'inversify';
 import { inject } from '@core';
 import type { AuthCommands } from '../auth-commands.ts';
@@ -24,8 +20,8 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
   public override readonly name = 'CreateUserCommand';
 
   public constructor(
-    @inject('UserRepository')
-    private readonly userRepo: IUserRepository,
+    @inject('UserWriter')
+    private readonly writer: IWriteRepository<User>,
 
     @inject('RoleRepository')
     private readonly roleRepo: IRoleRepository,
@@ -47,7 +43,7 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
   }: ICommandContext<IPickCommand<AuthCommands, 'CreateUserCommand'>>) {
     const passwordHash = await this.passwordHasher.hashPassword(password);
 
-    const role = await this.roleRepo.requireRole(USER_ROLE_ID);
+    const role = await this.roleRepo.require(USER_ROLE_ID);
 
     this.grants.requires({
       capability: 'user:create',
@@ -60,6 +56,6 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
       roles: [role.toObject()],
     });
 
-    await this.userRepo.saveUser(user);
+    await this.writer.save(user);
   }
 }

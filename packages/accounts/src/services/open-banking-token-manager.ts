@@ -4,7 +4,7 @@ import type {
   IOpenBankingTokenFetcher,
   IOpenBankingTokenRefresher,
 } from '@ports';
-import type { IUUIDGenerator } from '@zero/application-core';
+import type { IUUIDGenerator, IWriteRepository } from '@zero/application-core';
 import type { ILogger } from '@zero/bootstrap';
 import { OauthToken } from '@zero/domain';
 import { injectable } from 'inversify';
@@ -16,6 +16,9 @@ export class OpenBankingTokenManager {
   public constructor(
     @inject('OauthTokenRepository')
     private oauthTokenRepository: IOauthTokenRepository,
+
+    @inject('OauthTokenWriter')
+    private tokenWriter: IWriteRepository<OauthToken>,
 
     @inject('OpenBankingTokenRefresher')
     private tokenRefresher: IOpenBankingTokenRefresher,
@@ -34,7 +37,7 @@ export class OpenBankingTokenManager {
     return Object.assign(token, {
       [Symbol.asyncDispose]: async () => {
         if (token.hasEvents()) {
-          await this.oauthTokenRepository.saveToken(token);
+          await this.tokenWriter.save(token);
         }
       },
     });
@@ -42,7 +45,7 @@ export class OpenBankingTokenManager {
 
   public async getToken(currentUserId: string) {
     this.logger.debug(`Fetching token for ${currentUserId}`, LOG_CONTEXT);
-    const token = await this.oauthTokenRepository.getToken(
+    const token = await this.oauthTokenRepository.get(
       currentUserId,
       'open-banking'
     );
@@ -59,7 +62,7 @@ export class OpenBankingTokenManager {
           token.refreshExpiry
         );
 
-        await this.oauthTokenRepository.saveToken(token);
+        await this.tokenWriter.save(token);
         return this.returnDisposable(token);
       }
       return this.returnDisposable(token);
@@ -80,7 +83,7 @@ export class OpenBankingTokenManager {
       ),
     });
 
-    await this.oauthTokenRepository.saveToken(newToken);
+    await this.tokenWriter.save(newToken);
     return this.returnDisposable(newToken);
   }
 }

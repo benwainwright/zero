@@ -37,7 +37,7 @@ export class GetRolesQueryHandler extends AbstractQueryHandler<
       capability: 'role:list',
     });
 
-    return await this.roleRepo.getManyRoles(offset, limit);
+    return await this.roleRepo.list({ start: offset, limit });
   }
   public override readonly name = 'GetRoles';
 }

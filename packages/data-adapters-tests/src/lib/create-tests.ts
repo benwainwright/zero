@@ -36,7 +36,12 @@ export const createTests = async ({
 }: CreateTestsConfig) => {
   const { creator: userRepoCreator, after: afterUserRepoTests } =
     await createRepo({
-      repoKey: { userRepo: 'UserRepository', roleRepo: 'RoleRepository' },
+      repoKey: {
+        userRepo: 'UserRepository',
+        userWriter: 'UserWriter',
+        roleRepo: 'RoleRepository',
+        roleWriter: 'RoleWriter',
+      },
       modules,
       createCallback,
       afterCallback,
@@ -53,7 +58,8 @@ export const createTests = async ({
     await createRepo({
       repoKey: {
         accountsRepo: 'AccountRepository',
-        userRepo: 'UserRepository',
+        userRepo: 'UserWriter',
+        writer: 'AccountWriter',
       },
       modules,
       createCallback,
@@ -69,7 +75,11 @@ export const createTests = async ({
 
   const { creator: oauthTokenRepoCreator, after: afterTokenRepoTests } =
     await createRepo({
-      repoKey: { repo: 'OauthTokenRepository', userRepo: 'UserRepository' },
+      repoKey: {
+        repo: 'OauthTokenRepository',
+        userRepo: 'UserWriter',
+        writer: 'OauthTokenWriter',
+      },
       modules,
       createCallback,
       afterCallback,
@@ -86,7 +96,11 @@ export const createTests = async ({
     creator: bankConnectionRepoCreator,
     after: afterConnectionRepoTests,
   } = await createRepo({
-    repoKey: { repo: 'BankConnectionRepository', userRepo: 'UserRepository' },
+    repoKey: {
+      repo: 'BankConnectionRepository',
+      userRepo: 'UserWriter',
+      writer: 'BankConnectionWriter',
+    },
     modules,
     createCallback,
     afterCallback,
@@ -101,7 +115,11 @@ export const createTests = async ({
 
   const { creator: syncDetailsRepository, after: afterSyncDetailsRepoTests } =
     await createRepo({
-      repoKey: { repo: 'SyncDetailsRepository', userRepo: 'UserRepository' },
+      repoKey: {
+        repo: 'SyncDetailsRepository',
+        userRepo: 'UserWriter',
+        writer: 'SyncDetailsWriter',
+      },
       modules,
       createCallback,
       afterCallback,
@@ -118,8 +136,9 @@ export const createTests = async ({
     await createRepo({
       repoKey: {
         repo: 'TransactionRepository',
-        userRepo: 'UserRepository',
-        accountRepo: 'AccountRepository',
+        writer: 'TransactionWriter',
+        userRepo: 'UserWriter',
+        accountRepo: 'AccountWriter',
       },
       modules,
       createCallback,

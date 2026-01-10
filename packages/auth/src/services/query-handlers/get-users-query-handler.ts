@@ -33,7 +33,7 @@ export class GetUsersQueryHandler extends AbstractQueryHandler<
       capability: 'user:list',
     });
 
-    const users = await this.users.getManyUsers(offset, limit);
+    const users = await this.users.list({ start: offset, limit });
 
     return users;
   }

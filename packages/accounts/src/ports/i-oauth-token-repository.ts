@@ -1,7 +1,7 @@
+import type { IReadRepository } from '@zero/application-core';
 import type { OauthToken } from '@zero/domain';
 
-export interface IOauthTokenRepository {
-  getToken(userId: string, provider: string): Promise<OauthToken | undefined>;
-  saveToken(token: OauthToken): Promise<OauthToken>;
-  deleteToken(token: OauthToken): Promise<void>;
-}
+export type IOauthTokenRepository = IReadRepository<
+  OauthToken,
+  [userId: string, provider: string]
+>;

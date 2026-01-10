@@ -1,17 +1,26 @@
 import { inject, type DB } from '@core';
-import type { ISyncDetailsRepository } from '@zero/application-core';
+import type {
+  ISyncDetailsRepository,
+  IWriteRepository,
+} from '@zero/application-core';
 import { SyncDetails } from '@zero/domain';
 import type { SyncDetails as DBSyncDetails } from '../core/database.ts';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
+import { BaseRepo } from './base-repo.ts';
 
-export class SqliteSyncDetailsRepository implements ISyncDetailsRepository {
+export class SqliteSyncDetailsRepository
+  extends BaseRepo<SyncDetails, [string]>
+  implements ISyncDetailsRepository, IWriteRepository<SyncDetails>
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
 
-  public async saveSyncDetails(details: SyncDetails): Promise<SyncDetails> {
+  public async save(details: SyncDetails): Promise<SyncDetails> {
     const tx = this.database.transaction();
     const values = details.toObject();
 
@@ -32,7 +41,8 @@ export class SqliteSyncDetailsRepository implements ISyncDetailsRepository {
 
     return details;
   }
-  public async updateSyncDetails(details: SyncDetails): Promise<SyncDetails> {
+
+  public async update(details: SyncDetails): Promise<SyncDetails> {
     const tx = this.database.transaction();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,11 +67,12 @@ export class SqliteSyncDetailsRepository implements ISyncDetailsRepository {
       checkpoint: raw.checkpoint ?? undefined,
     });
   }
-  public async deleteSyncDetails(details: SyncDetails): Promise<void> {
+  public async delete(details: SyncDetails): Promise<void> {
     const tx = this.database.transaction();
     await tx.deleteFrom('sync_details').where('id', '=', details.id).execute();
   }
-  public async getSyncDetails(id: string): Promise<SyncDetails | undefined> {
+
+  public async get(id: string): Promise<SyncDetails | undefined> {
     const tx = this.database.transaction();
 
     const result = await tx

@@ -13,11 +13,17 @@ describe('list accounts query handler', () => {
       ListUserAccountsQueryHandler
     );
 
-    const context = getContext('ListUserAccountsQuery', undefined, 'ben');
+    const context = getContext(
+      'ListUserAccountsQuery',
+      { offset: 0, limit: 30 },
+      'ben'
+    );
 
     const accounts = [mock<Account>(), mock<Account>()];
 
-    when(accountsRepo.getUserAccounts).calledWith('ben').thenResolve(accounts);
+    when(accountsRepo.list)
+      .calledWith({ start: 0, limit: 30, userId: 'ben' })
+      .thenResolve(accounts);
 
     const result = await handler.tryHandle(context);
 

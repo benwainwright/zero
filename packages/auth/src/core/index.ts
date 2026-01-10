@@ -7,4 +7,3 @@ export { AuthorisingQueryBus } from './authorising-query-bus.ts';
 export { type IAuthExports } from './i-auth-exports.ts';
 export { GrantService } from './grant-service.ts';
 export { SessionStorage } from './session-storage.ts';
-export { UserRepositoryAuthEventStager } from './user-repository-auth-event-stager.ts';

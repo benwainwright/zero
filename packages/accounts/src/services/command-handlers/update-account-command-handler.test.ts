@@ -15,7 +15,7 @@ const getContext = getCommandContextBuilder<AccountsCommands>();
 
 describe('update account command handler', () => {
   it('updates the account and saves it back in the repo', async () => {
-    const [handler, accounts] = await buildInstance(
+    const [handler, accounts, writer] = await buildInstance(
       UpdateAccountCommandHandler
     );
 
@@ -26,9 +26,7 @@ describe('update account command handler', () => {
     );
     const mockAccount = mock<Account>();
 
-    when(accounts.requireAccount)
-      .calledWith('foo-bar')
-      .thenResolve(mockAccount);
+    when(accounts.require).calledWith('foo-bar').thenResolve(mockAccount);
 
     const result = await handler.tryHandle(context);
     expect(result).toEqual(true);
@@ -38,6 +36,6 @@ describe('update account command handler', () => {
       name: 'foo',
     });
 
-    expect(accounts.saveAccount).toHaveBeenCalledWith(mockAccount);
+    expect(writer.save).toHaveBeenCalledWith(mockAccount);
   });
 });

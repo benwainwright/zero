@@ -1,20 +1,13 @@
+import type {
+  ICountableRepository,
+  IListRepository,
+  IReadRepository,
+} from '@zero/application-core';
 import type { Transaction } from '@zero/domain';
 
-export interface ITransactionRepository {
-  getTransaction(id: string): Promise<Transaction | undefined>;
-  saveTransaction(transaction: Transaction): Promise<Transaction>;
-
-  getAccountTransactionCount(
-    userId: string,
-    accountId: string
-  ): Promise<number>;
-
-  getAccountTransactions(
-    userId: string,
-    accountId: string,
-    offset: number,
-    limit: number
-  ): Promise<Transaction[]>;
-
-  saveTransactions(transactions: Transaction[]): Promise<Transaction[]>;
-}
+export type ITransactionRepository = IReadRepository<
+  Transaction,
+  [txId: string]
+> &
+  IListRepository<Transaction, { userId: string; accountId: string }> &
+  ICountableRepository<{ userId: string; accountId: string }>;

@@ -7,4 +7,5 @@ export { CommandBus } from './command-bus.ts';
 export { TransactionalCommandBus } from './transactional-command-bus.ts';
 export { TransactionalQueryBus } from './transactional-query-bus.ts';
 export { AbstractQueryHandler } from './abstract-query-handler.ts';
+export { eventStager } from './repo-event-stager.ts';
 export { QueryBus } from './query-bus.ts';

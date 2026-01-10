@@ -5,13 +5,40 @@ import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import type { BankConnections } from '../core/database.ts';
 import z from 'zod';
+import type { IWriteRepository } from '@zero/application-core';
+import { BaseRepo } from './base-repo.ts';
+
 export class SqliteBankConnectionRepository
-  implements IBankConnectionRepository
+  extends BaseRepo<BankConnection, [string]>
+  implements IBankConnectionRepository, IWriteRepository<BankConnection>
 {
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
+
+  private mapValues(connection: BankConnection) {
+    const values = connection.toObject();
+    return {
+      ...values,
+      accounts: connection.toObject().accounts
+        ? JSON.stringify(connection.toObject().accounts)
+        : undefined,
+    };
+  }
+
+  public async update(entity: BankConnection): Promise<BankConnection> {
+    const tx = this.database.transaction();
+    await tx
+      .updateTable('bank_connections')
+      .set(this.mapValues(entity))
+      .where('id', '=', entity.id)
+      .execute();
+
+    return entity;
+  }
 
   private mapRaw(raw: Selectable<BankConnections>) {
     return BankConnection.reconstitute({
@@ -21,9 +48,7 @@ export class SqliteBankConnectionRepository
     });
   }
 
-  public async getConnection(
-    userId: string
-  ): Promise<BankConnection | undefined> {
+  public async get(userId: string): Promise<BankConnection | undefined> {
     const tx = this.database.transaction();
     const result = await tx
       .selectFrom('bank_connections')
@@ -38,9 +63,7 @@ export class SqliteBankConnectionRepository
     return this.mapRaw(result);
   }
 
-  public async saveConnection(
-    connection: BankConnection
-  ): Promise<BankConnection> {
+  public async save(connection: BankConnection): Promise<BankConnection> {
     const tx = this.database.transaction();
 
     await tx
@@ -65,7 +88,7 @@ export class SqliteBankConnectionRepository
     return connection;
   }
 
-  public async deleteConnection(connection: BankConnection): Promise<void> {
+  public async delete(connection: BankConnection): Promise<void> {
     const tx = this.database.transaction();
 
     await tx

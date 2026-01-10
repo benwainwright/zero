@@ -15,7 +15,7 @@ const getContext = getCommandContextBuilder<AccountsCommands>();
 
 describe('delete account handler', () => {
   it('calls delete on the account if it exists and then saves it back in the repo', async () => {
-    const [handler, accounts] = await buildInstance(
+    const [handler, accounts, writer] = await buildInstance(
       DeleteAccountCommandHandler
     );
 
@@ -25,12 +25,10 @@ describe('delete account handler', () => {
       'ben'
     );
     const mockAccount = mock<Account>();
-    when(accounts.requireAccount)
-      .calledWith('foo-bar')
-      .thenResolve(mockAccount);
+    when(accounts.require).calledWith('foo-bar').thenResolve(mockAccount);
     const result = await handler.tryHandle(context);
     expect(result).toEqual(true);
     expect(mockAccount.deleteAccount).toHaveBeenCalled();
-    expect(accounts.deleteAccount).toHaveBeenCalledWith(mockAccount);
+    expect(writer.delete).toHaveBeenCalledWith(mockAccount);
   });
 });

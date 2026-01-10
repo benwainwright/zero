@@ -16,7 +16,7 @@ describe('get roles query handler', () => {
 
     const roles = [mock<Role>(), mock<Role>()];
 
-    when(roleRepo.getManyRoles).calledWith(0, 30).thenResolve(roles);
+    when(roleRepo.list).calledWith({ start: 0, limit: 30 }).thenResolve(roles);
 
     const result = await handler.tryHandle(context);
 

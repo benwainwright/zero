@@ -10,7 +10,7 @@ export type AccountsQueries =
   | {
       id: string;
       key: 'ListUserAccountsQuery';
-      params: undefined;
+      params: { offset: number; limit: number };
       response: Account[];
     }
   | {
@@ -21,10 +21,10 @@ export type AccountsQueries =
     }
   | {
       id: string;
-      key: 'GetTransactionsQuery';
+      key: 'LiistTransactionsQuery';
       params: {
         limit: number;
         offset: number;
       };
-      response: Transaction[];
+      response: { transactions: Transaction[]; total: number };
     };

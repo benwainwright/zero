@@ -1,18 +1,19 @@
-import type { IUnitOfWork } from '@zero/application-core';
+import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
 import type { IOauthTokenRepository } from '@zero/accounts';
 import { OauthToken, User } from '@zero/domain';
-import type { IUserRepository } from '@zero/auth';
 
 export const testOauthRepository = (
   create: () => Promise<{
     repo: IOauthTokenRepository;
-    userRepo: IUserRepository;
+    writer: IWriteRepository<OauthToken>;
+    userRepo: IWriteRepository<User>;
+
     unitOfWork: IUnitOfWork;
   }>
 ) => {
   describe('the token repository', () => {
     it('can update and return a token', async () => {
-      const { repo, unitOfWork, userRepo } = await create();
+      const { repo, unitOfWork, userRepo, writer } = await create();
 
       const ben = User.reconstitute({
         email: 'bwainwright28@gmail.com',
@@ -23,7 +24,7 @@ export const testOauthRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(ben);
+      await userRepo.save(ben);
       await unitOfWork.commit();
 
       const tokenOne = OauthToken.reconstitute({
@@ -53,19 +54,19 @@ export const testOauthRepository = (
       });
 
       await unitOfWork.begin();
-      await repo.saveToken(tokenTwo);
-      await repo.saveToken(tokenOne);
+      await writer.save(tokenTwo);
+      await writer.save(tokenOne);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const token = await repo.getToken('ben', 'monzo');
+      const token = await repo.get('ben', 'monzo');
       await unitOfWork.commit();
 
       expect(token).toEqual(tokenTwo);
     });
 
     it('can delete a token', async () => {
-      const { repo, unitOfWork, userRepo } = await create();
+      const { repo, unitOfWork, userRepo, writer } = await create();
 
       const ben = User.reconstitute({
         email: 'bwainwright28@gmail.com',
@@ -76,7 +77,7 @@ export const testOauthRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(ben);
+      await userRepo.save(ben);
       await unitOfWork.commit();
 
       const tokenOne = OauthToken.reconstitute({
@@ -106,19 +107,19 @@ export const testOauthRepository = (
       });
 
       await unitOfWork.begin();
-      await repo.saveToken(tokenTwo);
-      await repo.saveToken(tokenOne);
+      await writer.save(tokenTwo);
+      await writer.save(tokenOne);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      await repo.deleteToken(tokenTwo);
+      await writer.delete(tokenTwo);
       await unitOfWork.commit();
       await unitOfWork.begin();
-      const token = await repo.getToken('ben', 'monzo');
+      const token = await repo.get('ben', 'monzo');
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const isPresentToken = await repo.getToken('ben', 'ynab');
+      const isPresentToken = await repo.get('ben', 'ynab');
       await unitOfWork.commit();
 
       expect(token).toBeUndefined();

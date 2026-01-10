@@ -2,19 +2,20 @@ import { SyncDetails, User } from '@zero/domain';
 import type {
   ISyncDetailsRepository,
   IUnitOfWork,
+  IWriteRepository,
 } from '@zero/application-core';
-import type { IUserRepository } from '@zero/auth';
 
 export const testSyncDetailsRepository = (
   create: () => Promise<{
     repo: ISyncDetailsRepository;
-    userRepo: IUserRepository;
+    writer: IWriteRepository<SyncDetails>;
+    userRepo: IWriteRepository<User>;
     unitOfWork: IUnitOfWork;
   }>
 ) => {
   describe('sqlite sync details adapter', () => {
     it('can save and get sync details by id', async () => {
-      const { repo, unitOfWork, userRepo } = await create();
+      const { repo, unitOfWork, userRepo, writer } = await create();
       const ben = User.reconstitute({
         email: 'bwainwright28@gmail.com',
         id: 'ben',
@@ -24,7 +25,7 @@ export const testSyncDetailsRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(ben);
+      await userRepo.save(ben);
       await unitOfWork.commit();
 
       const newDetails1 = SyncDetails.reconstitute({
@@ -44,19 +45,19 @@ export const testSyncDetailsRepository = (
       });
 
       await unitOfWork.begin();
-      await repo.saveSyncDetails(newDetails1);
-      await repo.saveSyncDetails(newDetails2);
+      await writer.save(newDetails1);
+      await writer.save(newDetails2);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const receivedDetails = await repo.getSyncDetails('foo-bar-1');
+      const receivedDetails = await repo.get('foo-bar-1');
       await unitOfWork.commit();
 
       expect(receivedDetails).toEqual(newDetails1);
     });
 
     it('allows you to delete sync details', async () => {
-      const { repo, unitOfWork, userRepo } = await create();
+      const { repo, unitOfWork, userRepo, writer } = await create();
       const ben = User.reconstitute({
         email: 'bwainwright28@gmail.com',
         id: 'ben',
@@ -66,7 +67,7 @@ export const testSyncDetailsRepository = (
       });
 
       await unitOfWork.begin();
-      await userRepo.saveUser(ben);
+      await userRepo.save(ben);
       await unitOfWork.commit();
 
       const newDetails1 = SyncDetails.reconstitute({
@@ -86,16 +87,16 @@ export const testSyncDetailsRepository = (
       });
 
       await unitOfWork.begin();
-      await repo.saveSyncDetails(newDetails1);
-      await repo.saveSyncDetails(newDetails2);
+      await writer.save(newDetails1);
+      await writer.save(newDetails2);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      await repo.deleteSyncDetails(newDetails1);
+      await writer.delete(newDetails1);
       await unitOfWork.commit();
 
       await unitOfWork.begin();
-      const receivedDetails = await repo.getSyncDetails('foo-bar-1');
+      const receivedDetails = await repo.get('foo-bar-1');
       await unitOfWork.commit();
 
       expect(receivedDetails).toEqual(undefined);
@@ -105,7 +106,7 @@ export const testSyncDetailsRepository = (
       const { repo, unitOfWork } = await create();
 
       await unitOfWork.begin();
-      const receivedDetails = await repo.getSyncDetails('foo-bar-1');
+      const receivedDetails = await repo.get('foo-bar-1');
       await unitOfWork.commit();
 
       expect(receivedDetails).toEqual(undefined);

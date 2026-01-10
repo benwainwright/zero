@@ -5,18 +5,29 @@ import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import { injectable } from 'inversify';
 import type { Selectable } from 'kysely';
 import type { Accounts, DB } from '../core/database.ts';
+import { BaseRepo } from './base-repo.ts';
+import type { IWriteRepository } from '@zero/application-core';
 
 @injectable()
-export class SqliteAccountsRepository implements IAccountRepository {
+export class SqliteAccountsRepository
+  extends BaseRepo<Account, [string]>
+  implements IAccountRepository, IWriteRepository<Account>
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
-  public async requireAccount(id: string): Promise<Account> {
-    const account = await this.getAccount(id);
-    if (!account) {
-      throw new Error('No account found!');
-    }
+  ) {
+    super();
+  }
+
+  public async update(account: Account): Promise<Account> {
+    const tx = this.database.transaction();
+
+    await tx
+      .updateTable('accounts')
+      .set(this.mapValues(account))
+      .where('id', '=', account.id)
+      .execute();
 
     return account;
   }
@@ -30,7 +41,7 @@ export class SqliteAccountsRepository implements IAccountRepository {
     });
   }
 
-  public async getAccount(id: string): Promise<Account | undefined> {
+  public async get(id: string): Promise<Account | undefined> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -46,7 +57,15 @@ export class SqliteAccountsRepository implements IAccountRepository {
     return this.mapRaw(result);
   }
 
-  public async getUserAccounts(userId: string): Promise<Account[]> {
+  public async list({
+    userId,
+    start,
+    limit,
+  }: {
+    userId: string;
+    start: number;
+    limit: number;
+  }): Promise<Account[]> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -55,49 +74,32 @@ export class SqliteAccountsRepository implements IAccountRepository {
       .where((eb) =>
         eb.and([eb('ownerId', '=', userId), eb('deleted', '=', 'false')])
       )
+      .offset(start)
+      .limit(limit)
       .execute();
 
     return result.map(this.mapRaw);
   }
 
-  public async saveAccount(account: Account): Promise<Account> {
+  private mapValues(account: Account) {
+    return {
+      ...account.toObject(),
+      closed: String(account.closed),
+      deleted: String(account.deleted),
+    };
+  }
+
+  public async save(account: Account): Promise<Account> {
     const tx = this.database.transaction();
 
-    const values = account.toObject();
-
-    await tx
-      .insertInto('accounts')
-      .values({
-        ...values,
-        closed: String(values.closed),
-        deleted: String(values.deleted),
-      })
-      .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
-          name: eb.ref('excluded.name'),
-          type: eb.ref('excluded.type'),
-          closed: eb.ref('excluded.closed'),
-          balance: eb.ref('excluded.balance'),
-          description: eb.ref('excluded.description'),
-          deleted: eb.ref('excluded.deleted'),
-          ownerId: eb.ref('excluded.ownerId'),
-        }))
-      )
-      .execute();
+    await tx.insertInto('accounts').values(this.mapValues(account)).execute();
 
     return account;
   }
 
-  public async deleteAccount(account: Account): Promise<void> {
+  public async delete(account: Account): Promise<void> {
     const tx = this.database.transaction();
 
     await tx.deleteFrom('accounts').where('id', '=', account.id).execute();
-  }
-
-  public async saveAccounts(accounts: Account[]): Promise<Account[]> {
-    for (const account of accounts) {
-      await this.saveAccount(account);
-    }
-    return accounts;
   }
 }

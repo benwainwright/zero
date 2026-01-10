@@ -1,15 +1,22 @@
 import { inject, type OauthTokens } from '@core';
-import type { IOauthTokenRepository } from '@zero/accounts';
 import { OauthToken } from '@zero/domain';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import type { DB } from '../core/database.ts';
+import type { IWriteRepository } from '@zero/application-core';
+import { BaseRepo } from './base-repo.ts';
+import type { IOauthTokenRepository } from '@zero/accounts';
 
-export class PostgresOauthTokenRepository implements IOauthTokenRepository {
+export class PostgresOauthTokenRepository
+  extends BaseRepo<OauthToken, [string, string]>
+  implements IWriteRepository<OauthToken>, IOauthTokenRepository
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
 
   private mapRaw(raw: Selectable<OauthTokens>) {
     return OauthToken.reconstitute({
@@ -20,7 +27,19 @@ export class PostgresOauthTokenRepository implements IOauthTokenRepository {
     });
   }
 
-  public async getToken(
+  public async update(token: OauthToken) {
+    const tx = this.database.transaction();
+
+    await tx
+      .updateTable('oauth_tokens')
+      .set(token.toObject())
+      .where('id', '=', token.id)
+      .execute();
+
+    return token;
+  }
+
+  public async get(
     userId: string,
     provider: string
   ): Promise<OauthToken | undefined> {
@@ -40,30 +59,17 @@ export class PostgresOauthTokenRepository implements IOauthTokenRepository {
 
     return this.mapRaw(result);
   }
-  public async saveToken(token: OauthToken): Promise<OauthToken> {
+  public async save(token: OauthToken): Promise<OauthToken> {
     const tx = this.database.transaction();
 
     await tx
       .insertInto('oauth_tokens')
       .values(token.toObject({ secure: true }))
-      .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
-          expiry: eb.ref('excluded.expiry'),
-          token: eb.ref('excluded.token'),
-          refreshToken: eb.ref('excluded.refreshToken'),
-          provider: eb.ref('excluded.provider'),
-          ownerId: eb.ref('excluded.ownerId'),
-          refreshExpiry: eb.ref('excluded.refreshExpiry'),
-          lastUse: eb.ref('excluded.lastUse'),
-          refreshed: eb.ref('excluded.refreshed'),
-          created: eb.ref('excluded.created'),
-        }))
-      )
       .execute();
 
     return token;
   }
-  public async deleteToken(token: OauthToken): Promise<void> {
+  public async delete(token: OauthToken): Promise<void> {
     const tx = this.database.transaction();
 
     await tx

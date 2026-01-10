@@ -9,7 +9,7 @@ describe('get user query handler', () => {
 
     const mockBen = mock<User>();
 
-    when(userRepo.requireUser).calledWith('ben').thenResolve(mockBen);
+    when(userRepo.require).calledWith('ben').thenResolve(mockBen);
 
     const context = getMockQueryContext('GetUser', { username: 'ben' }, 'ben');
 

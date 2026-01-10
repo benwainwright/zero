@@ -12,6 +12,8 @@ export {
   priority,
   type BindingMap,
   DecoratorManager,
+  type ContainerBinding,
+  type MappedServiceIdentifier,
 } from '@decorator-manager';
 
 export {

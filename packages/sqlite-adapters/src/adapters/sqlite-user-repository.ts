@@ -1,16 +1,54 @@
-import type { IUserRepository } from '@zero/auth';
 import { Role, User, permissionSchema, routesSchema } from '@zero/domain';
 import { inject, type DB } from '@core';
 import z from 'zod';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import { sql, type Selectable } from 'kysely';
 import type { Roles, Users } from '../core/database.ts';
+import { BaseRepo } from './base-repo.ts';
+import type { IWriteRepository } from '@zero/application-core';
+import type { IUserRepository } from '@zero/auth';
 
-export class SqliteUserRepository implements IUserRepository {
+export class SqliteUserRepository
+  extends BaseRepo<User, [string]>
+  implements IUserRepository, IWriteRepository<User>
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
+  public async update(user: User): Promise<User> {
+    const tx = this.database.transaction();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, roles, ...values } = user.toObject();
+
+    await tx
+      .updateTable('users')
+      .set(values)
+      .where('id', '=', user.id)
+      .execute();
+
+    await tx.deleteFrom('user_roles').where('userId', '=', user.id).execute();
+
+    await Promise.all(
+      user.roles.map(async (role) => {
+        await tx
+          .insertInto('user_roles')
+          .values({ userId: user.id, roleId: role.id })
+          .execute();
+      })
+    );
+
+    return user;
+  }
+
+  public async delete(user: User): Promise<void> {
+    const tx = this.database.transaction();
+
+    await tx.deleteFrom('users').where('id', '=', user.id).execute();
+  }
 
   public mapRawRole(raw: Selectable<Roles>) {
     return Role.reconstitute({
@@ -28,7 +66,7 @@ export class SqliteUserRepository implements IUserRepository {
     });
   }
 
-  public async saveUser(user: User): Promise<User> {
+  public async save(user: User): Promise<User> {
     const tx = this.database.transaction();
 
     await tx
@@ -38,12 +76,6 @@ export class SqliteUserRepository implements IUserRepository {
         email: user.email,
         passwordHash: user.passwordHash,
       })
-      .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
-          email: eb.ref('excluded.email'),
-          passwordHash: eb.ref('excluded.passwordHash'),
-        }))
-      )
       .execute();
 
     await tx.deleteFrom('user_roles').where('userId', '=', user.id).execute();
@@ -60,17 +92,13 @@ export class SqliteUserRepository implements IUserRepository {
     return user;
   }
 
-  public async requireUser(id: string): Promise<User> {
-    const user = await this.getUser(id);
-
-    if (!user) {
-      throw new Error(`User '${id}' was not found!`);
-    }
-
-    return user;
-  }
-
-  public async getManyUsers(start?: number, limit?: number): Promise<User[]> {
+  public async list({
+    start,
+    limit,
+  }: {
+    start?: number;
+    limit?: number;
+  }): Promise<User[]> {
     const query = await this.getUsersQuery();
 
     const withLimit = query.offset(start ?? 0).limit(limit ?? 30);
@@ -86,7 +114,7 @@ export class SqliteUserRepository implements IUserRepository {
     await tx.deleteFrom('users').where('id', '=', user.id).execute();
   }
 
-  public async getUser(id: string): Promise<User | undefined> {
+  public async get(id: string): Promise<User | undefined> {
     const query = await this.getUsersQuery();
 
     const result = await query.where('users.id', '=', id).executeTakeFirst();

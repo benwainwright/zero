@@ -1,8 +1,8 @@
 import { ADMIN_USER_ID, USER_ROLE_ID } from '@constants';
 import { inject } from '@core';
-import type { IPasswordHasher, IRoleRepository, IUserRepository } from '@ports';
-import type { IUnitOfWork } from '@zero/application-core';
-import type { ConfigValue, IBootstrapper, ILogger } from '@zero/bootstrap';
+import type { IPasswordHasher } from '@ports';
+import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
+import type { ConfigValue, ILogger } from '@zero/bootstrap';
 import { Role, User } from '@zero/domain';
 import { injectable } from 'inversify';
 import { adminPermissions } from './admin-permissions.ts';
@@ -15,12 +15,8 @@ export class AuthBootstrapper {
     private readonly logger: ILogger,
 
     @inject('UnitOfWork') private readonly unit: IUnitOfWork,
-
-    @inject('RoleRepository') private readonly roles: IRoleRepository,
-
-    @inject('UserRepository') private readonly users: IUserRepository,
-
-    @inject('Bootstrapper') private readonly bootstrapper: IBootstrapper,
+    @inject('UserWriter') private readonly userWriter: IWriteRepository<User>,
+    @inject('RoleWriter') private readonly roleWriter: IWriteRepository<Role>,
 
     @inject('AdminEmailConfigValue')
     private readonly adminEmail: ConfigValue<string>,
@@ -52,8 +48,8 @@ export class AuthBootstrapper {
       });
 
       await this.unit.begin();
-      await this.roles.saveRole(adminRole);
-      await this.roles.saveRole(userRole);
+      await this.roleWriter.save(adminRole);
+      await this.roleWriter.save(userRole);
 
       const bootstrapAdmin = User.reconstitute({
         id: 'admin',
@@ -62,7 +58,7 @@ export class AuthBootstrapper {
         roles: [adminRole.toObject()],
       });
 
-      await this.users.saveUser(bootstrapAdmin);
+      await this.userWriter.save(bootstrapAdmin);
       this.logger.info(`Users bootstrapped`);
       await this.unit.commit();
     } catch (error) {

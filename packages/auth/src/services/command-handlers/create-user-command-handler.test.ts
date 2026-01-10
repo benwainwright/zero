@@ -1,9 +1,10 @@
 import { mock } from 'vitest-mock-extended';
 import { CreateUserCommandHandler } from './create-user-command-handler.ts';
-import { buildCommandHandler, getMockCommandContext } from '@test-helpers';
+import { getMockCommandContext } from '@test-helpers';
 import { USER_ROLE_ID } from '@constants';
 import { when } from 'vitest-when';
 import { type IRole, type Role, User } from '@zero/domain';
+import { buildInstance } from '@zero/test-helpers';
 
 vi.mock('@zero/domain');
 
@@ -13,7 +14,7 @@ afterEach(() => {
 
 describe('create user command handler', () => {
   it('calls create on the user and then passes into the repo', async () => {
-    const { handler, roleRepo, userRepo, passwordHasher } = buildCommandHandler(
+    const [handler, writer, roleRepo, passwordHasher] = await buildInstance(
       CreateUserCommandHandler
     );
 
@@ -40,11 +41,11 @@ describe('create user command handler', () => {
       })
       .thenReturn(mockUser);
 
-    when(roleRepo.requireRole).calledWith(USER_ROLE_ID).thenResolve(mockRole);
+    when(roleRepo.require).calledWith(USER_ROLE_ID).thenResolve(mockRole);
     when(passwordHasher.hashPassword).calledWith('pass').thenResolve('hash');
 
     await handler.tryHandle(context);
 
-    expect(userRepo.saveUser).toHaveBeenCalledWith(mockUser);
+    expect(writer.save).toHaveBeenCalledWith(mockUser);
   });
 });

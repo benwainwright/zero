@@ -4,12 +4,38 @@ import { Transaction } from '@zero/domain';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import type { Transactions } from '../core/database.ts';
+import type { IWriteRepository } from '@zero/application-core';
+import { BaseRepo } from './base-repo.ts';
 
-export class SqliteTransactionRepository implements ITransactionRepository {
+export class SqliteTransactionRepository
+  extends BaseRepo<Transaction, [txId: string]>
+  implements ITransactionRepository, IWriteRepository<Transaction>
+{
   public constructor(
     @inject('KyselyTransactionManager')
     private readonly database: IKyselyTransactionManager<DB>
-  ) {}
+  ) {
+    super();
+  }
+
+  public async update(transaction: Transaction): Promise<Transaction> {
+    const tx = this.database.transaction();
+    await tx
+      .updateTable('transactions')
+      .set(this.mapValues(transaction))
+      .where('id', '=', transaction.id)
+      .execute();
+    return transaction;
+  }
+
+  public async delete(transaction: Transaction): Promise<void> {
+    const tx = this.database.transaction();
+
+    await tx
+      .deleteFrom('transactions')
+      .where('id', '=', transaction.id)
+      .execute();
+  }
 
   private mapRaw(raw: Selectable<Transactions>) {
     return Transaction.reconstitute({
@@ -19,7 +45,7 @@ export class SqliteTransactionRepository implements ITransactionRepository {
     });
   }
 
-  public async getTransaction(id: string): Promise<Transaction | undefined> {
+  public async get(id: string): Promise<Transaction | undefined> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -34,35 +60,33 @@ export class SqliteTransactionRepository implements ITransactionRepository {
 
     return this.mapRaw(result);
   }
-  public async saveTransaction(transaction: Transaction): Promise<Transaction> {
-    const tx = this.database.transaction();
+
+  private mapValues(transaction: Transaction) {
     const values = transaction.toObject();
+    return {
+      ...values,
+      date: values.date.toISOString(),
+    };
+  }
+
+  public async save(transaction: Transaction): Promise<Transaction> {
+    const tx = this.database.transaction();
 
     await tx
       .insertInto('transactions')
-      .values({
-        ...values,
-        date: values.date.toISOString(),
-      })
-      .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
-          ownerId: eb.ref('excluded.ownerId'),
-          amount: eb.ref('excluded.amount'),
-          payee: eb.ref('excluded.payee'),
-          accountId: eb.ref('excluded.accountId'),
-          date: eb.ref('excluded.date'),
-          categoryId: eb.ref('excluded.categoryId'),
-        }))
-      )
+      .values(this.mapValues(transaction))
       .execute();
 
     return transaction;
   }
 
-  public async getAccountTransactionCount(
-    userId: string,
-    accountId: string
-  ): Promise<number> {
+  public async count({
+    userId,
+    accountId,
+  }: {
+    userId: string;
+    accountId: string;
+  }): Promise<number> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -75,12 +99,18 @@ export class SqliteTransactionRepository implements ITransactionRepository {
 
     return Number(result.transaction_count);
   }
-  public async getAccountTransactions(
-    userId: string,
-    accountId: string,
-    offset: number,
-    limit: number
-  ): Promise<Transaction[]> {
+
+  public async list({
+    userId,
+    accountId,
+    start,
+    limit,
+  }: {
+    userId: string;
+    accountId: string;
+    start: number;
+    limit: number;
+  }): Promise<Transaction[]> {
     const tx = this.database.transaction();
 
     const result = await tx
@@ -89,19 +119,10 @@ export class SqliteTransactionRepository implements ITransactionRepository {
       .where((eb) =>
         eb.and([eb('ownerId', '=', userId), eb('accountId', '=', accountId)])
       )
-      .offset(offset)
+      .offset(start)
       .limit(limit)
       .execute();
 
     return result.map((row) => this.mapRaw(row));
-  }
-  public async saveTransactions(
-    transactions: Transaction[]
-  ): Promise<Transaction[]> {
-    for (const tx of transactions) {
-      await this.saveTransaction(tx);
-    }
-
-    return transactions;
   }
 }
