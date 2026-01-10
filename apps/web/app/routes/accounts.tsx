@@ -12,7 +12,7 @@ export const Users = (): ReactNode => {
     <Page
       routeName="accounts"
       headerActions={
-        <Button size="compact-md" onClick={open}>
+        <Button onClick={open} variant="subtle">
           New
         </Button>
       }

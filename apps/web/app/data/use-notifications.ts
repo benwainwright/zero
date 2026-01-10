@@ -32,6 +32,13 @@ export const useNotifications = () => {
         });
         break;
 
+      case 'AccountCreated':
+        showNotification({
+          type: 'success',
+          message: 'Account Created',
+        });
+        break;
+
       case 'LogoutSuccessfulEvent':
         showNotification({
           type: 'success',

@@ -5,7 +5,7 @@ import {
   NewTransactionRow,
   Page,
 } from '@components';
-import { Table, Button } from '@mantine/core';
+import { Table, Button, Paper } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useAccount, useCommand, useTransactions } from '@zero/react-api';
 import { useState } from 'react';
@@ -34,12 +34,8 @@ const AccountTransactions = () => {
       routeName="accountTransactions"
       title={account?.name ?? ''}
       headerActions={
-        <Button
-          onClick={() => setCreatingNewTx(true)}
-          size="compact-sm"
-          variant="outline"
-        >
-          Create
+        <Button onClick={() => setCreatingNewTx(true)} variant="subtle">
+          New Transaction
         </Button>
       }
     >
