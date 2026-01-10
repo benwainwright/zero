@@ -26,7 +26,7 @@ export type AccountsCommands =
   | {
       id: string;
       key: 'CreateTransactionCommand';
-      params: Omit<ITransaction, 'id' | 'categoryId'>;
+      params: Omit<ITransaction, 'id' | 'categoryId' | 'ownerId'>;
     }
   | {
       id: string;

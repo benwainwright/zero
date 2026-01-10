@@ -5,6 +5,7 @@ import {
   Category,
   OauthToken,
   Role,
+  Transaction,
   User,
 } from '@zero/domain';
 import { Typeson } from 'typeson';
@@ -24,6 +25,7 @@ export class Serialiser {
       ...modelSerialiser(Budget),
       ...modelSerialiser(OauthToken),
       ...modelSerialiser(Category),
+      ...modelSerialiser(Transaction),
     });
   }
 

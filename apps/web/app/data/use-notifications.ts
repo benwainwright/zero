@@ -39,6 +39,13 @@ export const useNotifications = () => {
         });
         break;
 
+      case 'TransactionCreated':
+        showNotification({
+          type: 'success',
+          message: 'Transaction Created!',
+        });
+        break;
+
       case 'UserUpdated':
         showNotification({
           type: 'success',

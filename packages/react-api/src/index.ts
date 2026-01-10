@@ -12,6 +12,7 @@ export {
   useRole,
   useAccount,
   useAccounts,
+  useTransactions,
 } from '@hooks';
 
 export {

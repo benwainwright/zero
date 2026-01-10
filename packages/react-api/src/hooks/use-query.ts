@@ -8,11 +8,13 @@ export const useQuery = <
   TKey extends TQuery['key']
 >(
   key: TKey,
+  load = true,
   ...params: IQueryParams<IPickQuery<TQuery, TKey>>
 ): {
   data: IPickQuery<TQuery, TKey>['response'] | undefined;
   isPending: boolean;
   refresh: () => void;
+  load?: boolean;
 } => {
   const [isPending, startTransition] = useTransition();
   const [data, setData] = useState<IPickQuery<TQuery, TKey>['response']>();
@@ -20,15 +22,17 @@ export const useQuery = <
   const { api } = useContext(ApiContext);
 
   useEffect(() => {
-    startTransition(async () => {
-      (async () => {
-        if (api && dirty) {
-          setData(await api.executeQuery(key, ...params));
-          setDirty(false);
-        }
-      })();
-    });
-  }, [api, dirty]);
+    if (load) {
+      startTransition(async () => {
+        (async () => {
+          if (api && dirty) {
+            setData(await api.executeQuery(key, ...params));
+            setDirty(false);
+          }
+        })();
+      });
+    }
+  }, [api, dirty, load]);
 
   const refresh = () => {
     setDirty(true);

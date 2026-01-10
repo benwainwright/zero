@@ -31,11 +31,12 @@ export class CreateTransactionCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle({
+    authContext,
     command,
   }: ICommandContext<{
     id: string;
     key: 'CreateTransactionCommand';
-    params: Omit<ITransaction, 'id' | 'categoryId'>;
+    params: Omit<ITransaction, 'id' | 'categoryId' | 'ownerId'>;
   }>): Promise<void> {
     this.grants.requires({
       capability: 'account:create-transaction',
@@ -43,8 +44,13 @@ export class CreateTransactionCommandHandler extends AbstractCommandHandler<
 
     const id = this.uuidGenerator.v7();
 
+    if (!authContext) {
+      throw new Error('Must be logged in');
+    }
+
     const theTx = Transaction.create({
       ...command,
+      ownerId: authContext.id,
       id,
     });
 

@@ -29,17 +29,20 @@ export const useData = <
     command,
     refreshOn,
     mapToLocalData,
+    load = true,
   }: {
     query: TQueryKey;
     command?: TCommandKey;
     refreshOn?: (keyof IKnownEvents)[];
     mapToLocalData?: TDataMapper;
+    load?: boolean;
   },
   ...params: IQueryParams<IPickQuery<TQuery, TQueryKey>>
 ) => {
   const { execute } = useCommand<TCommand, TCommandKey>(command);
   const { data, refresh, isPending } = useQuery<TQuery, TQueryKey>(
     query,
+    load,
     ...params
   );
   const [localData, setLocalData] = useState<{

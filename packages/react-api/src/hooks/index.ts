@@ -11,3 +11,4 @@ export { useRoles } from './use-roles.tsx';
 export { useRole } from './use-role.tsx';
 export { useAccounts } from './use-accounts.tsx';
 export { useAccount } from './use-account.tsx';
+export { useTransactions } from './use-transactions.tsx';

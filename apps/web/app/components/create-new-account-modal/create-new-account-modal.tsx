@@ -1,5 +1,5 @@
 import { Button, Group, Modal, TextInput } from '@mantine/core';
-import { Form, useForm } from '@mantine/form';
+import { useForm } from '@mantine/form';
 import { ApiContext } from '@zero/react-api';
 import { useContext } from 'react';
 

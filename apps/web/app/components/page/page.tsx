@@ -2,7 +2,7 @@ import { CurrentUserContext } from '@zero/react-api';
 import { type ReactNode, useContext } from 'react';
 import { Navigate } from 'react-router';
 import { routesList } from '@config';
-import { Box, Flex, Title } from '@mantine/core';
+import { Box, Flex, Stack, Title } from '@mantine/core';
 import { routeAvailable } from '@utils';
 
 interface PageProps {
@@ -39,11 +39,11 @@ export const Page = ({
 
   return initialLoadComplete ? (
     <>
-      <Title order={2} mb="xl" mt="l">
-        <Flex gap="1rem" align="center">
-          <Box style={{ flexGrow: 2 }}>{title ?? capitalisedHeader}</Box>
+      <Title order={2} mb="xl" mt="xl">
+        <Stack gap="1rem" align="start">
+          {title ?? capitalisedHeader}
           {headerActions}
-        </Flex>
+        </Stack>
       </Title>
       <Box mt="xl">{children}</Box>
     </>

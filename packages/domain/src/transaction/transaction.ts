@@ -5,6 +5,8 @@ export class Transaction
   extends DomainModel<ITransaction>
   implements ITransaction, IOwnedBy
 {
+  public static key = 'transaction';
+
   public override toObject(): ITransaction {
     return {
       id: this.id,

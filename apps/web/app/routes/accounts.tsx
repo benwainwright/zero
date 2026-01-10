@@ -11,7 +11,11 @@ export const Users = (): ReactNode => {
   return (
     <Page
       routeName="accounts"
-      headerActions={<Button onClick={open}>New</Button>}
+      headerActions={
+        <Button size="compact-md" onClick={open}>
+          New
+        </Button>
+      }
     >
       <CreateNewAccountModal opened={opened} close={close} />
       <Loader data={accounts}>
