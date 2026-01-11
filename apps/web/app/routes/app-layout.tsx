@@ -12,6 +12,8 @@ const AppLayout = (): ReactNode => {
   return (
     <CurrentUserProvider>
       <AppShell
+        transitionDuration={500}
+        transitionTimingFunction="ease"
         padding="md"
         header={{ height: 60 }}
         navbar={{

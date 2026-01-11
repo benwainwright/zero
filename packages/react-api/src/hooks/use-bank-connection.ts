@@ -44,7 +44,6 @@ export const useBankConnection = ():
 
   useEffect(() => {
     (async () => {
-      console.log(authLink);
       if (authLink?.url) {
         await deleteAuthLink();
         window.location.href = authLink.url;

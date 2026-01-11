@@ -18,3 +18,5 @@ export { NewTransactionRow } from './new-transaction-row/index.ts';
 export { DateLabel } from './date-label/index.ts';
 export { TransactionsTable } from './transactions-table/index.ts';
 export { BankConnectionIcon } from './bank-connection-icon/index.ts';
+export { RolesTable } from './roles-table/index.ts';
+export { UsersTable } from './users-table/index.ts';

@@ -1,35 +1,12 @@
-import { Loader, Page } from '@components';
+import { Loader, Page, UsersTable } from '@components';
 import { useUsers } from '@zero/react-api';
-import { Table } from '@mantine/core';
 import type { ReactNode } from 'react';
-import { Link } from 'react-router';
 
 export const Users = (): ReactNode => {
   const users = useUsers(0, 30);
   return (
     <Page routeName="users">
-      <Loader data={users}>
-        {(data) => (
-          <Table verticalSpacing={'sm'}>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Username</Table.Th>
-                <Table.Th>Email</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {data.map((user) => (
-                <Table.Tr key={`${user.id}-user-row`}>
-                  <Table.Td>
-                    <Link to={`/users/${user.id}/edit`}>{user.id}</Link>
-                  </Table.Td>
-                  <Table.Td>{user.email}</Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-        )}
-      </Loader>
+      <Loader data={users}>{(data) => <UsersTable users={data} />}</Loader>
     </Page>
   );
 };

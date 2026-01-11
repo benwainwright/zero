@@ -1,13 +1,16 @@
 import { Page } from '@components';
 import { CurrentUserContext, useCommand, useEvent } from '@zero/react-api';
+import logo from './b6d650e8-988f-42a8-a8dd-4fdc4152a562.png';
 import {
   Button,
   Group,
   PasswordInput,
   TextInput,
   Text,
+  Image,
   Anchor,
   Stack,
+  Flex,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useContext, useEffect, type ReactNode } from 'react';
@@ -52,6 +55,9 @@ export const Login = (): ReactNode => {
 
   return (
     <Page routeName="login">
+      <Flex justify={'center'}>
+        <Image src={logo} fit={'contain'} style={{ width: '300px' }} />
+      </Flex>
       <form method="post" onSubmit={form.onSubmit(onSubmit)}>
         <Stack>
           <TextInput

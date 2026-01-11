@@ -21,7 +21,7 @@ export const AccountsTable = ({ accounts }: AccountsTableProps) => {
         {accounts.map((account) => (
           <Table.Tr key={`${account.id}-account-row`}>
             <Table.Td>
-              <Link to={`/accounts/${account.id}/transactions`}>
+              <Link viewTransition to={`/accounts/${account.id}/transactions`}>
                 {account.name ? account.name : 'No name'}
               </Link>
             </Table.Td>

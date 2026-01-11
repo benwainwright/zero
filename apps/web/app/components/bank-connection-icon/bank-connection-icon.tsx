@@ -7,7 +7,7 @@ export const BankConnectionIcon = () => {
   const connection = useBankConnection();
   const { loaded } = connection;
   return (
-    <Link to="/bank-connection">
+    <Link to="/bank-connection" viewTransition>
       {loaded && connection.isConnected ? (
         <IconLink color="green" />
       ) : (

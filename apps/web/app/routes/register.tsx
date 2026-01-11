@@ -1,9 +1,18 @@
 import { Page } from '@components';
 import { useEvent, CurrentUserContext, useCommand } from '@zero/react-api';
 import { useContext, useEffect, type ReactNode } from 'react';
+import logo from './b6d650e8-988f-42a8-a8dd-4fdc4152a562.png';
 import { useNavigate } from 'react-router';
 
-import { Button, Group, PasswordInput, Stack, TextInput } from '@mantine/core';
+import {
+  Button,
+  Flex,
+  Group,
+  PasswordInput,
+  Stack,
+  TextInput,
+  Image,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 interface FormValues {
@@ -47,6 +56,9 @@ export const Register = (): ReactNode => {
 
   return (
     <Page routeName="register">
+      <Flex justify={'center'}>
+        <Image src={logo} fit={'contain'} style={{ width: '300px' }} />
+      </Flex>
       <form method="post" onSubmit={form.onSubmit(createUser)}>
         <Stack>
           <TextInput

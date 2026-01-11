@@ -27,6 +27,7 @@ export const NavBar = (): ReactNode => {
             const toString = value.isIndex ? '' : key;
             return (
               <NavLink
+                viewTransition
                 key={`nav-bar-${key}`}
                 active={
                   (toString.length === 0 && pathname === '/') ||

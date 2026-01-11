@@ -4,7 +4,6 @@ import { useBankConnection } from '@zero/react-api';
 
 export const BankConnection = () => {
   const connection = useBankConnection();
-  console.log(connection);
   const { loaded } = connection;
 
   return (
