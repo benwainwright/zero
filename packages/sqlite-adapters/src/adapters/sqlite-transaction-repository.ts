@@ -1,9 +1,9 @@
 import { inject, type DB } from '@core';
 import type { ITransactionRepository } from '@zero/accounts';
-import { Transaction } from '@zero/domain';
+import { Category, Transaction } from '@zero/domain';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
-import type { Transactions } from '../core/database.ts';
+import type { Categories, Transactions } from '../core/database.ts';
 import type { IWriteRepository } from '@zero/application-core';
 import { BaseRepo } from './base-repo.ts';
 
@@ -37,11 +37,29 @@ export class SqliteTransactionRepository
       .execute();
   }
 
-  private mapRaw(raw: Selectable<Transactions>) {
+  private mapRaw(
+    raw: Selectable<
+      Transactions & {
+        categoryName: string | null;
+        categoryId: string | null;
+        categoryDescription: string | null;
+        categoryOwnerId: string | null;
+      }
+    >
+  ) {
+    const category = raw.categoryId
+      ? Category.reconstitute({
+          name: raw.categoryName ?? '',
+          description: raw.categoryDescription ?? '',
+          id: raw.categoryId,
+          ownerId: raw.categoryOwnerId ?? '',
+        })
+      : undefined;
+
     return Transaction.reconstitute({
       ...raw,
       date: new Date(raw.date),
-      categoryId: raw.categoryId ?? undefined,
+      category,
     });
   }
 
@@ -50,8 +68,16 @@ export class SqliteTransactionRepository
 
     const result = await tx
       .selectFrom('transactions')
+      .where('transactions.id', '=', id)
       .selectAll()
-      .where('id', '=', id)
+      .select(['transactions.id as id', 'transactions.ownerId as ownerId'])
+      .leftJoin('categories', 'categories.id', 'transactions.categoryId')
+      .select([
+        'name as categoryName',
+        'description as categoryDescription',
+        'categories.id as categoryId',
+        'categories.ownerId as categoryOwnerId',
+      ])
       .executeTakeFirst();
 
     if (!result) {
@@ -62,10 +88,11 @@ export class SqliteTransactionRepository
   }
 
   private mapValues(transaction: Transaction) {
-    const values = transaction.toObject();
+    const { category, ...values } = transaction.toObject();
     return {
       ...values,
       date: values.date.toISOString(),
+      categoryId: category?.id ?? null,
     };
   }
 
@@ -116,9 +143,20 @@ export class SqliteTransactionRepository
     const result = await tx
       .selectFrom('transactions')
       .selectAll()
+      .select(['transactions.id as id', 'transactions.ownerId as ownerId'])
       .where((eb) =>
-        eb.and([eb('ownerId', '=', userId), eb('accountId', '=', accountId)])
+        eb.and([
+          eb('transactions.ownerId', '=', userId),
+          eb('accountId', '=', accountId),
+        ])
       )
+      .leftJoin('categories', 'categories.id', 'transactions.categoryId')
+      .select([
+        'name as categoryName',
+        'description as categoryDescription',
+        'categories.id as categoryId',
+        'categories.ownerId as categoryOwnerId',
+      ])
       .offset(start)
       .limit(limit)
       .execute();

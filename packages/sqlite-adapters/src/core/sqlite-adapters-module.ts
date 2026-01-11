@@ -6,6 +6,7 @@ import { eventStager, type IApplicationTypes } from '@zero/application-core';
 import {
   SqliteAccountsRepository,
   SqliteBankConnectionRepository,
+  SqliteCategoryRepository,
   SqliteOauthTokenRepository,
   SqliteRoleRepository,
   SqliteSyncDetailsRepository,
@@ -72,8 +73,13 @@ export const sqliteAdaptersModule: IModule<
   bind('SyncDetailsWriter').to(SqliteSyncDetailsRepository);
   decorate('SyncDetailsWriter', stager('SyncDetailsWriter'));
 
+  bind('CategoryRepository').to(SqliteCategoryRepository);
+  bind('CategoryWriter').to(SqliteCategoryRepository);
+  decorate('CategoryWriter', stager('CategoryWriter'));
+
   bind('DatabaseFilename').toConstantValue(databaseFilename);
   bind('UnitOfWork').to(KyselyUnitOfWork).inRequestScope();
+
   bind('KyselyTransactionManager').toService('UnitOfWork');
   bind('KyselyDataSource').to(KyselySqliteDatabase).inSingletonScope();
 };

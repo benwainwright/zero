@@ -1,5 +1,6 @@
 export {
   useApi,
+  useNextEvent,
   useUser,
   useUsers,
   useCommand,

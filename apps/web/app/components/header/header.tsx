@@ -27,8 +27,8 @@ export const Header = ({
           />
           {title}
         </Box>
+        {user && <BankConnectionIcon />}
       </Group>
-      {user && <BankConnectionIcon />}
     </AppShell.Header>
   );
 };

@@ -33,7 +33,7 @@ export interface Categories {
   description: string | null;
   id: string;
   name: string;
-  ownerId: string | null;
+  ownerId: string;
 }
 
 export interface OauthTokens {

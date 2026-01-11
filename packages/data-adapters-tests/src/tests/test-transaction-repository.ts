@@ -1,189 +1,270 @@
 import type { ITransactionRepository } from '@zero/accounts';
 import type { IUnitOfWork, IWriteRepository } from '@zero/application-core';
-import { Account, Transaction, User } from '@zero/domain';
+import { Account, Category, Transaction, User } from '@zero/domain';
 
 export const testTransactionRepository = (
   create: () => Promise<{
     repo: ITransactionRepository;
     writer: IWriteRepository<Transaction>;
     userRepo: IWriteRepository<User>;
+    categories: IWriteRepository<Category>;
     unitOfWork: IUnitOfWork;
     accountRepo: IWriteRepository<Account>;
   }>
 ) => {
-  describe('The transaction repository', () => {
-    it('allows you to save and retrieve individual transactions', async () => {
-      const { repo, unitOfWork, userRepo, accountRepo, writer } =
-        await create();
+  it('allows you to save and retrieve individual transactions', async () => {
+    const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
 
-      const ben = User.reconstitute({
-        email: 'bwainwright28@gmail.com',
-        id: 'ben',
-        passwordHash:
-          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-        roles: [],
-      });
-      const barAccount = Account.reconstitute({
-        id: 'bar',
-        ownerId: 'ben',
-        name: 'hello',
-        type: 'checking',
-        closed: false,
-        balance: 0,
-        deleted: false,
-      });
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+    const barAccount = Account.reconstitute({
+      id: 'bar',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
 
-      const bopAccount = Account.reconstitute({
-        id: 'bop',
-        ownerId: 'ben',
-        name: 'hello',
-        type: 'checking',
-        closed: false,
-        balance: 0,
-        deleted: false,
-      });
+    const bopAccount = Account.reconstitute({
+      id: 'bop',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
 
-      await unitOfWork.begin();
+    await unitOfWork.executeAtomically(async () => {
       await userRepo.save(ben);
       await accountRepo.save(barAccount);
       await accountRepo.save(bopAccount);
-      await unitOfWork.commit();
-
-      const transaction1 = Transaction.reconstitute({
-        ownerId: 'ben',
-        id: 'foo',
-        accountId: 'bar',
-        amount: 1000,
-        date: new Date(),
-        payee: 'foo',
-      });
-
-      const transaction2 = Transaction.reconstitute({
-        ownerId: 'ben',
-        id: 'biz',
-        accountId: 'bop',
-        amount: 100,
-        date: new Date(),
-        payee: 'foo',
-      });
-
-      await unitOfWork.begin();
-      await writer.save(transaction1);
-      await writer.save(transaction2);
-      await unitOfWork.commit();
-
-      await unitOfWork.begin();
-      const result = await repo.get('foo');
-      await unitOfWork.commit();
-
-      expect(result).toEqual(transaction1);
     });
 
-    it('allows you to save and retrieve transacions by account', async () => {
-      const { repo, unitOfWork, userRepo, accountRepo, writer } =
-        await create();
-      const barAccount = Account.reconstitute({
-        id: 'bar',
-        ownerId: 'ben',
-        name: 'hello',
-        type: 'checking',
-        closed: false,
-        balance: 0,
-        deleted: false,
-      });
+    const transaction1 = Transaction.reconstitute({
+      ownerId: 'ben',
+      id: 'foo',
+      accountId: 'bar',
+      amount: 1000,
+      date: new Date(),
+      payee: 'foo',
+    });
 
-      const bofAccount = Account.reconstitute({
-        id: 'bof',
-        ownerId: 'ben',
-        name: 'hello',
-        type: 'checking',
-        closed: false,
-        balance: 0,
-        deleted: false,
-      });
+    const transaction2 = Transaction.reconstitute({
+      ownerId: 'ben',
+      id: 'biz',
+      accountId: 'bop',
+      amount: 100,
+      date: new Date(),
+      payee: 'foo',
+    });
 
-      const bipAccount = Account.reconstitute({
-        id: 'bip',
-        ownerId: 'fred',
-        name: 'hello',
-        type: 'checking',
-        closed: false,
-        balance: 0,
-        deleted: false,
-      });
+    await unitOfWork.executeAtomically(async () => {
+      await writer.save(transaction1);
+      await writer.save(transaction2);
+    });
 
-      const ben = User.reconstitute({
-        email: 'bwainwright28@gmail.com',
-        id: 'ben',
-        passwordHash:
-          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-        roles: [],
-      });
-      const fred = User.reconstitute({
-        email: 'a@b.c',
-        id: 'fred',
-        passwordHash:
-          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-        roles: [],
-      });
+    const result = await unitOfWork.executeAtomically(async () => {
+      return await repo.get('foo');
+    });
 
-      await unitOfWork.begin();
+    expect(result).toEqual(transaction1);
+  });
+
+  it('correctly rehydrates categories', async () => {
+    const { repo, unitOfWork, userRepo, accountRepo, writer, categories } =
+      await create();
+
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+
+    const first = Category.reconstitute({
+      id: 'baz',
+      name: 'foo',
+      description: 'foo',
+      ownerId: 'ben',
+    });
+    const second = Category.reconstitute({
+      id: 'bip',
+      name: 'foo',
+      description: 'foo',
+      ownerId: 'ben',
+    });
+
+    const barAccount = Account.reconstitute({
+      id: 'bar',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    const bopAccount = Account.reconstitute({
+      id: 'bop',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    await unitOfWork.executeAtomically(async () => {
+      await userRepo.save(ben);
+      await accountRepo.save(barAccount);
+      await accountRepo.save(bopAccount);
+      await categories.saveAll([first, second]);
+    });
+
+    const transaction1 = Transaction.reconstitute({
+      ownerId: 'ben',
+      id: 'foo',
+      accountId: 'bar',
+      amount: 1000,
+      date: new Date(),
+      category: first,
+      payee: 'foo',
+    });
+
+    const transaction2 = Transaction.reconstitute({
+      ownerId: 'ben',
+      id: 'biz',
+      accountId: 'bop',
+      amount: 100,
+      date: new Date(),
+      payee: 'foo',
+    });
+
+    await unitOfWork.executeAtomically(async () => {
+      await writer.save(transaction1);
+      await writer.save(transaction2);
+    });
+
+    const result = await unitOfWork.executeAtomically(async () => {
+      return await repo.get('foo');
+    });
+
+    expect(result?.category).toEqual(first);
+  });
+
+  it('allows you to save and retrieve transacions by account', async () => {
+    const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
+    const barAccount = Account.reconstitute({
+      id: 'bar',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    const bofAccount = Account.reconstitute({
+      id: 'bof',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    const bipAccount = Account.reconstitute({
+      id: 'bip',
+      ownerId: 'fred',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+    const fred = User.reconstitute({
+      email: 'a@b.c',
+      id: 'fred',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+
+    await unitOfWork.executeAtomically(async () => {
       await userRepo.save(ben);
       await userRepo.save(fred);
       await accountRepo.save(barAccount);
       await accountRepo.save(bipAccount);
       await accountRepo.save(bofAccount);
-      await unitOfWork.commit();
+    });
 
-      const fredTransaction = Transaction.reconstitute({
-        id: 'blop',
-        accountId: 'bip',
+    const fredTransaction = Transaction.reconstitute({
+      id: 'blop',
+      accountId: 'bip',
+      payee: 'foo',
+      amount: 100,
+      ownerId: 'fred',
+      date: new Date(),
+    });
+
+    const accountTransactions = [
+      Transaction.reconstitute({
+        id: 'foo',
         payee: 'foo',
-        amount: 100,
-        ownerId: 'fred',
+        accountId: 'bar',
+        amount: 1000,
+        ownerId: 'ben',
         date: new Date(),
-      });
+      }),
 
-      const accountTransactions = [
-        Transaction.reconstitute({
-          id: 'foo',
-          payee: 'foo',
-          accountId: 'bar',
-          amount: 1000,
-          ownerId: 'ben',
-          date: new Date(),
-        }),
+      Transaction.reconstitute({
+        id: 'biz',
+        payee: 'foo',
+        accountId: 'bar',
+        amount: 100,
+        date: new Date(),
+        ownerId: 'ben',
+      }),
 
-        Transaction.reconstitute({
-          id: 'biz',
-          payee: 'foo',
-          accountId: 'bar',
-          amount: 100,
-          date: new Date(),
-          ownerId: 'ben',
-        }),
-
-        Transaction.reconstitute({
-          id: 'bing',
-          accountId: 'bar',
-          payee: 'foo',
-          amount: 100,
-          ownerId: 'ben',
-          date: new Date(),
-        }),
-      ];
-
-      await unitOfWork.begin();
-      await writer.saveAll([...accountTransactions, fredTransaction]);
-
-      const separateAccountTransaction = Transaction.reconstitute({
-        id: 'barp2',
+      Transaction.reconstitute({
+        id: 'bing',
         accountId: 'bar',
         payee: 'foo',
-        ownerId: 'ben',
         amount: 100,
+        ownerId: 'ben',
         date: new Date(),
-      });
+      }),
+    ];
+
+    const separateAccountTransaction = Transaction.reconstitute({
+      id: 'barp2',
+      accountId: 'bar',
+      payee: 'foo',
+      ownerId: 'ben',
+      amount: 100,
+      date: new Date(),
+    });
+
+    await unitOfWork.executeAtomically(async () => {
+      await writer.saveAll([...accountTransactions, fredTransaction]);
 
       await writer.save(separateAccountTransaction);
 
@@ -206,122 +287,120 @@ export const testTransactionRepository = (
           date: new Date(),
         }),
       ]);
-
-      await unitOfWork.commit();
-      await unitOfWork.begin();
-      const result = await repo.list({
+    });
+    const result = await unitOfWork.executeAtomically(async () => {
+      return await repo.list({
         start: 0,
         limit: 30,
         accountId: 'bar',
         userId: 'ben',
       });
-      await unitOfWork.commit();
-      expect(result).toHaveLength(4);
+    });
+    expect(result).toHaveLength(4);
 
-      expect(result).toEqual(
-        expect.arrayContaining([
-          ...accountTransactions,
-          separateAccountTransaction,
-        ])
-      );
+    expect(result).toEqual(
+      expect.arrayContaining([
+        ...accountTransactions,
+        separateAccountTransaction,
+      ])
+    );
 
-      expect(result).not.toEqual(expect.arrayContaining([fredTransaction]));
+    expect(result).not.toEqual(expect.arrayContaining([fredTransaction]));
+  });
+
+  it('allows you to retrieve a total count of txs in a given account', async () => {
+    const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
+
+    const barAccount = Account.reconstitute({
+      id: 'bar',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
     });
 
-    it('allows you to retrieve a total count of txs in a given account', async () => {
-      const { repo, unitOfWork, userRepo, accountRepo, writer } =
-        await create();
+    const bofAccount = Account.reconstitute({
+      id: 'bof',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
 
-      const barAccount = Account.reconstitute({
-        id: 'bar',
-        ownerId: 'ben',
-        name: 'hello',
-        type: 'checking',
-        closed: false,
-        balance: 0,
-        deleted: false,
-      });
+    const bipAccount = Account.reconstitute({
+      id: 'bip',
+      ownerId: 'fred',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
 
-      const bofAccount = Account.reconstitute({
-        id: 'bof',
-        ownerId: 'ben',
-        name: 'hello',
-        type: 'checking',
-        closed: false,
-        balance: 0,
-        deleted: false,
-      });
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
 
-      const bipAccount = Account.reconstitute({
-        id: 'bip',
-        ownerId: 'fred',
-        name: 'hello',
-        type: 'checking',
-        closed: false,
-        balance: 0,
-        deleted: false,
-      });
+    const fred = User.reconstitute({
+      email: 'a@b.c',
+      id: 'fred',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
 
-      const ben = User.reconstitute({
-        email: 'bwainwright28@gmail.com',
-        id: 'ben',
-        passwordHash:
-          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-        roles: [],
-      });
-
-      const fred = User.reconstitute({
-        email: 'a@b.c',
-        id: 'fred',
-        passwordHash:
-          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-        roles: [],
-      });
-
-      await unitOfWork.begin();
+    await unitOfWork.executeAtomically(async () => {
       await userRepo.save(ben);
       await userRepo.save(fred);
       await accountRepo.save(barAccount);
       await accountRepo.save(bofAccount);
       await accountRepo.save(bipAccount);
-      await unitOfWork.commit();
+    });
 
-      const accountTransactions = [
-        Transaction.reconstitute({
-          ownerId: 'fred',
-          id: 'burpie',
-          accountId: 'bip',
-          amount: 100,
-          payee: 'foo',
-          date: new Date(),
-        }),
-        Transaction.reconstitute({
-          id: 'foo',
-          payee: 'foo',
-          accountId: 'bar',
-          amount: 1000,
-          ownerId: 'ben',
-          date: new Date(),
-        }),
-        Transaction.reconstitute({
-          id: 'biz',
-          payee: 'foo',
-          accountId: 'bar',
-          amount: 100,
-          date: new Date(),
-          ownerId: 'ben',
-        }),
-        Transaction.reconstitute({
-          id: 'bing',
-          accountId: 'bar',
-          payee: 'foo',
-          amount: 100,
-          date: new Date(),
-          ownerId: 'ben',
-        }),
-      ];
+    const accountTransactions = [
+      Transaction.reconstitute({
+        ownerId: 'fred',
+        id: 'burpie',
+        accountId: 'bip',
+        amount: 100,
+        payee: 'foo',
+        date: new Date(),
+      }),
+      Transaction.reconstitute({
+        id: 'foo',
+        payee: 'foo',
+        accountId: 'bar',
+        amount: 1000,
+        ownerId: 'ben',
+        date: new Date(),
+      }),
+      Transaction.reconstitute({
+        id: 'biz',
+        payee: 'foo',
+        accountId: 'bar',
+        amount: 100,
+        date: new Date(),
+        ownerId: 'ben',
+      }),
+      Transaction.reconstitute({
+        id: 'bing',
+        accountId: 'bar',
+        payee: 'foo',
+        amount: 100,
+        date: new Date(),
+        ownerId: 'ben',
+      }),
+    ];
 
-      await unitOfWork.begin();
+    await unitOfWork.executeAtomically(async () => {
       await writer.saveAll(accountTransactions);
 
       const separateAccountTransaction = Transaction.reconstitute({
@@ -354,12 +433,11 @@ export const testTransactionRepository = (
           date: new Date(),
         }),
       ]);
-
-      await unitOfWork.commit();
-      await unitOfWork.begin();
-      const result = await repo.count({ userId: 'ben', accountId: 'bar' });
-      await unitOfWork.commit();
-      expect(result).toEqual(4);
     });
+    const result = await unitOfWork.executeAtomically(async () => {
+      return await repo.count({ userId: 'ben', accountId: 'bar' });
+    });
+
+    expect(result).toEqual(4);
   });
 };

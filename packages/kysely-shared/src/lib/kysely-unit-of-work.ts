@@ -15,13 +15,17 @@ export class KyselyUnitOfWork<DB>
     @inject('KyselyDataSource')
     private database: IKyselyDataSource<DB>
   ) {}
-  public async executeAtomically(callback: () => Promise<void>): Promise<void> {
+  public async executeAtomically<T = unknown>(
+    callback: () => Promise<T>
+  ): Promise<T> {
     try {
       await this.begin();
-      await callback();
+      const returnVal = await callback();
       await this.commit();
-    } catch {
+      return returnVal;
+    } catch (error) {
       await this.rollback();
+      throw error;
     }
   }
 

@@ -3,6 +3,7 @@ import {
   PostgresBankConnectionRepository,
   PostgresOauthTokenRepository,
   PostgresRoleRepository,
+  PostgressCategoryRepository,
   PostgresSyncDetailsRepository,
   PostgresTransactionRepository,
   PostgresUserRepository,
@@ -101,6 +102,10 @@ export const postgresAdaptersModule: IModule<
 
   bind('TransactionWriter').to(PostgresTransactionRepository).inRequestScope();
   decorate('TransactionWriter', stager('TransactionWriter'));
+
+  bind('CategoryRepository').to(PostgressCategoryRepository);
+  bind('CategoryWriter').to(PostgressCategoryRepository);
+  decorate('CategoryWriter', stager('CategoryWriter'));
 
   bind('PostgressUsername').toConstantValue(databaseUser);
   bind('PostgresDatabaseHost').toConstantValue(host);

@@ -52,3 +52,5 @@ vite.config.*.timestamp*
 test-output
 .env.local
 .nx
+**/.zero
+**/*.sqlite

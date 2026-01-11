@@ -48,7 +48,7 @@ export const up = async (db: Kysely<unknown>) => {
     .addColumn('id', 'text', (col) => col.primaryKey().notNull())
     .addColumn('name', 'text', (col) => col.notNull())
     .addColumn('description', 'text')
-    .addColumn('ownerId', 'text')
+    .addColumn('ownerId', 'text', (col) => col.notNull())
     .addForeignKeyConstraint(
       'category_owner_id_fkey',
       ['ownerId'],

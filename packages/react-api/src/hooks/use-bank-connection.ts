@@ -1,4 +1,4 @@
-import { useCommand, useData, useQuery, useSingleQuery } from '@hooks';
+import { useCommand, useData, useQuery } from '@hooks';
 import type { BankConnection } from '@zero/domain';
 import { useEffect } from 'react';
 

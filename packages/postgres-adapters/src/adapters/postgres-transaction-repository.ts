@@ -1,5 +1,5 @@
 import { inject, type Transactions } from '@core';
-import { Transaction } from '@zero/domain';
+import { Category, Transaction } from '@zero/domain';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import type { DB } from '../core/database.ts';
@@ -22,7 +22,7 @@ export class PostgresTransactionRepository
     const tx = this.database.transaction();
     await tx
       .updateTable('transactions')
-      .set(transaction.toObject())
+      .set(this.mapValues(transaction))
       .where('id', '=', transaction.id)
       .execute();
     return transaction;
@@ -37,10 +37,29 @@ export class PostgresTransactionRepository
       .execute();
   }
 
-  private mapRaw(raw: Selectable<Transactions>) {
+  private mapRaw(
+    raw: Selectable<
+      Transactions & {
+        categoryName: string | null;
+        categoryId: string | null;
+        categoryDescription: string | null;
+        categoryOwnerId: string | null;
+      }
+    >
+  ) {
+    const category = raw.categoryId
+      ? Category.reconstitute({
+          name: raw.categoryName ?? '',
+          description: raw.categoryDescription ?? '',
+          id: raw.categoryId,
+          ownerId: raw.categoryOwnerId ?? '',
+        })
+      : undefined;
+
     return Transaction.reconstitute({
       ...raw,
-      categoryId: raw.categoryId ?? undefined,
+      date: new Date(raw.date),
+      category,
     });
   }
 
@@ -49,8 +68,16 @@ export class PostgresTransactionRepository
 
     const result = await tx
       .selectFrom('transactions')
+      .where('transactions.id', '=', id)
       .selectAll()
-      .where('id', '=', id)
+      .select(['transactions.id as id', 'transactions.ownerId as ownerId'])
+      .leftJoin('categories', 'categories.id', 'transactions.categoryId')
+      .select([
+        'name as categoryName',
+        'description as categoryDescription',
+        'categories.id as categoryId',
+        'categories.ownerId as categoryOwnerId',
+      ])
       .executeTakeFirst();
 
     if (!result) {
@@ -60,12 +87,20 @@ export class PostgresTransactionRepository
     return this.mapRaw(result);
   }
 
+  private mapValues(transaction: Transaction) {
+    const { category, ...values } = transaction.toObject();
+    return {
+      ...values,
+      categoryId: category?.id ?? null,
+    };
+  }
+
   public async save(transaction: Transaction): Promise<Transaction> {
     const tx = this.database.transaction();
 
     await tx
       .insertInto('transactions')
-      .values(transaction.toObject())
+      .values(this.mapValues(transaction))
       .execute();
 
     return transaction;
@@ -106,9 +141,20 @@ export class PostgresTransactionRepository
     const result = await tx
       .selectFrom('transactions')
       .selectAll()
+      .select(['transactions.id as id', 'transactions.ownerId as ownerId'])
       .where((eb) =>
-        eb.and([eb('ownerId', '=', userId), eb('accountId', '=', accountId)])
+        eb.and([
+          eb('transactions.ownerId', '=', userId),
+          eb('accountId', '=', accountId),
+        ])
       )
+      .leftJoin('categories', 'categories.id', 'transactions.categoryId')
+      .select([
+        'name as categoryName',
+        'description as categoryDescription',
+        'categories.id as categoryId',
+        'categories.ownerId as categoryOwnerId',
+      ])
       .offset(start)
       .limit(limit)
       .execute();

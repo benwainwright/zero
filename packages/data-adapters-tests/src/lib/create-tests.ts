@@ -5,6 +5,7 @@ import {
   testBankConnectionRepository,
   testSyncDetailsRepository,
   testTransactionRepository,
+  testCategoryRepository,
 } from '@tests';
 
 import { createRepo } from './create-repo.ts';
@@ -132,12 +133,32 @@ export const createTests = async ({
     testSyncDetailsRepository(syncDetailsRepository);
   });
 
+  const { creator: categoryRepoCreator, after: afterCategoryRepo } =
+    await createRepo({
+      repoKey: {
+        repo: 'CategoryRepository',
+        writer: 'CategoryWriter',
+        userRepo: 'UserWriter',
+      },
+      modules,
+      createCallback,
+      afterCallback,
+    });
+
+  describe('the category repo', () => {
+    afterEach(async () => {
+      await afterCategoryRepo();
+    });
+    testCategoryRepository(categoryRepoCreator);
+  });
+
   const { creator: transactionRepoCreator, after: afterTxRepoTests } =
     await createRepo({
       repoKey: {
         repo: 'TransactionRepository',
         writer: 'TransactionWriter',
         userRepo: 'UserWriter',
+        categories: 'CategoryWriter',
         accountRepo: 'AccountWriter',
       },
       modules,

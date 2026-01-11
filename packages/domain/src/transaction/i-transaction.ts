@@ -1,3 +1,4 @@
+import { Category, categorySchema } from '@category';
 import z from 'zod';
 
 export type ITransaction = z.output<typeof transactionSchema>;
@@ -12,5 +13,7 @@ export const transactionSchema = z.object({
 
   payee: z.string(),
   amount: z.number(),
-  categoryId: z.string().optional(),
+  category: categorySchema
+    .transform((item) => Category.reconstitute(item))
+    .optional(),
 });

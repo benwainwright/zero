@@ -1,4 +1,4 @@
-import { CurrentUserContext, useEvents } from '@zero/react-api';
+import { CurrentUserContext } from '@zero/react-api';
 import { type ReactNode, useContext } from 'react';
 import { Navigate } from 'react-router';
 import { routesList } from '@config';
@@ -18,9 +18,6 @@ export const Page = ({
   title,
   headerActions,
 }: PageProps): ReactNode => {
-  useEvents((event) => {
-    console.log(event);
-  });
   const { user, initialLoadComplete } = useContext(CurrentUserContext);
   const routeConfig = routesList[routeName];
   if (!routeConfig) {

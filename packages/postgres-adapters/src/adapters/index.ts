@@ -5,3 +5,4 @@ export { PostgresSyncDetailsRepository } from './postgres-sync-details-repositor
 export { PostgresTransactionRepository } from './postgres-transaction-repository.ts';
 export { PostgresAccountRepository } from './postgress-accounts-repository.ts';
 export { PostgresUserRepository } from './postgres-user-repository.ts';
+export { PostgressCategoryRepository } from './postgress-category-repository.ts';

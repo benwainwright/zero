@@ -12,154 +12,115 @@ export const testUserAndRoleRepository = (
     unitOfWork: IUnitOfWork;
   }>
 ) => {
-  describe('the role repository', () => {
-    it('returns undefined if the role isnt found', async () => {
-      const { roleRepo, unitOfWork } = await create();
+  it('returns undefined if the role isnt found', async () => {
+    const { roleRepo, unitOfWork } = await create();
 
-      await unitOfWork.begin();
-      const result = await roleRepo.get('ben');
-      await unitOfWork.commit();
+    await unitOfWork.begin();
+    const result = await roleRepo.get('ben');
+    await unitOfWork.commit();
 
-      expect(result).toBeUndefined();
+    expect(result).toBeUndefined();
+  });
+
+  it('allows you to get a series of roles', async () => {
+    const { unitOfWork, roleRepo, roleWriter } = await create();
+
+    const adminRole = Role.reconstitute({
+      id: 'admin',
+      name: 'Administrator',
+      routes: ['all'],
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['all'],
+        },
+      ],
     });
 
-    it('allows you to get a series of roles', async () => {
-      const { unitOfWork, roleRepo, roleWriter } = await create();
-
-      const adminRole = Role.reconstitute({
-        id: 'admin',
-        name: 'Administrator',
-        routes: ['all'],
-        permissions: [
-          {
-            resource: '*',
-            action: 'ALLOW',
-            capabilities: ['all'],
-          },
-        ],
-      });
-
-      const userRole = Role.reconstitute({
-        id: 'user',
-        name: 'User',
-        routes: ['home'],
-        permissions: [
-          {
-            resource: '*',
-            action: 'ALLOW',
-            capabilities: ['self:update', 'self:read'],
-          },
-        ],
-      });
-
-      try {
-        await unitOfWork.begin();
-        await roleWriter.save(userRole);
-        await roleWriter.save(adminRole);
-        await unitOfWork.commit();
-      } catch (error) {
-        await unitOfWork.rollback();
-        console.log(error);
-      }
-
-      await unitOfWork.begin();
-      const roles = await roleRepo.list({ start: 0, limit: 30 });
-      await unitOfWork.commit();
-
-      expect(roles).toEqual(expect.arrayContaining([userRole, adminRole]));
+    const userRole = Role.reconstitute({
+      id: 'user',
+      name: 'User',
+      routes: ['home'],
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['self:update', 'self:read'],
+        },
+      ],
     });
 
-    it('can independently save and retreive roles', async () => {
-      const { unitOfWork, roleRepo, roleWriter } = await create();
-
-      const adminRole = Role.reconstitute({
-        id: 'admin',
-        name: 'Administrator',
-        routes: ['home'],
-        permissions: [
-          {
-            resource: '*',
-            action: 'ALLOW',
-            capabilities: ['all'],
-          },
-        ],
-      });
-
-      const userRole = Role.reconstitute({
-        id: 'user',
-        name: 'User',
-        routes: ['home', 'login'],
-        permissions: [
-          {
-            resource: '*',
-            action: 'ALLOW',
-            capabilities: ['self:update', 'self:read'],
-          },
-        ],
-      });
-
+    try {
       await unitOfWork.begin();
       await roleWriter.save(userRole);
       await roleWriter.save(adminRole);
       await unitOfWork.commit();
+    } catch (error) {
+      await unitOfWork.rollback();
+      console.log(error);
+    }
 
-      await unitOfWork.begin();
-      const roleOne = await roleRepo.get('user');
-      await unitOfWork.commit();
-      expect(roleOne).toEqual(userRole);
+    await unitOfWork.begin();
+    const roles = await roleRepo.list({ start: 0, limit: 30 });
+    await unitOfWork.commit();
 
-      await unitOfWork.begin();
-      const roleTwo = await roleRepo.get('admin');
-      await unitOfWork.commit();
-      expect(roleTwo).toEqual(adminRole);
-    });
-
-    it('can respect pagination when fetching many roles', async () => {
-      const { unitOfWork, roleRepo, roleWriter } = await create();
-
-      const roles = Array.from({ length: 8 }, (_, index) =>
-        Role.reconstitute({
-          routes: ['home'],
-          id: `role-${index}`,
-          name: `Role ${index}`,
-          permissions: [
-            {
-              resource: '*',
-              action: 'ALLOW',
-              capabilities: ['all'],
-            },
-          ],
-        })
-      );
-
-      await unitOfWork.begin();
-      for (const role of roles) {
-        await roleWriter.save(role);
-      }
-      await unitOfWork.commit();
-
-      await unitOfWork.begin();
-      const limitedRoles = await roleRepo.list({ start: 2, limit: 3 });
-      const overflowingRoles = await roleRepo.list({ start: 20, limit: 5 });
-      await unitOfWork.commit();
-
-      expect(limitedRoles).toHaveLength(3);
-      limitedRoles.forEach((role) =>
-        expect(roles.map((existingRole) => existingRole.id)).toContain(role.id)
-      );
-
-      expect(overflowingRoles).toHaveLength(0);
-    });
+    expect(roles).toEqual(expect.arrayContaining([userRole, adminRole]));
   });
 
-  describe('the user and role repositories', () => {
-    it('work correctly in coordination', async () => {
-      const { userRepo, unitOfWork, roleWriter, userWriter } = await create();
+  it('can independently save and retreive roles', async () => {
+    const { unitOfWork, roleRepo, roleWriter } = await create();
 
-      const adminRole = Role.reconstitute({
+    const adminRole = Role.reconstitute({
+      id: 'admin',
+      name: 'Administrator',
+      routes: ['home'],
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['all'],
+        },
+      ],
+    });
+
+    const userRole = Role.reconstitute({
+      id: 'user',
+      name: 'User',
+      routes: ['home', 'login'],
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['self:update', 'self:read'],
+        },
+      ],
+    });
+
+    await unitOfWork.begin();
+    await roleWriter.save(userRole);
+    await roleWriter.save(adminRole);
+    await unitOfWork.commit();
+
+    await unitOfWork.begin();
+    const roleOne = await roleRepo.get('user');
+    await unitOfWork.commit();
+    expect(roleOne).toEqual(userRole);
+
+    await unitOfWork.begin();
+    const roleTwo = await roleRepo.get('admin');
+    await unitOfWork.commit();
+    expect(roleTwo).toEqual(adminRole);
+  });
+
+  it('can respect pagination when fetching many roles', async () => {
+    const { unitOfWork, roleRepo, roleWriter } = await create();
+
+    const roles = Array.from({ length: 8 }, (_, index) =>
+      Role.reconstitute({
         routes: ['home'],
-        id: 'admin',
-        name: 'Administrator',
+        id: `role-${index}`,
+        name: `Role ${index}`,
         permissions: [
           {
             resource: '*',
@@ -167,124 +128,347 @@ export const testUserAndRoleRepository = (
             capabilities: ['all'],
           },
         ],
-      });
+      })
+    );
 
-      const userRole = Role.reconstitute({
-        routes: ['home'],
-        id: 'user',
-        name: 'User',
-        permissions: [
-          {
-            resource: '*',
-            action: 'ALLOW',
-            capabilities: ['self:update', 'self:read'],
-          },
-        ],
-      });
+    await unitOfWork.begin();
+    for (const role of roles) {
+      await roleWriter.save(role);
+    }
+    await unitOfWork.commit();
 
-      await unitOfWork.begin();
-      await roleWriter.save(userRole);
-      await roleWriter.save(adminRole);
-      await unitOfWork.commit();
+    await unitOfWork.begin();
+    const limitedRoles = await roleRepo.list({ start: 2, limit: 3 });
+    const overflowingRoles = await roleRepo.list({ start: 20, limit: 5 });
+    await unitOfWork.commit();
 
-      const data = User.reconstitute({
-        email: 'bwainwright28@gmail.com',
-        id: 'ben',
-        passwordHash:
-          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-        roles: [userRole.toObject(), adminRole.toObject()],
-      });
+    expect(limitedRoles).toHaveLength(3);
+    limitedRoles.forEach((role) =>
+      expect(roles.map((existingRole) => existingRole.id)).toContain(role.id)
+    );
 
-      try {
-        await unitOfWork.begin();
-        await userWriter.save(data);
-        await unitOfWork.commit();
-      } catch (error) {
-        console.log(error);
-        await unitOfWork.rollback();
-      }
-
-      try {
-        await unitOfWork.begin();
-        const user = await userRepo.get(data.id);
-        await unitOfWork.commit();
-
-        expect(user?.roles).toEqual(expect.arrayContaining(data.roles));
-        expect(user?.id).toEqual(data.id);
-        expect(user?.email).toEqual(data.email);
-        expect(user?.passwordHash).toEqual(data.passwordHash);
-      } catch (error) {
-        await unitOfWork.rollback();
-        console.log(error);
-        assert.fail('Failed');
-      }
-    });
+    expect(overflowingRoles).toHaveLength(0);
   });
 
-  describe('the user repository', () => {
-    it('can delete a user', async () => {
-      const { userRepo, unitOfWork, userWriter } = await create();
+  it('work correctly in coordination', async () => {
+    const { userRepo, unitOfWork, roleWriter, userWriter } = await create();
 
-      const data = User.reconstitute({
-        email: 'bwainwright28@gmail.com',
-        id: 'ben',
-        passwordHash:
-          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-        roles: [],
-      });
-
-      await unitOfWork.begin();
-      await userWriter.save(data);
-      await unitOfWork.commit();
-
-      await unitOfWork.begin();
-      await userWriter.delete(data);
-      await unitOfWork.commit();
-
-      await unitOfWork.begin();
-      const result = await userRepo.get('ben');
-      await unitOfWork.commit();
-
-      expect(result).toEqual(undefined);
+    const adminRole = Role.reconstitute({
+      routes: ['home'],
+      id: 'admin',
+      name: 'Administrator',
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['all'],
+        },
+      ],
     });
 
-    it('can update and return a user', async () => {
-      const { userRepo, unitOfWork, userWriter } = await create();
+    const userRole = Role.reconstitute({
+      routes: ['home'],
+      id: 'user',
+      name: 'User',
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['self:update', 'self:read'],
+        },
+      ],
+    });
 
-      const data = User.reconstitute({
-        email: 'bwainwright28@gmail.com',
-        id: 'ben',
-        passwordHash:
-          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-        roles: [],
-      });
+    await unitOfWork.begin();
+    await roleWriter.save(userRole);
+    await roleWriter.save(adminRole);
+    await unitOfWork.commit();
 
+    const data = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [userRole.toObject(), adminRole.toObject()],
+    });
+
+    try {
       await unitOfWork.begin();
       await userWriter.save(data);
       await unitOfWork.commit();
+    } catch (error) {
+      console.log(error);
+      await unitOfWork.rollback();
+    }
 
+    try {
       await unitOfWork.begin();
       const user = await userRepo.get(data.id);
+      await unitOfWork.commit();
+
+      expect(user?.roles).toEqual(expect.arrayContaining(data.roles));
+      expect(user?.id).toEqual(data.id);
+      expect(user?.email).toEqual(data.email);
+      expect(user?.passwordHash).toEqual(data.passwordHash);
+    } catch (error) {
+      await unitOfWork.rollback();
+      console.log(error);
+      assert.fail('Failed');
+    }
+  });
+
+  it('can delete a user', async () => {
+    const { userRepo, unitOfWork, userWriter } = await create();
+
+    const data = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+
+    await unitOfWork.begin();
+    await userWriter.save(data);
+    await unitOfWork.commit();
+
+    await unitOfWork.begin();
+    await userWriter.delete(data);
+    await unitOfWork.commit();
+
+    await unitOfWork.begin();
+    const result = await userRepo.get('ben');
+    await unitOfWork.commit();
+
+    expect(result).toEqual(undefined);
+  });
+
+  it('can update and return a user', async () => {
+    const { userRepo, unitOfWork, userWriter } = await create();
+
+    const data = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+
+    await unitOfWork.begin();
+    await userWriter.save(data);
+    await unitOfWork.commit();
+
+    await unitOfWork.begin();
+    const user = await userRepo.get(data.id);
+    await unitOfWork.commit();
+
+    expect(user).toEqual(data);
+  });
+
+  it('replaces role assignments when updating a user', async () => {
+    const { userRepo, unitOfWork, userWriter, roleWriter } = await create();
+
+    const adminRole = Role.reconstitute({
+      routes: ['home'],
+      id: 'admin',
+      name: 'Administrator',
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['all'],
+        },
+      ],
+    });
+
+    const viewerRole = Role.reconstitute({
+      routes: ['home'],
+      id: 'viewer',
+      name: 'Viewer',
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['user:read'],
+        },
+      ],
+    });
+
+    console.log('foo');
+
+    await unitOfWork.begin();
+    console.log('foo-1');
+    await roleWriter.save(adminRole);
+    console.log('foo2');
+    await roleWriter.save(viewerRole);
+    console.log('foo4');
+    await unitOfWork.commit();
+
+    console.log('foo5');
+    const originalUser = User.reconstitute({
+      email: 'user@example.com',
+      id: 'changing-roles',
+      passwordHash: 'hash',
+      roles: [adminRole.toObject()],
+    });
+
+    const updatedUser = User.reconstitute({
+      ...originalUser.toObject(),
+      roles: [viewerRole.toObject()],
+    });
+
+    try {
+      await unitOfWork.begin();
+      await userWriter.save(originalUser);
+      await unitOfWork.commit();
+
+      await unitOfWork.begin();
+      await userWriter.update(updatedUser);
+      await unitOfWork.commit();
+    } catch (error) {
+      console.log(error);
+      await unitOfWork.rollback();
+    }
+
+    await unitOfWork.begin();
+    const retrieved = await userRepo.get(updatedUser.id);
+    await unitOfWork.commit();
+
+    expect(retrieved?.roles).toEqual([viewerRole]);
+    expect(retrieved?.roles).not.toEqual(originalUser.roles);
+  });
+
+  it('if someone tries to insert an email twice in a tx will fail due to uniqueness constraint and rollback the tx', async () => {
+    const { userRepo, unitOfWork, userWriter } = await create();
+
+    const data = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+
+    // email MUST be unique
+    const data2 = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'another-ben',
+      passwordHash: 'foo',
+      roles: [],
+    });
+
+    try {
+      await unitOfWork.begin();
+      await userWriter.save(data);
+      await userWriter.save(data2);
+      await unitOfWork.commit();
+    } catch {
+      // This is fine. I just want to test that there is no users inserted
+
+      await unitOfWork.rollback();
+    }
+
+    await unitOfWork.begin();
+    const user = await userRepo.get(data.id);
+    await unitOfWork.commit();
+
+    expect(user).toEqual(undefined);
+  });
+
+  it('rolls back conflicting updates that violate unique email constraints', async () => {
+    const { userRepo, unitOfWork, userWriter } = await create();
+
+    const userOne = User.reconstitute({
+      email: 'first@example.com',
+      id: 'first',
+      passwordHash: 'hash',
+      roles: [],
+    });
+
+    const userTwo = User.reconstitute({
+      email: 'second@example.com',
+      id: 'second',
+      passwordHash: 'hash',
+      roles: [],
+    });
+
+    await unitOfWork.begin();
+    await userWriter.save(userOne);
+    await userWriter.save(userTwo);
+    await unitOfWork.commit();
+
+    const conflictingUserTwo = User.reconstitute({
+      ...userTwo.toObject(),
+      email: userOne.email,
+    });
+
+    try {
+      await unitOfWork.begin();
+      await userWriter.save(conflictingUserTwo);
+      await unitOfWork.commit();
+    } catch {
+      await unitOfWork.rollback();
+    }
+
+    await unitOfWork.begin();
+    const persistedUserOne = await userRepo.get(userOne.id);
+    const persistedUserTwo = await userRepo.get(userTwo.id);
+    await unitOfWork.commit();
+
+    expect(persistedUserOne?.email).toBe(userOne.email);
+    expect(persistedUserTwo?.email).toBe(userTwo.email);
+  });
+
+  describe('requireUser', () => {
+    it('returns a user if present', async () => {
+      const { userRepo, unitOfWork, userWriter } = await create();
+
+      const data = User.reconstitute({
+        email: 'bwainwright28@gmail.com',
+        id: 'ben',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
+
+      await unitOfWork.begin();
+      await userWriter.save(data);
+      await unitOfWork.commit();
+
+      await unitOfWork.begin();
+      const user = await userRepo.require('ben');
       await unitOfWork.commit();
 
       expect(user).toEqual(data);
     });
 
-    it('replaces role assignments when updating a user', async () => {
-      const { userRepo, unitOfWork, userWriter, roleWriter } = await create();
+    it('throws if not present', async () => {
+      const { userRepo, unitOfWork, userWriter } = await create();
 
-      const adminRole = Role.reconstitute({
-        routes: ['home'],
-        id: 'admin',
-        name: 'Administrator',
-        permissions: [
-          {
-            resource: '*',
-            action: 'ALLOW',
-            capabilities: ['all'],
-          },
-        ],
+      const data = User.reconstitute({
+        email: 'bwainwright28@gmail.com',
+        id: 'ben',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
       });
+
+      await unitOfWork.begin();
+      await userWriter.save(data);
+      await unitOfWork.commit();
+
+      await expect(userRepo.require('another-user')).rejects.toThrow();
+    });
+  });
+
+  describe('requireRole', () => {
+    it('throws an error one is not present', async () => {
+      const { roleRepo } = await create();
+
+      await expect(roleRepo.require('viewer')).rejects.toThrow();
+    });
+    it('returns a role if one is present', async () => {
+      const { roleRepo, unitOfWork, roleWriter } = await create();
 
       const viewerRole = Role.reconstitute({
         routes: ['home'],
@@ -299,51 +483,17 @@ export const testUserAndRoleRepository = (
         ],
       });
 
-      console.log('foo');
-
       await unitOfWork.begin();
-      console.log('foo-1');
-      await roleWriter.save(adminRole);
-      console.log('foo2');
       await roleWriter.save(viewerRole);
-      console.log('foo4');
       await unitOfWork.commit();
-
-      console.log('foo5');
-      const originalUser = User.reconstitute({
-        email: 'user@example.com',
-        id: 'changing-roles',
-        passwordHash: 'hash',
-        roles: [adminRole.toObject()],
-      });
-
-      const updatedUser = User.reconstitute({
-        ...originalUser.toObject(),
-        roles: [viewerRole.toObject()],
-      });
-
-      try {
-        await unitOfWork.begin();
-        await userWriter.save(originalUser);
-        await unitOfWork.commit();
-
-        await unitOfWork.begin();
-        await userWriter.update(updatedUser);
-        await unitOfWork.commit();
-      } catch (error) {
-        console.log(error);
-        await unitOfWork.rollback();
-      }
-
       await unitOfWork.begin();
-      const retrieved = await userRepo.get(updatedUser.id);
+      expect(await roleRepo.require('viewer')).toEqual(viewerRole);
       await unitOfWork.commit();
-
-      expect(retrieved?.roles).toEqual([viewerRole]);
-      expect(retrieved?.roles).not.toEqual(originalUser.roles);
     });
+  });
 
-    it('if someone tries to insert an email twice in a tx will fail due to uniqueness constraint and rollback the tx', async () => {
+  describe('getMany', () => {
+    it('can return many users', async () => {
       const { userRepo, unitOfWork, userWriter } = await create();
 
       const data = User.reconstitute({
@@ -354,230 +504,74 @@ export const testUserAndRoleRepository = (
         roles: [],
       });
 
-      // email MUST be unique
       const data2 = User.reconstitute({
-        email: 'bwainwright28@gmail.com',
-        id: 'another-ben',
-        passwordHash: 'foo',
+        email: 'a@b.com',
+        id: 'ben2',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
         roles: [],
       });
 
-      try {
-        await unitOfWork.begin();
-        await userWriter.save(data);
-        await userWriter.save(data2);
-        await unitOfWork.commit();
-      } catch {
-        // This is fine. I just want to test that there is no users inserted
-
-        await unitOfWork.rollback();
-      }
+      const data3 = User.reconstitute({
+        email: 'a@c.com',
+        id: 'ben3',
+        passwordHash:
+          '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+        roles: [],
+      });
 
       await unitOfWork.begin();
-      const user = await userRepo.get(data.id);
+      await userWriter.save(data);
+      await userWriter.save(data2);
+      await userWriter.save(data3);
       await unitOfWork.commit();
 
-      expect(user).toEqual(undefined);
+      await unitOfWork.begin();
+      const users = await userRepo.list({ start: 0, limit: 30 });
+      await unitOfWork.commit();
+
+      expect(users).toEqual(expect.arrayContaining([data, data2, data3]));
     });
 
-    it('rolls back conflicting updates that violate unique email constraints', async () => {
+    it('respects limits when returning many users', async () => {
       const { userRepo, unitOfWork, userWriter } = await create();
 
-      const userOne = User.reconstitute({
-        email: 'first@example.com',
-        id: 'first',
-        passwordHash: 'hash',
-        roles: [],
-      });
-
-      const userTwo = User.reconstitute({
-        email: 'second@example.com',
-        id: 'second',
-        passwordHash: 'hash',
-        roles: [],
-      });
+      const manyUsers = Array.from({ length: 45 }, (_, index) =>
+        User.reconstitute({
+          email: `bulk-${index}@example.com`,
+          id: `bulk-${index}`,
+          passwordHash: 'hash',
+          roles: [],
+        })
+      );
 
       await unitOfWork.begin();
-      await userWriter.save(userOne);
-      await userWriter.save(userTwo);
-      await unitOfWork.commit();
-
-      const conflictingUserTwo = User.reconstitute({
-        ...userTwo.toObject(),
-        email: userOne.email,
-      });
-
-      try {
-        await unitOfWork.begin();
-        await userWriter.save(conflictingUserTwo);
-        await unitOfWork.commit();
-      } catch {
-        await unitOfWork.rollback();
+      for (const user of manyUsers) {
+        await userWriter.save(user);
       }
-
-      await unitOfWork.begin();
-      const persistedUserOne = await userRepo.get(userOne.id);
-      const persistedUserTwo = await userRepo.get(userTwo.id);
       await unitOfWork.commit();
 
-      expect(persistedUserOne?.email).toBe(userOne.email);
-      expect(persistedUserTwo?.email).toBe(userTwo.email);
-    });
-
-    describe('requireUser', () => {
-      it('returns a user if present', async () => {
-        const { userRepo, unitOfWork, userWriter } = await create();
-
-        const data = User.reconstitute({
-          email: 'bwainwright28@gmail.com',
-          id: 'ben',
-          passwordHash:
-            '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-          roles: [],
-        });
-
-        await unitOfWork.begin();
-        await userWriter.save(data);
-        await unitOfWork.commit();
-
-        await unitOfWork.begin();
-        const user = await userRepo.require('ben');
-        await unitOfWork.commit();
-
-        expect(user).toEqual(data);
-      });
-
-      it('throws if not present', async () => {
-        const { userRepo, unitOfWork, userWriter } = await create();
-
-        const data = User.reconstitute({
-          email: 'bwainwright28@gmail.com',
-          id: 'ben',
-          passwordHash:
-            '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-          roles: [],
-        });
-
-        await unitOfWork.begin();
-        await userWriter.save(data);
-        await unitOfWork.commit();
-
-        await expect(userRepo.require('another-user')).rejects.toThrow();
-      });
-    });
-
-    describe('requireRole', () => {
-      it('throws an error one is not present', async () => {
-        const { roleRepo } = await create();
-
-        await expect(roleRepo.require('viewer')).rejects.toThrow();
-      });
-      it('returns a role if one is present', async () => {
-        const { roleRepo, unitOfWork, roleWriter } = await create();
-
-        const viewerRole = Role.reconstitute({
-          routes: ['home'],
-          id: 'viewer',
-          name: 'Viewer',
-          permissions: [
-            {
-              resource: '*',
-              action: 'ALLOW',
-              capabilities: ['user:read'],
-            },
-          ],
-        });
-
-        await unitOfWork.begin();
-        await roleWriter.save(viewerRole);
-        await unitOfWork.commit();
-        await unitOfWork.begin();
-        expect(await roleRepo.require('viewer')).toEqual(viewerRole);
-        await unitOfWork.commit();
-      });
-    });
-
-    describe('getMany', () => {
-      it('can return many users', async () => {
-        const { userRepo, unitOfWork, userWriter } = await create();
-
-        const data = User.reconstitute({
-          email: 'bwainwright28@gmail.com',
-          id: 'ben',
-          passwordHash:
-            '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-          roles: [],
-        });
-
-        const data2 = User.reconstitute({
-          email: 'a@b.com',
-          id: 'ben2',
-          passwordHash:
-            '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-          roles: [],
-        });
-
-        const data3 = User.reconstitute({
-          email: 'a@c.com',
-          id: 'ben3',
-          passwordHash:
-            '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
-          roles: [],
-        });
-
-        await unitOfWork.begin();
-        await userWriter.save(data);
-        await userWriter.save(data2);
-        await userWriter.save(data3);
-        await unitOfWork.commit();
-
-        await unitOfWork.begin();
-        const users = await userRepo.list({ start: 0, limit: 30 });
-        await unitOfWork.commit();
-
-        expect(users).toEqual(expect.arrayContaining([data, data2, data3]));
-      });
-
-      it('respects limits when returning many users', async () => {
-        const { userRepo, unitOfWork, userWriter } = await create();
-
-        const manyUsers = Array.from({ length: 45 }, (_, index) =>
-          User.reconstitute({
-            email: `bulk-${index}@example.com`,
-            id: `bulk-${index}`,
-            passwordHash: 'hash',
-            roles: [],
-          })
-        );
-
-        await unitOfWork.begin();
-        for (const user of manyUsers) {
-          await userWriter.save(user);
-        }
-        await unitOfWork.commit();
-
-        await unitOfWork.begin();
-        const offsetLimitedUsers = await userRepo.list({
-          start: 40,
-          limit: 10,
-        });
-        await unitOfWork.commit();
-
-        expect(offsetLimitedUsers).toHaveLength(5);
-        offsetLimitedUsers.forEach((user) =>
-          expect(manyUsers.map((existing) => existing.id)).toContain(user.id)
-        );
-      });
-    });
-
-    it('returns undefined if not present', async () => {
-      const { userRepo, unitOfWork } = await create();
-
       await unitOfWork.begin();
-      const user = await userRepo.get('foo');
+      const offsetLimitedUsers = await userRepo.list({
+        start: 40,
+        limit: 10,
+      });
       await unitOfWork.commit();
 
-      expect(user).toBeUndefined();
+      expect(offsetLimitedUsers).toHaveLength(5);
+      offsetLimitedUsers.forEach((user) =>
+        expect(manyUsers.map((existing) => existing.id)).toContain(user.id)
+      );
     });
+  });
+
+  it('returns undefined if not present', async () => {
+    const { userRepo, unitOfWork } = await create();
+
+    await unitOfWork.begin();
+    const user = await userRepo.get('foo');
+    await unitOfWork.commit();
+
+    expect(user).toBeUndefined();
   });
 };

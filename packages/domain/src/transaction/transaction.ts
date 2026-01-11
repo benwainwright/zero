@@ -1,5 +1,6 @@
 import { DomainModel, type IOwnedBy } from '@core';
 import { transactionSchema, type ITransaction } from './i-transaction.ts';
+import type { Category } from '@category';
 
 export class Transaction
   extends DomainModel<ITransaction>
@@ -15,7 +16,7 @@ export class Transaction
       date: this.date,
       payee: this.payee,
       amount: this.amount,
-      categoryId: this.categoryId,
+      category: this.category,
     };
   }
 
@@ -42,9 +43,9 @@ export class Transaction
     return this._payee;
   }
 
-  public _categoryId: string | undefined;
-  public get categoryId() {
-    return this._categoryId;
+  public _category: Category | undefined;
+  public get category() {
+    return this._category;
   }
 
   private constructor(config: ITransaction) {
@@ -55,7 +56,7 @@ export class Transaction
     this._payee = config.payee;
     this._accountId = config.accountId;
     this._date = config.date;
-    this._categoryId = config.categoryId;
+    this._category = config.category;
   }
 
   public delete() {
@@ -65,7 +66,7 @@ export class Transaction
   public update(config: Partial<Omit<ITransaction, 'id' | 'ownerId'>>) {
     const old = Transaction.reconstitute(this);
     this._amount = config.amount ?? this._amount;
-    this._categoryId = config.categoryId ?? this._categoryId;
+    this._category = config.category ?? this._category;
     this._accountId = config.accountId ?? this._accountId;
     this._date = config.date ?? this._date;
     this._payee = config.payee ?? this._payee;

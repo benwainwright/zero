@@ -5,3 +5,4 @@ export { SqliteBankConnectionRepository } from './sqlite-bank-connection-reposit
 export { SqliteOauthTokenRepository } from './sqlite-oauth-token-repository.ts';
 export { SqliteTransactionRepository } from './sqlite-transaction-repository.ts';
 export { SqliteAccountsRepository } from './sqlite-account-repository.ts';
+export { SqliteCategoryRepository } from './sqlite-category-repository.ts';
