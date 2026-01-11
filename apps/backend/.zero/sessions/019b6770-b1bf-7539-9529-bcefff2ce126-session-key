@@ -1,1 +1,0 @@
-{"roles":[{"routes":["all"],"id":"admin","name":"Admin","permissions":[{"capabilities":["all"],"action":"ALLOW","resource":"*"}]}],"id":"admin","passwordHash":"","email":"test@zero.com","$types":{"":"user"}}

@@ -3,6 +3,11 @@ import type { BankConnection, ITransaction } from '@zero/domain';
 export type AccountsCommands =
   | {
       id: string;
+      key: 'DeleteAuthLinkCommand';
+      params: undefined;
+    }
+  | {
+      id: string;
       key: 'SaveRequisitionAccountsCommand';
       params: undefined;
     }

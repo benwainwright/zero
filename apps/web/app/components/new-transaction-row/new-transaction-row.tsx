@@ -6,7 +6,7 @@ import {
   NumberInput,
   Table,
 } from '@mantine/core';
-import { DateInput, DatePickerInput } from '@mantine/dates';
+import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 
 interface RawTx {
@@ -27,6 +27,7 @@ export const NewTransactionRow = ({ open, form }: NewTransactionRowProps) => {
         <Table.Tr>
           <Table.Td>
             <DateInput
+              size="sm"
               style={{
                 minHeight: '1rem',
                 height: '1rem',
@@ -40,6 +41,7 @@ export const NewTransactionRow = ({ open, form }: NewTransactionRowProps) => {
           </Table.Td>
           <Table.Td>
             <Input
+              size="sm"
               variant="unstyled"
               style={{
                 minHeight: '1rem',
@@ -54,6 +56,7 @@ export const NewTransactionRow = ({ open, form }: NewTransactionRowProps) => {
           <Table.Td>
             <Group>
               <NumberInput
+                size="sm"
                 style={{
                   flexGrow: 2,
                   minHeight: '1rem',

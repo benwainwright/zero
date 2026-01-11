@@ -1,5 +1,5 @@
 import { inject } from '@core';
-import type { IObjectStorage } from '@zero/application-core';
+import type { ErrorHandler, IObjectStorage } from '@zero/application-core';
 import type { IResponseCache } from './i-response-cache.ts';
 import type { ILogger } from '@zero/bootstrap';
 import { injectable } from 'inversify';
@@ -15,11 +15,16 @@ export class ObjectStorageResponseCache implements IResponseCache<unknown> {
     private storage: IObjectStorage,
 
     @inject('Logger')
-    private logger: ILogger
+    private logger: ILogger,
+
+    @inject('ErrorHandler')
+    private errorHandler: ErrorHandler
   ) {
     // oxlint-disable eslint/no-misused-promises
     setInterval(async () => {
-      await this.prune();
+      await this.errorHandler.withErrorHandling(async () => {
+        await this.prune();
+      });
     }, 10 * 1000);
   }
 

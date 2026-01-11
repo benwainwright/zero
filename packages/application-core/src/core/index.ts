@@ -9,3 +9,4 @@ export { TransactionalQueryBus } from './transactional-query-bus.ts';
 export { AbstractQueryHandler } from './abstract-query-handler.ts';
 export { eventStager } from './repo-event-stager.ts';
 export { QueryBus } from './query-bus.ts';
+export { ErrorHandler } from './error-handler.ts';

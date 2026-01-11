@@ -1,9 +1,11 @@
 import { mock } from 'vitest-mock-extended';
 import { DeleteUserCommandHandler } from './delete-user-command-handler.ts';
 import { when } from 'vitest-when';
-import { getMockCommandContext } from '@test-helpers';
 import type { User } from '@zero/domain';
-import { buildInstance } from '@zero/test-helpers';
+import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
+import type { AuthCommands } from '@services';
+
+const getMockCommandContext = getCommandContextBuilder<AuthCommands>();
 
 describe('delete user command handler', () => {
   it('deletes the user if found', async () => {

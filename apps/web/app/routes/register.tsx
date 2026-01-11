@@ -3,7 +3,7 @@ import { useEvent, CurrentUserContext, useCommand } from '@zero/react-api';
 import { useContext, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 
-import { Button, Group, PasswordInput, TextInput } from '@mantine/core';
+import { Button, Group, PasswordInput, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 interface FormValues {
@@ -16,7 +16,7 @@ interface FormValues {
 export const Register = (): ReactNode => {
   const navigate = useNavigate();
   const { user, reload } = useContext(CurrentUserContext);
-  const { createAccount: createUser } = useCommand('CreateUserCommand');
+  const { execute: createUser } = useCommand('CreateUserCommand');
 
   const form = useForm({
     initialValues: {
@@ -48,38 +48,40 @@ export const Register = (): ReactNode => {
   return (
     <Page routeName="register">
       <form method="post" onSubmit={form.onSubmit(createUser)}>
-        <TextInput
-          label="Username"
-          placeholder=""
-          key={form.key('username')}
-          {...form.getInputProps('username')}
-        />
+        <Stack>
+          <TextInput
+            label="Username"
+            placeholder=""
+            key={form.key('username')}
+            {...form.getInputProps('username')}
+          />
 
-        <TextInput
-          label="Email"
-          type="email"
-          placeholder=""
-          key={form.key('email')}
-          {...form.getInputProps('email')}
-        />
+          <TextInput
+            label="Email"
+            type="email"
+            placeholder=""
+            key={form.key('email')}
+            {...form.getInputProps('email')}
+          />
 
-        <PasswordInput
-          label="Password"
-          placeholder=""
-          key={form.key('password')}
-          {...form.getInputProps('password')}
-        />
+          <PasswordInput
+            label="Password"
+            placeholder=""
+            key={form.key('password')}
+            {...form.getInputProps('password')}
+          />
 
-        <PasswordInput
-          label="Verify Password"
-          placeholder=""
-          key={form.key('validatePassword')}
-          {...form.getInputProps('validatePassword')}
-        />
+          <PasswordInput
+            label="Verify Password"
+            placeholder=""
+            key={form.key('validatePassword')}
+            {...form.getInputProps('validatePassword')}
+          />
 
-        <Group mt="md">
-          <Button type="submit">Submit</Button>
-        </Group>
+          <Group mt="md">
+            <Button type="submit">Submit</Button>
+          </Group>
+        </Stack>
       </form>
     </Page>
   );

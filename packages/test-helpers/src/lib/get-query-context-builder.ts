@@ -1,4 +1,4 @@
-import type { IPickQuery, IQuery } from '@zero/application-core';
+import type { IEventBus, IPickQuery, IQuery } from '@zero/application-core';
 import { User } from '@zero/domain';
 import { mock } from 'vitest-mock-extended';
 
@@ -10,6 +10,7 @@ export const getQueryContextBuilder =
     user?: string
   ): {
     authContext: User | undefined;
+    events: IEventBus;
     query: {
       id: string;
       key: TKey;
@@ -21,5 +22,6 @@ export const getQueryContextBuilder =
     return {
       query: { id: 'foo-bar', key: key, params },
       authContext,
+      events: mock<IEventBus>(),
     };
   };

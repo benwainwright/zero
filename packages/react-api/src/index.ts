@@ -8,11 +8,13 @@ export {
   useEvents,
   useOpenSocket,
   useQuery,
+  useSingleQuery,
   useRoles,
   useRole,
   useAccount,
   useAccounts,
   useTransactions,
+  useBankConnection,
 } from '@hooks';
 
 export {

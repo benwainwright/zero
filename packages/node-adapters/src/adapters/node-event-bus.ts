@@ -82,7 +82,7 @@ export class NodeEventBus<TEvent> implements IEventBus<TEvent> {
   }
 
   public emit<TKey extends keyof TEvent>(key: TKey, data: TEvent[TKey]) {
-    this.logger.info(`Event emitted: ${String(key)}`, LOG_CONTEXT);
+    this.logger.info(`Event emitted: ${String(key)}`, { ...LOG_CONTEXT, data });
     this.listener.emit(this.namespace, { key, data });
     this.parent?.emit(key, data);
   }

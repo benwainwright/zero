@@ -2,8 +2,9 @@ import {
   type IEventBus,
   type IAllEvents,
   type IApplicationTypes,
+  type ErrorHandler,
 } from '@zero/application-core';
-import { AbstractError, type ILogger } from '@zero/bootstrap';
+import { type ILogger } from '@zero/bootstrap';
 import { Serialiser } from '@zero/serialiser';
 import { injectable } from 'inversify';
 import { WebSocket } from 'ws';
@@ -24,27 +25,34 @@ export class ServerSocketClient {
     @inject('EventBus')
     private eventBus: IEventBus<IAllEvents & IQueryResponseEvent>,
 
+    @inject('ErrorHandler')
+    private errorHandler: ErrorHandler,
+
     @inject('Logger')
     private logger: ILogger
   ) {}
 
   public onConnect(socket: WebSocket) {
-    this.logger.debug(`Socket connected`, LOG_CONTEXT);
-    this.eventBus.onAll((packet) => {
-      this.logger.debug(`Event recieved`, { ...LOG_CONTEXT, packet });
-      const serialiser = new Serialiser();
-      const toSend = serialiser.serialise(packet);
-      socket.send(toSend);
+    this.errorHandler.withErrorHandling(() => {
+      this.logger.debug(`Socket connected`, LOG_CONTEXT);
+      this.eventBus.onAll((packet) => {
+        this.logger.debug(`Event recieved`, { ...LOG_CONTEXT, packet });
+        const serialiser = new Serialiser();
+        const toSend = serialiser.serialise(packet);
+        socket.send(toSend);
+      });
     });
   }
 
   public onClose() {
-    this.eventBus.removeAll();
+    this.errorHandler.withErrorHandling(() => {
+      this.eventBus.removeAll();
+    });
   }
 
   public async onMessage(message: WebSocket.RawData) {
-    this.logger.silly(`Message received on socket`, LOG_CONTEXT);
-    try {
+    await this.errorHandler.withErrorHandling(async () => {
+      this.logger.silly(`Message received on socket`, LOG_CONTEXT);
       const serialiser = new Serialiser();
       const parsed = serialiser.deserialise(
         message.toString('utf-8')
@@ -58,31 +66,21 @@ export class ServerSocketClient {
       const commandBus = await this.container.getAsync('CommandBus');
       const queryBus = await this.container.getAsync('QueryBus');
 
-      if (parsed.type === 'command') {
-        await commandBus.execute(parsed.packet);
-      } else {
-        const response = await queryBus.execute(parsed.packet);
-        this.eventBus.emit('QueryResponseEvent', {
-          id: parsed.packet.id,
-          data: response,
-        });
+      switch (parsed.type) {
+        case 'command':
+          await commandBus.execute(parsed.packet);
+          break;
+        case 'query':
+          {
+            const response = await queryBus.execute(parsed.packet);
+            this.eventBus.emit('QueryResponseEvent', {
+              id: parsed.packet.id,
+              data: response,
+            });
+          }
+          break;
+        case 'subscibe':
       }
-    } catch (error) {
-      if (error instanceof AbstractError) {
-        this.logger.error(`${error.message}, ${String(error.stack)}`, {
-          ...LOG_CONTEXT,
-          error,
-        });
-        error.handle(this.eventBus);
-        return;
-      } else if (error instanceof Error) {
-        this.logger.error(`${error.message}, ${String(error.stack)}`, {
-          ...LOG_CONTEXT,
-          error,
-        });
-      } else {
-        this.logger.error(String(error), { ...LOG_CONTEXT, error });
-      }
-    }
+    });
   }
 }

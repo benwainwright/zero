@@ -1,12 +1,15 @@
-import { buildQueryHandler, getMockQueryContext } from '@test-helpers';
 import { GetRoleQueryHandler } from './get-role-query-handler.ts';
 import { when } from 'vitest-when';
 import { Role } from '@zero/domain';
 import { mock } from 'vitest-mock-extended';
+import { buildInstance, getQueryContextBuilder } from '@zero/test-helpers';
+import type { AuthQueries } from '@services';
+
+const getMockQueryContext = getQueryContextBuilder<AuthQueries>();
 
 describe('get role query handler', () => {
   it('returns the role from the repo', async () => {
-    const { handler, roleRepo } = buildQueryHandler(GetRoleQueryHandler);
+    const [handler, roleRepo] = await buildInstance(GetRoleQueryHandler);
 
     const context = getMockQueryContext('GetRole', { id: 'role' }, 'ben');
 

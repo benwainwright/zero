@@ -9,7 +9,7 @@ export const Roles = () => {
     <Page routeName="roles">
       <Loader data={roles}>
         {(data) => (
-          <Table>
+          <Table verticalSpacing={'sm'}>
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Name</Table.Th>

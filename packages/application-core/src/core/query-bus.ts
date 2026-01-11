@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import { inject, multiInject } from './typed-inject.ts';
 import type { AbstractQueryHandler } from './abstract-query-handler.ts';
 import type { IQuery } from '@types';
-import type { ICurrentUserCache, IQueryBus } from '@ports';
+import type { ICurrentUserCache, IEventBus, IQueryBus } from '@ports';
 import { AppError } from '@errors';
 
 @injectable()
@@ -12,7 +12,10 @@ export class QueryBus<IQueries extends IQuery<string>> implements IQueryBus {
     private readonly handlers: AbstractQueryHandler<IQueries, string>[],
 
     @inject('CurrentUserCache')
-    private readonly userStore: ICurrentUserCache
+    private readonly userStore: ICurrentUserCache,
+
+    @inject('EventBus')
+    private readonly events: IEventBus
   ) {}
 
   public async execute<TQuery extends IQuery<string>>(
@@ -23,6 +26,7 @@ export class QueryBus<IQueries extends IQuery<string>> implements IQueryBus {
       const result = await handler.tryHandle({
         query,
         authContext: currentUser,
+        events: this.events,
       });
       if (result.handled) {
         return result.response;

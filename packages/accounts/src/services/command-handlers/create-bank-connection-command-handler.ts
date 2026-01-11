@@ -1,3 +1,4 @@
+import { BANK_AUTH_LINK_STORAGE_KEY } from '@constants';
 import { inject } from '@core';
 import type { IInstitutionAuthPageLinkFetcher } from '@ports';
 import type { AccountsCommands, OpenBankingTokenManager } from '@services';
@@ -56,12 +57,14 @@ export class CreateBankConnectionCommandHandler extends AbstractCommandHandler<
     this.grants.assertLogin(authContext);
 
     const token = await this.tokenManager.getToken(authContext.id);
+
     const { url, requsitionId } = await this.authLinkFetcher.getLink(
       connection,
       token
     );
+
     connection.saveRequisitionId(requsitionId);
-    await this.store.set('bank-auth-link', authContext.id, url);
+    await this.store.set(BANK_AUTH_LINK_STORAGE_KEY, authContext.id, url);
     await this.bankConnectionRepository.save(connection);
   }
 }

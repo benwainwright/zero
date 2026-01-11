@@ -11,18 +11,34 @@ import {
   ListUserAccountsQueryHandler,
   UpdateAccountCommandHandler,
   UpdateTransactionCommandHandler,
+  CheckBankConnectionQueryHandler,
+  CreateBankConnectionCommandHandler,
+  FetchOpenBankingInstitutionListCommandHandler,
+  GetBankAuthLinkQueryHandler,
+  GetOpenBankingInstitutionListQueryHandler,
+  DeleteAuthLinkCommandHandler,
+  OpenBankingTokenManager,
 } from '@services';
 
 export const accountsModule: IModule<
   IAccountsTypes & IApplicationTypes
 > = async ({ bind }) => {
+  bind('OpenBankingTokenManager').to(OpenBankingTokenManager);
+
   bind('CommandHandler').to(CreateAccountCommandHandler);
   bind('CommandHandler').to(DeleteAccountCommandHandler);
   bind('CommandHandler').to(UpdateAccountCommandHandler);
   bind('CommandHandler').to(CreateTransactionCommandHandler);
   bind('CommandHandler').to(UpdateTransactionCommandHandler);
   bind('CommandHandler').to(DeleteTransactionCommandHandler);
+  bind('CommandHandler').to(CreateBankConnectionCommandHandler);
+  bind('CommandHandler').to(FetchOpenBankingInstitutionListCommandHandler);
+  bind('CommandHandler').to(DeleteAuthLinkCommandHandler);
+
   bind('QueryHandler').to(ListTransactionsQueryHandler);
   bind('QueryHandler').to(ListUserAccountsQueryHandler);
   bind('QueryHandler').to(GetAccountQueryHandler);
+  bind('QueryHandler').to(CheckBankConnectionQueryHandler);
+  bind('QueryHandler').to(GetBankAuthLinkQueryHandler);
+  bind('QueryHandler').to(GetOpenBankingInstitutionListQueryHandler);
 };

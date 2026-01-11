@@ -12,7 +12,7 @@ export const integrationsModule: IModule<
 > = async ({ bind, logger, configValue }) => {
   logger.info(`Initialising integrations module`, LOG_CONTEXT);
 
-  bind('BankConnectionCreator').to(GocardlessClient);
+  bind('InstitutionListFetcher').to(GocardlessClient);
   bind('BankConnectionTokenFetcher').to(GocardlessClient);
   bind('InstitutionAuthPageLinkFetcher').to(GocardlessClient);
   bind('RequestionAccountFetcher').to(GocardlessClient);

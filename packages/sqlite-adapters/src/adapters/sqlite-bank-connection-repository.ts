@@ -1,5 +1,5 @@
 import { inject, type DB } from '@core';
-import type { IInstitutionListFetcher } from '@zero/accounts';
+import type { IBankConnectionRepository } from '@zero/accounts';
 import { BankConnection } from '@zero/domain';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
@@ -10,7 +10,7 @@ import { BaseRepo } from './base-repo.ts';
 
 export class SqliteBankConnectionRepository
   extends BaseRepo<BankConnection, [string]>
-  implements IInstitutionListFetcher, IWriteRepository<BankConnection>
+  implements IBankConnectionRepository, IWriteRepository<BankConnection>
 {
   public constructor(
     @inject('KyselyTransactionManager')

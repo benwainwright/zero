@@ -2,7 +2,7 @@ import { mock } from 'vitest-mock-extended';
 import { AbstractCommandHandler } from './abstract-command-handler.ts';
 import { CommandBus } from './command-bus.ts';
 import type { ICommand } from '@types';
-import { type ICurrentUserCache } from '@ports';
+import type { IEventBus, ICurrentUserCache } from '@ports';
 import { when } from 'vitest-when';
 import type { User } from '@zero/domain';
 
@@ -15,7 +15,9 @@ describe('command bus', () => {
     const mockUser = mock<User>();
     when(cache.get).calledWith().thenResolve(mockUser);
 
-    const bus = new CommandBus([handlerOne, handlerTwo], cache);
+    const events = mock<IEventBus>();
+
+    const bus = new CommandBus([handlerOne, handlerTwo], cache, events);
 
     const mockCommand = mock<ICommand<string>>();
 
@@ -23,6 +25,7 @@ describe('command bus', () => {
       .calledWith({
         command: mockCommand,
         authContext: mockUser,
+        events,
       })
       .thenResolve(false);
 
@@ -30,6 +33,7 @@ describe('command bus', () => {
       .calledWith({
         command: mockCommand,
         authContext: mockUser,
+        events,
       })
       .thenResolve(true);
 

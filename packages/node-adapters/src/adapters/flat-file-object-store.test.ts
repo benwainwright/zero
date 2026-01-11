@@ -7,6 +7,38 @@ import { ConfigValue, type ILogger } from '@zero/bootstrap';
 
 describe('flat file object store', () => {
   describe('listKeys', () => {
+    it('returns a list of all the keys in a given namespace', async () => {
+      const folder = await mkdtemp(join(tmpdir(), 'zero-tests'));
+
+      const path = new ConfigValue(Promise.resolve(folder));
+
+      const logger = mock<ILogger>();
+
+      const store = new FlatFileObjectStore(path, logger);
+
+      await store.set('foo', 'bar', 'test-1');
+      await store.set('foo', 'bash', 'test-2');
+      await store.set('foo', 'bip', 'test-3');
+
+      const keys = await store.listKeys('foo');
+      expect(keys).toEqual(['bar', 'bash', 'bip']);
+    });
+
+    it('returns an empty array if there is no namespace', async () => {
+      const folder = await mkdtemp(join(tmpdir(), 'zero-tests'));
+
+      const path = new ConfigValue(Promise.resolve(folder));
+
+      const logger = mock<ILogger>();
+
+      const store = new FlatFileObjectStore(path, logger);
+
+      const keys = await store.listKeys('foo');
+      expect(keys).toEqual([]);
+    });
+  });
+
+  describe('get and set', () => {
     it('returns undefined if there was no namespace', async () => {
       const folder = await mkdtemp(join(tmpdir(), 'zero-tests'));
 
@@ -35,26 +67,6 @@ describe('flat file object store', () => {
 
       expect(result).toEqual(undefined);
     });
-
-    it('returns a list of all the keys in a given namespace', async () => {
-      const folder = await mkdtemp(join(tmpdir(), 'zero-tests'));
-
-      const path = new ConfigValue(Promise.resolve(folder));
-
-      const logger = mock<ILogger>();
-
-      const store = new FlatFileObjectStore(path, logger);
-
-      await store.set('foo', 'bar', 'test-1');
-      await store.set('foo', 'bash', 'test-2');
-      await store.set('foo', 'bip', 'test-3');
-
-      const keys = await store.listKeys('foo');
-      expect(keys).toEqual(['bar', 'bash', 'bip']);
-    });
-  });
-
-  describe('get and set', () => {
     it('undefined results in objects returning undefined', async () => {
       const folder = await mkdtemp(join(tmpdir(), 'zero-tests'));
 

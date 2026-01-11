@@ -20,9 +20,16 @@ export interface RouteSpec {
   publicOnly?: boolean;
   authFailRedirect: string;
   sidebarIcon?: ReactElement;
+  sidebarPosition?: number;
 }
 
 export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
+  bankConnection: {
+    component: 'routes/bank-connection.tsx',
+    path: 'bank-connection',
+    hideFromMenu: true,
+    authFailRedirect: '/login',
+  },
   accountTransactions: {
     component: 'routes/account-transactions.tsx',
     path: 'accounts/:accountId/transactions',
@@ -30,6 +37,7 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     hideFromMenu: true,
   },
   home: {
+    sidebarPosition: -100,
     component: 'routes/home.tsx',
     isIndex: true,
     authFailRedirect: '/login',
@@ -55,6 +63,7 @@ export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
     component: 'routes/logout.tsx',
     authFailRedirect: '/login',
     sidebarIcon: <IconLogout size={16} stroke={1.5} />,
+    sidebarPosition: 1000,
   },
   login: {
     component: 'routes/login.tsx',

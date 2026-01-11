@@ -1,10 +1,12 @@
 import { UpdateUserCommandHandler } from './update-user-command-handler.ts';
-import { getMockCommandContext } from '@test-helpers';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
 import type { Role, User } from '@zero/domain';
 import { UserNotFoundError } from '@core';
-import { buildInstance } from '@zero/test-helpers';
+import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
+import type { AuthCommands } from '@services';
+
+const getMockCommandContext = getCommandContextBuilder<AuthCommands>();
 
 describe('Update user command handler', () => {
   it('will throw an error if the user isnt found', async () => {

@@ -1,3 +1,4 @@
+import { BANK_AUTH_LINK_STORAGE_KEY } from '@constants';
 import { inject } from '@core';
 import type { AccountsQueries } from '@services';
 import {
@@ -35,7 +36,9 @@ export class GetBankAuthLinkQueryHandler extends AbstractQueryHandler<
     this.grants.requiresNoPermissions();
     this.grants.assertLogin(authContext);
 
-    return { url: await this.store.get('bank-auth-link', authContext.id) };
+    return {
+      url: await this.store.get(BANK_AUTH_LINK_STORAGE_KEY, authContext.id),
+    };
   }
   public override readonly name = 'GetBankAuthLinkQuery';
 }

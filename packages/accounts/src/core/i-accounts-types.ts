@@ -1,3 +1,4 @@
+import type { AccountsEvents } from '@core';
 import type {
   IAccountRepository,
   IInstitutionListFetcher,
@@ -12,7 +13,11 @@ import type {
   ITransactionRepository,
 } from '@ports';
 import type { OpenBankingTokenManager } from '@services';
-import type { IWriteRepository } from '@zero/application-core';
+import type {
+  IAllEvents,
+  IEventBus,
+  IWriteRepository,
+} from '@zero/application-core';
 import type {
   Account,
   BankConnection,
@@ -21,6 +26,7 @@ import type {
 } from '@zero/domain';
 
 export interface IAccountsTypes {
+  EventBus: IEventBus<IAllEvents & AccountsEvents>;
   OpenBankingAccountDetailsFetcher: IOpenBankingAccountDetailsFetcher;
   OpenBankingTokenManager: OpenBankingTokenManager;
   OauthTokenRepository: IOauthTokenRepository;

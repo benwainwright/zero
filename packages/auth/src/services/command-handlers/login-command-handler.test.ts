@@ -2,8 +2,10 @@ import { LoginCommandHandler } from './login-command-handler.ts';
 import { mock } from 'vitest-mock-extended';
 import { when } from 'vitest-when';
 import type { User } from '@zero/domain';
-import { buildCommandHandler, getMockCommandContext } from '@test-helpers';
-import { buildInstance } from '@zero/test-helpers';
+import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
+import type { AuthCommands } from '@services';
+
+const getMockCommandContext = getCommandContextBuilder<AuthCommands>();
 
 describe('login command handler', async () => {
   it('checks the password and sets the current user if it is successful', async () => {
@@ -60,8 +62,8 @@ describe('login command handler', async () => {
   });
 
   it('check does not set the current user if it doesnt exist and emits loginfailedevent', async () => {
-    const { handler, userRepo, eventBus, currentUserSetter } =
-      buildCommandHandler(LoginCommandHandler);
+    const [handler, userRepo, , currentUserSetter, eventBus] =
+      await buildInstance(LoginCommandHandler);
 
     const context = getMockCommandContext('LoginCommand', {
       username: 'ben',

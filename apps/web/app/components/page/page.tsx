@@ -1,8 +1,8 @@
-import { CurrentUserContext } from '@zero/react-api';
+import { CurrentUserContext, useEvents } from '@zero/react-api';
 import { type ReactNode, useContext } from 'react';
 import { Navigate } from 'react-router';
 import { routesList } from '@config';
-import { Box, Flex, Group, Paper, Stack, Title } from '@mantine/core';
+import { Box, Group, Paper, Title } from '@mantine/core';
 import { routeAvailable } from '@utils';
 
 interface PageProps {
@@ -18,6 +18,9 @@ export const Page = ({
   title,
   headerActions,
 }: PageProps): ReactNode => {
+  useEvents((event) => {
+    console.log(event);
+  });
   const { user, initialLoadComplete } = useContext(CurrentUserContext);
   const routeConfig = routesList[routeName];
   if (!routeConfig) {
@@ -45,7 +48,7 @@ export const Page = ({
           {headerActions}
         </Group>
       </Title>
-      <Paper shadow="sm" p="lg" mt="lg" withBorder>
+      <Paper shadow="sm" p="xl" mt="lg" withBorder>
         {children}
       </Paper>
     </>

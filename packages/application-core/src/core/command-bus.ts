@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import type { AbstractCommandHandler } from './abstract-command-handler.ts';
 import { inject, multiInject } from './typed-inject.ts';
-import type { ICommandBus, ICurrentUserCache } from '@ports';
+import type { ICommandBus, ICurrentUserCache, IEventBus } from '@ports';
 import type { ICommand } from '@types';
 import { AppError } from '@errors';
 
@@ -15,13 +15,22 @@ export class CommandBus implements ICommandBus {
     >[],
 
     @inject('CurrentUserCache')
-    private readonly userStore: ICurrentUserCache
+    private readonly userStore: ICurrentUserCache,
+
+    @inject('EventBus')
+    private readonly events: IEventBus
   ) {}
 
   public async execute(command: ICommand<string>) {
     const currentUser = await this.userStore.get();
     for (const handler of this.handlers) {
-      if (await handler.tryHandle({ command, authContext: currentUser })) {
+      if (
+        await handler.tryHandle({
+          command,
+          authContext: currentUser,
+          events: this.events,
+        })
+      ) {
         return;
       }
     }

@@ -1,6 +1,7 @@
 export {
   AbstractCommandHandler,
   AbstractCommand,
+  ErrorHandler,
   AbstractQuery,
   AbstractQueryHandler,
   eventStager,

@@ -60,8 +60,8 @@ export class WebsocketApi
     ...params: NotUndefined extends true
       ? [IExtractParams<TCommand>]
       : ICommandParams<IPickCommand<IKnownCommands, TKey>, NotUndefined>
-  ): Promise<void> {
-    await this.commandClient.execute<TCommand, TKey, NotUndefined>(
+  ): Promise<string> {
+    return await this.commandClient.execute<TCommand, TKey, NotUndefined>(
       key,
       ...params
     );

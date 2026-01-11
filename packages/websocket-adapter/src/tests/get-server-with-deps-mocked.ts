@@ -14,6 +14,7 @@ import {
   type IApplicationTypes,
   type IQueryBus,
   type IEventBus,
+  ErrorHandler,
 } from '@zero/application-core';
 
 import {
@@ -67,6 +68,8 @@ export const getServerWithDepsMocked = async (): Promise<IServerWithDeps> => {
     });
     return '0';
   });
+
+  container.bind('ErrorHandler').to(ErrorHandler);
 
   container.bind('EventBus').toConstantValue(eventBus);
 

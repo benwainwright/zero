@@ -23,7 +23,7 @@ export interface IApiSurface<
     ...params: NotUndefined extends true
       ? [IPickCommand<TCommand, TKey>['params']]
       : ICommandParams<IPickCommand<TCommands, TKey>, NotUndefined>
-  ): Promise<void>;
+  ): Promise<string>;
 
   executeQuery<TQuery extends TQueries, TKey extends TQuery['key']>(
     key: TKey,

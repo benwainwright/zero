@@ -5,12 +5,19 @@ export {
   CreateTransactionCommandHandler,
   DeleteTransactionCommandHandler,
   UpdateTransactionCommandHandler,
+  CreateBankConnectionCommandHandler,
+  SaveRequisitionAccountsCommandHandler,
+  FetchOpenBankingInstitutionListCommandHandler,
+  DeleteAuthLinkCommandHandler,
 } from './command-handlers/index.ts';
 
 export {
   ListUserAccountsQueryHandler,
   GetAccountQueryHandler,
   ListTransactionsQueryHandler,
+  CheckBankConnectionQueryHandler,
+  GetBankAuthLinkQueryHandler,
+  GetOpenBankingInstitutionListQueryHandler,
 } from './query-handlers/index.ts';
 
 export type { AccountsCommands } from './accounts-commands.ts';

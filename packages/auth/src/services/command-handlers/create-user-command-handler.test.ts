@@ -1,16 +1,18 @@
 import { mock } from 'vitest-mock-extended';
 import { CreateUserCommandHandler } from './create-user-command-handler.ts';
-import { getMockCommandContext } from '@test-helpers';
 import { USER_ROLE_ID } from '@constants';
 import { when } from 'vitest-when';
 import { type IRole, type Role, User } from '@zero/domain';
-import { buildInstance } from '@zero/test-helpers';
+import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
+import type { AuthCommands } from '@services';
 
 vi.mock('@zero/domain');
 
 afterEach(() => {
   vi.resetAllMocks();
 });
+
+const getMockCommandContext = getCommandContextBuilder<AuthCommands>();
 
 describe('create user command handler', () => {
   it('calls create on the user and then passes into the repo', async () => {

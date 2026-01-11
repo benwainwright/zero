@@ -1,6 +1,7 @@
 export { useApi } from './use-api.ts';
 export { useCommand } from './use-command.ts';
 export { useData } from './use-data.ts';
+export { useNextEvent } from './use-next-event.ts';
 export { useEvent } from './use-event.ts';
 export { useEvents } from './use-events.ts';
 export { useOpenSocket } from './use-open-socket.ts';
@@ -12,3 +13,5 @@ export { useRole } from './use-role.tsx';
 export { useAccounts } from './use-accounts.tsx';
 export { useAccount } from './use-account.tsx';
 export { useTransactions } from './use-transactions.tsx';
+export { useBankConnection } from './use-bank-connection.ts';
+export { useSingleQuery } from './use-single-query.ts';

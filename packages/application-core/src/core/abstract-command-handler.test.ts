@@ -2,6 +2,7 @@ import type { ICommandContext } from '@types';
 import { AbstractCommandHandler } from './abstract-command-handler.ts';
 import { mock } from 'vitest-mock-extended';
 import type { ILogger } from '@zero/bootstrap';
+import type { IEventBus } from '@ports';
 
 describe('abstract command handler', () => {
   describe('tryHandle', () => {
@@ -43,7 +44,10 @@ describe('abstract command handler', () => {
       const logger = mock<ILogger>();
       const handler = new TestHandler(logger);
 
+      const events = mock<IEventBus>();
+
       const result = await handler.tryHandle({
+        events,
         command: {
           id: 'foo-bar',
           key: 'TestOtherCommand',
@@ -94,8 +98,10 @@ describe('abstract command handler', () => {
 
       const logger = mock<ILogger>();
       const handler = new TestHandler(logger);
+      const events = mock<IEventBus>();
 
       const result = await handler.tryHandle({
+        events,
         command: {
           id: 'foo-bar',
           key: 'TestCommand',

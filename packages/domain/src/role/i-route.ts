@@ -4,6 +4,7 @@ export const routes = [
   'home',
   'accountTransactions',
   'accounts',
+  'bankConnection',
   'register',
   'login',
   'logout',

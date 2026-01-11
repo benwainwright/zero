@@ -1,7 +1,12 @@
 import type { TypedContainer } from '@inversifyjs/strongly-typed';
 import type { Factory } from 'inversify';
 
-import { AbstractCommandHandler, AbstractQueryHandler } from '@core';
+import {
+  AbstractCommandHandler,
+  AbstractQueryHandler,
+  type ErrorHandler,
+} from '@core';
+
 import type {
   IDomainEventBuffer,
   IDomainEventStore,
@@ -16,7 +21,6 @@ import type {
   ICurrentUserCache,
   IUUIDGenerator,
   IWriteRepository,
-  IReadRepository,
   ISyncDetailsRepository,
 } from '@ports';
 
@@ -26,6 +30,7 @@ import type { IQuery } from '@types';
 import type { Serialiser } from '@zero/serialiser';
 
 export interface IApplicationTypes {
+  ErrorHandler: ErrorHandler;
   EventBus: IEventBus;
   CommandHandler: AbstractCommandHandler<ICommand<string>, string>;
   CurrentUserCache: ICurrentUserCache;

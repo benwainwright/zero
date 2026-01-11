@@ -15,6 +15,10 @@ export const NavBar = (): ReactNode => {
     <AppShell.Navbar>
       <ul>
         {Object.entries(list)
+          .slice()
+          .sort(([, a], [, b]) =>
+            (a.sidebarPosition ?? 0) > (b.sidebarPosition ?? 0) ? 1 : -1
+          )
           .filter(
             ([key, value]) =>
               routeAvailable(user, value, key as IRoute) && !value.hideFromMenu

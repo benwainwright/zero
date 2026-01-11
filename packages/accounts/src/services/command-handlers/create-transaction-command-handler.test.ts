@@ -25,7 +25,6 @@ describe('create transaction handler', () => {
       'CreateTransactionCommand',
       {
         accountId: 'account-id',
-        ownerId: 'ben',
         date,
         payee: 'foo',
         amount: 10,

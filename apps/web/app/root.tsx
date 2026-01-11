@@ -21,6 +21,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import type { ReactNode } from 'react';
 import { ApiProvider, CurrentUserProvider } from '@zero/react-api';
+import { theme } from '@config';
 
 // export const links: Route.LinksFunction = () => [];
 
@@ -35,7 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }): ReactNode {
         <Links />
       </head>
       <body>
-        <MantineProvider>
+        <MantineProvider theme={theme}>
           <ModalsProvider>
             <Notifications />
             <ApiProvider url={`ws://localhost:3000`}>

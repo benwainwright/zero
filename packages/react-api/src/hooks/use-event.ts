@@ -1,12 +1,12 @@
-import type { IAllEvents, IEventPacket } from '@zero/application-core';
-import type { AuthEvents } from '@zero/auth';
+import type { IEventPacket } from '@zero/application-core';
 
 import { useEvents } from './use-events.ts';
+import type { IKnownEvents } from '@zero/websocket-adapter/client';
 
-export const useEvent = <TKey extends keyof (IAllEvents & AuthEvents)>(
+export const useEvent = <TKey extends keyof IKnownEvents>(
   key: TKey,
   callback: (
-    data: IEventPacket<IAllEvents & AuthEvents, TKey>['data']
+    data: IEventPacket<IKnownEvents, TKey>['data']
   ) => Promise<void> | void
 ) => {
   useEvents((event) => {

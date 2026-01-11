@@ -10,7 +10,7 @@ export const Users = (): ReactNode => {
     <Page routeName="users">
       <Loader data={users}>
         {(data) => (
-          <Table>
+          <Table verticalSpacing={'sm'}>
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Username</Table.Th>

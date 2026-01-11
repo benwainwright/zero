@@ -26,7 +26,7 @@ export class Category
 
   public readonly id: string;
   public readonly name: string;
-  public readonly description: string;
+  public readonly description: string | undefined;
 
   public static ReadyToAssign = Category.reconstitute({
     id: '0',

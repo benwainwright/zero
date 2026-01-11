@@ -15,5 +15,5 @@ export interface ICommandClient<TCommands extends ICommand<string>> {
     ...params: NotUndefined extends true
       ? [IExtractParams<TCommand>]
       : ICommandParams<IPickCommand<TCommands, TKey>, NotUndefined>
-  ): Promise<void>;
+  ): Promise<string>;
 }

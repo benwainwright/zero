@@ -60,6 +60,10 @@ export class CheckBankConnectionQueryHandler extends AbstractQueryHandler<
   > {
     this.grants.assertLogin(authContext);
 
+    this.grants.requires({
+      capability: 'bank-connection:read',
+    });
+
     const connection = await this.bankConnections.get(authContext.id);
 
     if (!connection) {

@@ -1,4 +1,7 @@
-import { type ISessionIdRequester } from '@zero/application-core';
+import {
+  type ErrorHandler,
+  type ISessionIdRequester,
+} from '@zero/application-core';
 import { ConfigValue, type ILogger } from '@zero/bootstrap';
 import { WebSocketServer } from 'ws';
 
@@ -30,18 +33,21 @@ export class AppServer {
 
   public constructor(
     @inject('ContainerFactory')
-    private requestContainerFactory: (
+    private readonly requestContainerFactory: (
       sessionIdRequester: ISessionIdRequester
     ) => Promise<TypedContainer<IServerInternalTypes>>,
 
     @inject('WebsocketServerPort')
-    private port: ConfigValue<number>,
+    private readonly port: ConfigValue<number>,
 
     @inject('WebsocketServerHost')
-    private host: ConfigValue<string>,
+    private readonly host: ConfigValue<string>,
 
     @inject('SessionIdHandler')
-    private sessionIdHandler: SessionIdHandler,
+    private readonly sessionIdHandler: SessionIdHandler,
+
+    @inject('ErrorHandler')
+    private readonly errorHandler: ErrorHandler,
 
     @inject('Logger')
     private logger: ILogger
@@ -64,7 +70,9 @@ export class AppServer {
       });
 
       this.wss?.on('headers', (headers, request) => {
-        this.sessionIdHandler.setSesionId(headers, request);
+        this.errorHandler.withErrorHandling(() => {
+          this.sessionIdHandler.setSesionId(headers, request);
+        });
       });
 
       this.wss?.on('close', () => {
@@ -72,24 +80,26 @@ export class AppServer {
       });
 
       this.wss?.on('connection', async (ws, request) => {
-        this.logger.debug('Websocket connection established', LOG_CONTEXT);
+        await this.errorHandler.withErrorHandling(async () => {
+          this.logger.debug('Websocket connection established', LOG_CONTEXT);
 
-        const container = await this.requestContainerFactory({
-          getSessionId: async () => {
-            return this.sessionIdHandler.getSessionId(request);
-          },
+          const container = await this.requestContainerFactory({
+            getSessionId: async () => {
+              return this.sessionIdHandler.getSessionId(request);
+            },
+          });
+
+          const client = await container.getAsync('ServerWebsocketClient');
+          this.clientSet.add(client);
+
+          ws.on('message', client.onMessage.bind(client));
+          ws.on('close', () => {
+            client.onClose();
+            this.clientSet.delete(client);
+          });
+
+          client.onConnect(ws);
         });
-
-        const client = await container.getAsync('ServerWebsocketClient');
-        this.clientSet.add(client);
-
-        ws.on('message', client.onMessage.bind(client));
-        ws.on('close', () => {
-          client.onClose();
-          this.clientSet.delete(client);
-        });
-
-        client.onConnect(ws);
       });
 
       this.wss?.on('listening', async () => {

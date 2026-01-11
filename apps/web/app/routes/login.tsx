@@ -7,6 +7,7 @@ import {
   TextInput,
   Text,
   Anchor,
+  Stack,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useContext, useEffect, type ReactNode } from 'react';
@@ -19,7 +20,7 @@ interface FormValues {
 
 export const Login = (): ReactNode => {
   const { user, reload } = useContext(CurrentUserContext);
-  const { createAccount: login } = useCommand('LoginCommand');
+  const { execute: login } = useCommand('LoginCommand');
 
   const navigate = useNavigate();
 
@@ -52,30 +53,32 @@ export const Login = (): ReactNode => {
   return (
     <Page routeName="login">
       <form method="post" onSubmit={form.onSubmit(onSubmit)}>
-        <TextInput
-          label="Username"
-          placeholder=""
-          key={form.key('username')}
-          {...form.getInputProps('username')}
-        />
+        <Stack>
+          <TextInput
+            label="Username"
+            placeholder=""
+            key={form.key('username')}
+            {...form.getInputProps('username')}
+          />
 
-        <PasswordInput
-          label="Password"
-          placeholder=""
-          key={form.key('password')}
-          {...form.getInputProps('password')}
-        />
+          <PasswordInput
+            label="Password"
+            placeholder=""
+            key={form.key('password')}
+            {...form.getInputProps('password')}
+          />
 
-        <Group mt="md" mb="md">
-          <Button type="submit">Login</Button>
-        </Group>
-        <Text>
-          Or you can{' '}
-          <Anchor to="/register" component={Link}>
-            register
-          </Anchor>{' '}
-          a new account...
-        </Text>
+          <Group mt="md" mb="md">
+            <Button type="submit">Login</Button>
+          </Group>
+          <Text>
+            Or you can{' '}
+            <Anchor to="/register" component={Link}>
+              register
+            </Anchor>{' '}
+            a new account...
+          </Text>
+        </Stack>
       </form>
     </Page>
   );

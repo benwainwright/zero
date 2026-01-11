@@ -1,6 +1,7 @@
 import {
   CommandBus,
   DomainEventStore,
+  ErrorHandler,
   QueryBus,
   TransactionalCommandBus,
   TransactionalQueryBus,
@@ -20,6 +21,7 @@ export const applicationCoreModule: IModule<
   bind('Serialiser').to(Serialiser);
   bind('CommandBus').to(CommandBus).inRequestScope();
   bind('QueryBus').to(QueryBus).inRequestScope();
+  bind('ErrorHandler').to(ErrorHandler);
 
   decorate('CommandBus', TransactionalCommandBus);
   decorate('QueryBus', TransactionalQueryBus);

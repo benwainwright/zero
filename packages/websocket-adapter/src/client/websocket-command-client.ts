@@ -29,11 +29,12 @@ export class WebsocketCommandClient implements ICommandClient<IKnownCommands> {
     ...params: NotUndefined extends true
       ? [IExtractParams<TCommand>]
       : ICommandParams<IPickCommand<IKnownCommands, TKey>, NotUndefined>
-  ): Promise<void> {
+  ): Promise<string> {
+    const theId = this.uuidGenerator.v7();
     const packet = {
       type: 'command',
       packet: {
-        id: this.uuidGenerator.v7(),
+        id: theId,
         key,
         params: params[0],
       },
@@ -42,5 +43,6 @@ export class WebsocketCommandClient implements ICommandClient<IKnownCommands> {
     const serialiser = new Serialiser();
 
     this.socket.send(serialiser.serialise(packet));
+    return theId;
   }
 }

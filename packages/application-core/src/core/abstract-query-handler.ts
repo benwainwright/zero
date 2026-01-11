@@ -6,6 +6,7 @@ import type {
 } from '@types';
 import { BaseHandler } from './base-handler.ts';
 import type { User } from '@zero/domain';
+import type { IEventBus } from '@ports';
 
 export abstract class AbstractQueryHandler<
   TQueries extends IQuery<string>,
@@ -24,19 +25,32 @@ export abstract class AbstractQueryHandler<
   public async tryHandle({
     query,
     authContext,
+    events,
   }: {
     query: Omit<IQuery<string>, 'response'>;
+    events: IEventBus;
     authContext: User | undefined;
   }): Promise<ITryHandleQueryResponse<IPickQuery<TQueries, TKey>['response']>> {
     if (this.canHandle(query)) {
-      return {
-        response: await this.handle({
-          query: query.params,
-          authContext,
+      try {
+        events.emit('QueryHandleStartEvent', {
+          key: this.name,
           id: query.id,
-        }),
-        handled: true,
-      };
+        });
+        return {
+          response: await this.handle({
+            query: query.params,
+            authContext,
+            id: query.id,
+          }),
+          handled: true,
+        };
+      } finally {
+        events.emit('QueryHandleCompleteEvent', {
+          key: this.name,
+          id: query.id,
+        });
+      }
     }
 
     return {

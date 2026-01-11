@@ -18,6 +18,7 @@ export class FlatFileObjectStore implements IObjectStorage {
   public constructor(
     @inject('StoragePath')
     private folder: ConfigValue<string>,
+
     @inject('Logger')
     private logger: ILogger
   ) {}
@@ -25,7 +26,11 @@ export class FlatFileObjectStore implements IObjectStorage {
   public async listKeys(namespace: string): Promise<string[]> {
     const path = await this.resolvePath(namespace);
     this.logger.silly(`Path resolved at ${path}`, LOG_CONTEXT);
-    return await readdir(path);
+    try {
+      return await readdir(path);
+    } catch {
+      return [];
+    }
   }
 
   private async resolvePath(namespace: string, key?: string) {

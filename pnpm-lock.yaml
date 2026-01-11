@@ -377,6 +377,9 @@ importers:
       '@zero/websocket-adapter':
         specifier: workspace:*
         version: link:../../packages/websocket-adapter
+      fuse.js:
+        specifier: ^7.1.0
+        version: 7.1.0
       inversify:
         specifier: 'catalog:'
         version: 7.10.7(reflect-metadata@0.2.2)
@@ -589,6 +592,9 @@ importers:
 
   packages/domain:
     dependencies:
+      natural-language-parser:
+        specifier: ^1.0.0
+        version: 1.0.0
       zod:
         specifier: 4.2.1
         version: 4.2.1
@@ -6321,6 +6327,10 @@ packages:
   functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
 
+  fuse.js@7.1.0:
+    resolution: {integrity: sha512-trLf4SzuuUxfusZADLINj+dE8clK1frKdmqiJNb1Es75fmI5oY6X2mxLVUciLLjxqw/xr72Dhy+lER6dGd02FQ==}
+    engines: {node: '>=10'}
+
   generator-function@2.0.1:
     resolution: {integrity: sha512-SFdFmIJi+ybC0vjlHN0ZGVGHc3lgE0DxPAT0djjVg+kjOnSqclqmj0KQ7ykTOLP6YxoqOvuAODGdcHJn+43q3g==}
     engines: {node: '>= 0.4'}
@@ -7516,6 +7526,10 @@ packages:
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  natural-language-parser@1.0.0:
+    resolution: {integrity: sha512-AiMz3II0lWyjyJ7asJaXtooDXvZHBzxBArSyznokUl7xf7TOiD+zSn22xWmIUDyGKsof2OPO1YVjP6CXeUhhYw==}
+    hasBin: true
 
   negotiator@0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
@@ -16755,6 +16769,8 @@ snapshots:
 
   functions-have-names@1.2.3: {}
 
+  fuse.js@7.1.0: {}
+
   generator-function@2.0.1: {}
 
   generic-names@4.0.0:
@@ -18137,6 +18153,10 @@ snapshots:
   napi-postinstall@0.3.4: {}
 
   natural-compare@1.4.0: {}
+
+  natural-language-parser@1.0.0:
+    dependencies:
+      yargs: 17.7.2
 
   negotiator@0.6.3: {}
 

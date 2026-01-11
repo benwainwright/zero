@@ -66,74 +66,81 @@ export const EditUser = (): ReactNode => {
   return (
     <Page routeName="editUser" title="Edit User">
       <form method="post" onSubmit={form.onSubmit(onSubmit)}>
-        <TextInput
-          label="Username"
-          placeholder=""
-          key={form.key('username')}
-          value={userId}
-          disabled
-        />
+        <Stack>
+          <TextInput
+            size="lg"
+            label="Username"
+            placeholder=""
+            key={form.key('username')}
+            value={userId}
+            disabled
+          />
 
-        <TextInput
-          label="Email"
-          type="email"
-          placeholder=""
-          key={form.key('email')}
-          {...form.getInputProps('email')}
-        />
+          <TextInput
+            label="Email"
+            size="lg"
+            type="email"
+            placeholder=""
+            key={form.key('email')}
+            {...form.getInputProps('email')}
+          />
 
-        <PasswordInput
-          label="Password"
-          placeholder=""
-          key={form.key('password')}
-          {...form.getInputProps('password')}
-        />
+          <PasswordInput
+            size="lg"
+            label="Password"
+            placeholder=""
+            key={form.key('password')}
+            {...form.getInputProps('password')}
+          />
 
-        <PasswordInput
-          label="Verify Password"
-          placeholder=""
-          key={form.key('validatePassword')}
-          {...form.getInputProps('validatePassword')}
-        />
+          <PasswordInput
+            size="lg"
+            label="Verify Password"
+            placeholder=""
+            key={form.key('validatePassword')}
+            {...form.getInputProps('validatePassword')}
+          />
 
-        <Fieldset legend="Roles" mt="lg">
-          <Stack>
-            {roles &&
-              roles?.map((role) => {
-                console.log(form.getValues());
-                return (
-                  <Checkbox
-                    checked={
-                      form.getValues()?.roles?.includes(role.id) ?? false
-                    }
-                    onChange={(checked) => {
-                      form.setValues((previous) => {
-                        if (previous.roles) {
-                          if (checked.target.checked) {
+          <Fieldset legend="Roles" mt="lg">
+            <Stack>
+              {roles &&
+                roles?.map((role) => {
+                  console.log(form.getValues());
+                  return (
+                    <Checkbox
+                      size="lg"
+                      checked={
+                        form.getValues()?.roles?.includes(role.id) ?? false
+                      }
+                      onChange={(checked) => {
+                        form.setValues((previous) => {
+                          if (previous.roles) {
+                            if (checked.target.checked) {
+                              return {
+                                ...previous,
+                                roles: previous.roles.includes(role.id)
+                                  ? previous.roles
+                                  : [...previous.roles, role.id],
+                              };
+                            }
                             return {
                               ...previous,
-                              roles: previous.roles.includes(role.id)
-                                ? previous.roles
-                                : [...previous.roles, role.id],
+                              roles: previous.roles.filter(
+                                (theRole) => theRole !== role.id
+                              ),
                             };
                           }
-                          return {
-                            ...previous,
-                            roles: previous.roles.filter(
-                              (theRole) => theRole !== role.id
-                            ),
-                          };
-                        }
-                        return previous;
-                      });
-                    }}
-                    key={`role-checkbox-${role.id}`}
-                    label={role.name}
-                  ></Checkbox>
-                );
-              })}
-          </Stack>
-        </Fieldset>
+                          return previous;
+                        });
+                      }}
+                      key={`role-checkbox-${role.id}`}
+                      label={role.name}
+                    ></Checkbox>
+                  );
+                })}
+            </Stack>
+          </Fieldset>
+        </Stack>
 
         <Group justify="flex-end" mt="md">
           <Button type="submit" disabled={!form.isDirty()}>

@@ -2,6 +2,7 @@ import type { IQueryContext } from '@types';
 import { AbstractQueryHandler } from './abstract-query-handler.ts';
 import type { ILogger } from '@zero/bootstrap';
 import { mock } from 'vitest-mock-extended';
+import type { IEventBus } from '@ports';
 
 describe('abstract query handler', () => {
   describe('try handle', () => {
@@ -41,8 +42,10 @@ describe('abstract query handler', () => {
       const logger = mock<ILogger>();
 
       const handler = new TestHandler(logger);
+      const events = mock<IEventBus>();
 
       const result = await handler.tryHandle({
+        events,
         query: {
           key: 'TestQuery',
           id: 'foo-bar',
@@ -98,7 +101,9 @@ describe('abstract query handler', () => {
 
       const handler = new TestHandler(logger);
 
+      const events = mock<IEventBus>();
       const result = await handler.tryHandle({
+        events,
         query: {
           key: 'OtherTestQuery',
           id: 'foo-bar',
