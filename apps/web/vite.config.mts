@@ -4,9 +4,9 @@ import { reactRouter } from '@react-router/dev/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 
-const protocol = process.env['BACKEND_PROTOCOL'] ?? 'ws';
-const host = process.env['BACKEND_HOST'] ?? 'localhost';
-const port = process.env['BACKEND_PORT'] ?? 3000;
+const protocol = JSON.stringify(process.env['BACKEND_PROTOCOL']) ?? 'ws';
+const host = JSON.stringify(process.env['BACKEND_HOST']) ?? 'localhost';
+const port = JSON.stringify(process.env['BACKEND_PORT']) ?? 3000;
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
