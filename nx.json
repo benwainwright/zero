@@ -10,6 +10,26 @@
     ],
     "sharedGlobals": []
   },
+
+  "release": {
+    "releaseTag": {
+      "pattern": "release/{projectName}/{version}"
+    },
+    "groups": {
+      "apps": {
+        "projects": ["@zero/backend"],
+        "projectsRelationship": "independent",
+        "docker": {
+          "skipVersionActions": true,
+          "registryUrl": "docker.io",
+          "groupPreVersionCommand": "echo BEFORE VERSIONING"
+        },
+        "changelog": {
+          "projectChangelogs": true
+        }
+      }
+    }
+  },
   "plugins": [
     {
       "plugin": "@nx/js/typescript",

@@ -7,7 +7,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "pnpm exec nx run-many --targets test",
+    "build:backend:dev": " docker build -t zero-backend:dev --build-arg CONFIG=apps/backend/zero.config.dev.json",
+
     "type-check": "pnpm exec nx run-many --targets typecheck",
     "build": "pnpm exec nx run-many --targets build",
     "prepare": "husky",
