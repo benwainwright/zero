@@ -5,15 +5,13 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 import { fileURLToPath } from 'node:url';
 
-const betterSqlitePkg = path.dirname(
-  fileURLToPath(import.meta.resolve('better-sqlite3/package.json'))
-);
-const nativeBinary = path.join(
-  betterSqlitePkg,
-  'build',
-  'Release',
-  'better_sqlite3.node'
-);
+const getBetterSqliteBinaryPath = () => {
+  const betterSqlitePkg = path.dirname(
+    fileURLToPath(import.meta.resolve('better-sqlite3/package.json'))
+  );
+
+  return path.join(betterSqlitePkg, 'build', 'Release', 'better_sqlite3.node');
+};
 
 function injectFilenameForBadPkg() {
   const badPkgRe = /node_modules\/bindings\//;
@@ -59,15 +57,19 @@ export default defineConfig(({ mode }) => {
         projects: [path.join(import.meta.dirname, 'tsconfig.app.json')],
       }),
       injectFilenameForBadPkg(),
-      viteStaticCopy({
-        targets: [
-          {
-            src: nativeBinary,
-            dest: path.join(__dirname, 'dist', 'build'),
-            rename: 'better_sqlite3.node',
-          },
-        ],
-      }),
+      ...(env['DATABASE'] === 'sqlite'
+        ? [
+            viteStaticCopy({
+              targets: [
+                {
+                  src: getBetterSqliteBinaryPath(),
+                  dest: path.join(__dirname, 'dist', 'build'),
+                  rename: 'better_sqlite3.node',
+                },
+              ],
+            }),
+          ]
+        : []),
     ],
     ssr: {
       target: 'node' as const,
