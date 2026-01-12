@@ -2,7 +2,7 @@
   "name": "@zero/source",
   "version": "0.0.0",
   "engines": {
-    "pnpm": "10.26.0"
+    "pnpm": "10"
   },
   "license": "MIT",
   "type": "module",
