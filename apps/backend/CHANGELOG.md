@@ -1,3 +1,7 @@
+# 2601.12.5fce4df (2026-01-12)
+
+This was a version bump only for @zero/backend to align it with other projects, there were no code changes.
+
 # 2601.12.c74d6c6 (2026-01-12)
 
 This was a version bump only for @zero/backend to align it with other projects, there were no code changes.
