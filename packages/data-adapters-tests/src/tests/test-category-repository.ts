@@ -21,9 +21,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
-      await userRepo.save(ben);
-    });
+    await unitOfWork.atomically(async () => await userRepo.save(ben));
 
     const first = Category.reconstitute({
       id: 'baz',
@@ -38,14 +36,14 @@ export const testCategoryRepository = (
       ownerId: 'ben',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.save(first);
       await writer.save(second);
     });
 
-    const result = await unitOfWork.executeAtomically(async () => {
-      return await repo.get('bip');
-    });
+    const result = await unitOfWork.atomically(
+      async () => await repo.get('bip')
+    );
 
     expect(result).toEqual(second);
   });
@@ -61,9 +59,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
-      await userRepo.save(ben);
-    });
+    await unitOfWork.atomically(async () => await userRepo.save(ben));
 
     const first = Category.reconstitute({
       id: 'baz',
@@ -78,14 +74,14 @@ export const testCategoryRepository = (
       ownerId: 'ben',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.save(first);
       await writer.save(second);
     });
 
-    const result = await unitOfWork.executeAtomically(async () => {
-      return await repo.get('bip');
-    });
+    const result = await unitOfWork.atomically(
+      async () => await repo.get('bip')
+    );
 
     expect(result).toEqual(second);
   });
@@ -101,7 +97,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
     });
 
@@ -118,16 +114,16 @@ export const testCategoryRepository = (
       ownerId: 'ben',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.save(first);
       await writer.save(second);
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.delete(second);
     });
 
-    const result = await unitOfWork.executeAtomically(async () => {
+    const result = await unitOfWork.atomically(async () => {
       return await repo.get('bip');
     });
 
@@ -145,7 +141,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
     });
 
@@ -163,7 +159,7 @@ export const testCategoryRepository = (
     });
 
     await expect(
-      unitOfWork.executeAtomically(async () => {
+      unitOfWork.atomically(async () => {
         await writer.save(first);
         await writer.save(second);
       })
@@ -181,7 +177,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
     });
 
@@ -199,12 +195,12 @@ export const testCategoryRepository = (
       ownerId: 'ben',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.save(first);
       await writer.update(second);
     });
 
-    const result = await unitOfWork.executeAtomically(async () => {
+    const result = await unitOfWork.atomically(async () => {
       return await repo.get('baz');
     });
 
@@ -222,7 +218,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
     });
 
@@ -233,12 +229,12 @@ export const testCategoryRepository = (
       ownerId: 'ben',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.save(first);
     });
 
     await expect(
-      unitOfWork.executeAtomically(async () => {
+      unitOfWork.atomically(async () => {
         return await repo.require('bip');
       })
     ).rejects.toThrow();
@@ -255,7 +251,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
     });
 
@@ -272,15 +268,15 @@ export const testCategoryRepository = (
       ownerId: 'ben',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.saveAll([first, second]);
     });
 
-    const resultOne = await unitOfWork.executeAtomically(async () => {
+    const resultOne = await unitOfWork.atomically(async () => {
       return await repo.get('bip');
     });
 
-    const resultTwo = await unitOfWork.executeAtomically(async () => {
+    const resultTwo = await unitOfWork.atomically(async () => {
       return await repo.get('baz');
     });
 
@@ -305,7 +301,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.saveAll([ben, fred]);
     });
 
@@ -329,11 +325,11 @@ export const testCategoryRepository = (
       ownerId: 'fred',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.saveAll([first, second, third]);
     });
 
-    const results = await unitOfWork.executeAtomically(async () => {
+    const results = await unitOfWork.atomically(async () => {
       return await repo.list({ userId: 'ben', start: 0, limit: 30 });
     });
 
@@ -350,7 +346,7 @@ export const testCategoryRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
     });
 
@@ -363,11 +359,11 @@ export const testCategoryRepository = (
       })
     );
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.saveAll(categories);
     });
 
-    const results = await unitOfWork.executeAtomically(async () => {
+    const results = await unitOfWork.atomically(async () => {
       return await repo.list({ userId: 'ben', start: 0, limit: 30 });
     });
 

@@ -1,5 +1,6 @@
 import type { IAccountEvents } from '@account';
 import type { IBankConnectionEvents } from '@bank-connection';
+import type { CategoryEvents } from '@category';
 import type { IOauthTokenEvents } from '@oauth-token';
 import type { IRoleEvents } from '@role';
 import type { SyncDetailsEvents } from '@sync-details';
@@ -12,4 +13,5 @@ export type IDomainEvents = IUserEvents &
   ITransactionEvents &
   IAccountEvents &
   IOauthTokenEvents &
-  SyncDetailsEvents;
+  SyncDetailsEvents &
+  CategoryEvents;

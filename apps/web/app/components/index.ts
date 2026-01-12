@@ -20,3 +20,4 @@ export { TransactionsTable } from './transactions-table/index.ts';
 export { BankConnectionIcon } from './bank-connection-icon/index.ts';
 export { RolesTable } from './roles-table/index.ts';
 export { UsersTable } from './users-table/index.ts';
+export { CategoriesTable } from './categories-table/index.ts';

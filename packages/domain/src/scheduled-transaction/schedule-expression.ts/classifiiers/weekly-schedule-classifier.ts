@@ -12,12 +12,13 @@ export interface WeeklySchedule {
 }
 
 export class WeeklyScheduleClassifier extends Classifier<WeeklySchedule> {
-  protected override readonly regex = /every\s(?<day>[\d]*)\s?\w*$/;
+  protected override readonly regex = /every\s(?<day>\w+)\s?\w*$/;
 
   protected override hydrateClassification(
     match: RegExpMatchArray
   ): WeeklySchedule {
     const day = match?.groups?.['day'] ?? '';
+    console.log({ day });
 
     const days = {
       monday: false,

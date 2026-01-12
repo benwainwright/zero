@@ -11,6 +11,7 @@ export const routes = [
   'roles',
   'users',
   'editUser',
+  'categories',
   'editRole',
   'all',
 ] as const;

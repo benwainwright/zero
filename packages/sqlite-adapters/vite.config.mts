@@ -30,14 +30,14 @@ export default defineConfig(() => ({
         path.join(import.meta.dirname, 'tsconfig.spec.json'),
       ],
     }),
-    viteStaticCopy({
-      targets: [
-        {
-          src: 'node_modules/better-sqlite3/build/Release/better_sqlite3.node',
-          dest: 'bindings/better_sqlite3.node',
-        },
-      ],
-    }),
+    // viteStaticCopy({
+    //   targets: [
+    //     {
+    //       src: 'node_modules/better-sqlite3/build/Release/better_sqlite3.node',
+    //       dest: 'bindings/better_sqlite3.node',
+    //     },
+    //   ],
+    // }),
     injectFilenameForBadPkg(),
   ],
   ssr: {

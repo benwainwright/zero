@@ -15,3 +15,5 @@ export { useAccount } from './use-account.tsx';
 export { useTransactions } from './use-transactions.tsx';
 export { useBankConnection } from './use-bank-connection.ts';
 export { useSingleQuery } from './use-single-query.ts';
+export { useCategories } from './use-categories.tsx';
+export { useCategory } from './use-category.ts';

@@ -1,6 +1,9 @@
 export {
   CreateAccountCommandHandler,
   DeleteAccountCommandHandler,
+  DeleteCategoryCommandHandler,
+  UpdateCategoryCommandHandler,
+  CreateCategoryCommandHandler,
   UpdateAccountCommandHandler,
   CreateTransactionCommandHandler,
   DeleteTransactionCommandHandler,
@@ -14,6 +17,8 @@ export {
 export {
   ListUserAccountsQueryHandler,
   GetAccountQueryHandler,
+  ListCategoriesQueryHandler,
+  GetCategoryQueryHandler,
   ListTransactionsQueryHandler,
   CheckBankConnectionQueryHandler,
   GetBankAuthLinkQueryHandler,

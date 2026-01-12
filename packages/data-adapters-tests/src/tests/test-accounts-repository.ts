@@ -21,9 +21,7 @@ export const testAccountsRepo = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => await userRepo.save(ben));
 
     const accountOne = Account.reconstitute({
       id: 'one',
@@ -45,14 +43,14 @@ export const testAccountsRepo = (
       deleted: false,
     });
 
-    await unitOfWork.begin();
-    await writer.saveAll([accountOne, accountTwo]);
-    await writer.delete(accountOne);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.saveAll([accountOne, accountTwo]);
+      await writer.delete(accountOne);
+    });
 
-    await unitOfWork.begin();
-    const result = await repo.get('one');
-    await unitOfWork.commit();
+    const result = await unitOfWork.atomically(
+      async () => await repo.get('one')
+    );
 
     expect(result).toBeUndefined();
   });
@@ -68,9 +66,7 @@ export const testAccountsRepo = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => await userRepo.save(ben));
 
     const accountOne = Account.reconstitute({
       id: 'one',
@@ -92,19 +88,21 @@ export const testAccountsRepo = (
       deleted: true,
     });
 
-    await unitOfWork.begin();
-    await writer.save(accountOne);
-    await writer.save(accountTwo);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.save(accountOne);
+      await writer.save(accountTwo);
+    });
 
-    await unitOfWork.begin();
-    const accounts = await repo.list({ start: 0, limit: 30, userId: 'ben' });
-    await unitOfWork.commit();
+    const accounts = await unitOfWork.atomically(
+      async () => await repo.list({ start: 0, limit: 30, userId: 'ben' })
+    );
+
     expect(accounts).toHaveLength(1);
 
-    await unitOfWork.begin();
-    const account = await repo.get('two');
-    await unitOfWork.commit();
+    const account = await unitOfWork.atomically(
+      async () => await repo.get('two')
+    );
+
     expect(account).toEqual(accountTwo);
   });
 

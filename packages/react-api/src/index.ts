@@ -11,11 +11,13 @@ export {
   useQuery,
   useSingleQuery,
   useRoles,
+  useCategory,
   useRole,
   useAccount,
   useAccounts,
   useTransactions,
   useBankConnection,
+  useCategories,
 } from '@hooks';
 
 export {

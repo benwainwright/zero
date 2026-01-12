@@ -27,8 +27,7 @@ export const Users = (): ReactNode => {
           if (data.length === 0) {
             return (
               <Text>
-                You haven't created any accounts yet! Click the button above to
-                create one
+                You haven't created any accounts yet! Click the button above to{' '}
               </Text>
             );
           }

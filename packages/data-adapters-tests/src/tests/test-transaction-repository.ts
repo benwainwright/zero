@@ -42,7 +42,7 @@ export const testTransactionRepository = (
       deleted: false,
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
       await accountRepo.save(barAccount);
       await accountRepo.save(bopAccount);
@@ -66,12 +66,12 @@ export const testTransactionRepository = (
       payee: 'foo',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.save(transaction1);
       await writer.save(transaction2);
     });
 
-    const result = await unitOfWork.executeAtomically(async () => {
+    const result = await unitOfWork.atomically(async () => {
       return await repo.get('foo');
     });
 
@@ -123,7 +123,7 @@ export const testTransactionRepository = (
       deleted: false,
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
       await accountRepo.save(barAccount);
       await accountRepo.save(bopAccount);
@@ -149,12 +149,12 @@ export const testTransactionRepository = (
       payee: 'foo',
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.save(transaction1);
       await writer.save(transaction2);
     });
 
-    const result = await unitOfWork.executeAtomically(async () => {
+    const result = await unitOfWork.atomically(async () => {
       return await repo.get('foo');
     });
 
@@ -208,7 +208,7 @@ export const testTransactionRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
       await userRepo.save(fred);
       await accountRepo.save(barAccount);
@@ -263,7 +263,7 @@ export const testTransactionRepository = (
       date: new Date(),
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.saveAll([...accountTransactions, fredTransaction]);
 
       await writer.save(separateAccountTransaction);
@@ -288,7 +288,7 @@ export const testTransactionRepository = (
         }),
       ]);
     });
-    const result = await unitOfWork.executeAtomically(async () => {
+    const result = await unitOfWork.atomically(async () => {
       return await repo.list({
         start: 0,
         limit: 30,
@@ -357,7 +357,7 @@ export const testTransactionRepository = (
       roles: [],
     });
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await userRepo.save(ben);
       await userRepo.save(fred);
       await accountRepo.save(barAccount);
@@ -400,7 +400,7 @@ export const testTransactionRepository = (
       }),
     ];
 
-    await unitOfWork.executeAtomically(async () => {
+    await unitOfWork.atomically(async () => {
       await writer.saveAll(accountTransactions);
 
       const separateAccountTransaction = Transaction.reconstitute({
@@ -434,7 +434,7 @@ export const testTransactionRepository = (
         }),
       ]);
     });
-    const result = await unitOfWork.executeAtomically(async () => {
+    const result = await unitOfWork.atomically(async () => {
       return await repo.count({ userId: 'ben', accountId: 'bar' });
     });
 

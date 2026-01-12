@@ -1,6 +1,23 @@
-import type { Account, BankConnection, Transaction } from '@zero/domain';
+import type {
+  Account,
+  BankConnection,
+  Category,
+  Transaction,
+} from '@zero/domain';
 
 export type AccountsQueries =
+  | {
+      id: string;
+      key: 'GetCategoryQuery';
+      params: { category: string };
+      response: Category | undefined;
+    }
+  | {
+      id: string;
+      key: 'ListCategoriesQuery';
+      params: { offset: number; limit: number };
+      response: { categories: Category[] };
+    }
   | {
       id: string;
       key: 'GetBankAuthLinkQuery';

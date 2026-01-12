@@ -39,7 +39,7 @@ export const Page = ({
 
   return initialLoadComplete ? (
     <>
-      <Title order={2}>
+      <Title order={2} size="h1">
         <Group align="start">
           <Box style={{ flexGrow: 2 }}>{title ?? capitalisedHeader}</Box>
           {headerActions}

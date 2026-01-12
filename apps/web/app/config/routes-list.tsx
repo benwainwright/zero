@@ -4,6 +4,7 @@ import {
   IconUser,
   IconHome,
   IconLogout,
+  IconCategoryFilled,
   IconUsers,
   IconUsersGroup,
   IconPig,
@@ -24,6 +25,12 @@ export interface RouteSpec {
 }
 
 export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
+  categories: {
+    component: 'routes/categories.tsx',
+    path: 'categories',
+    authFailRedirect: '/login',
+    sidebarIcon: <IconCategoryFilled size={16} stroke={1.5} />,
+  },
   bankConnection: {
     component: 'routes/bank-connection.tsx',
     path: 'bank-connection',

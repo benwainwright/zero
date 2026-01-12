@@ -4,3 +4,5 @@ export { ListTransactionsQueryHandler } from './list-transactions-query-handler.
 export { CheckBankConnectionQueryHandler } from './check-bank-connection-query-handler.ts';
 export { GetBankAuthLinkQueryHandler } from './get-bank-auth-link-query-handler.ts';
 export { GetOpenBankingInstitutionListQueryHandler } from './get-open-banking-institution-list-query-handler.ts';
+export { GetCategoryQueryHandler } from './get-category-query-handler.ts';
+export { ListCategoriesQueryHandler } from './list-categories-query-handler.ts';

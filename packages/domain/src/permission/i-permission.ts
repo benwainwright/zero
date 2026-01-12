@@ -1,4 +1,4 @@
-import { capabilities } from '@core';
+import { capabilities } from './i-capability.ts';
 
 import z from 'zod';
 

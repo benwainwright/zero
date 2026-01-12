@@ -18,6 +18,11 @@ import {
   GetOpenBankingInstitutionListQueryHandler,
   DeleteAuthLinkCommandHandler,
   OpenBankingTokenManager,
+  UpdateCategoryCommandHandler,
+  CreateCategoryCommandHandler,
+  DeleteCategoryCommandHandler,
+  ListCategoriesQueryHandler,
+  GetCategoryQueryHandler,
 } from '@services';
 
 export const accountsModule: IModule<
@@ -34,6 +39,9 @@ export const accountsModule: IModule<
   bind('CommandHandler').to(CreateBankConnectionCommandHandler);
   bind('CommandHandler').to(FetchOpenBankingInstitutionListCommandHandler);
   bind('CommandHandler').to(DeleteAuthLinkCommandHandler);
+  bind('CommandHandler').to(UpdateCategoryCommandHandler);
+  bind('CommandHandler').to(CreateCategoryCommandHandler);
+  bind('CommandHandler').to(DeleteCategoryCommandHandler);
 
   bind('QueryHandler').to(ListTransactionsQueryHandler);
   bind('QueryHandler').to(ListUserAccountsQueryHandler);
@@ -41,4 +49,6 @@ export const accountsModule: IModule<
   bind('QueryHandler').to(CheckBankConnectionQueryHandler);
   bind('QueryHandler').to(GetBankAuthLinkQueryHandler);
   bind('QueryHandler').to(GetOpenBankingInstitutionListQueryHandler);
+  bind('QueryHandler').to(ListCategoriesQueryHandler);
+  bind('QueryHandler').to(GetCategoryQueryHandler);
 };

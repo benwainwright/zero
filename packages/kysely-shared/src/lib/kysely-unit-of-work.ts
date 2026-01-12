@@ -15,9 +15,7 @@ export class KyselyUnitOfWork<DB>
     @inject('KyselyDataSource')
     private database: IKyselyDataSource<DB>
   ) {}
-  public async executeAtomically<T = unknown>(
-    callback: () => Promise<T>
-  ): Promise<T> {
+  public async atomically<T = unknown>(callback: () => Promise<T>): Promise<T> {
     try {
       await this.begin();
       const returnVal = await callback();
