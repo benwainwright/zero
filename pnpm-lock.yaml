@@ -302,31 +302,6 @@ importers:
         specifier: 3.1.4
         version: 3.1.4(vite@7.3.0(@types/node@20.19.9)(jiti@2.4.2)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(yaml@2.8.2))
 
-  apps/deploy:
-    dependencies:
-      '@cdklabs/generative-ai-cdk-constructs':
-        specifier: ^0.1.312
-        version: 0.1.312(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)
-      '@inversifyjs/strongly-typed':
-        specifier: 'catalog:'
-        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
-      '@zero/backend':
-        specifier: workspace:*
-        version: link:../backend
-      '@zero/web':
-        specifier: workspace:*
-        version: link:../web
-      aws-cdk-lib:
-        specifier: ^2.233.0
-        version: 2.233.0(constructs@10.4.4)
-      constructs:
-        specifier: ^10.4.4
-        version: 10.4.4
-    devDependencies:
-      vite-node:
-        specifier: 5.2.0
-        version: 5.2.0(@types/node@20.19.9)(jiti@2.4.2)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(yaml@2.8.2)
-
   apps/web:
     dependencies:
       '@inversifyjs/strongly-typed':
@@ -983,19 +958,6 @@ packages:
 
   '@ago-dev/nx-aws-cdk-v2@1.6.1':
     resolution: {integrity: sha512-0QAKE29g3XAt1cyxkuk6G9+o4lBDQ8kMdt+pyLtyA44gRBSsP38uBeZ9xC5XEDHmFspTohGoBO89IDMBqdNXag==}
-
-  '@aws-cdk/asset-awscli-v1@2.2.242':
-    resolution: {integrity: sha512-4c1bAy2ISzcdKXYS1k4HYZsNrgiwbiDzj36ybwFVxEWZXVAP0dimQTCaB9fxu7sWzEjw3d+eaw6Fon+QTfTIpQ==}
-
-  '@aws-cdk/asset-node-proxy-agent-v6@2.1.0':
-    resolution: {integrity: sha512-7bY3J8GCVxLupn/kNmpPc5VJz8grx+4RKfnnJiO1LG+uxkZfANZG3RMHhE+qQxxwkyQ9/MfPtTpf748UhR425A==}
-
-  '@aws-cdk/cloud-assembly-schema@48.20.0':
-    resolution: {integrity: sha512-+eeiav9LY4wbF/EFuCt/vfvi/Zoxo8bf94PW5clbMraChEliq83w4TbRVy0jB9jE0v1ooFTtIjSQkowSPkfISg==}
-    engines: {node: '>= 18.0.0'}
-    bundledDependencies:
-      - jsonschema
-      - semver
 
   '@aws-crypto/crc32@5.2.0':
     resolution: {integrity: sha512-nLbCWqQNgUiwwtFsen1AdzAtvuLRsQS8rYgMuxCrdKf9kOssamGLuPwyTY9wyYblNr9+1XM8v6zoDTPPSIeANg==}
@@ -1833,16 +1795,6 @@ packages:
 
   '@borewit/text-codec@0.1.1':
     resolution: {integrity: sha512-5L/uBxmjaCIX5h8Z+uu+kA9BQLkc/Wl06UGR5ajNRxu+/XjonB5i8JpgFMrPj3LXTCPA0pv8yxUvbUi+QthGGA==}
-
-  '@cdklabs/generative-ai-cdk-constructs@0.1.312':
-    resolution: {integrity: sha512-ctHy0JgRdQE1jsC4SHsTWyr2feSR4NRxmL/ZViJDPw65FcvTPs1rNcgyB8uOZmr7kadeMvHA0yQ51pmlxc/XLA==}
-    engines: {node: '>= 20.x <= 24.x'}
-    peerDependencies:
-      aws-cdk-lib: ^2.221.1
-      constructs: ^10.3.0
-    bundledDependencies:
-      - '@aws-cdk/aws-lambda-python-alpha'
-      - deepmerge
 
   '@colors/colors@1.6.0':
     resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
@@ -4877,24 +4829,6 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  aws-cdk-lib@2.233.0:
-    resolution: {integrity: sha512-rBOzIA8TGC5eB8TyVIvckAVlX7a0/gVPE634FguhSee9RFaovjgc5+IixGyyLJhu3lLsMSjqDoqTJg2ab+p8ng==}
-    engines: {node: '>= 18.0.0'}
-    peerDependencies:
-      constructs: ^10.0.0
-    bundledDependencies:
-      - '@balena/dockerignore'
-      - case
-      - fs-extra
-      - ignore
-      - jsonschema
-      - minimatch
-      - punycode
-      - semver
-      - table
-      - yaml
-      - mime-types
-
   aws-cdk-local@3.0.1:
     resolution: {integrity: sha512-m5Mre/nbMjwA+9zY4rc5DXzscDDgH2Y9J4/QZ95EFi++IlGHNLXnx7h/16uQoq4sWd3Z/JPjQcLf+p1aulbkpQ==}
     hasBin: true
@@ -5179,12 +5113,6 @@ packages:
   caniuse-lite@1.0.30001760:
     resolution: {integrity: sha512-7AAMPcueWELt1p3mi13HR/LHH0TJLT11cnwDJEs3xA4+CK/PLKeO9Kl1oru24htkyUKtkGCvAx4ohB0Ttry8Dw==}
 
-  cdk-nag@2.37.55:
-    resolution: {integrity: sha512-xcAkygwbph3pp7N0UEzJBmXUH/MIsluV7DYJSeZ/V3yCr0Y0QaRGO298WyD6mi4K+Rmnpl+EJoWUxcOblOqLKA==}
-    peerDependencies:
-      aws-cdk-lib: ^2.176.0
-      constructs: ^10.0.5
-
   chai@6.2.1:
     resolution: {integrity: sha512-p4Z49OGG5W/WBCPSS/dH3jQ73kD6tiMmUM+bckNK6Jr5JHMG3k9bg/BvKR8lKmtVBKmOiuVaV2ws8s9oSbwysg==}
     engines: {node: '>=18'}
@@ -5374,9 +5302,6 @@ packages:
 
   constants-browserify@1.0.0:
     resolution: {integrity: sha512-xFxOwqIzR/e1k1gLiWEophSCMqXcwVHIH7akf7b/vxcUeGunlj3hvZaaqxwHsTgn+IndtkQJgSztIDWeumWJDQ==}
-
-  constructs@10.4.4:
-    resolution: {integrity: sha512-lP0qC1oViYf1cutHo9/KQ8QL637f/W29tDmv/6sy35F5zs+MD9f66nbAAIjicwc7fwyuF3rkg6PhZh4sfvWIpA==}
 
   content-disposition@0.5.4:
     resolution: {integrity: sha512-FveZTNuGw04cxlAiWbzi6zTAL/lhehaWbTtgluJh4/E95DqMwTmha3KZN1aAWA8cFIhHzMZUvLevkw5Rqk+tSQ==}
@@ -9823,12 +9748,6 @@ snapshots:
 
   '@ago-dev/nx-aws-cdk-v2@1.6.1': {}
 
-  '@aws-cdk/asset-awscli-v1@2.2.242': {}
-
-  '@aws-cdk/asset-node-proxy-agent-v6@2.1.0': {}
-
-  '@aws-cdk/cloud-assembly-schema@48.20.0': {}
-
   '@aws-crypto/crc32@5.2.0':
     dependencies:
       '@aws-crypto/util': 5.2.0
@@ -11219,12 +11138,6 @@ snapshots:
   '@bcoe/v8-coverage@1.0.2': {}
 
   '@borewit/text-codec@0.1.1': {}
-
-  '@cdklabs/generative-ai-cdk-constructs@0.1.312(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)':
-    dependencies:
-      aws-cdk-lib: 2.233.0(constructs@10.4.4)
-      cdk-nag: 2.37.55(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)
-      constructs: 10.4.4
 
   '@colors/colors@1.6.0': {}
 
@@ -15081,13 +14994,6 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  aws-cdk-lib@2.233.0(constructs@10.4.4):
-    dependencies:
-      '@aws-cdk/asset-awscli-v1': 2.2.242
-      '@aws-cdk/asset-node-proxy-agent-v6': 2.1.0
-      '@aws-cdk/cloud-assembly-schema': 48.20.0
-      constructs: 10.4.4
-
   aws-cdk-local@3.0.1:
     dependencies:
       diff: 5.2.0
@@ -15440,11 +15346,6 @@ snapshots:
 
   caniuse-lite@1.0.30001760: {}
 
-  cdk-nag@2.37.55(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4):
-    dependencies:
-      aws-cdk-lib: 2.233.0(constructs@10.4.4)
-      constructs: 10.4.4
-
   chai@6.2.1: {}
 
   chalk@2.4.2:
@@ -15615,8 +15516,6 @@ snapshots:
   console-browserify@1.2.0: {}
 
   constants-browserify@1.0.0: {}
-
-  constructs@10.4.4: {}
 
   content-disposition@0.5.4:
     dependencies:
