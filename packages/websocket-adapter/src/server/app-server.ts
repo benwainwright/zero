@@ -56,10 +56,6 @@ export class AppServer {
   private clientSet = new Set<ServerSocketClient>();
 
   public async start() {
-    setInterval(() => {
-      this.logger.info('Ping');
-    }, 1000);
-
     this.wss = new WebSocketServer({
       port: await this.port.value,
     });
