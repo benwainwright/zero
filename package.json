@@ -1,6 +1,9 @@
 {
   "name": "@zero/source",
   "version": "0.0.0",
+  "engines": {
+    "pnpm": "10.26.0"
+  },
   "license": "MIT",
   "type": "module",
   "scripts": {
