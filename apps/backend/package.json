@@ -7,6 +7,7 @@
     "dev": "vite-node src/start.ts"
   },
   "dependencies": {
+    "@drizzle-team/brocli": "0.11.0",
     "@inversifyjs/strongly-typed": "catalog:",
     "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
@@ -31,7 +32,7 @@
         "executor": "nx:run-commands",
         "options": {
           "env": {
-            "DATABASE": "sqlite"
+            "DATABASE": "postgres"
           }
         }
       },

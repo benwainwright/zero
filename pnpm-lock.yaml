@@ -252,6 +252,9 @@ importers:
 
   apps/backend:
     dependencies:
+      '@drizzle-team/brocli':
+        specifier: 0.11.0
+        version: 0.11.0
       '@inversifyjs/strongly-typed':
         specifier: 'catalog:'
         version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))

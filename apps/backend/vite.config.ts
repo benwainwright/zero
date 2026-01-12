@@ -81,7 +81,7 @@ export default defineConfig(({ mode }) => {
         transformMixedEsModules: true,
       },
       lib: {
-        entry: 'src/start.ts',
+        entry: 'src/cli.ts',
         name: '@zero/bootstrap',
         fileName: 'index',
         formats: ['es' as const],
