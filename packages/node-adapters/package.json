@@ -18,13 +18,15 @@
     "vitest-when": "catalog:"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.966.0",
     "@inversifyjs/strongly-typed": "catalog:",
     "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
-    "@zero/domain": "workspace:*",
     "@zero/bootstrap": "workspace:*",
+    "@zero/domain": "workspace:*",
     "bcryptjs": "^3.0.3",
     "inversify": "catalog:",
+    "mock-aws-s3-v3": "^6.1.8",
     "reflect-metadata": "catalog:",
     "uuid": "13.0.0",
     "zod": "catalog:"
