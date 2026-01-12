@@ -42,6 +42,7 @@
           "docker:build"
         ],
         "options": {
+          "cwd": "apps/backend",
           "commands": [
             "docker push benwainwrightmanch/zero --all-tags"
           ]
