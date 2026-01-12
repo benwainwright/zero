@@ -13,4 +13,4 @@ COPY dist/cli.js /app/cli.js
 COPY ${CONFIG} /app/config.json
 
 # Run the CLI with the baked config
-CMD ["node", "cli.js", "--config", "/app/config.json"]
+CMD ["node", "cli.js", "start" "--config", "/app/config.json"]

@@ -36,6 +36,28 @@
           }
         }
       },
+      "docker:publish": {
+        "executor": "nx:run-commands",
+        "dependsOn": [
+          "docker:build"
+        ],
+        "options": {
+          "commands": [
+            "docker push benwainwrightmanch/zero --all-tags"
+          ]
+        }
+      },
+      "docker:build": {
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "cwd": "apps/backend",
+          "args": [
+            "--tag benwainwrightmanch/zero:latest --tag benwainwrightmanch/zero:$(git rev-parse HEAD)"
+          ]
+        }
+      },
       "deploy:prod": {
         "executor": "nx:run-commands",
         "options": {
