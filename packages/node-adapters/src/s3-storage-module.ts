@@ -24,6 +24,13 @@ export const s3StorageModule: IModule<
     description: 'S3 compatible object storage endpoint',
   });
 
+  const storageRegion = configValue({
+    namespace: 's3',
+    key: 'region',
+    schema: z.string(),
+    description: 'S3 compatible object storage region',
+  });
+
   const storageAccessKeyId = configValue({
     namespace: 's3',
     key: 'accessKeyId',
@@ -42,4 +49,5 @@ export const s3StorageModule: IModule<
   bind('StorageBucketEndpoint').toConstantValue(storageEndpoint);
   bind('StorageBucketAccessKeyId').toConstantValue(storageAccessKeyId);
   bind('StorageBucketSecretAccessKey').toConstantValue(storageSecretAccessKey);
+  bind('StorageBucketRegion').toConstantValue(storageRegion);
 };

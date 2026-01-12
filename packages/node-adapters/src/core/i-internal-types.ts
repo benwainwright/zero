@@ -6,6 +6,7 @@ export interface IInternalTypes {
   EventBusListener: EventEmitter;
   BusNamespace: string;
   StoragePath: ConfigValue<string>;
+  StorageBucketRegion: ConfigValue<string>;
   StorageBucketEndpoint: ConfigValue<string>;
   StorageBucketName: ConfigValue<string>;
   StorageBucketAccessKeyId: ConfigValue<string>;

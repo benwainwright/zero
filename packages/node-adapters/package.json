@@ -25,6 +25,7 @@
     "@zero/bootstrap": "workspace:*",
     "@zero/domain": "workspace:*",
     "bcryptjs": "^3.0.3",
+    "fake-s3": "^3.1.3",
     "inversify": "catalog:",
     "mock-aws-s3-v3": "^6.1.8",
     "reflect-metadata": "catalog:",

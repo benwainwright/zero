@@ -6,6 +6,9 @@ import { injectable } from 'inversify';
 @injectable()
 export class S3CompatibleClient {
   public constructor(
+    @inject('StorageBucketRegion')
+    public readonly region: ConfigValue<string>,
+
     @inject('StorageBucketEndpoint')
     public readonly endpoint: ConfigValue<string>,
 
@@ -19,6 +22,7 @@ export class S3CompatibleClient {
   public async get() {
     return new S3Client({
       endpoint: await this.endpoint.value,
+      region: await this.region.value,
       credentials: {
         secretAccessKey: await this.secretAcessKey.value,
         accessKeyId: await this.secretAccessKeyId.value,
