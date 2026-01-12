@@ -56,6 +56,10 @@ export class AppServer {
   private clientSet = new Set<ServerSocketClient>();
 
   public async start() {
+    setInterval(() => {
+      this.logger.info('Ping');
+    }, 1000);
+
     this.wss = new WebSocketServer({
       port: await this.port.value,
     });
@@ -75,12 +79,12 @@ export class AppServer {
       });
 
       this.wss?.on('close', () => {
-        this.logger.info(`Websocket closed`, { ...LOG_CONTEXT });
+        this.logger.info(`Websocket connection closed`, { ...LOG_CONTEXT });
       });
 
       this.wss?.on('connection', async (ws, request) => {
         await this.errorHandler.withErrorHandling(async () => {
-          this.logger.debug('Websocket connection established', LOG_CONTEXT);
+          this.logger.info('Websocket connection established', LOG_CONTEXT);
 
           const container = await this.requestContainerFactory({
             getSessionId: async () => {
