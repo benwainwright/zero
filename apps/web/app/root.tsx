@@ -22,6 +22,7 @@ import { Notifications } from '@mantine/notifications';
 import type { ReactNode } from 'react';
 import { ApiProvider, CurrentUserProvider } from '@zero/react-api';
 import { theme } from '@config';
+import { socketUrl } from './socket-url.ts';
 
 // export const links: Route.LinksFunction = () => [];
 
@@ -39,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }): ReactNode {
         <MantineProvider theme={theme}>
           <ModalsProvider>
             <Notifications />
-            <ApiProvider url={`ws://localhost:3000`}>
+            <ApiProvider url={socketUrl}>
               <CurrentUserProvider>{children}</CurrentUserProvider>
             </ApiProvider>
           </ModalsProvider>
