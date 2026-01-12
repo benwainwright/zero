@@ -73,6 +73,7 @@ export default defineConfig(({ mode }) => {
     ],
     ssr: {
       target: 'node' as const,
+      noExternal: true,
     },
     build: {
       ssr: true,
@@ -81,6 +82,7 @@ export default defineConfig(({ mode }) => {
       reportCompressedSize: true,
       commonjsOptions: {
         transformMixedEsModules: true,
+        include: [/node_modules/],
       },
       lib: {
         entry: 'src/cli.ts',
