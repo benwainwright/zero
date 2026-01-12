@@ -46,9 +46,6 @@
       "path": "./packages/react-api"
     },
     {
-      "path": "./apps/deploy"
-    },
-    {
       "path": "./packages/postgres-adapters"
     },
     {

@@ -36,6 +36,14 @@
           }
         }
       },
+      "deploy:prod": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "railway up --service @zero/backend --environment production"
+          ]
+        }
+      },
       "start:database": {
         "continuous": true,
         "executor": "nx:run-commands",
