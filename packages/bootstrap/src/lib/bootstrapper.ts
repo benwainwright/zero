@@ -146,7 +146,7 @@ export class Bootstrapper implements IBootstrapper {
   }): ConfigValue<core.output<TConfigValue>> {
     const namespacedConfig = this.ensureNamespacedConfig(namespace);
     const envKey = `ZERO_CONFIG_${namespace}_${key}`.toUpperCase();
-    const envValue = process.env[envKey];
+    const envValue = this.coerceEnvValue(process.env[envKey]);
 
     const value =
       namespacedConfig[key] === undefined && envValue !== undefined
@@ -243,5 +243,32 @@ export class Bootstrapper implements IBootstrapper {
     const existing = this.ensureRecord(this._config[namespace]);
     this._config[namespace] = existing;
     return existing;
+  }
+  private coerceEnvValue(raw: string | undefined): unknown {
+    if (!raw) {
+      return undefined;
+    }
+
+    const trimmed = raw.trim();
+
+    if (/^(true|false)$/i.test(trimmed))
+      return trimmed.toLowerCase() === 'true';
+
+    if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
+
+    if (/^(null)$/i.test(trimmed)) return null;
+
+    if (
+      (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+      (trimmed.startsWith('[') && trimmed.endsWith(']'))
+    ) {
+      try {
+        return JSON.parse(trimmed);
+      } catch {
+        // fall through to string
+      }
+    }
+
+    return raw;
   }
 }
