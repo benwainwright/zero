@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@lib": ["./src/lib/index.ts"],
+      "@adapters": ["./src/adapters/index.ts"],
+      "@core": ["./src/core/index.ts"],
       "@types": ["./src/types/index.ts"]
     },
     "outDir": "./out-tsc/vitest",
@@ -19,6 +20,7 @@
     "vite.config.mts",
     "vitest.config.mts",
     "src/**/*.test.ts",
+    "src/**/*tests.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.tsx",

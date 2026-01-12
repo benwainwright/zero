@@ -1,4 +1,5 @@
 import { databaseAdaptersModule } from './database.ts';
+import { storageAdapterModule } from './storage.ts';
 
 import { command, string } from '@drizzle-team/brocli';
 import { getBootstrapper } from '@zero/bootstrap';
@@ -15,6 +16,7 @@ export const startCommand = command({
   handler: async (options) => {
     const bootstrapper = await getBootstrapper(options.config);
     bootstrapper.addModule(databaseAdaptersModule);
+    bootstrapper.addModule(storageAdapterModule);
     bootstrapper.addModule(applicationCoreModule);
     bootstrapper.addModule(nodeAdaptersModule);
     bootstrapper.addModule(authModule);

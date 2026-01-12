@@ -3,3 +3,9 @@ module '@database-adapters' {
     import('@zero/bootstrap').BindingMap
   >;
 }
+
+module '@storage-adapter' {
+  const storageAdapterModule: import('@zero/bootstrap').IModule<
+    import('@zero/bootstrap').BindingMap
+  >;
+}

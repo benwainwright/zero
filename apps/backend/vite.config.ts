@@ -27,10 +27,21 @@ function injectFilenameForBadPkg() {
   };
 }
 
+const getStoragePackage = (env: Record<string, string>) => {
+  const databaseModules: Record<string, string> = {
+    s3: './storage/s3.ts',
+    flatfile: './storage/flat-file.ts',
+  };
+
+  const db = env['STORAGE'];
+
+  return databaseModules[db];
+};
+
 const getDbPackage = (env: Record<string, string>) => {
   const databaseModules: Record<string, string> = {
-    postgres: './postgres.ts',
-    sqlite: './sqlite.ts',
+    postgres: './databases/postgres.ts',
+    sqlite: './databases/sqlite.ts',
   };
 
   const db = env['DATABASE'];
@@ -49,6 +60,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@database-adapters': getDbPackage(env),
+        '@storage-adapter': getStoragePackage(env),
       },
     },
 
