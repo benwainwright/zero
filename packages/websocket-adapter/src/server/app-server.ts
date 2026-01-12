@@ -58,7 +58,6 @@ export class AppServer {
   public async start() {
     this.wss = new WebSocketServer({
       port: await this.port.value,
-      host: await this.host.value,
     });
 
     return new Promise<void>((accept) => {
