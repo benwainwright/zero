@@ -1,4 +1,5 @@
-const host = process.env['VITE_ZERO_BACKEND_SOCKET_HOST'];
-const port = process.env['VITE_ZERO_CONFIG_SOCKET_PORT'];
+const protocol = process.env['BACKEND_PROTOCOL'];
+const host = process.env['BACKEND_HOST'];
+const port = process.env['BACKEND_PORT'];
 
-export const socketUrl = `ws://${host}:${port}`;
+export const socketUrl = `${protocol}://${host}:${port}`;

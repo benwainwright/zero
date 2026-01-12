@@ -4,6 +4,7 @@ import { reactRouter } from '@react-router/dev/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 
+const protocol = process.env['BACKEND_PROTOCOL'] ?? 'ws';
 const host = process.env['BACKEND_HOST'] ?? 'localhost';
 const port = process.env['BACKEND_PORT'] ?? 3000;
 
@@ -19,8 +20,9 @@ export default defineConfig(() => ({
     host: 'localhost',
   },
   define: {
-    "process.env['VITE_ZERO_CONFIG_SOCKET_HOST']": host,
-    "process.env['VITE_ZERO_CONFIG_SOCKET_PORT']": port,
+    "process.env['BACKEND_PROTOCOL']": protocol,
+    "process.env['BACKEND_HOST']": host,
+    "process.env['BACKEND_PORT']": port,
   },
   plugins: [
     !process.env['VITEST'] && reactRouter(),
