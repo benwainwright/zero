@@ -1,9 +1,10 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "buildCommand": "pnpm exec nx run @zero/backend:build"
+    "buildCommand": "pnpm exec nx run @zero/backend:build",
+    "watchPatterns": ["**"]
   },
   "deploy": {
-    "startCommand": "node apps/backend/dist/cli.js --config apps/backend/zero.config.dev.json"
+    "startCommand": "node apps/backend/dist/cli.js start --config apps/backend/zero.config.dev.json"
   }
 }
