@@ -105,6 +105,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         external: [],
       },
+      sourcemap: 'inline',
     },
   };
 });
