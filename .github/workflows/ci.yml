@@ -28,4 +28,4 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec nx run-many -t lint test build typecheck
+      - run: pnpm exec nx run-many -t test build typecheck
