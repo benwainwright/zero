@@ -29,29 +29,34 @@ export class S3ObjectStore implements IObjectStorage {
 
     const result = await client.send(command);
 
-    return (result.Contents?.map((item) => item.Key) ?? []).flatMap((item) =>
-      item ? [item] : []
-    );
+    return (
+      result.Contents?.map((item) => item.Key?.slice(`${namespace}/`.length)) ??
+      []
+    ).flatMap((item) => (item ? [item] : []));
   }
 
   public async get(
     namespace: string,
     key: string
   ): Promise<string | undefined> {
-    const client = await this.client.get();
+    try {
+      const client = await this.client.get();
 
-    const command = new GetObjectCommand({
-      Bucket: await this.bucketName.value,
-      Key: `${namespace}/${key}`,
-    });
+      const command = new GetObjectCommand({
+        Bucket: await this.bucketName.value,
+        Key: `${namespace}/${key}`,
+      });
 
-    const result = await client.send(command);
+      const result = await client.send(command);
 
-    if (!result) {
+      if (!result) {
+        return undefined;
+      }
+
+      return await result.Body?.transformToString();
+    } catch {
       return undefined;
     }
-
-    return await result.Body?.transformToString();
   }
 
   public async set(
@@ -59,33 +64,42 @@ export class S3ObjectStore implements IObjectStorage {
     key: string,
     thing: string | undefined
   ): Promise<void> {
-    const client = await this.client.get();
+    try {
+      const client = await this.client.get();
 
-    const command = thing
-      ? new PutObjectCommand({
-          Bucket: await this.bucketName.value,
-          Key: `${namespace}/${key}`,
-          Body: thing,
-        })
-      : new DeleteObjectCommand({
-          Bucket: await this.bucketName.value,
-          Key: `${namespace}/${key}`,
-        });
+      const command = thing
+        ? new PutObjectCommand({
+            Bucket: await this.bucketName.value,
+            Key: `${namespace}/${key}`,
+            Body: thing,
+          })
+        : new DeleteObjectCommand({
+            Bucket: await this.bucketName.value,
+            Key: `${namespace}/${key}`,
+          });
 
-    await client.send(command);
+      await client.send(command);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public async clear(namespace: string): Promise<void> {
     const client = await this.client.get();
-    const keys = await this.listKeys(namespace);
+    const listCommand = new ListObjectsCommand({
+      Bucket: await this.bucketName.value,
+      Prefix: `${namespace}/`,
+    });
 
-    const command = new DeleteObjectsCommand({
+    const listResult = await client.send(listCommand);
+
+    const deleteCommand = new DeleteObjectsCommand({
       Bucket: await this.bucketName.value,
       Delete: {
-        Objects: keys.map((item) => ({ Key: item })),
+        Objects: listResult.Contents?.map((item) => ({ Key: item.Key })),
       },
     });
 
-    await client.send(command);
+    await client.send(deleteCommand);
   }
 }

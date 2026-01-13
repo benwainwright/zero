@@ -15,6 +15,7 @@ export default defineConfig(() => ({
   ],
   test: {
     name: '@zero/',
+    //globalSetup: './src/test-helpers/global-setup.ts',
     watch: false,
     globals: true,
     environment: 'node',
