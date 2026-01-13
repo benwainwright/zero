@@ -46,6 +46,17 @@ export class SqliteCategoryRepository
     return this.mapRaw(result);
   }
 
+  public async listAll({ userId }: { userId: string }): Promise<Category[]> {
+    const tx = this.database.transaction();
+    const result = await tx
+      .selectFrom('categories')
+      .selectAll()
+      .where('ownerId', '=', userId)
+      .execute();
+
+    return result.map((role) => this.mapRaw(role));
+  }
+
   public async list({
     userId,
     start,

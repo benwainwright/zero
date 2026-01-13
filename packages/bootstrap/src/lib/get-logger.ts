@@ -1,14 +1,18 @@
 import { type ILogObj } from 'tslog';
 
 import { CustomLogger } from './custom-logger.ts';
+import type { ILogger } from '@types';
 
 export const getLogger = (type: 'pretty' | 'json') => {
   const logger = new CustomLogger<ILogObj>({ type });
 
-  const newLogger = (theLogger: CustomLogger<ILogObj>) => {
-    const getChildLogger = (name: string) => {
+  const newLogger = (theLogger: CustomLogger<ILogObj>): ILogger => {
+    const getChildLogger = <TData extends ILogObj>(
+      name: string,
+      data?: TData
+    ) => {
       return newLogger(
-        theLogger.getSubLogger({ name }) as CustomLogger<ILogObj>
+        theLogger.getSubLogger({ name }, data) as CustomLogger<ILogObj>
       );
     };
 

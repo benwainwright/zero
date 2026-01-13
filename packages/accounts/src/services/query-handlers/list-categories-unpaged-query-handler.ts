@@ -9,9 +9,9 @@ import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import type { Category } from '@zero/domain';
 
-export class ListCategoriesQueryHandler extends AbstractQueryHandler<
+export class ListCategoriesUnpagedQueryHandler extends AbstractQueryHandler<
   AccountsQueries,
-  'ListCategoriesQuery'
+  'ListCategoriesQueryUnpaged'
 > {
   public constructor(
     @inject('CategoryRepository')
@@ -27,12 +27,10 @@ export class ListCategoriesQueryHandler extends AbstractQueryHandler<
   }
 
   protected override async handle({
-    query: { offset, limit },
     authContext,
   }: IQueryContext<{
     id: string;
-    key: 'ListCategoriesQuery';
-    params: { offset: number; limit: number };
+    key: 'ListCategoriesQueryUnpaged';
     response: { categories: Category[] };
   }>): Promise<{ categories: Category[] }> {
     this.grants.assertLogin(authContext);
@@ -40,13 +38,11 @@ export class ListCategoriesQueryHandler extends AbstractQueryHandler<
       capability: 'category:list',
     });
 
-    const cats = await this.categories.list({
-      start: offset,
-      limit,
+    const cats = await this.categories.listAll({
       userId: authContext.id,
     });
 
     return { categories: cats };
   }
-  public override readonly name = 'ListCategoriesQuery';
+  public override readonly name = 'ListCategoriesQueryUnpaged';
 }

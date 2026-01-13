@@ -36,6 +36,6 @@ describe('update account command handler', () => {
       name: 'foo',
     });
 
-    expect(writer.save).toHaveBeenCalledWith(mockAccount);
+    expect(writer.update).toHaveBeenCalledWith(mockAccount);
   });
 });

@@ -15,11 +15,12 @@ export default defineConfig(() => ({
   ],
   test: {
     name: '@zero/',
-    //globalSetup: './src/test-helpers/global-setup.ts',
+    globalSetup: './src/test-helpers/global-setup.ts',
     watch: false,
     globals: true,
     environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    maxWorkers: 1,
     reporters: ['default'],
     coverage: {
       enabled: true,

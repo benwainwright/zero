@@ -9,6 +9,7 @@ export {
   useEvents,
   useOpenSocket,
   useQuery,
+  useLogErrors,
   useSingleQuery,
   useRoles,
   useCategory,

@@ -1,5 +1,8 @@
 export interface ILogger {
-  child(context: string): ILogger;
+  child<TData extends { [name: string]: unknown }>(
+    name: string,
+    context?: TData
+  ): ILogger;
   error<TData extends { context?: string; error?: Error | unknown }>(
     message: string,
     data?: TData

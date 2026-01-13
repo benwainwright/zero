@@ -1,6 +1,5 @@
 import {
   AbstractCommandHandler,
-  AppError,
   type ICommandContext,
   type IUUIDGenerator,
   type IWriteRepository,
@@ -45,10 +44,7 @@ export class CreateAccountCommandHandler extends AbstractCommandHandler<
       capability: 'account:list',
     });
 
-    if (!authContext) {
-      throw new AppError('Must be logged in');
-    }
-
+    this.grants.assertLogin(authContext);
     const id = this.uuidGenerator.v7();
 
     const newAccount = Account.create({

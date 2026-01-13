@@ -22,6 +22,7 @@ export {
   ListTransactionsQueryHandler,
   CheckBankConnectionQueryHandler,
   GetBankAuthLinkQueryHandler,
+  ListCategoriesUnpagedQueryHandler,
   GetOpenBankingInstitutionListQueryHandler,
 } from './query-handlers/index.ts';
 

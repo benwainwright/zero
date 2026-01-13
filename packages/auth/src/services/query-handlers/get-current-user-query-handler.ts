@@ -32,10 +32,6 @@ export class GetCurrentUserQueryHandler extends AbstractQueryHandler<
   > {
     this.grant.requiresNoPermissions();
 
-    if (authContext instanceof User) {
-      return authContext;
-    }
-
-    return undefined;
+    return authContext;
   }
 }

@@ -1,7 +1,7 @@
 import type { IObjectStorage } from '@zero/application-core';
 
 export const objectStoreTests = (create: () => Promise<IObjectStorage>) => {
-  describe('listKeys', () => {
+  describe.sequential('listKeys', () => {
     it('returns a list of all the keys in a given namespace', async () => {
       const store = await create();
 

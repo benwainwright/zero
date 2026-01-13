@@ -76,6 +76,7 @@ export class ServerSocketClient {
             this.eventBus.emit('QueryResponseEvent', {
               id: parsed.packet.id,
               data: response,
+              key: parsed.packet.key,
             });
           }
           break;

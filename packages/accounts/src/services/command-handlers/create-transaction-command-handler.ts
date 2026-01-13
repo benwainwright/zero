@@ -36,7 +36,7 @@ export class CreateTransactionCommandHandler extends AbstractCommandHandler<
   }: ICommandContext<{
     id: string;
     key: 'CreateTransactionCommand';
-    params: Omit<ITransaction, 'id' | 'categoryId' | 'ownerId'>;
+    params: Omit<ITransaction, 'id' | 'ownerId'>;
   }>): Promise<void> {
     this.grants.requires({
       capability: 'account:create-transaction',

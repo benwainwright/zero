@@ -26,6 +26,7 @@ export default defineConfig(() => ({
   },
   plugins: [
     !process.env['VITEST'] && reactRouter(),
+
     tsconfigPaths({
       projectDiscovery: 'lazy',
       projects: [

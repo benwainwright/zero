@@ -82,6 +82,6 @@ export class UpdateUserCommandHandler extends AbstractCommandHandler<
       roles: allRoles,
     });
 
-    await this.userWriter.save(user);
+    await this.userWriter.update(user);
   }
 }

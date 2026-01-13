@@ -22,7 +22,8 @@
     "@zero/domain": "workspace:*",
     "@zero/serialiser": "workspace:*",
     "inversify": "catalog:",
-    "zod": "catalog:",
-    "reflect-metadata": "catalog:"
+    "reflect-metadata": "catalog:",
+    "type-fest": "^5.4.0",
+    "zod": "catalog:"
   }
 }

@@ -20,4 +20,5 @@ export { type IReadRepository } from './i-read-repository.ts';
 export { type IScopedService } from './i-scoped-service.ts';
 export { type IWriteRepository } from './i-write-repository.ts';
 export { type ICountableRepository } from './i-countable-repository.ts';
+export { type IUnpagedListRepository } from './i-list-unlimited-repository.ts';
 export { type IListRepository } from './i-list-repository.ts';

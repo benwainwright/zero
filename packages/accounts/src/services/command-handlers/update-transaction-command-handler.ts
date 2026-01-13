@@ -45,7 +45,7 @@ export class UpdateTransactionCommandHandler extends AbstractCommandHandler<
 
     tx.update(data);
 
-    await this.txWriter.save(tx);
+    await this.txWriter.update(tx);
   }
   public override readonly name = 'UpdateTransactionCommand';
 }

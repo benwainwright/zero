@@ -17,6 +17,7 @@ export {
   type IStringHasher,
   type IUUIDGenerator,
   type IEventListener,
+  type IUnpagedListRepository,
   type IWriteRepository,
   type IListener,
   type IReadRepository,

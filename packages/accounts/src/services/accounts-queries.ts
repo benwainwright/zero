@@ -20,6 +20,12 @@ export type AccountsQueries =
     }
   | {
       id: string;
+      key: 'ListCategoriesQueryUnpaged';
+      params: undefined;
+      response: { categories: Category[] };
+    }
+  | {
+      id: string;
       key: 'GetBankAuthLinkQuery';
       params: undefined;
       response: { url: string | undefined };

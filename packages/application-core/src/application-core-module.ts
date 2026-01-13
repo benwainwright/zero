@@ -53,7 +53,7 @@ export const applicationCoreModule: IModule<
         .toConstantValue(requestContainer);
 
       requestContainer.bind('Logger').toConstantValue(
-        logger.child({
+        logger.child('sesion-logger', {
           session: hasher.md5(sessionId),
         })
       );

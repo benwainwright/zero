@@ -38,6 +38,6 @@ describe('update tx command handler', () => {
       date,
     });
 
-    expect(writer.save).toHaveBeenCalledWith(mockTransaction);
+    expect(writer.update).toHaveBeenCalledWith(mockTransaction);
   });
 });

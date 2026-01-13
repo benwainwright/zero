@@ -1,8 +1,12 @@
-import StackTracey from 'stacktracey';
+import type { LiteralUnion } from 'type-fest';
+import * as stackTraceParser from 'stacktrace-parser';
 
-interface StackLine {
-  callee: string;
-  file: string;
+export interface StackFrame {
+  file: string | null;
+  methodName: LiteralUnion<'<unknown>', string>;
+  arguments: string[];
+  lineNumber: number | null;
+  column: number | null;
 }
 
 interface IEventEmitter {
@@ -10,21 +14,11 @@ interface IEventEmitter {
 }
 
 export abstract class AbstractError extends Error {
-  public parsedStack: StackLine[];
+  public parsedStack: StackFrame[];
 
   public constructor(message: string) {
     super(message);
-    const stack = new StackTracey(this);
-
-    this.parsedStack = stack.items.map((item) => {
-      const lineString = item.line ? `:${String(item.line)}` : ``;
-      const colString = item.column ? `:${String(item.column)}` : ``;
-
-      return {
-        callee: item.callee,
-        file: `${item.fileRelative}:${lineString}${colString}`,
-      };
-    });
+    this.parsedStack = stackTraceParser.parse(this.stack ?? '');
   }
 
   public abstract handle(events: IEventEmitter): void;

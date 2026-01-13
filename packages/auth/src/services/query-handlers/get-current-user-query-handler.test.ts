@@ -1,5 +1,4 @@
 import { GetCurrentUserQueryHandler } from './get-current-user-query-handler.ts';
-import { User } from '@zero/domain';
 import { buildInstance, getQueryContextBuilder } from '@zero/test-helpers';
 import type { AuthQueries } from '@services';
 
@@ -15,7 +14,7 @@ describe('get current user query handler', () => {
 
     expect.assertions(2);
     if (result.handled) {
-      expect(result.response).toBeInstanceOf(User);
+      expect(result.response).toBeDefined();
       expect(result.response?.id).toEqual('ben');
     }
   });

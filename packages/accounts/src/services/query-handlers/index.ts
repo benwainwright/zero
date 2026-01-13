@@ -6,3 +6,4 @@ export { GetBankAuthLinkQueryHandler } from './get-bank-auth-link-query-handler.
 export { GetOpenBankingInstitutionListQueryHandler } from './get-open-banking-institution-list-query-handler.ts';
 export { GetCategoryQueryHandler } from './get-category-query-handler.ts';
 export { ListCategoriesQueryHandler } from './list-categories-query-handler.ts';
+export { ListCategoriesUnpagedQueryHandler } from './list-categories-unpaged-query-handler.ts';

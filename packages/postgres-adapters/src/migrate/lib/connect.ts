@@ -12,6 +12,7 @@ export interface ConnectConfig {
 const logger: ILogger = {
   info: console.log,
   child: () => logger,
+  fatal: () => console.error,
   error: console.error,
   warn: console.log,
   debug: console.log,

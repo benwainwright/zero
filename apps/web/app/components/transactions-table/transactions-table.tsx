@@ -1,8 +1,13 @@
-import { Currency, DateLabel, NewTransactionRow } from '@components';
+import {
+  Currency,
+  DateLabel,
+  EditTransactionRow,
+  TransactionRow,
+} from '@components';
 import { Table } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import type { Transaction } from '@zero/domain';
+import { Transaction, type ITransaction } from '@zero/domain';
 import { useCommand } from '@zero/react-api';
+import { useEffect, useState } from 'react';
 
 interface TransactionsTableProps {
   transactions: Transaction[];
@@ -11,65 +16,71 @@ interface TransactionsTableProps {
   onTransactionCreated: () => void;
 }
 
+const getDefaultTransaction = (accountId: string) => ({
+  date: new Date(),
+  accountId,
+  payee: '',
+  amount: 0,
+});
+
 export const TransactionsTable = ({
   transactions,
   creatingNewTransaction,
   onTransactionCreated,
   accountId,
 }: TransactionsTableProps) => {
-  const { execute: createTrnsaction } = useCommand('CreateTransactionCommand');
+  const [newTransaction, setNewTransaction] = useState<
+    Omit<ITransaction, 'id' | 'ownerId'>
+  >(getDefaultTransaction(accountId));
+  const { execute: createTransaction } = useCommand('CreateTransactionCommand');
 
-  const form = useForm({
-    initialValues: {
-      payee: '',
-      date: new Date(),
-      amount: '',
-    },
-  });
+  useEffect(() => {
+    if (!creatingNewTransaction) {
+      setNewTransaction(getDefaultTransaction(accountId));
+    }
+  }, [creatingNewTransaction, accountId]);
 
   return (
-    <form
-      method="post"
-      onSubmit={form.onSubmit(async (values) => {
-        await createTrnsaction({
-          accountId,
-          ...values,
-          amount: Number(values.amount) * 1000,
-        });
-        onTransactionCreated();
-      })}
+    <Table
+      onKeyDown={async (event) => {
+        if (event.key === 'Enter') {
+          await createTransaction(newTransaction);
+          onTransactionCreated();
+        }
+      }}
+      layout="fixed"
+      highlightOnHover
+      tabularNums
+      verticalSpacing={'sm'}
+      withColumnBorders
     >
-      <Table
-        layout="fixed"
-        highlightOnHover
-        tabularNums
-        verticalSpacing={'sm'}
-        withColumnBorders
-      >
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Date</Table.Th>
-            <Table.Th>Payee</Table.Th>
-            <Table.Th>Amount</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          <NewTransactionRow open={creatingNewTransaction} form={form} />
-          {transactions.map((tx) => {
-            return (
-              <Table.Tr key={`${tx.id}-tx-row`}>
-                <Table.Td>
-                  <DateLabel date={tx.date} />
-                </Table.Td>
-                <Table.Td>{tx.payee}</Table.Td>
-                <Table.Td>
-                  <Currency>{tx.amount}</Currency>
-                </Table.Td>
-              </Table.Tr>
-            );
-          })}
-        </Table.Tbody>
-      </Table>
-    </form>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>Date</Table.Th>
+          <Table.Th>Payee</Table.Th>
+          <Table.Th>Category</Table.Th>
+          <Table.Th>Amount</Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
+        {creatingNewTransaction && (
+          <EditTransactionRow
+            currentValue={newTransaction}
+            onChange={(newValue) => {
+              console.log({ newValue });
+              setNewTransaction(newValue);
+            }}
+          />
+        )}
+        {transactions.map((tx) => {
+          return (
+            <TransactionRow
+              transaction={tx.toObject()}
+              key={`${tx.id}-tx-row`}
+            />
+          );
+        })}
+      </Table.Tbody>
+    </Table>
   );
 };

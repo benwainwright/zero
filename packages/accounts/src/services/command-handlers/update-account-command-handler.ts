@@ -49,6 +49,6 @@ export class UpdateAccountCommandHandler extends AbstractCommandHandler<
 
     account.update({ name, description });
 
-    await this.writer.save(account);
+    await this.writer.update(account);
   }
 }

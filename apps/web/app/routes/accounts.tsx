@@ -17,7 +17,7 @@ export const Users = (): ReactNode => {
       routeName="accounts"
       headerActions={
         <Button onClick={open} variant="subtle">
-          Create Account
+          Create
         </Button>
       }
     >
@@ -27,7 +27,8 @@ export const Users = (): ReactNode => {
           if (data.length === 0) {
             return (
               <Text>
-                You haven't created any accounts yet! Click the button above to{' '}
+                You haven't created any accounts yet! Click the button above to
+                create one
               </Text>
             );
           }

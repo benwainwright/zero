@@ -17,3 +17,4 @@ export { useBankConnection } from './use-bank-connection.ts';
 export { useSingleQuery } from './use-single-query.ts';
 export { useCategories } from './use-categories.tsx';
 export { useCategory } from './use-category.ts';
+export { useLogErrors } from './use-log-errors.ts';

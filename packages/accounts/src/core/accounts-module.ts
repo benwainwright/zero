@@ -23,13 +23,13 @@ import {
   DeleteCategoryCommandHandler,
   ListCategoriesQueryHandler,
   GetCategoryQueryHandler,
+  ListCategoriesUnpagedQueryHandler,
 } from '@services';
 
 export const accountsModule: IModule<
   IAccountsTypes & IApplicationTypes
 > = async ({ bind }) => {
   bind('OpenBankingTokenManager').to(OpenBankingTokenManager);
-
   bind('CommandHandler').to(CreateAccountCommandHandler);
   bind('CommandHandler').to(DeleteAccountCommandHandler);
   bind('CommandHandler').to(UpdateAccountCommandHandler);
@@ -42,12 +42,12 @@ export const accountsModule: IModule<
   bind('CommandHandler').to(UpdateCategoryCommandHandler);
   bind('CommandHandler').to(CreateCategoryCommandHandler);
   bind('CommandHandler').to(DeleteCategoryCommandHandler);
-
   bind('QueryHandler').to(ListTransactionsQueryHandler);
   bind('QueryHandler').to(ListUserAccountsQueryHandler);
   bind('QueryHandler').to(GetAccountQueryHandler);
   bind('QueryHandler').to(CheckBankConnectionQueryHandler);
   bind('QueryHandler').to(GetBankAuthLinkQueryHandler);
+  bind('QueryHandler').to(ListCategoriesUnpagedQueryHandler);
   bind('QueryHandler').to(GetOpenBankingInstitutionListQueryHandler);
   bind('QueryHandler').to(ListCategoriesQueryHandler);
   bind('QueryHandler').to(GetCategoryQueryHandler);

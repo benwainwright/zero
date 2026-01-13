@@ -47,7 +47,7 @@ describe('Update user command handler', () => {
       roles: [],
     });
 
-    expect(userWriter.save).toHaveBeenCalledWith(mockUser);
+    expect(userWriter.update).toHaveBeenCalledWith(mockUser);
   });
 
   it('will get roles from role repo if any updates are made', async () => {
@@ -79,6 +79,6 @@ describe('Update user command handler', () => {
       roles: [mockFooRole, mockBarRole],
     });
 
-    expect(userWriter.save).toHaveBeenCalledWith(mockUser);
+    expect(userWriter.update).toHaveBeenCalledWith(mockUser);
   });
 });
