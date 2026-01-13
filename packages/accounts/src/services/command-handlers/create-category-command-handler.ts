@@ -54,13 +54,7 @@ export class CreateCategoryCommandHandler extends AbstractCommandHandler<
       ownerId: authContext.id,
     };
 
-    console.log(config);
-
-    console.log(Category.create);
-
     const category = Category.create(config);
-
-    console.log({ category });
 
     await this.categories.save(category);
   }

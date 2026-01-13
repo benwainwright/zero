@@ -244,6 +244,7 @@ export class Bootstrapper implements IBootstrapper {
     this._config[namespace] = existing;
     return existing;
   }
+
   private coerceEnvValue(raw: string | undefined): unknown {
     if (!raw) {
       return undefined;

@@ -4,6 +4,7 @@
     "outDir": "dist",
     "types": ["node"],
     "rootDir": "src",
+    "esModuleInterop": true,
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },
   "include": ["src/**/*.ts"],

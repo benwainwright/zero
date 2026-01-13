@@ -1,14 +1,18 @@
 import { TypedContainer } from '@inversifyjs/strongly-typed';
 import type { IBootstrapTypes, IInternalTypes } from '@types';
-import { getWinstonLogger } from './get-winston-logger.ts';
+import { getLogger } from './get-logger.ts';
 import { Bootstrapper } from './bootstrapper.ts';
 import { DecoratorManager } from '@decorator-manager';
 
-export const getBootstrapper = async (configFile: string) => {
+export const getBootstrapper = async (
+  configFile: string,
+  loggerType: 'pretty' | 'json'
+) => {
   const container = new TypedContainer<IBootstrapTypes & IInternalTypes>({
     defaultScope: 'Request',
   });
-  const logger = getWinstonLogger();
+  const logger = getLogger(loggerType);
+
   logger.info(`Starting application`);
   container.bind('Logger').toConstantValue(logger);
   container.bind('ConfigFile').toConstantValue(configFile);
@@ -20,5 +24,6 @@ export const getBootstrapper = async (configFile: string) => {
   logger.debug(`Finished initialising bootstrap module`);
 
   container.bind('Container').toConstantValue(container);
+  console.log('4');
   return await container.getAsync('Bootstrapper');
 };

@@ -12,9 +12,14 @@ import { integrationsModule } from '@zero/integration-adapters';
 
 export const startCommand = command({
   name: 'start',
-  options: { config: string().default('zero.config.json') },
+  options: {
+    config: string().default('zero.config.json'),
+    logger: string().enum('pretty', 'json').default('pretty'),
+  },
   handler: async (options) => {
-    const bootstrapper = await getBootstrapper(options.config);
+    console.log('Starting');
+    const bootstrapper = await getBootstrapper(options.config, options.logger);
+    console.log('End');
     bootstrapper.addModule(databaseAdaptersModule);
     bootstrapper.addModule(storageAdapterModule);
     bootstrapper.addModule(applicationCoreModule);

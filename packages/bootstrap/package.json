@@ -18,11 +18,11 @@
   },
   "dependencies": {
     "@inversifyjs/plugin": "catalog:",
-    "winston": "catalog:",
+    "@inversifyjs/strongly-typed": "catalog:",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
-    "@inversifyjs/strongly-typed": "catalog:",
-    "zod": "catalog:",
-    "stacktracey": "catalog:"
+    "stacktracey": "catalog:",
+    "tslog": "^4.10.2",
+    "zod": "catalog:"
   }
 }

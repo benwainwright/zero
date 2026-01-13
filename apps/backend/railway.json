@@ -5,6 +5,6 @@
     "watchPatterns": ["**", "!apps/web/**", "!apps/web-e2e/**"]
   },
   "deploy": {
-    "startCommand": "node apps/backend/dist/cli.js start --config apps/backend/zero.config.dev.json"
+    "startCommand": "node apps/backend/dist/cli.js start --config apps/backend/zero.config.dev.json --logger json"
   }
 }

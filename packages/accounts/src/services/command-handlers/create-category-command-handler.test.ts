@@ -21,7 +21,7 @@ describe('create category command handler', () => {
       'CreateCategoryCommand',
       {
         name: 'foo',
-        description: 'bar',
+        description: 'foo',
       },
       'ben'
     );

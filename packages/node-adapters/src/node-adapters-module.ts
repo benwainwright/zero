@@ -1,5 +1,4 @@
 import { type IAuthTypes } from '@zero/auth';
-import * as z from 'zod';
 import { type IModule } from '@zero/bootstrap';
 import { NodePasswordHasher } from '@adapters';
 import type { IInternalTypes } from './core/i-internal-types.ts';

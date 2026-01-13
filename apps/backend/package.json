@@ -83,7 +83,11 @@
           "cwd": "apps/backend",
           "commands": [
             "vite-node  src/cli.ts start"
-          ]
+          ],
+          "env": {
+            "DATABASE": "postgres",
+            "STORAGE": "s3"
+          }
         },
         "configurations": {
           "postgres": {
