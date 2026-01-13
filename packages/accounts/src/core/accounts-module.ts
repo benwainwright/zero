@@ -27,6 +27,7 @@ import {
   SaveRequisitionAccountsCommandHandler,
   FetchLinkedAccountDetailsCommandHandler,
   GetLinkedAccountsDetailsQuery,
+  LinkAccountCommandHandler,
 } from '@services';
 
 export const accountsModule: IModule<
@@ -43,6 +44,7 @@ export const accountsModule: IModule<
   bind('CommandHandler').to(FetchOpenBankingInstitutionListCommandHandler);
   bind('CommandHandler').to(DeleteAuthLinkCommandHandler);
   bind('CommandHandler').to(UpdateCategoryCommandHandler);
+  bind('CommandHandler').to(LinkAccountCommandHandler);
   bind('CommandHandler').to(CreateCategoryCommandHandler);
   bind('CommandHandler').to(DeleteCategoryCommandHandler);
   bind('CommandHandler').to(SaveRequisitionAccountsCommandHandler);

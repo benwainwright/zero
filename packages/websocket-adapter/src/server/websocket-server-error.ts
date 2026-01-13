@@ -8,7 +8,7 @@ interface IEventEmitter {
 export class WebsocketServerError extends AbstractError {
   public override handle(events: IEventEmitter) {
     events.emit('ApplicationError', {
-      stack: this.parsedStack,
+      parsedStack: this.parsedStack,
       message: this.message,
     });
   }

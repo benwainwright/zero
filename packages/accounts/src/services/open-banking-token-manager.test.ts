@@ -1,6 +1,5 @@
 import { mock } from "vitest-mock-extended";
-import { OpenBankingTokenManager } from "./open-banking-token-manager.ts";
-import { when } from "vitest-when";
+import { OpenBankingTokenManager } from "./open-banking-token-manager.ts"; import { when } from "vitest-when";
 import { OauthToken } from "@zero/domain";
 import { buildInstance } from "@zero/test-helpers";
 
@@ -14,6 +13,27 @@ afterEach(() => {
 });
 
 describe("Open banking token manager", () => {
+  it('creates a new token if the token is somehow empty', async () => {
+    const today = new Date("2025-11-23T19:14:37.986Z");
+    vi.setSystemTime(today);
+    const [manager, repo,,,tokenFetcher] = await buildInstance(OpenBankingTokenManager);
+
+    const mockOldToken = mock<OauthToken>({
+      token: ''
+    });
+
+    when(repo.get).calledWith("foo", "open-banking").thenResolve(mockOldToken);
+
+
+    when(tokenFetcher.getNewToken).calledWith().thenResolve({
+      token: 'new', refreshToken: 'foo-refresh', tokenExpiresIn: 10, refreshTokenExpiresIn: 10})
+
+    const token = await manager.getToken("foo");
+    expect(tokenFetcher.getNewToken).toHaveBeenCalled()
+    expect(token.refreshToken).toEqual('foo-refresh')
+    expect(token.token).toEqual('new')
+  })
+
   it("just returns the token from the repo if it is in date", async () => {
     const today = new Date("2025-11-23T19:14:37.986Z");
     vi.setSystemTime(today);

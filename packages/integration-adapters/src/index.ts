@@ -1,2 +1,2 @@
 export { integrationsModule } from './module.ts';
-export { type AdapterEvents } from './adapter-events.ts';
+export { type IntegrationEvents } from './adapter-events.ts';

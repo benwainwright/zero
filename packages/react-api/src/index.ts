@@ -15,6 +15,7 @@ export {
   useCategory,
   useRole,
   useAccount,
+  useHttpRequests,
   useAccounts,
   useTransactions,
   useBankConnection,
@@ -25,5 +26,7 @@ export {
   CurrentUserContext,
   CurrentUserProvider,
   ApiProvider,
+  HttpRequestsContext,
+  HttpRequestsProvider,
   ApiContext,
 } from '@providers';

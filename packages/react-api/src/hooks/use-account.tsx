@@ -10,7 +10,7 @@ export const useAccount = (id?: string) => {
     {
       query: 'GetAccountQuery',
       command: 'UpdateAccountCommand',
-      refreshOn: ['AccountUpdated'],
+      refreshOn: ['AccountUpdated', 'AccountLinked', 'AccountLinkRemoved'],
       load: Boolean(id),
     },
     {

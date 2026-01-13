@@ -2,7 +2,12 @@ import { HttpError } from '@errors';
 import type { ILogger } from '@zero/bootstrap';
 import type z4 from 'zod/v4';
 import type { IResponseCache } from './i-response-cache.ts';
-import type { IStringHasher } from '@zero/application-core';
+import type {
+  IEventBus,
+  IStringHasher,
+  IUUIDGenerator,
+} from '@zero/application-core';
+import type { IntegrationEvents } from '../adapter-events.ts';
 
 const LOG_CONTEXT = { context: 'http-client' };
 
@@ -23,6 +28,8 @@ interface HttpClientConfig {
   defaultHeaders?: Record<string, string>;
   defaultTtl?: number;
   stringHasher: IStringHasher;
+  eventBus: IEventBus<IntegrationEvents>;
+  uuidGenerator: IUUIDGenerator;
 }
 
 export class HttpClient {
@@ -32,6 +39,8 @@ export class HttpClient {
   private readonly defaultHeaders: Record<string, string> | undefined;
   private readonly defaultTtl: number | undefined;
   private readonly stringHasher: IStringHasher;
+  private readonly uuidGenerator: IUUIDGenerator;
+  private readonly eventBus: IEventBus<IntegrationEvents>;
 
   public constructor(config: HttpClientConfig) {
     this.baseUrl = config.baseUrl;
@@ -40,6 +49,8 @@ export class HttpClient {
     this.defaultHeaders = config.defaultHeaders;
     this.defaultTtl = config.defaultTtl;
     this.stringHasher = config.stringHasher;
+    this.eventBus = config.eventBus;
+    this.uuidGenerator = config.uuidGenerator;
   }
 
   public async get<TResponse extends z4.ZodType>({
@@ -88,11 +99,36 @@ export class HttpClient {
     });
   }
 
+  private emitSendEvent(url: string, init: RequestInit) {
+    const id = this.uuidGenerator.v7();
+    if (init.method === 'get') {
+      this.eventBus.emit('HttpGetRequest', {
+        url,
+        time: new Date(),
+        requestId: id,
+        method: init.method,
+        headers: init.headers,
+      });
+    } else if (init.method === 'post') {
+      this.eventBus.emit('HttpPostRequest', {
+        time: new Date(),
+        url,
+        requestId: id,
+        method: init.method,
+        headers: init.headers,
+        body: init.body,
+      });
+    }
+
+    return id;
+  }
+
   private async doCachedFetch(
     url: string,
     init: RequestInit,
     ttl: number | undefined
   ) {
+    const requestId = this.emitSendEvent(url, init);
     const cacheKey = this.stringHasher.md5(
       `${url}-${String(init.method)}-${JSON.stringify(init.body)}`
     );
@@ -100,6 +136,11 @@ export class HttpClient {
     const cacheResult = await this.cache.get(cacheKey);
 
     if (cacheResult !== undefined) {
+      this.eventBus.emit('HttpCachedResponse', {
+        time: new Date(),
+        body: cacheResult,
+        requestId,
+      });
       return cacheResult;
     }
 
@@ -114,7 +155,8 @@ export class HttpClient {
       throw new HttpError(
         `Request ${JSON.stringify(urlObj)} failed: ${text}`,
         result.status,
-        text
+        text,
+        requestId
       );
     }
 
@@ -125,6 +167,14 @@ export class HttpClient {
     if (finalTtl) {
       await this.cache.set(cacheKey, data, finalTtl);
     }
+
+    this.eventBus.emit('HttpResponse', {
+      time: new Date(),
+      statusCode: result.status,
+      body: data,
+      headers: result.headers,
+      requestId,
+    });
 
     return data;
   }

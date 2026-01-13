@@ -50,6 +50,7 @@ export class FetchOpenBankingInstitutionListCommandHandler extends AbstractComma
 
     await using token = await this.tokenManager.getToken(authContext.id);
 
+
     const connections = await this.institutionListFetcher.getConnections(
       authContext.id,
       token

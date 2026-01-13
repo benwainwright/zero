@@ -1,13 +1,15 @@
-import { showNotification } from './show-notification.tsx';
 import { useEvents } from '@zero/react-api';
+import { useNotifications } from './use-notifications.ts';
 
-export const useNotifications = () => {
+export const useEventNotifications = () => {
+  const { showNotification } = useNotifications();
   useEvents((event) => {
     switch (event.key) {
       case 'ApplicationError':
         showNotification({
           type: 'error',
-          message: event.data.message,
+          message: event.data.message ?? '',
+          stack: event.data.parsedStack,
         });
         break;
 
@@ -15,6 +17,14 @@ export const useNotifications = () => {
         showNotification({
           type: 'success',
           message: 'Bank connection disconnected',
+        });
+        break;
+
+      case 'HttpError':
+        showNotification({
+          type: 'error',
+          message: `There was an error making an HTTP request: [${event.data.statusCode}] - ${event.data.body}`,
+          stack: event.data.parsedStack,
         });
         break;
 
@@ -34,7 +44,7 @@ export const useNotifications = () => {
 
       case 'LoginFailedEvent':
         showNotification({
-          type: 'error',
+          type: 'failure',
           message: 'Login Failed',
         });
         break;

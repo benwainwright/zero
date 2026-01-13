@@ -29,13 +29,6 @@ export const useBankConnection = ():
   | BankConnectionLoading
   | BankConnectionConnected
   | BankConnectionNotConnected => {
-  const { execute: fetchInstitutions } = useCommand(
-    'FetchOpenBankingInstitutionListCommand',
-    {
-      wait: true,
-    }
-  );
-
   const { execute: deleteAuthLink } = useCommand('DeleteAuthLinkCommand');
 
   const {
@@ -66,6 +59,13 @@ export const useBankConnection = ():
       'OauthTokenUsed',
     ],
   });
+
+  const { execute: fetchInstitutions } = useCommand(
+    'FetchOpenBankingInstitutionListCommand',
+    {
+      wait: true,
+    }
+  );
 
   const isConnected = data?.status === 'connected';
 

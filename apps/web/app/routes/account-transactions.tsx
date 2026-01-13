@@ -18,6 +18,7 @@ import { modals } from '@mantine/modals';
 const AccountTransactions = () => {
   const { accountId } = useParams<{ accountId: string }>();
   const { account } = useAccount(accountId);
+  const { execute: linkAccount } = useCommand('LinkAccountCommand');
   const maybeResponse = useTransactions(accountId, 0, 30);
   const connection = useBankConnection();
   const { execute: deleteAccount } = useCommand('DeleteAccountCommand');
@@ -49,9 +50,18 @@ const AccountTransactions = () => {
       title={account?.name ?? ''}
       headerActions={
         <>
-          {connection.loaded && connection.isConnected && (
-            <LinkAccountButton onPick={() => {}} />
-          )}
+          {connection.loaded &&
+            connection.isConnected &&
+            !account.linkedOpenBankingAccount && (
+              <LinkAccountButton
+                onPick={async (obAccount) => {
+                  await linkAccount({
+                    obAccountId: obAccount,
+                    localId: accountId,
+                  });
+                }}
+              />
+            )}
           <Button onClick={() => setCreatingNewTx(true)} variant="subtle">
             New Transaction
           </Button>

@@ -9,12 +9,17 @@ import {
   type IOpenBankingTokenRefresher,
   type IRequesitionAccountFetcher,
 } from '@zero/accounts';
-import type { IStringHasher } from '@zero/application-core';
+import type {
+  IEventBus,
+  IStringHasher,
+  IUUIDGenerator,
+} from '@zero/application-core';
 
 import { type ConfigValue, type ILogger } from '@zero/bootstrap';
-import { BankConnection, OauthToken } from '@zero/domain';
+import { BankConnection, OauthToken, type IEvent } from '@zero/domain';
 import { injectable } from 'inversify';
 import z from 'zod';
+import type { IntegrationEvents } from '../adapter-events.ts';
 
 @injectable()
 export class GocardlessClient
@@ -45,6 +50,12 @@ export class GocardlessClient
     @inject('StringHasher')
     stringHasher: IStringHasher,
 
+    @inject('UUIDGenerator')
+    uuidGenerator: IUUIDGenerator,
+
+    @inject('EventBus')
+    eventBus: IEventBus<IntegrationEvents>,
+
     @inject('Logger')
     logger: ILogger
   ) {
@@ -52,6 +63,8 @@ export class GocardlessClient
       baseUrl: `https://bankaccountdata.gocardless.com/api/v2`,
       logger,
       responseCache,
+      eventBus,
+      uuidGenerator,
       defaultTtl: 1000 * 60,
       stringHasher,
       defaultHeaders: {

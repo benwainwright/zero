@@ -12,3 +12,4 @@ export { CreateCategoryCommandHandler } from './create-category-command-handler.
 export { DeleteCategoryCommandHandler } from './delete-category-command-handler.ts';
 export { UpdateCategoryCommandHandler } from './update-category-command-handler.ts';
 export { FetchLinkedAccountDetailsCommandHandler } from './fetch-linked-accounts-details-handler.ts';
+export { LinkAccountCommandHandler } from './link-account-command-handler.ts';

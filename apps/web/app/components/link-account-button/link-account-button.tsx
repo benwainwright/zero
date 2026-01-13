@@ -84,7 +84,7 @@ export const LinkAccountButton = ({
             {value ? (
               <div aria-busy></div>
             ) : (
-              <Input.Placeholder>Pick value</Input.Placeholder>
+              <Input.Placeholder>Choose Account</Input.Placeholder>
             )}
           </InputBase>
         </Combobox.Target>
@@ -97,10 +97,10 @@ export const LinkAccountButton = ({
 
   return (
     <Button
-      variant="light"
-      size="xs"
+      variant="subtle"
       onClick={() => {
         setIsLinking(true);
+        combobox.openDropdown();
       }}
     >
       Link Account

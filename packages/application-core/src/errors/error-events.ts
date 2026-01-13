@@ -10,7 +10,7 @@ export interface StackFrame {
 
 export interface IErrorEvents {
   ApplicationError: {
-    stack: StackFrame[];
-    message: string;
+    parsedStack: StackFrame[];
+    message: string | undefined;
   };
 }

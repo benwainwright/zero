@@ -57,7 +57,7 @@ export class OpenBankingTokenManager {
       'open-banking'
     );
 
-    if (token) {
+    if (token && token.token) {
       this.logger.debug(`Token found`, LOG_CONTEXT);
       if (token.isOutOfDate()) {
         this.logger.debug(`Token is out of date - refreshing...`, LOG_CONTEXT);

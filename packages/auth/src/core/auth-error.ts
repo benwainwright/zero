@@ -4,7 +4,7 @@ import { AbstractError } from '@zero/bootstrap';
 export class AuthError extends AbstractError {
   public override handle(events: IEventEmitter): void {
     events.emit('ApplicationError', {
-      stack: this.parsedStack,
+      parsedStack: this.parsedStack,
       message: this.message,
     });
   }

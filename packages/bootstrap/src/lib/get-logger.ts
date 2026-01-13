@@ -4,7 +4,7 @@ import { CustomLogger } from './custom-logger.ts';
 import type { ILogger } from '@types';
 
 export const getLogger = (type: 'pretty' | 'json') => {
-  const logger = new CustomLogger<ILogObj>({ type });
+  const logger = new CustomLogger<ILogObj>({ type, minLevel: 3 });
 
   const newLogger = (theLogger: CustomLogger<ILogObj>): ILogger => {
     const getChildLogger = <TData extends ILogObj>(
@@ -12,7 +12,10 @@ export const getLogger = (type: 'pretty' | 'json') => {
       data?: TData
     ) => {
       return newLogger(
-        theLogger.getSubLogger({ name }, data) as CustomLogger<ILogObj>
+        theLogger.getSubLogger(
+          { name, minLevel: 3 },
+          data
+        ) as CustomLogger<ILogObj>
       );
     };
 

@@ -2,6 +2,8 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 
+import { NotificationProvider } from '@context';
+
 import {
   // isRouteErrorResponse,
   Links,
@@ -18,13 +20,10 @@ import {
 import { ModalsProvider } from '@mantine/modals';
 
 // import type { Route } from "./+types/root.ts";
-import { Notifications } from '@mantine/notifications';
 import type { ReactNode } from 'react';
 import { ApiProvider, CurrentUserProvider } from '@zero/react-api';
 import { theme } from '@config';
 import { socketUrl } from './socket-url.ts';
-
-// export const links: Route.LinksFunction = () => [];
 
 export function Layout({ children }: { children: React.ReactNode }): ReactNode {
   return (
@@ -39,10 +38,11 @@ export function Layout({ children }: { children: React.ReactNode }): ReactNode {
       <body>
         <MantineProvider theme={theme}>
           <ModalsProvider>
-            <Notifications />
-            <ApiProvider url={socketUrl}>
-              <CurrentUserProvider>{children}</CurrentUserProvider>
-            </ApiProvider>
+            <NotificationProvider timeout={5_000}>
+              <ApiProvider url={socketUrl}>
+                <CurrentUserProvider>{children}</CurrentUserProvider>
+              </ApiProvider>
+            </NotificationProvider>
           </ModalsProvider>
         </MantineProvider>
         <ScrollRestoration />

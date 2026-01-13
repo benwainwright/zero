@@ -1,5 +1,6 @@
 export {
   CreateAccountCommandHandler,
+  LinkAccountCommandHandler,
   DeleteAccountCommandHandler,
   FetchLinkedAccountDetailsCommandHandler,
   DeleteCategoryCommandHandler,

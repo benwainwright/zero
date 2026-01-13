@@ -37,16 +37,19 @@
       "path": "../domain/tsconfig.lib.json"
     },
     {
-      "path": "../application-core/tsconfig.lib.json"
-    },
-    {
       "path": "../bootstrap/tsconfig.lib.json"
     },
     {
-      "path": "../accounts/tsconfig.lib.json"
+      "path": "../auth/tsconfig.lib.json"
     },
     {
-      "path": "../auth/tsconfig.lib.json"
+      "path": "../integration-adapters/tsconfig.lib.json"
+    },
+    {
+      "path": "../application-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../accounts/tsconfig.lib.json"
     }
   ]
 }

@@ -7,10 +7,18 @@ import type {
 
 import type { IInternalTypes } from './i-internal-types.ts';
 import type { IBootstrapTypes } from '@zero/bootstrap';
-import type { IApplicationTypes } from '@zero/application-core';
+import type {
+  IAllEvents,
+  IApplicationTypes,
+  IEventBus,
+} from '@zero/application-core';
+import type { IntegrationEvents } from '../adapter-events.ts';
 
 export const inject = inversifyInject as TypedInject<
-  IApplicationTypes & IInternalTypes & IBootstrapTypes
+  Omit<IApplicationTypes, 'EventBus'> & {
+    EventBus: IEventBus<IntegrationEvents & IAllEvents>;
+  } & IInternalTypes &
+    IBootstrapTypes
 >;
 
 export const multiInject = inverifyMultiInject as TypedMultiInject<

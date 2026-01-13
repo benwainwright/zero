@@ -23,6 +23,9 @@ export default defineConfig(() => ({
     "process.env['BACKEND_PROTOCOL']": JSON.stringify(protocol),
     "process.env['BACKEND_HOST']": JSON.stringify(host),
     "process.env['BACKEND_PORT']": JSON.stringify(port),
+    'process.env.NODE_ENV': JSON.stringify(
+      process.env['NODE_ENV'] || 'development'
+    ),
   },
   plugins: [
     !process.env['VITEST'] && reactRouter(),
