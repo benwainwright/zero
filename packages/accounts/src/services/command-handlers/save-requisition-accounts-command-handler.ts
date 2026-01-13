@@ -56,7 +56,7 @@ export class SaveRequisitionAccountsCommandHandler extends AbstractCommandHandle
       capability: 'bank-connection:update',
     });
 
-    const token = await this.tokenManager.getToken(authContext.id);
+    await using token = await this.tokenManager.getToken(authContext.id);
 
     const connection = await this.connectionRepo.require(authContext.id);
 

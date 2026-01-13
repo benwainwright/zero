@@ -48,7 +48,7 @@ export class FetchOpenBankingInstitutionListCommandHandler extends AbstractComma
   }>): Promise<void> {
     this.grants.assertLogin(authContext);
 
-    const token = await this.tokenManager.getToken(authContext.id);
+    await using token = await this.tokenManager.getToken(authContext.id);
 
     const connections = await this.institutionListFetcher.getConnections(
       authContext.id,

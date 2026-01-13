@@ -1,6 +1,16 @@
-import { Loader, Page, TransactionsTable } from '@components';
+import {
+  LinkAccountButton,
+  Loader,
+  Page,
+  TransactionsTable,
+} from '@components';
 import { Button, Text } from '@mantine/core';
-import { useAccount, useCommand, useTransactions } from '@zero/react-api';
+import {
+  useAccount,
+  useBankConnection,
+  useCommand,
+  useTransactions,
+} from '@zero/react-api';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { modals } from '@mantine/modals';
@@ -9,6 +19,7 @@ const AccountTransactions = () => {
   const { accountId } = useParams<{ accountId: string }>();
   const { account } = useAccount(accountId);
   const maybeResponse = useTransactions(accountId, 0, 30);
+  const connection = useBankConnection();
   const { execute: deleteAccount } = useCommand('DeleteAccountCommand');
   const [creatingNewTx, setCreatingNewTx] = useState(false);
   const navigate = useNavigate();
@@ -38,6 +49,9 @@ const AccountTransactions = () => {
       title={account?.name ?? ''}
       headerActions={
         <>
+          {connection.loaded && connection.isConnected && (
+            <LinkAccountButton onPick={() => {}} />
+          )}
           <Button onClick={() => setCreatingNewTx(true)} variant="subtle">
             New Transaction
           </Button>

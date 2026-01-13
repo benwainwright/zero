@@ -38,9 +38,11 @@ export const useBankConnection = ():
 
   const { execute: deleteAuthLink } = useCommand('DeleteAuthLinkCommand');
 
-  const { data: authLink, refresh: refreshAuthLink } = useQuery(
-    'GetBankAuthLinkQuery'
-  );
+  const {
+    data: authLink,
+    refresh: refreshAuthLink,
+    isPending,
+  } = useQuery('GetBankAuthLinkQuery');
 
   useEffect(() => {
     (async () => {
@@ -79,7 +81,7 @@ export const useBankConnection = ():
 
   useEffect(() => {
     (async () => {
-      if (!isConnected && institutionList === undefined) {
+      if (!isPending && !isConnected && institutionList === undefined) {
         await fetchInstitutions();
         refresh();
       }

@@ -41,7 +41,7 @@ export class OpenBankingTokenManager {
     return Object.assign(token, {
       [Symbol.asyncDispose]: async () => {
         if (token.hasEvents()) {
-          await this.tokenWriter.save(token);
+          await this.tokenWriter.update(token);
         }
       },
     });
@@ -99,7 +99,7 @@ export class OpenBankingTokenManager {
       ),
     });
 
-    await this.tokenWriter.save(newToken);
+    await this.tokenWriter.update(newToken);
     return this.returnDisposable(newToken);
   }
 }

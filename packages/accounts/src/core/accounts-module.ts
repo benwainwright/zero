@@ -24,6 +24,9 @@ import {
   ListCategoriesQueryHandler,
   GetCategoryQueryHandler,
   ListCategoriesUnpagedQueryHandler,
+  SaveRequisitionAccountsCommandHandler,
+  FetchLinkedAccountDetailsCommandHandler,
+  GetLinkedAccountsDetailsQuery,
 } from '@services';
 
 export const accountsModule: IModule<
@@ -42,6 +45,9 @@ export const accountsModule: IModule<
   bind('CommandHandler').to(UpdateCategoryCommandHandler);
   bind('CommandHandler').to(CreateCategoryCommandHandler);
   bind('CommandHandler').to(DeleteCategoryCommandHandler);
+  bind('CommandHandler').to(SaveRequisitionAccountsCommandHandler);
+  bind('CommandHandler').to(FetchLinkedAccountDetailsCommandHandler);
+  bind('QueryHandler').to(GetLinkedAccountsDetailsQuery);
   bind('QueryHandler').to(ListTransactionsQueryHandler);
   bind('QueryHandler').to(ListUserAccountsQueryHandler);
   bind('QueryHandler').to(GetAccountQueryHandler);

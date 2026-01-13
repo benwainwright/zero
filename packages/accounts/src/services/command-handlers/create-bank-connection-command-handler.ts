@@ -56,7 +56,7 @@ export class CreateBankConnectionCommandHandler extends AbstractCommandHandler<
 
     this.grants.assertLogin(authContext);
 
-    const token = await this.tokenManager.getToken(authContext.id);
+    await using token = await this.tokenManager.getToken(authContext.id);
 
     const { url, requsitionId } = await this.authLinkFetcher.getLink(
       connection,

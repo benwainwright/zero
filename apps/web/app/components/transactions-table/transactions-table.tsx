@@ -1,9 +1,4 @@
-import {
-  Currency,
-  DateLabel,
-  EditTransactionRow,
-  TransactionRow,
-} from '@components';
+import { EditTransactionRow, TransactionRow } from '@components';
 import { Table } from '@mantine/core';
 import { Transaction, type ITransaction } from '@zero/domain';
 import { useCommand } from '@zero/react-api';

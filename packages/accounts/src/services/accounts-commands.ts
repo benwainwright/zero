@@ -3,6 +3,11 @@ import type { BankConnection, ITransaction } from '@zero/domain';
 export type AccountsCommands =
   | {
       id: string;
+      key: 'FetchLinkedAccountsDetailsCommand';
+      params: undefined;
+    }
+  | {
+      id: string;
       key: 'CreateCategoryCommand';
       params: {
         name: string;

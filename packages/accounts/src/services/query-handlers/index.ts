@@ -7,3 +7,4 @@ export { GetOpenBankingInstitutionListQueryHandler } from './get-open-banking-in
 export { GetCategoryQueryHandler } from './get-category-query-handler.ts';
 export { ListCategoriesQueryHandler } from './list-categories-query-handler.ts';
 export { ListCategoriesUnpagedQueryHandler } from './list-categories-unpaged-query-handler.ts';
+export { GetLinkedAccountsDetailsQuery } from './get-linked-account-details-query.ts';

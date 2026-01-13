@@ -46,7 +46,6 @@ export const CategoriesComboBox = ({
       store={combobox}
       withinPortal={false}
       onOptionSubmit={(val) => {
-        console.log('SUBMIT');
         const theCategory = data.get(val);
         setValue(theCategory);
         onChange(theCategory);

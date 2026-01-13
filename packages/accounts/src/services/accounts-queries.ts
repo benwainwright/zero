@@ -8,6 +8,16 @@ import type {
 export type AccountsQueries =
   | {
       id: string;
+      key: 'GetLinkedAccountsDetailsQuery';
+      params: undefined;
+      response: {
+        name: string;
+        id: string;
+        details: string;
+      }[];
+    }
+  | {
+      id: string;
       key: 'GetCategoryQuery';
       params: { category: string };
       response: Category | undefined;

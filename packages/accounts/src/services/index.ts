@@ -1,6 +1,7 @@
 export {
   CreateAccountCommandHandler,
   DeleteAccountCommandHandler,
+  FetchLinkedAccountDetailsCommandHandler,
   DeleteCategoryCommandHandler,
   UpdateCategoryCommandHandler,
   CreateCategoryCommandHandler,
@@ -24,6 +25,7 @@ export {
   GetBankAuthLinkQueryHandler,
   ListCategoriesUnpagedQueryHandler,
   GetOpenBankingInstitutionListQueryHandler,
+  GetLinkedAccountsDetailsQuery,
 } from './query-handlers/index.ts';
 
 export type { AccountsCommands } from './accounts-commands.ts';
