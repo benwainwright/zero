@@ -18,7 +18,7 @@ export const setup = async () => {
     )
   );
   await waitPort({ host: 'localhost', port: 4566 });
-  await new Promise((accept) => setTimeout(accept, 3_000));
+  await new Promise((accept) => setTimeout(accept, 5_000));
 };
 
 export const teardown = async () => {
