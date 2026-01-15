@@ -20,7 +20,7 @@ export const InstitutionCard = ({
       style={{ cursor: 'pointer' }}
     >
       <Card.Section m="lg">
-        <Image src={institution.logo} height={60} alt={institution.bankName} />
+        <Image src={institution.logo} height={170} alt={institution.bankName} />
       </Card.Section>
 
       <Group justify="space-between" mt="md" mb="xs">

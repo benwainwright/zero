@@ -32,7 +32,7 @@ export class PostgresOauthTokenRepository
 
     await tx
       .updateTable('oauth_tokens')
-      .set(token.toObject())
+      .set(token.toObject({ secure: true }))
       .where('id', '=', token.id)
       .execute();
 

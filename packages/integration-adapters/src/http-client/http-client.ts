@@ -162,7 +162,10 @@ export class HttpClient {
 
     const data = (await result.json()) as unknown;
 
-    const finalTtl = ttl ?? this.defaultTtl;
+    const finalTtl =
+      ttl ?? (this.defaultTtl && init.method === 'get')
+        ? this.defaultTtl
+        : undefined;
 
     if (finalTtl) {
       await this.cache.set(cacheKey, data, finalTtl);

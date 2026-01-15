@@ -65,15 +65,10 @@ export class CheckBankConnectionQueryHandler extends AbstractQueryHandler<
     });
 
     const connection = await this.bankConnections.get(authContext.id);
-
-    if (!connection) {
-      return { status: 'not_connected' };
-    }
-
     const token = await this.tokenRepo.get(authContext.id, 'open-banking');
 
-    if (!token) {
-      throw new AppError('No token found');
+    if (!connection || !token) {
+      return { status: 'not_connected' };
     }
 
     return {

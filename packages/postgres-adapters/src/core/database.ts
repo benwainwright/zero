@@ -29,6 +29,7 @@ export interface Accounts {
   deleted: boolean;
   description: string | null;
   id: string;
+  linkedOpenBankingAccount: string | null;
   name: string;
   ownerId: string;
   type: string;

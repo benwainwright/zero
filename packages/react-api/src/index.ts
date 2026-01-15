@@ -28,5 +28,7 @@ export {
   ApiProvider,
   HttpRequestsContext,
   HttpRequestsProvider,
+  EventsLogContext,
+  EventsLogProvider,
   ApiContext,
 } from '@providers';

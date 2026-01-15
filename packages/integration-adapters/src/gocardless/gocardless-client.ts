@@ -1,4 +1,4 @@
-import { inject } from '@core';
+import { inject, wait } from '@core';
 import { HttpClient, type IResponseCache } from '@http-client';
 import {
   type IInstitutionListFetcher,
@@ -9,17 +9,19 @@ import {
   type IOpenBankingTokenRefresher,
   type IRequesitionAccountFetcher,
 } from '@zero/accounts';
-import type {
-  IEventBus,
-  IStringHasher,
-  IUUIDGenerator,
+import {
+  AppError,
+  type IEventBus,
+  type IStringHasher,
+  type IUUIDGenerator,
 } from '@zero/application-core';
 
 import { type ConfigValue, type ILogger } from '@zero/bootstrap';
-import { BankConnection, OauthToken, type IEvent } from '@zero/domain';
+import { BankConnection, OauthToken } from '@zero/domain';
 import { injectable } from 'inversify';
 import z from 'zod';
 import type { IntegrationEvents } from '../adapter-events.ts';
+import { HttpError } from '@errors';
 
 @injectable()
 export class GocardlessClient
@@ -74,6 +76,62 @@ export class GocardlessClient
     });
   }
 
+  private async getAccountStatus(
+    id: string,
+    token: OauthToken
+  ): Promise<string> {
+    const { status } = await this.client.get({
+      path: `accounts/${id}/`,
+      ttl: 0,
+      headers: {
+        Authorization: `Bearer ${token.use()}`,
+      },
+      responseSchema: z.object({ status: z.string() }),
+    });
+
+    return status;
+  }
+
+  public async pollAccountStatusUntilReady(
+    id: string,
+    timesToTry: number,
+    token: OauthToken
+  ) {
+    let attempts = 0;
+    do {
+      const status = await this.getAccountStatus(id, token);
+      if (status === 'READY') {
+        return;
+      }
+      await wait(1000 * (attempts + 1));
+      attempts++;
+    } while (attempts < timesToTry);
+    throw new AppError(`Account is not ready`);
+  }
+
+  private async getSingleAccountDetails(id: string, token: OauthToken) {
+    return await this.client.get({
+      ttl: 1000 * 60 * 60 * 6,
+      path: `accounts/${id}/details/`,
+      headers: {
+        Authorization: `Bearer ${token.use()}`,
+      },
+      responseSchema: z
+        .object({
+          account: z.object({
+            resourceId: z.string(),
+            name: z.string().optional(),
+            details: z.string().optional(),
+          }),
+        })
+        .transform((response) => ({
+          id,
+          name: response.account.name,
+          details: response.account.details,
+        })),
+    });
+  }
+
   public async getAccountDetails(
     ids: string[],
     token: OauthToken
@@ -82,26 +140,15 @@ export class GocardlessClient
   > {
     return await Promise.all(
       ids.map(async (id) => {
-        return await this.client.get({
-          ttl: 1000 * 60 * 60 * 6,
-          path: `accounts/${id}/details/`,
-          headers: {
-            Authorization: `Bearer ${token.use()}`,
-          },
-          responseSchema: z
-            .object({
-              account: z.object({
-                resourceId: z.string(),
-                name: z.string().optional(),
-                details: z.string().optional(),
-              }),
-            })
-            .transform((response) => ({
-              id,
-              name: response.account.name,
-              details: response.account.details,
-            })),
-        });
+        try {
+          return await this.getSingleAccountDetails(id, token);
+        } catch (error) {
+          if (error instanceof HttpError && error.statusCode === 409) {
+            await this.pollAccountStatusUntilReady(id, 10, token);
+            return await this.getSingleAccountDetails(id, token);
+          }
+          throw error;
+        }
       })
     );
   }

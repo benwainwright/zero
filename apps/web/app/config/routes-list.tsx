@@ -25,6 +25,18 @@ export interface RouteSpec {
 }
 
 export const routesList: Record<Exclude<IRoute, 'all'>, RouteSpec> = {
+  eventLog: {
+    component: 'routes/event-log.tsx',
+    path: 'event-log',
+    authFailRedirect: '/login',
+    hideFromMenu: true,
+  },
+  httpRequests: {
+    component: 'routes/http-requests.tsx',
+    path: 'http-requests',
+    authFailRedirect: '/login',
+    hideFromMenu: true,
+  },
   categories: {
     component: 'routes/categories.tsx',
     path: 'categories',

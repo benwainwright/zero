@@ -5,9 +5,9 @@ import type { IntegrationEvents } from '../adapter-events.ts';
 export class HttpError extends AbstractError {
   public constructor(
     message: string,
-    private statusCode: number,
-    private body: string,
-    private requestId: string
+    public readonly statusCode: number,
+    public readonly body: string,
+    public readonly requestId: string
   ) {
     super(message);
   }

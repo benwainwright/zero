@@ -75,7 +75,7 @@ export class OpenBankingTokenManager {
         this.grants.requires({
           capability: 'token:update',
         });
-        await this.tokenWriter.save(token);
+        await this.tokenWriter.update(token);
         return this.returnDisposable(token);
       }
       return this.returnDisposable(token);
@@ -99,7 +99,7 @@ export class OpenBankingTokenManager {
       ),
     });
 
-    await this.tokenWriter.update(newToken);
+    await this.tokenWriter.save(newToken);
     return this.returnDisposable(newToken);
   }
 }

@@ -27,5 +27,6 @@ export { TransactionRow } from './transaction-row/index.ts';
 export { Notification, ErrorNotification } from './notification/index.ts';
 export { Notifications } from './notifications/index.ts';
 export { StackTrace } from './stack-trace/index.ts';
-export { DebugDrawer } from './debug-drawer/index.ts';
 export { HttpRequestsPanel } from './http-requests-panel/index.ts';
+export { EventLogPanel } from './event-log-panel/index.ts';
+export { EventLogControl } from './event-log-control/index.ts';

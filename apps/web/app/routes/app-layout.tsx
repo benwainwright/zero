@@ -5,6 +5,7 @@ import { Outlet } from 'react-router';
 import type { ReactNode } from 'react';
 import {
   CurrentUserProvider,
+  EventsLogProvider,
   HttpRequestsProvider,
   useLogErrors,
 } from '@zero/react-api';
@@ -16,29 +17,35 @@ const AppLayout = (): ReactNode => {
   useEventNotifications();
   return (
     <CurrentUserProvider>
-      <HttpRequestsProvider>
-        <AppShell
-          transitionDuration={500}
-          transitionTimingFunction="ease"
-          padding="md"
-          header={{ height: 60 }}
-          navbar={{
-            width: 300,
-            breakpoint: 'sm',
-            collapsed: { mobile: !opened },
-          }}
-        >
-          <Header title="Zero" onBurgerClick={toggle} sideBarOpened={opened} />
-          <NavBar />
+      <EventsLogProvider>
+        <HttpRequestsProvider>
+          <AppShell
+            transitionDuration={500}
+            transitionTimingFunction="ease"
+            padding="md"
+            header={{ height: 60 }}
+            navbar={{
+              width: 300,
+              breakpoint: 'sm',
+              collapsed: { mobile: !opened },
+            }}
+          >
+            <Header
+              title="Zero"
+              onBurgerClick={toggle}
+              sideBarOpened={opened}
+            />
+            <NavBar />
 
-          <AppShell.Main>
-            <Container>
-              <Notifications />
-              <Outlet />
-            </Container>
-          </AppShell.Main>
-        </AppShell>
-      </HttpRequestsProvider>
+            <AppShell.Main>
+              <Container>
+                <Notifications />
+                <Outlet />
+              </Container>
+            </AppShell.Main>
+          </AppShell>
+        </HttpRequestsProvider>
+      </EventsLogProvider>
     </CurrentUserProvider>
   );
 };

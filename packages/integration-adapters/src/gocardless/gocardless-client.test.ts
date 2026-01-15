@@ -1,8 +1,9 @@
-import { server } from '@test-helpers';
+import { server, GOCARDLESS_API } from '@test-helpers';
 import { GocardlessClient } from './gocardless-client.ts';
 import { mockGocardlessData } from '../test-helpers/msw/index.ts';
 import { mock } from 'vitest-mock-extended';
 import { BankConnection, OauthToken } from '@zero/domain';
+import { http, HttpResponse } from 'msw';
 
 beforeAll(() => {
   server.listen({
@@ -27,6 +28,8 @@ describe('the gocardless client', () => {
         { value: Promise.resolve(mockGocardlessData.secretId) },
         { value: Promise.resolve(mockGocardlessData.secretKey) },
         { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
+        mock(),
+        mock(),
         mock(),
         mock(),
         mock()
@@ -54,12 +57,132 @@ describe('the gocardless client', () => {
     });
   });
 
-  describe('getAccountDetails', () => {
-    it('makes multiple requests and aggregates them', async () => {
+  describe.only('getAccountDetails', () => {
+    it('returns the details of the given account', async () => {
       const client = new GocardlessClient(
         { value: Promise.resolve(mockGocardlessData.secretId) },
         { value: Promise.resolve(mockGocardlessData.secretKey) },
         { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
+        mock(),
+        mock(),
+        mock(),
+        mock(),
+        mock()
+      );
+
+      const token = OauthToken.reconstitute({
+        id: 'foo',
+        refreshExpiry: undefined,
+        provider: 'ynab',
+        token: mockGocardlessData.mockToken,
+        refreshToken: 'string',
+        expiry: new Date(),
+        lastUse: undefined,
+        created: new Date(),
+        refreshed: undefined,
+        ownerId: 'user',
+      });
+
+      const result = await client.getAccountDetails(['foo', 'bar'], token);
+      expect(result).toEqual([
+        { id: 'foo', name: 'the name', details: undefined },
+        { id: 'bar', name: 'the name', details: 'foo-details' },
+      ]);
+    });
+
+    it('handles account not ready responses by polling /details until the account is ready', async () => {
+      let ready = false;
+      server.use(
+        http.get(`${GOCARDLESS_API}/api/v2/accounts/foo/`, () => {
+          try {
+            if (ready === false) {
+              return HttpResponse.json({
+                id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+                created: '2026-01-15T08:08:04.065Z',
+                last_accessed: '2026-01-15T08:08:04.065Z',
+                iban: 'string',
+                bban: 'string',
+                status: 'PROCESSING',
+                institution_id: 'string',
+                owner_name: 'string',
+                name: 'string',
+              });
+            } else {
+              return HttpResponse.json({
+                id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+                created: '2026-01-15T08:08:04.065Z',
+                last_accessed: '2026-01-15T08:08:04.065Z',
+                iban: 'string',
+                bban: 'string',
+                status: 'READY',
+                institution_id: 'string',
+                owner_name: 'string',
+                name: 'string',
+              });
+            }
+          } finally {
+            ready = true;
+          }
+        }),
+        http.get(`${GOCARDLESS_API}/api/v2/accounts/foo/details/`, () => {
+          if (!ready) {
+            return HttpResponse.json(
+              {
+                summary: 'Account is Processing',
+                detail:
+                  'Your account data is currently being processed. Please try again shortly, or poll /accounts/d9d827ab-cf91-47ba-8e8f-35bef1024f9f/ endpoint and retry when status is READY',
+                status_code: 409,
+                type: 'AccountProcessing',
+              },
+              { status: 409 }
+            );
+          }
+
+          return HttpResponse.json(
+            mockGocardlessData.mockAccountDetailsResponses.foo
+          );
+        })
+      );
+
+      const client = new GocardlessClient(
+        { value: Promise.resolve(mockGocardlessData.secretId) },
+        { value: Promise.resolve(mockGocardlessData.secretKey) },
+        { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
+        mock(),
+        mock(),
+        mock(),
+        mock(),
+        mock()
+      );
+
+      const token = OauthToken.reconstitute({
+        id: 'foo',
+        refreshExpiry: undefined,
+        provider: 'gocardless',
+        token: mockGocardlessData.mockToken,
+        refreshToken: 'string',
+        expiry: new Date(Date.now() + 10_000),
+        lastUse: undefined,
+        created: new Date(),
+        refreshed: undefined,
+        ownerId: 'user',
+      });
+
+      const resultPromise = client.getAccountDetails(['foo', 'bar'], token);
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(await resultPromise).toEqual([
+        { id: 'foo', name: 'the name', details: undefined },
+        { id: 'bar', name: 'the name', details: 'foo-details' },
+      ]);
+    });
+
+    it.only('makes multiple requests and aggregates them', async () => {
+      const client = new GocardlessClient(
+        { value: Promise.resolve(mockGocardlessData.secretId) },
+        { value: Promise.resolve(mockGocardlessData.secretKey) },
+        { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
+        mock(),
+        mock(),
         mock(),
         mock(),
         mock()
@@ -107,6 +230,8 @@ describe('the gocardless client', () => {
         { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
         mock(),
         mock(),
+        mock(),
+        mock(),
         mock()
       );
 
@@ -129,6 +254,8 @@ describe('the gocardless client', () => {
         { value: Promise.resolve(mockGocardlessData.secretId) },
         { value: Promise.resolve(mockGocardlessData.secretKey) },
         { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
+        mock(),
+        mock(),
         mock(),
         mock(),
         mock()
@@ -164,6 +291,8 @@ describe('the gocardless client', () => {
         { value: Promise.resolve(mockGocardlessData.secretId) },
         { value: Promise.resolve(mockGocardlessData.secretKey) },
         { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
+        mock(),
+        mock(),
         mock(),
         mock(),
         mock()

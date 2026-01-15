@@ -1,7 +1,7 @@
 export { useApi } from './use-api.ts';
 export { useCommand } from './use-command.ts';
 export { useHttpRequests, type RequestRecord } from './use-http-requests.ts';
-
+export { useEventsLog } from './use-events-log.ts';
 export { useData } from './use-data.ts';
 export { useNextEvent } from './use-next-event.ts';
 export { useEvent } from './use-event.ts';

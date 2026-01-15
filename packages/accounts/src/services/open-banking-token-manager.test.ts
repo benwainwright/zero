@@ -16,7 +16,7 @@ describe("Open banking token manager", () => {
   it('creates a new token if the token is somehow empty', async () => {
     const today = new Date("2025-11-23T19:14:37.986Z");
     vi.setSystemTime(today);
-    const [manager, repo,,,tokenFetcher] = await buildInstance(OpenBankingTokenManager);
+    const [manager, repo,writer,,tokenFetcher] = await buildInstance(OpenBankingTokenManager);
 
     const mockOldToken = mock<OauthToken>({
       token: ''
@@ -32,6 +32,7 @@ describe("Open banking token manager", () => {
     expect(tokenFetcher.getNewToken).toHaveBeenCalled()
     expect(token.refreshToken).toEqual('foo-refresh')
     expect(token.token).toEqual('new')
+    expect(writer.save).toHaveBeenCalledWith(token)
   })
 
   it("just returns the token from the repo if it is in date", async () => {

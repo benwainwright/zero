@@ -2,6 +2,8 @@ import z from 'zod';
 
 export const routes = [
   'home',
+  'httpRequests',
+  'eventLog',
   'accountTransactions',
   'accounts',
   'bankConnection',

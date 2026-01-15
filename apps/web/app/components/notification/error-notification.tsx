@@ -1,7 +1,6 @@
 import type { LiteralUnion } from 'type-fest';
 import { Notification } from '@mantine/core';
 import { StackTrace } from '@components';
-import { IconX } from '@tabler/icons-react';
 interface NotificationProps {
   message: string;
   stack: StackFrame[];

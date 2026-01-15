@@ -37,6 +37,7 @@ export class LinkAccountCommandHandler extends AbstractCommandHandler<
     key: 'LinkAccountCommand';
     params: { localId: string; obAccountId: string };
   }>): Promise<void> {
+    this.grants.requiresNoPermissions();
     const account = await this.accounts.require(localId);
     account.linkAccount(obAccountId);
     await this.writer.update(account);
