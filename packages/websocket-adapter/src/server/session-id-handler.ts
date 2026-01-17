@@ -1,4 +1,4 @@
-import type { ILogger } from '@zero/bootstrap';
+import type { ConfigValue, ILogger } from '@zero/bootstrap';
 import cookie from 'cookie';
 import { IncomingMessage } from 'http';
 
@@ -21,19 +21,24 @@ export class SessionIdHandler {
     private key: string,
 
     @inject('UUIDGenerator')
-    private uuidGenerator: IUUIDGenerator
+    private uuidGenerator: IUUIDGenerator,
+
+    @inject('CookieDomain')
+    private readonly cookieDomain: ConfigValue<string>
   ) {}
 
   private sessionIds = new WeakMap<IncomingMessage, string>();
 
-  public setSesionId(headers: string[], request: IncomingMessage) {
+  public async setSesionId(headers: string[], request: IncomingMessage) {
     const existingId = this.parseSessionIdFromRequest(request);
 
     if (existingId) {
       this.sessionIds.set(request, existingId);
     } else {
       const newId = this.uuidGenerator.v7();
-      headers.push(`Set-Cookie: ${this.key}=${newId}; HttpOnly;`);
+      headers.push(
+        `Set-Cookie: ${this.key}=${newId}; HttpOnly; Secure; ${this.cookieDomain.value}`
+      );
       this.sessionIds.set(request, newId);
     }
   }

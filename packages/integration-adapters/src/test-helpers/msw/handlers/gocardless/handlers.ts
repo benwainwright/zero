@@ -4,6 +4,40 @@ import { invalidRequestResponse } from './invalid-request-response.ts';
 import { mockGocardlessData } from './mock-gocardless-data.ts';
 
 export const handlers = [
+  http.get<{ accountId: string }>(
+    `${GOCARDLESS_API}/api/v2/accounts/:accountId/transactions/`,
+    ({ params, request }) => {
+      console.log('HERE');
+      const invalidResponse = invalidRequestResponse(request);
+
+      if (invalidResponse) {
+        return invalidResponse;
+      }
+
+      const { accountId } = params;
+
+      if (accountId !== mockGocardlessData.mockAccountId) {
+        return HttpResponse.json({
+          detail: 'Not found.',
+          summary: 'Not found.',
+          status_code: 404,
+        });
+      }
+
+      if (!accountId) {
+        return HttpResponse.json(
+          {
+            summary: 'Invalid Account ID',
+            detail: '$ACCOUNT_ID is not a valid Account UUID. ',
+            status_code: 400,
+          },
+          { status: 400 }
+        );
+      }
+
+      return HttpResponse.json(mockGocardlessData.mockTransactions);
+    }
+  ),
   http.get<{ institutionId: string }>(
     `${GOCARDLESS_API}/api/v2/institutions/:institutionId/`,
     ({ params, request }) => {
@@ -94,7 +128,7 @@ export const handlers = [
     }
   ),
 
-  http.get(`${GOCARDLESS_API}/api/v2/institutions`, ({ request }) => {
+  http.get(`${GOCARDLESS_API}/api/v2/institutions/`, ({ request }) => {
     const invalidResponse = invalidRequestResponse(request);
 
     if (invalidResponse) {

@@ -1,7 +1,5 @@
 import { getServerWithDepsMocked } from './get-server-with-deps-mocked.ts';
 import { getClientWithDepsMocked } from './get-client-with-deps-mocked.ts';
-import { AbstractError } from '@zero/bootstrap';
-import type { IEventEmitter } from '@zero/application-core';
 
 vi.mock('uuid');
 

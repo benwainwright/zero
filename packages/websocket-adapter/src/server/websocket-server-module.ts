@@ -33,6 +33,15 @@ export const websocketServerModule: IModule<IServerInternalTypes> = async ({
 
   bind('UUIDGenerator').toConstantValue(uuidGenerator);
 
+  bind('CookieDomain').toConstantValue(
+    configValue({
+      namespace: 'websocketServer',
+      key: 'cookieDomain',
+      schema: z.string(),
+      description: 'Domain to scope cookies set by the application to',
+    })
+  );
+
   bind('WebsocketServerHost').toConstantValue(
     configValue({
       namespace: `websocketServer`,

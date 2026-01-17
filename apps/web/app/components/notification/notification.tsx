@@ -4,6 +4,7 @@ import { IconX, IconCheck, IconInfoCircleFilled } from '@tabler/icons-react';
 interface NotificationProps {
   type: 'success' | 'failure' | 'info';
   message: string;
+  onClose: () => void;
 }
 
 const getNotificationProps = (type: 'success' | 'failure' | 'info') => {
@@ -29,9 +30,9 @@ const getNotificationProps = (type: 'success' | 'failure' | 'info') => {
   }
 };
 
-export const Notification = ({ type, message }: NotificationProps) => {
+export const Notification = ({ type, message, onClose }: NotificationProps) => {
   return (
-    <MantineNotification {...getNotificationProps(type)}>
+    <MantineNotification {...getNotificationProps(type)} onClose={onClose}>
       {message}
     </MantineNotification>
   );

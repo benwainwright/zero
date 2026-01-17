@@ -3,16 +3,21 @@ import { useNotifications } from '@context';
 import { Affix } from '@mantine/core';
 
 export const Notifications = () => {
-  const { notificationQueue } = useNotifications();
+  const { notificationQueue, closeNotification } = useNotifications();
 
-  console.log(notificationQueue);
   return (
     <Affix position={{ top: 20, left: 20 }}>
       {notificationQueue.map((notification) => {
         const { type } = notification;
 
         if (type !== 'error') {
-          return <Notification type={type} message={notification.message} />;
+          return (
+            <Notification
+              type={type}
+              message={notification.message}
+              onClose={() => closeNotification(notification)}
+            />
+          );
         }
         return (
           <ErrorNotification

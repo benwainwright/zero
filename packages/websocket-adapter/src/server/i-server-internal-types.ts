@@ -7,6 +7,7 @@ import type { SessionIdHandler } from './session-id-handler.ts';
 
 export interface IServerInternalTypes {
   AppServer: AppServer;
+  CookieDomain: ConfigValue<string>;
   ServerWebsocketClient: ServerSocketClient;
   SessionIdCookieKey: string;
   SessionIdHandler: SessionIdHandler;

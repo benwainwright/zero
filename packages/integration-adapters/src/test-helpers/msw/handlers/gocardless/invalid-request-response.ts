@@ -9,8 +9,6 @@ export const invalidRequestResponse = (
   const contentType = request.headers.get('content-type');
   const auth = request.headers.get('Authorization');
 
-  console.log({ auth });
-
   if (!withoutToken && auth !== `Bearer ${mockGocardlessData.mockToken}`) {
     return HttpResponse.json(
       {

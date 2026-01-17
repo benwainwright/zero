@@ -5,6 +5,7 @@ import { useState } from 'react';
 interface NotificationContextPropsData {
   notificationQueue: NotificationData[];
   showNotification?: (notification: NotificationData) => void;
+  closeNotification?: (notification: NotificationData) => void;
 }
 
 export const NotificationsContext = createContext<NotificationContextPropsData>(
@@ -22,12 +23,14 @@ export const NotificationProvider = ({
 }: NotificationProviderProps) => {
   const [queue, setQueue] = useState<NotificationData[]>([]);
 
+  const closeNotification = (data: NotificationData) => {
+    setQueue((queue) => queue.filter((item) => item !== data));
+  };
+
   const showNotification = useCallback(
     (data: NotificationData) => {
       setQueue((queue) => [...queue, data]);
-      setTimeout(() => {
-        setQueue((queue) => queue.filter((item) => item !== data));
-      }, timeout);
+      setTimeout(() => closeNotification(data), timeout);
     },
     [setQueue, timeout]
   );
@@ -36,6 +39,7 @@ export const NotificationProvider = ({
     <NotificationsContext
       value={{
         notificationQueue: queue,
+        closeNotification,
         showNotification,
       }}
     >

@@ -68,9 +68,9 @@ export class AppServer {
         });
       });
 
-      this.wss?.on('headers', (headers, request) => {
-        this.errorHandler.withErrorHandling(() => {
-          this.sessionIdHandler.setSesionId(headers, request);
+      this.wss?.on('headers', async (headers, request) => {
+        await this.errorHandler.withErrorHandling(async () => {
+          await this.sessionIdHandler.setSesionId(headers, request);
         });
       });
 

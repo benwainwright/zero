@@ -26,6 +26,8 @@ describe('create transaction handler', () => {
       {
         accountId: 'account-id',
         date,
+        pending: false,
+        currency: 'GBP',
         payee: 'foo',
         amount: 10,
       },
@@ -40,6 +42,8 @@ describe('create transaction handler', () => {
       .calledWith({
         id: 'foo-id',
         accountId: 'account-id',
+        pending: false,
+        currency: 'GBP',
         ownerId: 'ben',
         date,
         payee: 'foo',

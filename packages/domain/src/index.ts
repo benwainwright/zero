@@ -42,6 +42,10 @@ export {
   Transaction,
   type ITransaction,
   transactionSchema,
+  openBankingCreditTransactionSchema,
+  openBankingTransactionSchema,
+  openBankingDebitTransactionSchema,
+  type IOpenBankingTransaction,
 } from '@transaction';
 
 export { OauthToken, type IOauthToken, oAuthTokenSchema } from '@oauth-token';

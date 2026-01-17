@@ -83,6 +83,7 @@ export interface Transactions {
   accountId: string;
   amount: number;
   categoryId: string | null;
+  currency: string | null;
   date: Timestamp;
   id: string;
   ownerId: string;

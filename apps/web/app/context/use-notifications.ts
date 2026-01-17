@@ -3,7 +3,7 @@ import { NotificationsContext } from './notifications-provider.tsx';
 import type { NotificationData } from './notification.ts';
 
 export const useNotifications = () => {
-  const { showNotification, notificationQueue } =
+  const { showNotification, notificationQueue, closeNotification } =
     useContext(NotificationsContext);
 
   const finalShowNotification = useCallback(
@@ -13,5 +13,16 @@ export const useNotifications = () => {
     [showNotification]
   );
 
-  return { showNotification: finalShowNotification, notificationQueue };
+  const finalCloseNotification = useCallback(
+    (data: NotificationData) => {
+      closeNotification?.(data);
+    },
+    [closeNotification]
+  );
+
+  return {
+    showNotification: finalShowNotification,
+    notificationQueue,
+    closeNotification: finalCloseNotification,
+  };
 };

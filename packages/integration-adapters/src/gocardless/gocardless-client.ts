@@ -10,7 +10,7 @@ import {
 } from '@zero/application-core';
 
 import { type ConfigValue, type ILogger } from '@zero/bootstrap';
-import { OauthToken } from '@zero/domain';
+import { OauthToken, openBankingTransactionSchema } from '@zero/domain';
 import { injectable } from 'inversify';
 import z from 'zod';
 import type { IntegrationEvents } from '../adapter-events.ts';
@@ -121,6 +121,24 @@ export class GocardlessClient
       default:
         return { status: 'expired' };
     }
+  }
+
+  public async getAccountTransactions(token: OauthToken, account: string) {
+    const response = await this.client.get({
+      path: `accounts/${account}/transactions/`,
+      ttl: 1000 * 60 * 60 * 24,
+      headers: {
+        Authorization: `Bearer ${token.use()}`,
+      },
+      responseSchema: z.object({
+        transactions: z.object({
+          booked: z.array(openBankingTransactionSchema),
+          pending: z.array(openBankingTransactionSchema),
+        }),
+      }),
+    });
+
+    return response.transactions;
   }
 
   private async getInstitutionDetails(

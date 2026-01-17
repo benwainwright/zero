@@ -11,6 +11,8 @@ export class Transaction
   public override toObject(): ITransaction {
     return {
       id: this.id,
+      currency: this.currency,
+      pending: this._pending,
       accountId: this.accountId,
       ownerId: this.ownerId,
       date: this.date,
@@ -18,6 +20,11 @@ export class Transaction
       amount: this.amount,
       category: this.category,
     };
+  }
+
+  public _pending: boolean;
+  public get pending() {
+    return this._pending;
   }
 
   public readonly id: string;
@@ -31,6 +38,11 @@ export class Transaction
   private _date: Date;
   public get date() {
     return this._date;
+  }
+
+  private _currency: 'GBP';
+  public get currency() {
+    return this._currency;
   }
 
   private _amount: number;
@@ -56,6 +68,8 @@ export class Transaction
     this._payee = config.payee;
     this._accountId = config.accountId;
     this._date = config.date;
+    this._pending = config.pending;
+    this._currency = config.currency;
     this._category = config.category;
   }
 
@@ -71,6 +85,8 @@ export class Transaction
     this._date = config.date ?? this._date;
     this._payee = config.payee ?? this._payee;
     this._amount = config.amount ?? this._amount;
+    this._currency = config.currency ?? this._currency;
+    this._pending = config.pending ?? this._pending;
     this.raiseEvent({
       event: 'TransactionUpdated',
       data: { old, new: Transaction.reconstitute(this) },

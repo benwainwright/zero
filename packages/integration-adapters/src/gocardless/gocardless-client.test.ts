@@ -106,6 +106,42 @@ describe('the gocardless client', () => {
     });
   });
 
+  describe('get account transactions', () => {
+    it('it returns the account transactions from the response', async () => {
+      const client = new GocardlessClient(
+        { value: Promise.resolve(mockGocardlessData.secretId) },
+        { value: Promise.resolve(mockGocardlessData.secretKey) },
+        { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
+        mock(),
+        mock(),
+        mock(),
+        mock(),
+        mock(),
+        mock()
+      );
+
+      const newToken = OauthToken.reconstitute({
+        refreshExpiry: undefined,
+        provider: 'ynab',
+        id: 'foo',
+        token: mockGocardlessData.mockToken,
+        refreshToken: 'string',
+        expiry: new Date(Date.now() + 10_000),
+        lastUse: undefined,
+        created: new Date(),
+        refreshed: undefined,
+        ownerId: 'user',
+      });
+
+      const txes = await client.getAccountTransactions(
+        newToken,
+        mockGocardlessData.mockAccountId
+      );
+
+      expect(txes).toEqual(mockGocardlessData.mockTransactions.transactions);
+    });
+  });
+
   describe('getAccountBalance', () => {
     it('returns the value of the most recent balance entry', async () => {
       const client = new GocardlessClient(
@@ -161,10 +197,10 @@ describe('the gocardless client', () => {
       const token = OauthToken.reconstitute({
         id: 'foo',
         refreshExpiry: undefined,
-        provider: 'ynab',
+        provider: 'gocardless',
         token: mockGocardlessData.mockToken,
         refreshToken: 'string',
-        expiry: new Date(Date.now() + 10_000),
+        expiry: new Date(Date.now() + 10_000_000),
         lastUse: undefined,
         created: new Date(),
         refreshed: undefined,

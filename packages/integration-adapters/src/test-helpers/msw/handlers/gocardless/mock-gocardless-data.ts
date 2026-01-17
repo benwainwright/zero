@@ -106,6 +106,41 @@ export const mockGocardlessData = {
       },
     ],
   },
+  mockTransactions: {
+    transactions: {
+      booked: [
+        {
+          transactionId: 'foo',
+          debtorName: 'bar',
+          transactionAmount: {
+            currency: 'GBP',
+            amount: '328.18',
+          },
+          bookingDate: '2024-12-31',
+          valueDate: '2020-12-31',
+        },
+        {
+          transactionId: 'bar',
+          transactionAmount: {
+            currency: 'GVP',
+            amount: '947.26',
+          },
+          bookingDate: '2025-12-01',
+          valueDate: '2024-12-01',
+        },
+      ],
+      pending: [
+        {
+          transactionAmount: {
+            currency: 'GBP',
+            amount: '99.20',
+          },
+          valueDate: '2023-12-01',
+        },
+      ],
+    },
+    last_updated: '2026-01-17T22:13:39+00:00',
+  },
   mockConnectedRequisitionResponse: {
     id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     created: '2025-05-14T11:05:56.276Z',

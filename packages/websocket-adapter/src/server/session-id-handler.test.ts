@@ -14,7 +14,8 @@ describe('session id handler', () => {
       const handler = new SessionIdHandler(
         logger,
         'key-session',
-        uuidGenerator
+        uuidGenerator,
+        mock()
       );
 
       const headers: string[] = [];
@@ -36,7 +37,8 @@ describe('session id handler', () => {
       const handler = new SessionIdHandler(
         logger,
         'key-session',
-        uuidGenerator
+        uuidGenerator,
+        mock()
       );
 
       const headers: string[] = [];
@@ -63,7 +65,8 @@ describe('session id handler', () => {
       const handler = new SessionIdHandler(
         logger,
         'key-session',
-        uuidGenerator
+        uuidGenerator,
+        mock()
       );
 
       const headers: string[] = [];
@@ -86,7 +89,8 @@ describe('session id handler', () => {
       const handler = new SessionIdHandler(
         logger,
         'key-session',
-        uuidGenerator
+        uuidGenerator,
+        mock()
       );
 
       const request = mock<IncomingMessage>({

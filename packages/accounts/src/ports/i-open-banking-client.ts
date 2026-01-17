@@ -1,4 +1,4 @@
-import type { OauthToken } from '@zero/domain';
+import type { IOpenBankingTransaction, OauthToken } from '@zero/domain';
 
 export interface IPossbileInstitution {
   bankName: string;
@@ -36,4 +36,11 @@ export interface IOpenBankingClient {
   getInstitutionList(token: OauthToken): Promise<IPossbileInstitution[]>;
   getAuthorisationUrl(token: OauthToken, bankId: string): Promise<string>;
   getAccounts(token: OauthToken): Promise<IOpenBankingAccountDetails[]>;
+  getAccountTransactions(
+    token: OauthToken,
+    accountId: string
+  ): Promise<{
+    booked: IOpenBankingTransaction[];
+    pending: IOpenBankingTransaction[];
+  }>;
 }
