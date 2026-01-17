@@ -50,18 +50,19 @@ const AccountTransactions = () => {
       title={account?.name ?? ''}
       headerActions={
         <>
-          {connection.loaded &&
-            connection.isConnected &&
-            !account.linkedOpenBankingAccount && (
-              <LinkAccountButton
-                onPick={async (obAccount) => {
-                  await linkAccount({
-                    obAccountId: obAccount,
-                    localId: accountId,
-                  });
-                }}
-              />
-            )}
+          {connection.connectionStatus?.status === 'connected' &&
+          account.linkedOpenBankingAccount ? (
+            <Button variant="subtle">Unlink</Button>
+          ) : (
+            <LinkAccountButton
+              onPick={async (obAccount) => {
+                await linkAccount({
+                  obAccountId: obAccount,
+                  localId: accountId,
+                });
+              }}
+            />
+          )}
           <Button onClick={() => setCreatingNewTx(true)} variant="subtle">
             New Transaction
           </Button>

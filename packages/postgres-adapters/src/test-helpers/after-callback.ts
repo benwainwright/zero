@@ -12,7 +12,7 @@ export const afterCallback = async (
 ) => {
   await dropAllMigrations({
     host: 'localhost',
-    port: 5433,
+    port: 5432,
     database: 'zero',
     password: 'password',
     user: 'postgres',

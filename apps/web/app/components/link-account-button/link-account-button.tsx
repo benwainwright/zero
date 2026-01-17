@@ -1,5 +1,5 @@
 import { Button, Combobox, Input, InputBase, useCombobox } from '@mantine/core';
-import { useRequest, useDataRequest } from '@zero/react-api';
+import { useRequest } from '@zero/react-api';
 import { useEffect, useState, type ReactNode } from 'react';
 
 interface LinkAccountButtonProps {
@@ -7,8 +7,8 @@ interface LinkAccountButtonProps {
 }
 
 interface AccountDetails {
-  name: string;
-  details: string;
+  name: string | undefined;
+  details: string | undefined;
   id: string;
 }
 
@@ -16,16 +16,9 @@ export const LinkAccountButton = ({
   onPick,
 }: LinkAccountButtonProps): ReactNode => {
   const [isLinking, setIsLinking] = useState(false);
-  const { execute: fetchDetails } = useRequest(
-    'FetchLinkedAccountsDetailsCommand'
-  );
-  const { data: linkedAccountDetails, refresh } = useDataRequest(
-    'GetLinkedAccountsDetailsQuery',
-    isLinking
-  );
+  const { execute: getAccounts } = useRequest('GetOpenBankingAccountsCommand');
 
-  const [requisitionAccounts, setRequisitionAccounts] =
-    useState<AccountDetails[]>();
+  const [accounts, setAccounts] = useState<AccountDetails[]>();
 
   const combobox = useCombobox({
     onDropdownClose: () => {
@@ -37,22 +30,14 @@ export const LinkAccountButton = ({
 
   useEffect(() => {
     void (async () => {
-      if (
-        isLinking &&
-        linkedAccountDetails &&
-        linkedAccountDetails.length > 0
-      ) {
-        setRequisitionAccounts(linkedAccountDetails);
-      } else {
-        await fetchDetails();
-        refresh();
+      if (isLinking) {
+        setAccounts(await getAccounts());
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLinking, fetchDetails, refresh, JSON.stringify(linkedAccountDetails)]);
+  }, [isLinking, getAccounts]);
 
-  if (isLinking && requisitionAccounts) {
-    const options = requisitionAccounts.map((item) => (
+  if (isLinking && accounts) {
+    const options = accounts.map((item) => (
       <Combobox.Option value={item.id} key={item.id}>
         {item.name ?? item.details}
       </Combobox.Option>

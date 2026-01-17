@@ -12,7 +12,7 @@ export const createCallback = async (
 ) => {
   await runMigrations({
     host: 'localhost',
-    port: 5433,
+    port: 5432,
     database: 'zero',
     password: 'password',
     user: 'postgres',

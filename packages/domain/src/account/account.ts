@@ -116,6 +116,7 @@ export class Account
       balance: this._balance,
       id: this.id,
       name: this._name,
+      linkedOpenBankingAccount: this._linkedOpenBankingAccount,
       type: this.type,
       description: this._description,
       closed: this._closed,

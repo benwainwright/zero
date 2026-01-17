@@ -10,3 +10,4 @@ export { UpdateCategoryCommandHandler } from './update-category-command-handler.
 export { LinkAccountCommandHandler } from './link-account-command-handler.ts';
 export { CheckBankConnectionStatusCommandHandler } from './check-bank-connection-status-command.ts';
 export { AuthoriseBankCommandHandler } from './authorise-bank-command-handler.ts';
+export { GetOpenBankingAccountDetailsCommandHandler } from './get-open-banking-account-details-command-handler.ts';

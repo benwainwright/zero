@@ -1,5 +1,8 @@
-import type { OpenBankingConnectionStatus } from '@ports';
-import type { BankConnection, ITransaction } from '@zero/domain';
+import type {
+  IOpenBankingAccountDetails,
+  OpenBankingConnectionStatus,
+} from '@ports';
+import type { ITransaction } from '@zero/domain';
 
 interface IPossbileInstitution {
   bankName: string;
@@ -8,6 +11,12 @@ interface IPossbileInstitution {
 }
 
 export type AccountsCommands =
+  | {
+      id: string;
+      key: 'GetOpenBankingAccountsCommand';
+      params: undefined;
+      response: IOpenBankingAccountDetails[];
+    }
   | {
       id: string;
       key: 'CheckBankConnectionStatusCommand';

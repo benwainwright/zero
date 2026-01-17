@@ -1,5 +1,5 @@
 import { inject } from '@core';
-import type { IOpenBankingClient } from '@ports';
+import type { IOpenBankingAccountDetails, IOpenBankingClient } from '@ports';
 import type { AccountsCommands, OpenBankingTokenManager } from '@services';
 import {
   AbstractRequestHandler,
@@ -8,9 +8,9 @@ import {
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 
-export class AuthoriseBankCommandHandler extends AbstractRequestHandler<
+export class GetOpenBankingAccountDetailsCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
-  'AuthoriseBankCommand'
+  'GetOpenBankingAccountsCommand'
 > {
   public constructor(
     @inject('OpenBankingClient')
@@ -27,20 +27,21 @@ export class AuthoriseBankCommandHandler extends AbstractRequestHandler<
   ) {
     super(logger);
   }
-
   protected override async handle({
     authContext,
-    params: { bankId },
   }: IRequestContext<{
     id: string;
-    key: 'AuthoriseBankCommand';
-    params: { bankId: string };
-    response: { authUrl: string };
-  }>): Promise<{ authUrl: string }> {
+    key: 'GetOpenBankingAccountsCommand';
+    params: undefined;
+    response: IOpenBankingAccountDetails[];
+  }>): Promise<IOpenBankingAccountDetails[]> {
+    this.grants.requiresNoPermissions();
     this.grants.assertLogin(authContext);
+
     await using token = await this.tokens.getToken(authContext.id);
 
-    return { authUrl: await this.bank.getAuthorisationUrl(token, bankId) };
+    return this.bank.getAccounts(token);
   }
-  public override readonly name = 'AuthoriseBankCommand';
+
+  public override readonly name = 'GetOpenBankingAccountsCommand';
 }

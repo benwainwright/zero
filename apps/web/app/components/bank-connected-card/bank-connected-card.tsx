@@ -58,6 +58,19 @@ export const BankConnectedCard = ({
                   }
                 </Table.Td>
               </Table.Tr>
+              {refreshed && (
+                <Table.Tr>
+                  <Table.Th pl="lg">Token Last Refreshed</Table.Th>
+                  <Table.Td>
+                    {
+                      <DateLabel
+                        date={refreshed}
+                        formatOptions={DateTime.DATETIME_FULL}
+                      ></DateLabel>
+                    }
+                  </Table.Td>
+                </Table.Tr>
+              )}
             </Table.Tbody>
           </Table>
         </Flex>

@@ -4,7 +4,7 @@ import waitPort from 'wait-port';
 import path from 'path';
 import { runMigrations } from '@migrate';
 
-const PORT = 5433;
+const PORT = 5432;
 
 export const setup = async () => {
   // oxlint-disable eslint/no-misused-promises

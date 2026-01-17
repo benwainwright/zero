@@ -101,7 +101,7 @@ export const useData: UseDataType = <
   }>();
 
   useEffect(() => {
-    if (mapToLocalData) {
+    if (mapToLocalData && data) {
       setLocalData({ mapped: mapToLocalData(data) });
     } else {
       setLocalData({ unmapped: data });
@@ -109,7 +109,10 @@ export const useData: UseDataType = <
   }, [JSON.stringify(data)]);
 
   useEvents((event) => {
+    console.log({ event });
+    console.log('EVENT FIRED');
     if (refreshOn?.includes(event.key)) {
+      console.log('REFRESH');
       refresh();
     }
   });

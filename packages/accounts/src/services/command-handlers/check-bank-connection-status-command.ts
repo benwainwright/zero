@@ -41,7 +41,7 @@ export class CheckBankConnectionStatusCommandHandler extends AbstractRequestHand
   > {
     this.grants.assertLogin(authContext);
     this.grants.requiresNoPermissions();
-    const token = await this.tokens.getToken(authContext.id);
+    await using token = await this.tokens.getToken(authContext.id);
     const status = await this.bank.getConnectionStatus(token);
 
     if (status.status === 'not_connected') {

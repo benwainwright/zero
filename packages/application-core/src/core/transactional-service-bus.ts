@@ -1,4 +1,4 @@
-import type { IServiceBus, IUnitOfWork } from '@ports';
+import type { IDomainEventStore, IServiceBus, IUnitOfWork } from '@ports';
 import type { IRequest } from '@types';
 import { priority, type ILogger } from '@zero/bootstrap';
 import { inject } from './typed-inject.ts';
@@ -13,6 +13,9 @@ export class TransactionalServiceBus implements IServiceBus {
 
     @inject('UnitOfWork')
     private unitOfWork: IUnitOfWork,
+
+    @inject('DomainEventEmitter')
+    private domainEvents: IDomainEventStore,
 
     @inject('Logger')
     private logger: ILogger
@@ -36,6 +39,7 @@ export class TransactionalServiceBus implements IServiceBus {
         LOG_CONTEXT
       );
       await this.unitOfWork.commit();
+      this.domainEvents.flush();
       return result;
     } catch (error) {
       this.logger.debug(
@@ -43,6 +47,7 @@ export class TransactionalServiceBus implements IServiceBus {
         LOG_CONTEXT
       );
       await this.unitOfWork.rollback();
+      this.domainEvents.purge();
       throw error;
     }
   }
