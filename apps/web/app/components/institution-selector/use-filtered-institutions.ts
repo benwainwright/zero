@@ -1,8 +1,10 @@
-import type { BankConnection } from '@zero/domain';
+import type { IPossbileInstitution } from '@zero/accounts';
 import Fuse from 'fuse.js';
 import { useState } from 'react';
 
-export const useFilteredInstitutions = (institutions: BankConnection[]) => {
+export const useFilteredInstitutions = (
+  institutions: IPossbileInstitution[]
+) => {
   const [filter, setFilter] = useState<string>();
 
   if (!filter) {

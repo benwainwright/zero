@@ -334,6 +334,9 @@ importers:
       '@types/luxon':
         specifier: 3.7.1
         version: 3.7.1
+      '@zero/accounts':
+        specifier: workspace:*
+        version: link:../../packages/accounts
       '@zero/application-core':
         specifier: workspace:*
         version: link:../../packages/application-core
@@ -784,6 +787,9 @@ importers:
       '@inversifyjs/strongly-typed':
         specifier: 'catalog:'
         version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
+      '@zero/accounts':
+        specifier: workspace:*
+        version: link:../accounts
       '@zero/application-core':
         specifier: workspace:*
         version: link:../application-core

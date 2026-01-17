@@ -8,3 +8,5 @@ export { CreateCategoryCommandHandler } from './create-category-command-handler.
 export { DeleteCategoryCommandHandler } from './delete-category-command-handler.ts';
 export { UpdateCategoryCommandHandler } from './update-category-command-handler.ts';
 export { LinkAccountCommandHandler } from './link-account-command-handler.ts';
+export { CheckBankConnectionStatusCommandHandler } from './check-bank-connection-status-command.ts';
+export { AuthoriseBankCommandHandler } from './authorise-bank-command-handler.ts';

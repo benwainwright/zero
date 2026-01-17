@@ -10,7 +10,11 @@ export type {
   IOpenBankingAccountDetailsFetcher,
   IOpenBankingTokenFetcher,
   IOauthTokenRepository,
+  IOpenBankingClient,
   IInstitutionListFetcher,
+  IPossbileInstitution,
+  IOpenBankingAccountDetails,
+  OpenBankingConnectionStatus,
 } from '@ports';
 
 export type { IAccountsTypes, AccountsEvents } from '@core';

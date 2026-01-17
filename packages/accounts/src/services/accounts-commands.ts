@@ -1,16 +1,42 @@
+import type { OpenBankingConnectionStatus } from '@ports';
 import type { BankConnection, ITransaction } from '@zero/domain';
+
+interface IPossbileInstitution {
+  bankName: string;
+  id: string;
+  logo: string;
+}
 
 export type AccountsCommands =
   | {
       id: string;
-      key: 'LinkAccountCommand';
-      params: { localId: string; obAccountId: string };
-      response: undefined;
+      key: 'CheckBankConnectionStatusCommand';
+      params: undefined;
+      response:
+        | { status: 'not_connected'; banks: IPossbileInstitution[] }
+        | {
+            status: 'connected';
+            name: string;
+            logo: string;
+            created: Date;
+            refreshed: Date | undefined;
+            expires: Date;
+          }
+        | Exclude<
+            OpenBankingConnectionStatus,
+            { status: 'not_connected' } | { status: 'connected' }
+          >;
     }
   | {
       id: string;
-      key: 'FetchLinkedAccountsDetailsCommand';
-      params: undefined;
+      key: 'AuthoriseBankCommand';
+      params: { bankId: string };
+      response: { authUrl: string };
+    }
+  | {
+      id: string;
+      key: 'LinkAccountCommand';
+      params: { localId: string; obAccountId: string };
       response: undefined;
     }
   | {
@@ -38,30 +64,6 @@ export type AccountsCommands =
         name: string;
         description: string;
       };
-      response: undefined;
-    }
-  | {
-      id: string;
-      key: 'DeleteAuthLinkCommand';
-      params: undefined;
-      response: undefined;
-    }
-  | {
-      id: string;
-      key: 'SaveRequisitionAccountsCommand';
-      params: undefined;
-      response: undefined;
-    }
-  | {
-      id: string;
-      key: 'CreateBankConnectionCommand';
-      params: BankConnection;
-      response: undefined;
-    }
-  | {
-      id: string;
-      key: 'FetchOpenBankingInstitutionListCommand';
-      params: undefined;
       response: undefined;
     }
   | {

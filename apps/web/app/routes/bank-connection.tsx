@@ -1,26 +1,22 @@
-import { BankConnectedCard, InstitutionSelector, Page } from '@components';
+import { ConnectionStatusOptions, Page } from '@components';
 import { Stack } from '@mantine/core';
 import { useBankConnection } from '@zero/react-api';
 
 export const BankConnection = () => {
   const connection = useBankConnection();
-  const { loaded } = connection;
+
+  const { authorise } = connection;
 
   return (
     <Page routeName="bankConnection" title="Bank Integration">
-      {loaded && (
+      {connection && connection.connectionStatus && (
         <Stack align="start">
-          {connection.isConnected ? (
-            <BankConnectedCard details={connection.details} />
-          ) : (
-            <InstitutionSelector
-              institutions={connection.institutionList}
-              onSelectInstitution={async (institution) => {
-                const { createConnection } = connection;
-                await createConnection(institution);
-              }}
-            />
-          )}
+          <ConnectionStatusOptions
+            status={connection.connectionStatus}
+            onSelectBank={async (institution) => {
+              await authorise(institution);
+            }}
+          />
         </Stack>
       )}
     </Page>

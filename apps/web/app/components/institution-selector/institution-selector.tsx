@@ -1,11 +1,11 @@
 import { InstitutionCard } from '@components';
 import { Text, SimpleGrid, TextInput, Stack } from '@mantine/core';
-import type { BankConnection } from '@zero/domain';
 import { useFilteredInstitutions } from './use-filtered-institutions.ts';
+import type { IPossbileInstitution } from '@zero/accounts';
 
 interface InstitutionSelectorProps {
-  institutions: BankConnection[];
-  onSelectInstitution: (connection: BankConnection) => void;
+  institutions: IPossbileInstitution[];
+  onSelectInstitution: (connection: IPossbileInstitution) => void;
 }
 
 export const InstitutionSelector = ({

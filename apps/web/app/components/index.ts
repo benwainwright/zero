@@ -30,3 +30,4 @@ export { StackTrace } from './stack-trace/index.ts';
 export { HttpRequestsPanel } from './http-requests-panel/index.ts';
 export { EventLogPanel } from './event-log-panel/index.ts';
 export { EventLogControl } from './event-log-control/index.ts';
+export { ConnectionStatusOptions } from './connection-status-options/index.ts';

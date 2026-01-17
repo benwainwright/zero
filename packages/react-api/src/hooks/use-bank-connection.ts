@@ -1,106 +1,33 @@
-import { useData, useDataRequest, useRequest } from '@hooks';
-import type { BankConnection } from '@zero/domain';
-import { useEffect } from 'react';
+import { useDataRequest, useRequest } from '@hooks';
+import type { IPossbileInstitution, AccountsCommands } from '@zero/accounts';
+import type { IPickRequest } from '@zero/application-core';
+import { useCallback } from 'react';
 
-interface BankConnectionConnected {
-  loaded: true;
-  isConnected: true;
-  details: {
-    logo: string;
-    bankName: string;
-    connected: Date;
-    refreshed: Date | undefined;
-    expires: Date;
-  };
-}
+export const useBankConnection = (): {
+  connectionStatus:
+    | IPickRequest<
+        AccountsCommands,
+        'CheckBankConnectionStatusCommand'
+      >['response']
+    | undefined;
+  authorise: (institution: IPossbileInstitution) => Promise<void>;
+} => {
+  const { data: connectionStatus } = useDataRequest(
+    'CheckBankConnectionStatusCommand'
+  );
 
-interface BankConnectionNotConnected {
-  loaded: true;
-  isConnected: false;
-  createConnection: (connection: BankConnection) => Promise<void>;
-  institutionList: BankConnection[];
-}
+  const { execute: authoriseCommand } = useRequest('AuthoriseBankCommand');
 
-interface BankConnectionLoading {
-  loaded: false;
-}
+  const authorise = useCallback(
+    async (institution: IPossbileInstitution) => {
+      const response = await authoriseCommand({ bankId: institution.id });
 
-export const useBankConnection = ():
-  | BankConnectionLoading
-  | BankConnectionConnected
-  | BankConnectionNotConnected => {
-  const { execute: deleteAuthLink } = useRequest('DeleteAuthLinkCommand');
-
-  const {
-    data: authLink,
-    refresh: refreshAuthLink,
-    isPending,
-  } = useDataRequest('GetBankAuthLinkQuery');
-
-  useEffect(() => {
-    (async () => {
-      if (authLink?.url) {
-        await deleteAuthLink();
-        window.location.href = authLink.url;
+      if (response) {
+        window.location.href = response.authUrl;
       }
-    })();
-  }, [authLink?.url]);
-
-  const { data } = useData({
-    query: 'CheckBankConnectionQuery',
-    refreshOn: [
-      'BankConnectionCreated',
-      'BankConnectionDeleted',
-      'BankConnectionRefreshed',
-      'BankConnectionRequisitionSaved',
-      'OauthTokenCreated',
-      'OauthTokenDeleted',
-      'OauthTokenRefreshed',
-      'OauthTokenUsed',
-    ],
-  });
-
-  const { execute: fetchInstitutions } = useRequest(
-    'FetchOpenBankingInstitutionListCommand'
+    },
+    [authoriseCommand]
   );
 
-  const isConnected = data?.status === 'connected';
-
-  const { refresh, data: institutionList } = useDataRequest(
-    'GetOpenBankingInstitutionList',
-    !isConnected
-  );
-
-  const { execute: createBankConnection } = useRequest(
-    'CreateBankConnectionCommand'
-  );
-
-  useEffect(() => {
-    (async () => {
-      if (!isPending && !isConnected && institutionList === undefined) {
-        await fetchInstitutions();
-        refresh();
-      }
-    })();
-  }, [JSON.stringify(institutionList), isConnected]);
-
-  if (!institutionList || !data) {
-    return { loaded: false };
-  }
-
-  if (isConnected) {
-    return { isConnected, loaded: true, details: data } as const;
-  }
-
-  const createConnection = async (institution: BankConnection) => {
-    await createBankConnection(institution);
-    refreshAuthLink();
-  };
-
-  return {
-    isConnected,
-    institutionList,
-    createConnection,
-    loaded: true,
-  };
+  return { connectionStatus, authorise };
 };

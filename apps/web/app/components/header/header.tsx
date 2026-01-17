@@ -1,6 +1,6 @@
 import { BankConnectionIcon } from '@components';
 import { AppShell, Box, Burger, Group } from '@mantine/core';
-import { CurrentUserContext } from '@zero/react-api';
+import { CurrentUserContext, useBankConnection } from '@zero/react-api';
 import { IconHttpGet, IconCalendar } from '@tabler/icons-react';
 import { useContext, type ReactNode } from 'react';
 import { Link } from 'react-router';

@@ -29,10 +29,13 @@
   ],
   "references": [
     {
-      "path": "../domain/tsconfig.lib.json"
+      "path": "../auth/tsconfig.lib.json"
     },
     {
-      "path": "../auth/tsconfig.lib.json"
+      "path": "../accounts/tsconfig.lib.json"
+    },
+    {
+      "path": "../domain/tsconfig.lib.json"
     },
     {
       "path": "../websocket-adapter/tsconfig.lib.json"

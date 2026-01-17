@@ -16,6 +16,12 @@ import z from 'zod';
 import type { IntegrationEvents } from '../adapter-events.ts';
 import { HttpError } from '@errors';
 import { REQUISITION_ID_KEY } from './constants.ts';
+import type {
+  IOpenBankingClient,
+  IOpenBankingTokenFetcher,
+  IOpenBankingTokenRefresher,
+  OpenBankingConnectionStatus,
+} from '@zero/accounts';
 
 interface IPossbileInstitution {
   bankName: string;
@@ -23,38 +29,13 @@ interface IPossbileInstitution {
   logo: string;
 }
 
-interface IOpenBankingAccountDetails {
-  id: string;
-  name: string | undefined;
-  details: string | undefined;
-}
-
-type OpenBankingConnectionStatus =
-  | {
-      status: 'not_connected';
-    }
-  | {
-      status: 'connected';
-    }
-  | {
-      status: 'authorizing';
-    }
-  | {
-      status: 'rejected';
-    }
-  | {
-      status: 'expired';
-    };
-
-interface IOpenBankingClient {
-  getConnectionStatus(token: OauthToken): Promise<OpenBankingConnectionStatus>;
-  getInstitutionList(token: OauthToken): Promise<IPossbileInstitution[]>;
-  getAuthorisationUrl(token: OauthToken, bankId: string): Promise<string>;
-  getAccounts(token: OauthToken): Promise<IOpenBankingAccountDetails[]>;
-}
-
 @injectable()
-export class GocardlessClient implements IOpenBankingClient {
+export class GocardlessClient
+  implements
+    IOpenBankingClient,
+    IOpenBankingTokenFetcher,
+    IOpenBankingTokenRefresher
+{
   private client: HttpClient;
 
   public constructor(
@@ -125,12 +106,38 @@ export class GocardlessClient implements IOpenBankingClient {
       case 'RJ':
         return { status: 'rejected' };
 
-      case 'LN':
-        return { status: 'connected' };
+      case 'LN': {
+        const institutionDetails = await this.getInstitutionDetails(
+          token,
+          requisition.institution_id
+        );
+        return {
+          status: 'connected',
+          logo: institutionDetails.logo,
+          name: institutionDetails.name,
+        };
+      }
 
       default:
         return { status: 'expired' };
     }
+  }
+
+  private async getInstitutionDetails(
+    token: OauthToken,
+    institutionId: string
+  ) {
+    return await this.client.get({
+      path: `institutions/${institutionId}/`,
+      ttl: 1000 * 60 * 60 * 24,
+      headers: {
+        Authorization: `Bearer ${token.use()}`,
+      },
+      responseSchema: z.object({
+        name: z.string(),
+        logo: z.string(),
+      }),
+    });
   }
 
   public async getInstitutionList(
@@ -208,9 +215,7 @@ export class GocardlessClient implements IOpenBankingClient {
       );
     }
 
-    console.log('START');
     const requisition = await this.getRequisitionDetails(requisitionId, token);
-    console.log({ requisition });
 
     return await this.getAllAccountDetails(requisition.accounts, token);
   }
@@ -234,6 +239,7 @@ export class GocardlessClient implements IOpenBankingClient {
           z.literal('LN'),
           z.literal('EX'),
         ]),
+        institution_id: z.string(),
         accounts: z.array(z.string()),
       }),
     });

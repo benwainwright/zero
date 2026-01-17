@@ -14,7 +14,9 @@ export const integrationsModule: IModule<
 
   bind('OpenBankingAccountBalanceFetcher').to(GocardlessClient);
   bind('OpenBankingTokenRefresher').to(GocardlessClient);
+  bind('BankConnectionTokenFetcher').to(GocardlessClient);
   bind('ResponseCache').to(ObjectStorageResponseCache).inSingletonScope();
+  bind('OpenBankingClient').to(GocardlessClient);
   bind('GocardlessRedirectUrlConfigValue').toConstantValue(
     configValue({
       namespace: 'gocardless',

@@ -2,17 +2,19 @@ import { DateLabel } from '@components';
 import { Card, Text, Image, Table, Flex } from '@mantine/core';
 import { DateTime } from 'luxon';
 interface BankConnectionConnectedProps {
-  details: {
-    logo: string;
-    bankName: string;
-    connected: Date;
-    refreshed: Date | undefined;
-    expires: Date;
-  };
+  name: string;
+  logo: string;
+  created: Date;
+  refreshed: Date | undefined;
+  expires: Date;
 }
 
 export const BankConnectedCard = ({
-  details,
+  logo,
+  name,
+  created,
+  refreshed,
+  expires,
 }: BankConnectionConnectedProps) => {
   return (
     <>
@@ -21,9 +23,9 @@ export const BankConnectedCard = ({
         <Flex mt="md" mb="xs">
           <Card.Section m="lg">
             <Image
-              src={details.logo}
+              src={logo}
               width="auto"
-              alt={details.bankName}
+              alt={name}
               style={{ maxWidth: '300px' }}
             />
           </Card.Section>
@@ -32,14 +34,14 @@ export const BankConnectedCard = ({
             <Table.Tbody>
               <Table.Tr>
                 <Table.Th pl="lg">Bank</Table.Th>
-                <Table.Td>{details.bankName}</Table.Td>
+                <Table.Td>{name}</Table.Td>
               </Table.Tr>
               <Table.Tr>
                 <Table.Th pl="lg">Connection Date</Table.Th>
                 <Table.Td>
                   {
                     <DateLabel
-                      date={details.connected}
+                      date={created}
                       formatOptions={DateTime.DATETIME_FULL}
                     ></DateLabel>
                   }
@@ -50,7 +52,7 @@ export const BankConnectedCard = ({
                 <Table.Td>
                   {
                     <DateLabel
-                      date={details.expires}
+                      date={expires}
                       formatOptions={DateTime.DATETIME_FULL}
                     ></DateLabel>
                   }

@@ -4,10 +4,31 @@ import { invalidRequestResponse } from './invalid-request-response.ts';
 import { mockGocardlessData } from './mock-gocardless-data.ts';
 
 export const handlers = [
+  http.get<{ institutionId: string }>(
+    `${GOCARDLESS_API}/api/v2/institutions/:institutionId/`,
+    ({ params, request }) => {
+      const invalidResponse = invalidRequestResponse(request);
+
+      if (invalidResponse) {
+        return invalidResponse;
+      }
+      const { institutionId } = params;
+
+      if (institutionId !== mockGocardlessData.mockInstututionResponse.id) {
+        return HttpResponse.json({
+          detail: 'Not found.',
+          summary: 'Not found.',
+          status_code: 404,
+        });
+      }
+
+      return HttpResponse.json(mockGocardlessData.mockInstututionResponse);
+    }
+  ),
+
   http.get<{ accountId: string }>(
     `${GOCARDLESS_API}/api/v2/accounts/:accountId/details/`,
     ({ request, params }) => {
-      console.log('START');
       const invalidResponse = invalidRequestResponse(request);
 
       if (invalidResponse) {

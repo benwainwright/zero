@@ -20,6 +20,7 @@
     "@zero/auth": "workspace:*",
     "@zero/domain": "workspace:*",
     "@zero/react-api": "workspace:*",
+    "@zero/accounts": "workspace:*",
     "@zero/serialiser": "workspace:*",
     "@zero/websocket-adapter": "workspace:*",
     "babel-plugin-import": "^1.13.8",

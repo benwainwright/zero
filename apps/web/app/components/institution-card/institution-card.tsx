@@ -1,9 +1,9 @@
 import { Text, Card, Group, Image } from '@mantine/core';
-import type { BankConnection } from '@zero/domain';
+import type { IPossbileInstitution } from '@zero/accounts';
 
 interface InstitutionCardProps {
-  institution: BankConnection;
-  onClick: (institition: BankConnection) => void;
+  institution: IPossbileInstitution;
+  onClick: (institition: IPossbileInstitution) => void;
 }
 
 export const InstitutionCard = ({

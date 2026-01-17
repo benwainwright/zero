@@ -10,3 +10,9 @@ export type { IBankConnectionRepository } from './i-bank-connection-repository.t
 export type { IOpenBankingAccountBalanceFetcher } from './i-open-banking-balance-fetcher.ts';
 export type { IOpenBankingAccountDetailsFetcher } from './i-open-banking-account-details-fetcher.ts';
 export type { IOpenBankingTokenRefresher } from './i-open-banking-token-refresher.ts';
+export type {
+  IPossbileInstitution,
+  IOpenBankingAccountDetails,
+  IOpenBankingClient,
+  OpenBankingConnectionStatus,
+} from './i-open-banking-client.ts';

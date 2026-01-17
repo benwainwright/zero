@@ -12,6 +12,7 @@ import type {
   IRequesitionAccountFetcher,
   ITransactionRepository,
   ICategoryRepository,
+  IOpenBankingClient,
 } from '@ports';
 import type { OpenBankingTokenManager } from '@services';
 import type {
@@ -30,6 +31,7 @@ import type {
 export interface IAccountsTypes {
   EventBus: IEventBus<IAllEvents & AccountsEvents>;
   OpenBankingAccountDetailsFetcher: IOpenBankingAccountDetailsFetcher;
+  OpenBankingClient: IOpenBankingClient;
   OpenBankingTokenManager: OpenBankingTokenManager;
   OauthTokenRepository: IOauthTokenRepository;
   CategoryRepository: ICategoryRepository;

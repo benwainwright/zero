@@ -3,12 +3,14 @@ export {
   LinkAccountCommandHandler,
   DeleteAccountCommandHandler,
   DeleteCategoryCommandHandler,
+  CheckBankConnectionStatusCommandHandler,
   UpdateCategoryCommandHandler,
   CreateCategoryCommandHandler,
   UpdateAccountCommandHandler,
   CreateTransactionCommandHandler,
   DeleteTransactionCommandHandler,
   UpdateTransactionCommandHandler,
+  AuthoriseBankCommandHandler,
 } from './command-handlers/index.ts';
 
 export {

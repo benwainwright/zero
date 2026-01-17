@@ -19,12 +19,16 @@ import {
   GetCategoryQueryHandler,
   ListCategoriesUnpagedQueryHandler,
   LinkAccountCommandHandler,
+  CheckBankConnectionStatusCommandHandler,
+  AuthoriseBankCommandHandler,
 } from '@services';
 
 export const accountsModule: IModule<
   IAccountsTypes & IApplicationTypes
 > = async ({ bind }) => {
   bind('OpenBankingTokenManager').to(OpenBankingTokenManager);
+  bind('RequestHandler').to(CheckBankConnectionStatusCommandHandler);
+  bind('RequestHandler').to(AuthoriseBankCommandHandler);
   bind('RequestHandler').to(CreateAccountCommandHandler);
   bind('RequestHandler').to(DeleteAccountCommandHandler);
   bind('RequestHandler').to(UpdateAccountCommandHandler);

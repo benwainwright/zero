@@ -8,7 +8,7 @@ export const useDataRequest = <
   TKey extends TRequest['key']
 >(
   key: TKey,
-  load?: boolean,
+  load = true,
   ...params: IRequestParams<IPickRequest<TRequest, TKey>>
 ): {
   data: IPickRequest<TRequest, TKey>['response'] | undefined;

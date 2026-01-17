@@ -3,7 +3,7 @@ export { REQUISITION_ID_KEY } from './constants.ts';
 import { GocardlessClient } from './gocardless-client.ts';
 import { mockGocardlessData } from '../test-helpers/msw/index.ts';
 import { mock } from 'vitest-mock-extended';
-import { BankConnection, OauthToken } from '@zero/domain';
+import { OauthToken } from '@zero/domain';
 import { http, HttpResponse } from 'msw';
 import { when } from 'vitest-when';
 import type { IObjectStorage } from '@zero/application-core';
@@ -62,6 +62,47 @@ describe('the gocardless client', () => {
       const result = await client.getConnectionStatus(newToken);
 
       expect(result).toEqual({ status: 'not_connected' });
+    });
+
+    it('gets the details of the institution if there is a connection', async () => {
+      const objectStore = mock<IObjectStorage>();
+
+      const client = new GocardlessClient(
+        { value: Promise.resolve(mockGocardlessData.secretId) },
+        { value: Promise.resolve(mockGocardlessData.secretKey) },
+        { value: Promise.resolve(mockGocardlessData.mockRedirectUrl) },
+        mock(),
+        mock(),
+        mock(),
+        objectStore,
+        mock(),
+        mock()
+      );
+
+      const newToken = OauthToken.reconstitute({
+        refreshExpiry: undefined,
+        provider: 'ynab',
+        id: 'foo',
+        token: mockGocardlessData.mockToken,
+        refreshToken: 'string',
+        expiry: new Date(),
+        lastUse: undefined,
+        created: new Date(),
+        refreshed: undefined,
+        ownerId: 'user',
+      });
+
+      when(objectStore.get)
+        .calledWith(REQUISITION_ID_KEY, 'foo')
+        .thenResolve(mockGocardlessData.mockConnectedRequisitionResponse.id);
+
+      const result = await client.getConnectionStatus(newToken);
+
+      expect(result).toEqual({
+        status: 'connected',
+        logo: mockGocardlessData.mockInstututionResponse.logo,
+        bankname: mockGocardlessData.mockInstututionResponse.name,
+      });
     });
   });
 
@@ -248,14 +289,6 @@ describe('the gocardless client', () => {
       mock(),
       mock()
     );
-
-    const connection = BankConnection.reconstitute({
-      bankName: 'foo',
-      id: mockGocardlessData.mockRequisitionResponse.institution_id,
-      ownerId: 'ben',
-      logo: 'bar',
-      requisitionId: 'baz',
-    });
 
     const token = OauthToken.reconstitute({
       id: 'foo',
