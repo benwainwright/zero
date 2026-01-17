@@ -31,7 +31,7 @@ describe('update tx command handler', () => {
     when(txes.require).calledWith('foo-bar').thenResolve(mockTransaction);
 
     const result = await handler.tryHandle(context);
-    expect(result).toEqual(true);
+    expect(result.handled).toEqual(true);
 
     expect(mockTransaction.update).toHaveBeenCalledWith({
       payee: 'foo',

@@ -208,7 +208,9 @@ export class GocardlessClient implements IOpenBankingClient {
       );
     }
 
+    console.log('START');
     const requisition = await this.getRequisitionDetails(requisitionId, token);
+    console.log({ requisition });
 
     return await this.getAllAccountDetails(requisition.accounts, token);
   }
@@ -222,7 +224,6 @@ export class GocardlessClient implements IOpenBankingClient {
       },
       responseSchema: z.object({
         id: z.string(),
-        name: z.string(),
         status: z.union([
           z.literal('CR'),
           z.literal('GC'),
@@ -234,11 +235,6 @@ export class GocardlessClient implements IOpenBankingClient {
           z.literal('EX'),
         ]),
         accounts: z.array(z.string()),
-        bic: z.string(),
-        transaction_total_days: z.string(),
-        countries: z.array(z.string()),
-        logo: z.string(),
-        max_access_valid_for_days: z.string(),
       }),
     });
   }

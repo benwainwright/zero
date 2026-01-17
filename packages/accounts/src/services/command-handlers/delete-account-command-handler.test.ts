@@ -27,7 +27,7 @@ describe('delete account handler', () => {
     const mockAccount = mock<Account>();
     when(accounts.require).calledWith('foo-bar').thenResolve(mockAccount);
     const result = await handler.tryHandle(context);
-    expect(result).toEqual(true);
+    expect(result.handled).toEqual(true);
     expect(mockAccount.deleteAccount).toHaveBeenCalled();
     expect(writer.delete).toHaveBeenCalledWith(mockAccount);
   });

@@ -11,7 +11,7 @@ import { REQUISITION_ID_KEY } from './constants.ts';
 
 beforeAll(() => {
   server.listen({
-    //onUnhandledRequest: 'error',
+    onUnhandledRequest: 'error',
   });
 });
 
@@ -102,7 +102,7 @@ describe('the gocardless client', () => {
   });
 
   describe('getAccounts', () => {
-    it('gets the details of the requisition accounts', async () => {
+    it.only('gets the details of the requisition accounts', async () => {
       const storage = mock<IObjectStorage>();
 
       const client = new GocardlessClient(

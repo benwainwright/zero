@@ -23,9 +23,9 @@ export const testSyncDetailsRepository = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+    });
 
     const newDetails1 = SyncDetails.reconstitute({
       id: 'foo-bar-1',
@@ -43,14 +43,14 @@ export const testSyncDetailsRepository = (
       lastSync: new Date('2025-12-10T20:39:37.823Z'),
     });
 
-    await unitOfWork.begin();
-    await writer.save(newDetails1);
-    await writer.save(newDetails2);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.save(newDetails1);
+      await writer.save(newDetails2);
+    });
 
-    await unitOfWork.begin();
-    const receivedDetails = await repo.get('foo-bar-1');
-    await unitOfWork.commit();
+    const receivedDetails = await unitOfWork.atomically(
+      async () => await repo.get('foo-bar-1')
+    );
 
     expect(receivedDetails).toEqual(newDetails1);
   });
@@ -65,9 +65,9 @@ export const testSyncDetailsRepository = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+    });
 
     const newDetails1 = SyncDetails.reconstitute({
       ownerId: 'ben',
@@ -85,18 +85,16 @@ export const testSyncDetailsRepository = (
       lastSync: new Date('2025-12-10T20:39:37.823Z'),
     });
 
-    await unitOfWork.begin();
-    await writer.save(newDetails1);
-    await writer.save(newDetails2);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.save(newDetails1);
+      await writer.save(newDetails2);
+    });
 
-    await unitOfWork.begin();
-    await writer.delete(newDetails1);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => await writer.delete(newDetails1));
 
-    await unitOfWork.begin();
-    const receivedDetails = await repo.get('foo-bar-1');
-    await unitOfWork.commit();
+    const receivedDetails = await unitOfWork.atomically(
+      async () => await repo.get('foo-bar-1')
+    );
 
     expect(receivedDetails).toEqual(undefined);
   });
@@ -104,9 +102,9 @@ export const testSyncDetailsRepository = (
   it("returns undefined if it doesn't exist", async () => {
     const { repo, unitOfWork } = await create();
 
-    await unitOfWork.begin();
-    const receivedDetails = await repo.get('foo-bar-1');
-    await unitOfWork.commit();
+    const receivedDetails = await unitOfWork.atomically(
+      async () => await repo.get('foo-bar-1')
+    );
 
     expect(receivedDetails).toEqual(undefined);
   });

@@ -64,7 +64,7 @@ describe('abstract query handler', () => {
         expect(result.response).toEqual({ foo: 'bar' });
         expect(handledMock).toHaveBeenCalledWith({
           authContext: undefined,
-          query: { foo: 'hello' },
+          params: { foo: 'hello' },
           id: 'foo-bar',
         });
       }

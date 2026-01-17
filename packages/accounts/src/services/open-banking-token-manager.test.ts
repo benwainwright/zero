@@ -78,7 +78,7 @@ describe("Open banking token manager", () => {
       await using token = await manager.getToken("foo");
       void token;
     }
-    expect(writer.save).toHaveBeenCalledWith(mockToken);
+    expect(writer.update).toHaveBeenCalledWith(mockToken);
   });
 
   it("refreshes the token and saves it in the repo if it is out of date", async () => {
@@ -107,6 +107,6 @@ describe("Open banking token manager", () => {
       new Date()
     );
     expect(token).toEqual(mockToken);
-    expect(writer.save).toHaveBeenCalledWith(mockToken);
+    expect(writer.update).toHaveBeenCalledWith(mockToken);
   });
 });

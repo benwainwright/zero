@@ -117,9 +117,9 @@ export const testAccountsRepo = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+    });
 
     const accountOne = Account.reconstitute({
       id: 'one',
@@ -141,13 +141,13 @@ export const testAccountsRepo = (
       deleted: false,
     });
 
-    await unitOfWork.begin();
-    await writer.saveAll([accountOne, accountTwo]);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.saveAll([accountOne, accountTwo]);
+    });
 
-    await unitOfWork.begin();
-    const accounts = await repo.list({ start: 0, limit: 30, userId: 'ben' });
-    await unitOfWork.commit();
+    const accounts = await unitOfWork.atomically(
+      async () => await repo.list({ start: 0, limit: 30, userId: 'ben' })
+    );
 
     expect(accounts[0]).toEqual(accountOne);
     expect(accounts[1]).toEqual(accountTwo);
@@ -163,9 +163,9 @@ export const testAccountsRepo = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+    });
 
     const accountOne = Account.reconstitute({
       id: 'one',
@@ -187,14 +187,14 @@ export const testAccountsRepo = (
       deleted: false,
     });
 
-    await unitOfWork.begin();
-    await writer.save(accountOne);
-    await writer.save(accountTwo);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.save(accountOne);
+      await writer.save(accountTwo);
+    });
 
-    await unitOfWork.begin();
-    const token = await repo.get('two');
-    await unitOfWork.commit();
+    const token = await unitOfWork.atomically(
+      async () => await repo.get('two')
+    );
 
     expect(token).toEqual(accountTwo);
   });
@@ -218,10 +218,10 @@ export const testAccountsRepo = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await userRepo.save(fred);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+      await userRepo.save(fred);
+    });
 
     const accountOne = Account.reconstitute({
       id: 'one',
@@ -253,15 +253,15 @@ export const testAccountsRepo = (
       balance: 0,
     });
 
-    await unitOfWork.begin();
-    await writer.save(accountOne);
-    await writer.save(accountTwo);
-    await writer.save(accountThree);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.save(accountOne);
+      await writer.save(accountTwo);
+      await writer.save(accountThree);
+    });
 
-    await unitOfWork.begin();
-    const accounts = await repo.list({ start: 0, limit: 30, userId: 'ben' });
-    await unitOfWork.commit();
+    const accounts = await unitOfWork.atomically(
+      async () => await repo.list({ start: 0, limit: 30, userId: 'ben' })
+    );
 
     expect(accounts).toHaveLength(2);
     expect(accounts[0]).toEqual(accountOne);

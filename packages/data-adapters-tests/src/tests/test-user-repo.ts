@@ -15,9 +15,9 @@ export const testUserAndRoleRepository = (
   it('returns undefined if the role isnt found', async () => {
     const { roleRepo, unitOfWork } = await create();
 
-    await unitOfWork.begin();
-    const result = await roleRepo.get('ben');
-    await unitOfWork.commit();
+    const result = await unitOfWork.atomically(
+      async () => await roleRepo.get('ben')
+    );
 
     expect(result).toBeUndefined();
   });
@@ -51,19 +51,14 @@ export const testUserAndRoleRepository = (
       ],
     });
 
-    try {
-      await unitOfWork.begin();
+    await unitOfWork.atomically(async () => {
       await roleWriter.save(userRole);
       await roleWriter.save(adminRole);
-      await unitOfWork.commit();
-    } catch (error) {
-      await unitOfWork.rollback();
-      console.log(error);
-    }
+    });
 
-    await unitOfWork.begin();
-    const roles = await roleRepo.list({ start: 0, limit: 30 });
-    await unitOfWork.commit();
+    const roles = await unitOfWork.atomically(
+      async () => await roleRepo.list({ start: 0, limit: 30 })
+    );
 
     expect(roles).toEqual(expect.arrayContaining([userRole, adminRole]));
   });
@@ -97,19 +92,21 @@ export const testUserAndRoleRepository = (
       ],
     });
 
-    await unitOfWork.begin();
-    await roleWriter.save(userRole);
-    await roleWriter.save(adminRole);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await roleWriter.save(userRole);
+      await roleWriter.save(adminRole);
+    });
 
-    await unitOfWork.begin();
-    const roleOne = await roleRepo.get('user');
-    await unitOfWork.commit();
+    const roleOne = await unitOfWork.atomically(
+      async () => await roleRepo.get('user')
+    );
+
     expect(roleOne).toEqual(userRole);
 
-    await unitOfWork.begin();
-    const roleTwo = await roleRepo.get('admin');
-    await unitOfWork.commit();
+    const roleTwo = await unitOfWork.atomically(
+      async () => await roleRepo.get('admin')
+    );
+
     expect(roleTwo).toEqual(adminRole);
   });
 
@@ -131,16 +128,19 @@ export const testUserAndRoleRepository = (
       })
     );
 
-    await unitOfWork.begin();
-    for (const role of roles) {
-      await roleWriter.save(role);
-    }
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      for (const role of roles) {
+        await roleWriter.save(role);
+      }
+    });
 
-    await unitOfWork.begin();
-    const limitedRoles = await roleRepo.list({ start: 2, limit: 3 });
-    const overflowingRoles = await roleRepo.list({ start: 20, limit: 5 });
-    await unitOfWork.commit();
+    const limitedRoles = await unitOfWork.atomically(
+      async () => await roleRepo.list({ start: 2, limit: 3 })
+    );
+
+    const overflowingRoles = await unitOfWork.atomically(
+      async () => await roleRepo.list({ start: 20, limit: 5 })
+    );
 
     expect(limitedRoles).toHaveLength(3);
     limitedRoles.forEach((role) =>
@@ -179,10 +179,10 @@ export const testUserAndRoleRepository = (
       ],
     });
 
-    await unitOfWork.begin();
-    await roleWriter.save(userRole);
-    await roleWriter.save(adminRole);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await roleWriter.save(userRole);
+      await roleWriter.save(adminRole);
+    });
 
     const data = User.reconstitute({
       email: 'bwainwright28@gmail.com',
@@ -192,29 +192,16 @@ export const testUserAndRoleRepository = (
       roles: [userRole.toObject(), adminRole.toObject()],
     });
 
-    try {
-      await unitOfWork.begin();
-      await userWriter.save(data);
-      await unitOfWork.commit();
-    } catch (error) {
-      console.log(error);
-      await unitOfWork.rollback();
-    }
+    await unitOfWork.atomically(async () => await userWriter.save(data));
 
-    try {
-      await unitOfWork.begin();
-      const user = await userRepo.get(data.id);
-      await unitOfWork.commit();
+    const user = await unitOfWork.atomically(
+      async () => await userRepo.get(data.id)
+    );
 
-      expect(user?.roles).toEqual(expect.arrayContaining(data.roles));
-      expect(user?.id).toEqual(data.id);
-      expect(user?.email).toEqual(data.email);
-      expect(user?.passwordHash).toEqual(data.passwordHash);
-    } catch (error) {
-      await unitOfWork.rollback();
-      console.log(error);
-      assert.fail('Failed');
-    }
+    expect(user?.roles).toEqual(expect.arrayContaining(data.roles));
+    expect(user?.id).toEqual(data.id);
+    expect(user?.email).toEqual(data.email);
+    expect(user?.passwordHash).toEqual(data.passwordHash);
   });
 
   it('can delete a user', async () => {
@@ -228,17 +215,12 @@ export const testUserAndRoleRepository = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userWriter.save(data);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => await userWriter.save(data));
+    await unitOfWork.atomically(async () => await userWriter.delete(data));
 
-    await unitOfWork.begin();
-    await userWriter.delete(data);
-    await unitOfWork.commit();
-
-    await unitOfWork.begin();
-    const result = await userRepo.get('ben');
-    await unitOfWork.commit();
+    const result = await unitOfWork.atomically(
+      async () => await userRepo.get('ben')
+    );
 
     expect(result).toEqual(undefined);
   });
@@ -254,13 +236,13 @@ export const testUserAndRoleRepository = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userWriter.save(data);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await userWriter.save(data);
+    });
 
-    await unitOfWork.begin();
-    const user = await userRepo.get(data.id);
-    await unitOfWork.commit();
+    const user = await unitOfWork.atomically(
+      async () => await userRepo.get(data.id)
+    );
 
     expect(user).toEqual(data);
   });
@@ -294,17 +276,11 @@ export const testUserAndRoleRepository = (
       ],
     });
 
-    console.log('foo');
+    await unitOfWork.atomically(async () => {
+      await roleWriter.save(adminRole);
+      await roleWriter.save(viewerRole);
+    });
 
-    await unitOfWork.begin();
-    console.log('foo-1');
-    await roleWriter.save(adminRole);
-    console.log('foo2');
-    await roleWriter.save(viewerRole);
-    console.log('foo4');
-    await unitOfWork.commit();
-
-    console.log('foo5');
     const originalUser = User.reconstitute({
       email: 'user@example.com',
       id: 'changing-roles',
@@ -317,22 +293,17 @@ export const testUserAndRoleRepository = (
       roles: [viewerRole.toObject()],
     });
 
-    try {
-      await unitOfWork.begin();
+    await unitOfWork.atomically(async () => {
       await userWriter.save(originalUser);
-      await unitOfWork.commit();
+    });
 
-      await unitOfWork.begin();
+    await unitOfWork.atomically(async () => {
       await userWriter.update(updatedUser);
-      await unitOfWork.commit();
-    } catch (error) {
-      console.log(error);
-      await unitOfWork.rollback();
-    }
+    });
 
-    await unitOfWork.begin();
-    const retrieved = await userRepo.get(updatedUser.id);
-    await unitOfWork.commit();
+    const retrieved = await unitOfWork.atomically(
+      async () => await userRepo.get(updatedUser.id)
+    );
 
     expect(retrieved?.roles).toEqual([viewerRole]);
     expect(retrieved?.roles).not.toEqual(originalUser.roles);
@@ -358,19 +329,17 @@ export const testUserAndRoleRepository = (
     });
 
     try {
-      await unitOfWork.begin();
-      await userWriter.save(data);
-      await userWriter.save(data2);
-      await unitOfWork.commit();
+      await unitOfWork.atomically(async () => {
+        await userWriter.save(data);
+        await userWriter.save(data2);
+      });
     } catch {
-      // This is fine. I just want to test that there is no users inserted
-
-      await unitOfWork.rollback();
+      // This is fine - I just want ot make sure there is no users added
     }
 
-    await unitOfWork.begin();
-    const user = await userRepo.get(data.id);
-    await unitOfWork.commit();
+    const user = await unitOfWork.atomically(
+      async () => await userRepo.get(data.id)
+    );
 
     expect(user).toEqual(undefined);
   });
@@ -392,10 +361,10 @@ export const testUserAndRoleRepository = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userWriter.save(userOne);
-    await userWriter.save(userTwo);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await userWriter.save(userOne);
+      await userWriter.save(userTwo);
+    });
 
     const conflictingUserTwo = User.reconstitute({
       ...userTwo.toObject(),
@@ -403,17 +372,20 @@ export const testUserAndRoleRepository = (
     });
 
     try {
-      await unitOfWork.begin();
-      await userWriter.save(conflictingUserTwo);
-      await unitOfWork.commit();
+      await unitOfWork.atomically(async () => {
+        await userWriter.save(conflictingUserTwo);
+      });
     } catch {
-      await unitOfWork.rollback();
+      // This is fine, just want to catch the constraint failure
     }
 
-    await unitOfWork.begin();
-    const persistedUserOne = await userRepo.get(userOne.id);
-    const persistedUserTwo = await userRepo.get(userTwo.id);
-    await unitOfWork.commit();
+    const persistedUserOne = await unitOfWork.atomically(
+      async () => await userRepo.get(userOne.id)
+    );
+
+    const persistedUserTwo = await unitOfWork.atomically(
+      async () => await userRepo.get(userTwo.id)
+    );
 
     expect(persistedUserOne?.email).toBe(userOne.email);
     expect(persistedUserTwo?.email).toBe(userTwo.email);
@@ -431,13 +403,13 @@ export const testUserAndRoleRepository = (
         roles: [],
       });
 
-      await unitOfWork.begin();
-      await userWriter.save(data);
-      await unitOfWork.commit();
+      await unitOfWork.atomically(async () => {
+        await userWriter.save(data);
+      });
 
-      await unitOfWork.begin();
-      const user = await userRepo.require('ben');
-      await unitOfWork.commit();
+      const user = await unitOfWork.atomically(
+        async () => await userRepo.require('ben')
+      );
 
       expect(user).toEqual(data);
     });
@@ -453,11 +425,13 @@ export const testUserAndRoleRepository = (
         roles: [],
       });
 
-      await unitOfWork.begin();
-      await userWriter.save(data);
-      await unitOfWork.commit();
+      await unitOfWork.atomically(async () => {
+        await userWriter.save(data);
+      });
 
-      await expect(userRepo.require('another-user')).rejects.toThrow();
+      await expect(
+        unitOfWork.atomically(async () => userRepo.require('another-user'))
+      ).rejects.toThrow();
     });
   });
 
@@ -483,12 +457,13 @@ export const testUserAndRoleRepository = (
         ],
       });
 
-      await unitOfWork.begin();
-      await roleWriter.save(viewerRole);
-      await unitOfWork.commit();
-      await unitOfWork.begin();
-      expect(await roleRepo.require('viewer')).toEqual(viewerRole);
-      await unitOfWork.commit();
+      await unitOfWork.atomically(
+        async () => await roleWriter.save(viewerRole)
+      );
+
+      expect(
+        await unitOfWork.atomically(async () => roleRepo.require('viewer'))
+      ).toEqual(viewerRole);
     });
   });
 
@@ -520,15 +495,15 @@ export const testUserAndRoleRepository = (
         roles: [],
       });
 
-      await unitOfWork.begin();
-      await userWriter.save(data);
-      await userWriter.save(data2);
-      await userWriter.save(data3);
-      await unitOfWork.commit();
+      await unitOfWork.atomically(async () => {
+        await userWriter.save(data);
+        await userWriter.save(data2);
+        await userWriter.save(data3);
+      });
 
-      await unitOfWork.begin();
-      const users = await userRepo.list({ start: 0, limit: 30 });
-      await unitOfWork.commit();
+      const users = await unitOfWork.atomically(
+        async () => await userRepo.list({ start: 0, limit: 30 })
+      );
 
       expect(users).toEqual(expect.arrayContaining([data, data2, data3]));
     });
@@ -545,18 +520,19 @@ export const testUserAndRoleRepository = (
         })
       );
 
-      await unitOfWork.begin();
-      for (const user of manyUsers) {
-        await userWriter.save(user);
-      }
-      await unitOfWork.commit();
-
-      await unitOfWork.begin();
-      const offsetLimitedUsers = await userRepo.list({
-        start: 40,
-        limit: 10,
+      await unitOfWork.atomically(async () => {
+        for (const user of manyUsers) {
+          await userWriter.save(user);
+        }
       });
-      await unitOfWork.commit();
+
+      const offsetLimitedUsers = await unitOfWork.atomically(
+        async () =>
+          await userRepo.list({
+            start: 40,
+            limit: 10,
+          })
+      );
 
       expect(offsetLimitedUsers).toHaveLength(5);
       offsetLimitedUsers.forEach((user) =>
@@ -568,9 +544,9 @@ export const testUserAndRoleRepository = (
   it('returns undefined if not present', async () => {
     const { userRepo, unitOfWork } = await create();
 
-    await unitOfWork.begin();
-    const user = await userRepo.get('foo');
-    await unitOfWork.commit();
+    const user = await unitOfWork.atomically(async () => {
+      await userRepo.get('foo');
+    });
 
     expect(user).toBeUndefined();
   });

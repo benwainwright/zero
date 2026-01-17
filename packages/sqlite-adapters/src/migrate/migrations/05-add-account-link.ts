@@ -10,6 +10,6 @@ export const up = async (db: Kysely<unknown>) => {
 export const down = async (db: Kysely<unknown>) => {
   await db.schema
     .alterTable('accounts')
-    .addColumn('linkedOpenBankingAccount', 'text')
+    .dropColumn('linkedOpenBankingAccount')
     .execute();
 };

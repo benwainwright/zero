@@ -16,7 +16,7 @@ describe('get category query handler', () => {
 
     const cat = mock<Category>();
 
-    when(repo.get).calledWith('foo').thenResolve(cat);
+    when(repo.require).calledWith('foo').thenResolve(cat);
 
     const result = await handler.tryHandle(context);
 

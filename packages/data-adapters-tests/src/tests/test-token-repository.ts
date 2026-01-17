@@ -22,9 +22,7 @@ export const testOauthRepository = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => await userRepo.save(ben));
 
     const tokenOne = OauthToken.reconstitute({
       id: 'foo',
@@ -52,14 +50,14 @@ export const testOauthRepository = (
       created: new Date('2025-11-10T20:39:37.823Z'),
     });
 
-    await unitOfWork.begin();
-    await writer.save(tokenTwo);
-    await writer.save(tokenOne);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.save(tokenTwo);
+      await writer.save(tokenOne);
+    });
 
-    await unitOfWork.begin();
-    const token = await repo.get('ben', 'monzo');
-    await unitOfWork.commit();
+    const token = await unitOfWork.atomically(
+      async () => await repo.get('ben', 'monzo')
+    );
 
     expect(token).toEqual(tokenTwo);
   });
@@ -75,9 +73,9 @@ export const testOauthRepository = (
       roles: [],
     });
 
-    await unitOfWork.begin();
-    await userRepo.save(ben);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+    });
 
     const tokenOne = OauthToken.reconstitute({
       refreshExpiry: undefined,
@@ -105,21 +103,21 @@ export const testOauthRepository = (
       created: new Date('2025-11-10T20:39:37.823Z'),
     });
 
-    await unitOfWork.begin();
-    await writer.save(tokenTwo);
-    await writer.save(tokenOne);
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.save(tokenTwo);
+      await writer.save(tokenOne);
+    });
 
-    await unitOfWork.begin();
-    await writer.delete(tokenTwo);
-    await unitOfWork.commit();
-    await unitOfWork.begin();
-    const token = await repo.get('ben', 'monzo');
-    await unitOfWork.commit();
+    await unitOfWork.atomically(async () => {
+      await writer.delete(tokenTwo);
+    });
 
-    await unitOfWork.begin();
-    const isPresentToken = await repo.get('ben', 'ynab');
-    await unitOfWork.commit();
+    const token = await unitOfWork.atomically(async () =>
+      repo.get('ben', 'monzo')
+    );
+    const isPresentToken = await unitOfWork.atomically(async () =>
+      repo.get('ben', 'ynab')
+    );
 
     expect(token).toBeUndefined();
     expect(isPresentToken).toEqual(tokenOne);

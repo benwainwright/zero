@@ -61,7 +61,7 @@ export const mockGocardlessData = {
     id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     created: '2025-05-14T11:05:56.276Z',
     redirect: 'http://www.yourwebpage.com',
-    status: 'ln',
+    status: 'LN',
     institution_id: 'string',
     agreement: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     reference: 'string',

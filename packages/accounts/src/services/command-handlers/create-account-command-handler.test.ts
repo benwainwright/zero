@@ -43,8 +43,10 @@ describe('create account handler', () => {
 
     const result = await handler.tryHandle(context);
 
-    expect(result).toEqual(true);
+    expect(result.handled).toEqual(true);
 
-    expect(accountRepo.save).toBeCalledWith(mockAccount);
+    if (result.handled) {
+      expect(accountRepo.save).toBeCalledWith(mockAccount);
+    }
   });
 });

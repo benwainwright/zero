@@ -49,7 +49,7 @@ describe('create transaction handler', () => {
 
     const result = await handler.tryHandle(context);
 
-    expect(result).toEqual(true);
+    expect(result.handled).toEqual(true);
 
     expect(transactionRepo.save).toBeCalledWith(mocktransaction);
   });

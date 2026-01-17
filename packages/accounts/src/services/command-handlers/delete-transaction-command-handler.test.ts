@@ -29,7 +29,7 @@ describe('delete tx handler', () => {
 
     const result = await handler.tryHandle(context);
 
-    expect(result).toEqual(true);
+    expect(result.handled).toEqual(true);
 
     expect(mockTx.delete).toHaveBeenCalled();
     expect(writer.delete).toHaveBeenCalledWith(mockTx);

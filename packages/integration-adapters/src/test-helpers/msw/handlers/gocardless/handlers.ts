@@ -7,6 +7,7 @@ export const handlers = [
   http.get<{ accountId: string }>(
     `${GOCARDLESS_API}/api/v2/accounts/:accountId/details/`,
     ({ request, params }) => {
+      console.log('START');
       const invalidResponse = invalidRequestResponse(request);
 
       if (invalidResponse) {
@@ -117,6 +118,30 @@ export const handlers = [
           },
           { status: 404 }
         );
+      }
+
+      return HttpResponse.json(
+        mockGocardlessData.mockConnectedRequisitionResponse
+      );
+    }
+  ),
+
+  http.get<{ requisitionId: string }>(
+    `${GOCARDLESS_API}/api/v2/requisitions/:requisitionId/`,
+    async ({ request, params }) => {
+      const invalidResponse = invalidRequestResponse(request);
+
+      if (invalidResponse) {
+        return invalidResponse;
+      }
+
+      const { requisitionId } = params;
+
+      if (
+        !requisitionId ||
+        requisitionId !== mockGocardlessData.mockConnectedRequisitionResponse.id
+      ) {
+        return HttpResponse.json({ error: 'not found' }, { status: 404 });
       }
 
       return HttpResponse.json(

@@ -36,6 +36,7 @@ export class SqliteAccountsRepository
     return Account.reconstitute({
       ...raw,
       description: raw.description ?? undefined,
+      linkedOpenBankingAccount: raw.linkedOpenBankingAccount ?? undefined,
       closed: raw.closed === 'true',
       deleted: raw.deleted === 'true',
     });

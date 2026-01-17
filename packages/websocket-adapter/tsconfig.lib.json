@@ -43,6 +43,9 @@
       "path": "../auth/tsconfig.lib.json"
     },
     {
+      "path": "../test-helpers/tsconfig.lib.json"
+    },
+    {
       "path": "../integration-adapters/tsconfig.lib.json"
     },
     {
