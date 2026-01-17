@@ -1,6 +1,6 @@
 import { EditTransactionRow } from '@components';
 import type { ITransaction } from '@zero/domain';
-import { useCommand } from '@zero/react-api';
+import { useRequest } from '@zero/react-api';
 import { useState } from 'react';
 
 interface TransactionRowProps {
@@ -10,7 +10,7 @@ interface TransactionRowProps {
 export const TransactionRow = ({ transaction }: TransactionRowProps) => {
   const [transactionRowValue, setTransactionRowValue] =
     useState<Omit<ITransaction, 'id' | 'ownerId'>>(transaction);
-  const { execute: updateTransaction } = useCommand('UpdateTransactionCommand');
+  const { execute: updateTransaction } = useRequest('UpdateTransactionCommand');
 
   return (
     <EditTransactionRow

@@ -5,11 +5,13 @@ export type AuthCommands =
       id: string;
       key: 'CreateRoleCommand';
       params: Omit<IRole, 'id'>;
+      response: undefined;
     }
   | {
       id: string;
       key: 'UpdateRoleCommand';
       params: IRole;
+      response: undefined;
     }
   | {
       id: string;
@@ -17,6 +19,7 @@ export type AuthCommands =
       params: {
         id: string;
       };
+      response: undefined;
     }
   | {
       id: string;
@@ -27,11 +30,13 @@ export type AuthCommands =
         username: string;
         roles: string[];
       };
+      response: undefined;
     }
   | {
       id: string;
       key: 'LogoutCommand';
       params: undefined;
+      response: undefined;
     }
   | {
       id: string;
@@ -41,6 +46,7 @@ export type AuthCommands =
         password: string;
         username: string;
       };
+      response: undefined;
     }
   | {
       id: string;
@@ -48,6 +54,7 @@ export type AuthCommands =
       params: {
         username: string;
       };
+      response: undefined;
     }
   | {
       id: string;
@@ -56,4 +63,5 @@ export type AuthCommands =
         username: string;
         password: string;
       };
+      response: undefined;
     };

@@ -2,13 +2,13 @@ import { inject } from '@core';
 import type { IGrantManager, IRoleRepository } from '@ports';
 import type { AuthQueries } from '@services';
 import {
-  AbstractQueryHandler,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { ILogger } from '@zero/bootstrap';
 import type { Role } from '@zero/domain';
 
-export class GetRoleQueryHandler extends AbstractQueryHandler<
+export class GetRoleQueryHandler extends AbstractRequestHandler<
   AuthQueries,
   'GetRole'
 > {
@@ -26,8 +26,8 @@ export class GetRoleQueryHandler extends AbstractQueryHandler<
   }
 
   protected override async handle({
-    query: { id },
-  }: IQueryContext<{
+    params: { id },
+  }: IRequestContext<{
     id: string;
     key: 'GetRole';
     params: { id: string };

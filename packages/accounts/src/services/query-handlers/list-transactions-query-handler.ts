@@ -2,14 +2,14 @@ import { inject } from '@core';
 import type { ITransactionRepository } from '@ports';
 import type { AccountsQueries } from '@services';
 import {
-  AbstractQueryHandler,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import type { Transaction } from '@zero/domain';
 
-export class ListTransactionsQueryHandler extends AbstractQueryHandler<
+export class ListTransactionsQueryHandler extends AbstractRequestHandler<
   AccountsQueries,
   'ListTransactionsQuery'
 > {
@@ -28,8 +28,8 @@ export class ListTransactionsQueryHandler extends AbstractQueryHandler<
 
   protected override async handle({
     authContext,
-    query: { limit, offset, accountId },
-  }: IQueryContext<{
+    params: { limit, offset, accountId },
+  }: IRequestContext<{
     id: string;
     key: 'ListTransactionsQuery';
     params: { limit: number; offset: number; accountId: string };

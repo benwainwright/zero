@@ -1,4 +1,4 @@
-import { buildQueryHandler } from '@zero/test-helpers';
+import { buildRequestHandler } from '@zero/test-helpers';
 import { ListCategoriesQueryHandler } from './list-categories-query-handler.ts';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
@@ -9,7 +9,7 @@ describe('list categories query handler', () => {
       handler,
       context,
       dependencies: [repo],
-    } = await buildQueryHandler(
+    } = await buildRequestHandler(
       ListCategoriesQueryHandler,
       'ListCategoriesQuery',
       { offset: 0, limit: 30 },

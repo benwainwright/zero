@@ -9,7 +9,7 @@ export const useRole = (id: string) => {
   } = useData(
     {
       query: 'GetRole',
-      command: 'UpdateRoleCommand',
+      updaterKey: 'UpdateRoleCommand',
       mapToLocalData: (role) => role?.toObject(),
       refreshOn: ['RoleUpdated'],
     },

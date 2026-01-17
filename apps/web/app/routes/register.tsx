@@ -1,5 +1,5 @@
 import { Page } from '@components';
-import { useEvent, CurrentUserContext, useCommand } from '@zero/react-api';
+import { useEvent, CurrentUserContext, useRequest } from '@zero/react-api';
 import { useContext, useEffect, type ReactNode } from 'react';
 import logo from './b6d650e8-988f-42a8-a8dd-4fdc4152a562.png';
 import { useNavigate } from 'react-router';
@@ -25,7 +25,7 @@ interface FormValues {
 export const Register = (): ReactNode => {
   const navigate = useNavigate();
   const { user, reload } = useContext(CurrentUserContext);
-  const { execute: createUser } = useCommand('CreateUserCommand');
+  const { execute: createUser } = useRequest('CreateUserCommand');
 
   const form = useForm({
     initialValues: {

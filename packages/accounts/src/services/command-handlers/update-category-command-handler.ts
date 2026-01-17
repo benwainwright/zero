@@ -2,15 +2,16 @@ import { inject } from '@core';
 import type { ICategoryRepository } from '@ports';
 import type { AccountsCommands } from '@services';
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IWriteRepository,
 } from '@zero/application-core';
+
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import { Category } from '@zero/domain';
 
-export class UpdateCategoryCommandHandler extends AbstractCommandHandler<
+export class UpdateCategoryCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
   'UpdateCategoryCommand'
 > {
@@ -31,12 +32,13 @@ export class UpdateCategoryCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle({
-    command: { id, name, description },
-  }: ICommandContext<{
+    params: { id, name, description },
+  }: IRequestContext<{
     id: string;
     key: 'UpdateCategoryCommand';
     params: { id: string; name: string; description: string };
-  }>): Promise<void> {
+    response: undefined;
+  }>): Promise<undefined> {
     this.grants.requires({
       capability: 'category:update',
     });

@@ -3,36 +3,44 @@ import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
 import type { Role, User } from '@zero/domain';
 import { UserNotFoundError } from '@core';
-import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
-import type { AuthCommands } from '@services';
-
-const getMockCommandContext = getCommandContextBuilder<AuthCommands>();
+import { buildRequestHandler } from '@zero/test-helpers';
 
 describe('Update user command handler', () => {
   it('will throw an error if the user isnt found', async () => {
-    const [handler, userRepo] = await buildInstance(UpdateUserCommandHandler);
-
-    const context = getMockCommandContext('UpdateUserCommand', {
-      username: 'ben',
-      email: 'a@b.c',
-      password: 'foo',
-      roles: [],
-    });
+    const {
+      handler,
+      context,
+      dependencies: [userRepo],
+    } = await buildRequestHandler(
+      UpdateUserCommandHandler,
+      'UpdateUserCommand',
+      {
+        username: 'ben',
+        email: 'a@b.c',
+        password: 'foo',
+        roles: [],
+      }
+    );
 
     when(userRepo.get).calledWith('ben').thenResolve(undefined);
     await expect(handler.tryHandle(context)).rejects.toThrow(UserNotFoundError);
   });
 
   it('will update an existing user', async () => {
-    const [handler, userRepo, passwordHasher, , , userWriter] =
-      await buildInstance(UpdateUserCommandHandler);
-
-    const context = getMockCommandContext('UpdateUserCommand', {
-      username: 'ben',
-      email: 'a@b.c',
-      password: 'foo',
-      roles: [],
-    });
+    const {
+      handler,
+      context,
+      dependencies: [userRepo, passwordHasher, , , userWriter],
+    } = await buildRequestHandler(
+      UpdateUserCommandHandler,
+      'UpdateUserCommand',
+      {
+        username: 'ben',
+        email: 'a@b.c',
+        password: 'foo',
+        roles: [],
+      }
+    );
 
     const mockUser = mock<User>();
 
@@ -51,20 +59,26 @@ describe('Update user command handler', () => {
   });
 
   it('will get roles from role repo if any updates are made', async () => {
-    const [handler, userRepo, passwordHasher, , roleRepo, userWriter] =
-      await buildInstance(UpdateUserCommandHandler);
+    const {
+      handler,
+      context,
+      dependencies: [userRepo, passwordHasher, , roleRepo, userWriter],
+    } = await buildRequestHandler(
+      UpdateUserCommandHandler,
+      'UpdateUserCommand',
+      {
+        username: 'ben',
+        email: 'a@b.c',
+        password: 'foo',
+        roles: ['foo', 'bar'],
+      }
+    );
+
     const mockFooRole = mock<Role>();
     const mockBarRole = mock<Role>();
 
     when(roleRepo.require).calledWith('foo').thenResolve(mockFooRole);
     when(roleRepo.require).calledWith('bar').thenResolve(mockBarRole);
-
-    const context = getMockCommandContext('UpdateUserCommand', {
-      username: 'ben',
-      email: 'a@b.c',
-      password: 'foo',
-      roles: ['foo', 'bar'],
-    });
 
     const mockUser = mock<User>();
 

@@ -1,6 +1,6 @@
-import type { IKnownCommands } from './i-known-commands.ts';
+import type { IKnownRequests } from './i-known-requests.ts';
 
 export type IWebsocketCommandPacket = {
   type: 'command';
-  packet: IKnownCommands;
+  packet: IKnownRequests;
 };

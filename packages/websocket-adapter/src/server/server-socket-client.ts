@@ -9,7 +9,7 @@ import { Serialiser } from '@zero/serialiser';
 import { injectable } from 'inversify';
 import { WebSocket } from 'ws';
 import { inject } from './typed-inject.ts';
-import type { IQueryResponseEvent, IWebsocketPacket } from '@types';
+import type { IRequestResponseEvent, IWebsocketPacket } from '@types';
 import type { TypedContainer } from '@inversifyjs/strongly-typed';
 
 export const LOG_CONTEXT = {
@@ -23,7 +23,7 @@ export class ServerSocketClient {
     private readonly container: TypedContainer<IApplicationTypes>,
 
     @inject('EventBus')
-    private eventBus: IEventBus<IAllEvents & IQueryResponseEvent>,
+    private eventBus: IEventBus<IAllEvents & IRequestResponseEvent>,
 
     @inject('ErrorHandler')
     private errorHandler: ErrorHandler,
@@ -63,24 +63,19 @@ export class ServerSocketClient {
         message: JSON.stringify(parsed),
       });
 
-      const commandBus = await this.container.getAsync('CommandBus');
-      const queryBus = await this.container.getAsync('QueryBus');
+      const queryBus = await this.container.getAsync('ServiceBus');
 
       switch (parsed.type) {
-        case 'command':
-          await commandBus.execute(parsed.packet);
-          break;
-        case 'query':
+        case 'request':
           {
             const response = await queryBus.execute(parsed.packet);
-            this.eventBus.emit('QueryResponseEvent', {
+            this.eventBus.emit('RequestResponseEvent', {
               id: parsed.packet.id,
               data: response,
               key: parsed.packet.key,
             });
           }
           break;
-        case 'subscibe':
       }
     });
   }

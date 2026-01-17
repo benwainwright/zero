@@ -1,6 +1,6 @@
 import {
-  AbstractQueryHandler,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { AuthQueries } from '../auth-queries.ts';
 import type { Role } from '@zero/domain';
@@ -8,7 +8,7 @@ import type { IGrantManager, IRoleRepository } from '@ports';
 import type { ILogger } from '@zero/bootstrap';
 import { inject } from '@core';
 
-export class GetRolesQueryHandler extends AbstractQueryHandler<
+export class GetRolesQueryHandler extends AbstractRequestHandler<
   AuthQueries,
   'GetRoles'
 > {
@@ -26,8 +26,8 @@ export class GetRolesQueryHandler extends AbstractQueryHandler<
   }
 
   protected override async handle({
-    query: { offset, limit },
-  }: IQueryContext<{
+    params: { offset, limit },
+  }: IRequestContext<{
     id: string;
     key: 'GetRoles';
     params: { limit: number; offset: number };

@@ -20,15 +20,14 @@ import { GetRoleQueryHandler } from './query-handlers/get-role-query-handler.ts'
 export const bindServices = (
   bind: Bind<IApplicationTypes & IBootstrapTypes & IAuthTypes>
 ) => {
-  bind('CommandHandler').to(CreateUserCommandHandler);
-  bind('CommandHandler').to(DeleteUserCommandHandler);
-  bind('CommandHandler').to(LoginCommandHandler);
-  bind('CommandHandler').to(LogoutCommandHandler);
-  bind('CommandHandler').to(UpdateUserCommandHandler);
-
-  bind('QueryHandler').to(GetCurrentUserQueryHandler);
-  bind('QueryHandler').to(GetUsersQueryHandler);
-  bind('QueryHandler').to(GetUserQueryHandler);
-  bind('QueryHandler').to(GetRolesQueryHandler);
-  bind('QueryHandler').to(GetRoleQueryHandler);
+  bind('RequestHandler').to(CreateUserCommandHandler);
+  bind('RequestHandler').to(DeleteUserCommandHandler);
+  bind('RequestHandler').to(LoginCommandHandler);
+  bind('RequestHandler').to(LogoutCommandHandler);
+  bind('RequestHandler').to(UpdateUserCommandHandler);
+  bind('RequestHandler').to(GetCurrentUserQueryHandler);
+  bind('RequestHandler').to(GetUsersQueryHandler);
+  bind('RequestHandler').to(GetUserQueryHandler);
+  bind('RequestHandler').to(GetRolesQueryHandler);
+  bind('RequestHandler').to(GetRoleQueryHandler);
 };

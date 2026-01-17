@@ -1,5 +1,5 @@
 import {
-  AbstractCommandHandler,
+  AbstractRequestHandler,
   type IAllEvents,
   type IEventBus,
 } from '@zero/application-core';
@@ -9,7 +9,7 @@ import { inject } from '@core';
 import type { ILogger } from '@zero/bootstrap';
 import type { AuthEvents } from '@services';
 
-export class LogoutCommandHandler extends AbstractCommandHandler<
+export class LogoutCommandHandler extends AbstractRequestHandler<
   AuthCommands,
   'LogoutCommand'
 > {
@@ -29,7 +29,7 @@ export class LogoutCommandHandler extends AbstractCommandHandler<
     super(logger);
   }
 
-  protected override async handle(): Promise<void> {
+  protected override async handle(): Promise<undefined> {
     this.grants.requiresNoPermissions();
 
     await this.currentUserSetter.set(undefined);

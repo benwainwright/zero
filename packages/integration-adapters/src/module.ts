@@ -12,12 +12,7 @@ export const integrationsModule: IModule<
 > = async ({ bind, logger, configValue }) => {
   logger.info(`Initialising integrations module`, LOG_CONTEXT);
 
-  bind('InstitutionListFetcher').to(GocardlessClient);
-  bind('BankConnectionTokenFetcher').to(GocardlessClient);
-  bind('InstitutionAuthPageLinkFetcher').to(GocardlessClient);
-  bind('RequestionAccountFetcher').to(GocardlessClient);
   bind('OpenBankingAccountBalanceFetcher').to(GocardlessClient);
-  bind('OpenBankingAccountDetailsFetcher').to(GocardlessClient);
   bind('OpenBankingTokenRefresher').to(GocardlessClient);
   bind('ResponseCache').to(ObjectStorageResponseCache).inSingletonScope();
   bind('GocardlessRedirectUrlConfigValue').toConstantValue(

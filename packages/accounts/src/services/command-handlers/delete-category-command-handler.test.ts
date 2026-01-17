@@ -1,4 +1,4 @@
-import { buildCommandHandler } from '@zero/test-helpers';
+import { buildRequestHandler } from '@zero/test-helpers';
 import { DeleteCategoryCommandHandler } from './delete-category-command-handler.ts';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
@@ -10,7 +10,7 @@ describe('delete category command handler', () => {
       handler,
       context,
       dependencies: [categoryRepo, categoryWriter],
-    } = await buildCommandHandler(
+    } = await buildRequestHandler(
       DeleteCategoryCommandHandler,
       'DeleteCategoryCommand',
       { id: 'foo' }

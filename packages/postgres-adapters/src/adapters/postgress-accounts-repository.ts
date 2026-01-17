@@ -65,6 +65,7 @@ export class PostgresAccountRepository
     return Account.reconstitute({
       ...raw,
       description: raw.description ?? undefined,
+      linkedOpenBankingAccount: raw.linkedOpenBankingAccount ?? undefined,
     });
   }
 

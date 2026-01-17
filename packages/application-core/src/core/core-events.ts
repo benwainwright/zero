@@ -7,11 +7,11 @@ export interface ICoreEvents {
     key: string;
     id: string;
   };
-  QueryHandleStartEvent: {
+  RequestHandleStartEvent: {
     key: string;
     id: string;
   };
-  QueryHandleCompleteEvent: {
+  RequestHandleCompleteEvent: {
     key: string;
     id: string;
   };

@@ -20,7 +20,7 @@ export type AccountsQueries =
       id: string;
       key: 'GetCategoryQuery';
       params: { category: string };
-      response: Category | undefined;
+      response: Category;
     }
   | {
       id: string;
@@ -58,7 +58,7 @@ export type AccountsQueries =
   | {
       id: string;
       key: 'GetOpenBankingInstitutionList';
-      paramse: undefined;
+      params: undefined;
       response: BankConnection[] | undefined;
     }
   | {

@@ -1,6 +1,6 @@
 import type { IKnownEvents } from '@client';
 
 export interface IEventUnsubscribe {
-  type: 'subscibe';
+  type: 'subscribe';
   event: keyof IKnownEvents;
 }

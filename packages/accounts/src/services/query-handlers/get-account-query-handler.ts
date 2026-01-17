@@ -1,6 +1,6 @@
 import {
-  AbstractQueryHandler,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { AccountsQueries } from '../accounts-queries.ts';
 import type { Account } from '@zero/domain';
@@ -11,7 +11,7 @@ import type { IAccountRepository } from '@ports';
 import type { IGrantManager } from '@zero/auth';
 
 @injectable()
-export class GetAccountQueryHandler extends AbstractQueryHandler<
+export class GetAccountQueryHandler extends AbstractRequestHandler<
   AccountsQueries,
   'GetAccountQuery'
 > {
@@ -29,8 +29,8 @@ export class GetAccountQueryHandler extends AbstractQueryHandler<
   }
 
   protected override async handle({
-    query: { id },
-  }: IQueryContext<{
+    params: { id },
+  }: IRequestContext<{
     id: string;
     key: 'GetAccountQuery';
     params: { id: string };

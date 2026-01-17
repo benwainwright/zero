@@ -1,14 +1,18 @@
-import type { IApiSurface } from '@zero/application-core';
 import type {
-  IKnownCommands,
+  IKnownRequests,
   IKnownEvents,
-  IKnownQueries,
 } from '@zero/websocket-adapter/client';
 import { createContext, type ReactNode } from 'react';
 import { useApi } from '@hooks';
+import type { IEventListener, IServiceClient } from '@zero/application-core';
+
+interface IApi {
+  services: IServiceClient<IKnownRequests>;
+  eventBus: IEventListener<IKnownEvents>;
+}
 
 interface IApiContextType {
-  api?: IApiSurface<IKnownCommands, IKnownQueries, IKnownEvents> | undefined;
+  api?: IApi | undefined;
 }
 
 export const ApiContext = createContext<IApiContextType>({});

@@ -4,12 +4,7 @@ export { UpdateAccountCommandHandler } from './update-account-command-handler.ts
 export { CreateTransactionCommandHandler } from './create-transaction-command-handler.ts';
 export { UpdateTransactionCommandHandler } from './update-transaction-command-handler.ts';
 export { DeleteTransactionCommandHandler } from './delete-transaction-command-handler.ts';
-export { FetchOpenBankingInstitutionListCommandHandler } from './fetch-open-banking-institution-list-command-handler.ts';
-export { SaveRequisitionAccountsCommandHandler } from './save-requisition-accounts-command-handler.ts';
-export { CreateBankConnectionCommandHandler } from './create-bank-connection-command-handler.ts';
-export { DeleteAuthLinkCommandHandler } from './delete-auth-link-command-handler.ts';
 export { CreateCategoryCommandHandler } from './create-category-command-handler.ts';
 export { DeleteCategoryCommandHandler } from './delete-category-command-handler.ts';
 export { UpdateCategoryCommandHandler } from './update-category-command-handler.ts';
-export { FetchLinkedAccountDetailsCommandHandler } from './fetch-linked-accounts-details-handler.ts';
 export { LinkAccountCommandHandler } from './link-account-command-handler.ts';

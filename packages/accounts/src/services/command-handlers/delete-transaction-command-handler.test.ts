@@ -1,6 +1,6 @@
 import { when } from 'vitest-when';
 import { DeleteTransactionCommandHandler } from './delete-transaction-command-handler.ts';
-import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
+import { buildInstance, getRequestContextBuilder } from '@zero/test-helpers';
 import type { AccountsCommands } from '../accounts-commands.ts';
 import { mock } from 'vitest-mock-extended';
 import type { Transaction } from '@zero/domain';
@@ -11,7 +11,7 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-const getContext = getCommandContextBuilder<AccountsCommands>();
+const getContext = getRequestContextBuilder<AccountsCommands>();
 
 describe('delete tx handler', () => {
   it('calls delete on the tx if it exists and then saves it back in the repo', async () => {

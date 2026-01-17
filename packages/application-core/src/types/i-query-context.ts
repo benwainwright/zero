@@ -1,7 +1,7 @@
-import type { IQuery } from './i-query.ts';
+import type { IRequest } from './i-query.ts';
 import type { IBaseContext } from './i-base-context.ts';
 
-export interface IQueryContext<TQuery extends IQuery<string>>
+export interface IRequestContext<TQuery extends IRequest<string>>
   extends IBaseContext {
-  query: TQuery['params'];
+  params: TQuery['params'];
 }

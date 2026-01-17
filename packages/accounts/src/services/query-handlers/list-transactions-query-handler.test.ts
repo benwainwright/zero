@@ -1,11 +1,11 @@
-import { buildInstance, getQueryContextBuilder } from '@zero/test-helpers';
+import { buildInstance, getRequestContextBuilder } from '@zero/test-helpers';
 import { ListTransactionsQueryHandler } from './list-transactions-query-handler.ts';
 import type { AccountsQueries } from '@services';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
 import type { Transaction } from '@zero/domain';
 
-const getContext = getQueryContextBuilder<AccountsQueries>();
+const getContext = getRequestContextBuilder<AccountsQueries>();
 
 describe('list transactions query handler', () => {
   it('returns the txs from the repo', async () => {

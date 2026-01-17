@@ -3,4 +3,4 @@ export {
   websocketClientModule,
   type IKnownEvents,
 } from '@client';
-export { type IKnownCommands, type IKnownQueries } from '@types';
+export { type IKnownRequests } from '@types';

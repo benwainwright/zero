@@ -1,7 +1,7 @@
 import {
-  AbstractQueryHandler,
+  AbstractRequestHandler,
   AppError,
-  type IQueryContext,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { AccountsQueries } from '../accounts-queries.ts';
 import type { Account } from '@zero/domain';
@@ -12,7 +12,7 @@ import type { IAccountRepository } from '@ports';
 import type { IGrantManager } from '@zero/auth';
 
 @injectable()
-export class ListUserAccountsQueryHandler extends AbstractQueryHandler<
+export class ListUserAccountsQueryHandler extends AbstractRequestHandler<
   AccountsQueries,
   'ListUserAccountsQuery'
 > {
@@ -31,8 +31,8 @@ export class ListUserAccountsQueryHandler extends AbstractQueryHandler<
 
   protected override async handle({
     authContext,
-    query: { limit, offset },
-  }: IQueryContext<{
+    params: { limit, offset },
+  }: IRequestContext<{
     id: string;
     key: 'ListUserAccountsQuery';
     params: { limit: number; offset: number };

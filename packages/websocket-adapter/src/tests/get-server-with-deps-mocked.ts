@@ -10,10 +10,9 @@ import {
 import { mock } from 'vitest-mock-extended';
 
 import {
-  type ICommandBus,
   type IApplicationTypes,
-  type IQueryBus,
   type IEventBus,
+  type IServiceBus,
   ErrorHandler,
 } from '@zero/application-core';
 
@@ -32,8 +31,7 @@ import type { Factory } from 'inversify';
 
 interface IServerWithDeps {
   server: AppServer;
-  commandBus: Mocked<ICommandBus>;
-  queryBus: Mocked<IQueryBus>;
+  serviceBus: Mocked<IServiceBus>;
   port: number;
   logger: Mocked<ILogger>;
   eventBus: Mocked<IEventBus>;
@@ -85,13 +83,11 @@ export const getServerWithDepsMocked = async (): Promise<IServerWithDeps> => {
   const logger = mock<ILogger>();
   container.bind('Logger').toConstantValue(logger);
 
-  const commandBus = mock<ICommandBus>();
-  const queryBus = mock<IQueryBus>();
+  const serviceBus = mock<IServiceBus>();
 
   const decoratorManager = mock<IDecoratorManager>();
 
-  container.bind('CommandBus').toConstantValue(commandBus);
-  container.bind('QueryBus').toConstantValue(queryBus);
+  container.bind('ServiceBus').toConstantValue(serviceBus);
   container.bind('DecoratorManager').toConstantValue(decoratorManager);
 
   await container.getAsync('Bootstrapper');
@@ -100,8 +96,7 @@ export const getServerWithDepsMocked = async (): Promise<IServerWithDeps> => {
 
   return {
     server,
-    commandBus,
-    queryBus,
+    serviceBus,
     port: freePort,
     logger,
     eventBus,

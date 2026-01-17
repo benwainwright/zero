@@ -11,11 +11,11 @@ export const useEvents =
 
         useEffect(() => {
           if (api) {
-            listener.current = api.onAll(callback);
+            listener.current = api.eventBus.onAll(callback);
           }
           return () => {
             if (listener.current) {
-              api?.off(listener.current);
+              api?.eventBus.off(listener.current);
             }
           };
         }, [api]);

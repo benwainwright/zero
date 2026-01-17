@@ -1,7 +1,6 @@
 import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { ApiContext } from '@zero/react-api';
-import { useContext } from 'react';
+import { useRequest } from '@zero/react-api';
 
 interface ICreateNewAccountModal {
   opened: boolean;
@@ -17,10 +16,10 @@ export const CreateNewAccountModal = ({
   close,
   opened,
 }: ICreateNewAccountModal) => {
-  const { api } = useContext(ApiContext);
+  const { execute: createAccount } = useRequest('CreateAccountCommand');
 
   const create = async () => {
-    await api?.executeCommand('CreateAccountCommand', form.values);
+    await createAccount(form.values);
     close();
   };
 

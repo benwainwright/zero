@@ -1,10 +1,8 @@
 import {
-  CommandBus,
   DomainEventStore,
   ErrorHandler,
-  QueryBus,
-  TransactionalCommandBus,
-  TransactionalQueryBus,
+  ServiceBus,
+  TransactionalServiceBus,
 } from '@core';
 import { TypedContainer } from '@inversifyjs/strongly-typed';
 import type { ISessionIdRequester } from '@ports';
@@ -19,12 +17,10 @@ export const applicationCoreModule: IModule<
   bind('DomainEventBuffer').to(DomainEventStore).inRequestScope();
   bind('DomainEventEmitter').toService('DomainEventBuffer');
   bind('Serialiser').to(Serialiser);
-  bind('CommandBus').to(CommandBus).inRequestScope();
-  bind('QueryBus').to(QueryBus).inRequestScope();
+  bind('ServiceBus').to(ServiceBus).inRequestScope();
   bind('ErrorHandler').to(ErrorHandler);
 
-  decorate('CommandBus', TransactionalCommandBus);
-  decorate('QueryBus', TransactionalQueryBus);
+  decorate('ServiceBus', TransactionalServiceBus);
 
   bind('ContainerFactory').toFactory(() => {
     return async (sessionIdRequester: ISessionIdRequester) => {

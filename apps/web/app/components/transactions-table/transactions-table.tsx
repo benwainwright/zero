@@ -1,7 +1,7 @@
 import { EditTransactionRow, TransactionRow } from '@components';
 import { Table } from '@mantine/core';
 import { Transaction, type ITransaction } from '@zero/domain';
-import { useCommand } from '@zero/react-api';
+import { useRequest } from '@zero/react-api';
 import { useEffect, useState } from 'react';
 
 interface TransactionsTableProps {
@@ -27,7 +27,7 @@ export const TransactionsTable = ({
   const [newTransaction, setNewTransaction] = useState<
     Omit<ITransaction, 'id' | 'ownerId'>
   >(getDefaultTransaction(accountId));
-  const { execute: createTransaction } = useCommand('CreateTransactionCommand');
+  const { execute: createTransaction } = useRequest('CreateTransactionCommand');
 
   useEffect(() => {
     if (!creatingNewTransaction) {

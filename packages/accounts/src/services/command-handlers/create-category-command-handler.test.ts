@@ -1,4 +1,4 @@
-import { buildCommandHandler } from '@zero/test-helpers';
+import { buildRequestHandler } from '@zero/test-helpers';
 import { CreateCategoryCommandHandler } from './create-category-command-handler.ts';
 import { when } from 'vitest-when';
 import { Category } from '@zero/domain';
@@ -16,7 +16,7 @@ describe('create category command handler', () => {
       handler,
       dependencies: [categoryWriter, uuidGenerator],
       context,
-    } = await buildCommandHandler(
+    } = await buildRequestHandler(
       CreateCategoryCommandHandler,
       'CreateCategoryCommand',
       {

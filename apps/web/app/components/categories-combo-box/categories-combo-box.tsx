@@ -1,6 +1,6 @@
 import { Combobox, Input, InputBase, Loader, useCombobox } from '@mantine/core';
 import type { Category } from '@zero/domain';
-import { useSingleQuery } from '@zero/react-api';
+import { useRequest } from '@zero/react-api';
 import { useState } from 'react';
 
 interface CategoriesComboBoxProps {
@@ -15,7 +15,7 @@ export const CategoriesComboBox = ({
   const [data, setData] = useState<Map<string, Category>>(new Map());
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState<Category | undefined>(currentValue);
-  const { query } = useSingleQuery('ListCategoriesQueryUnpaged');
+  const { execute: listCategories } = useRequest('ListCategoriesQueryUnpaged');
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -23,7 +23,7 @@ export const CategoriesComboBox = ({
       if (data.size === 0 && !loading) {
         setLoading(true);
 
-        const categories = await query();
+        const categories = await listCategories();
         if (categories) {
           setData(
             new Map(categories.categories.map((item) => [item.id, item]))

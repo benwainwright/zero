@@ -2,15 +2,15 @@ import { inject } from '@core';
 import type { ICategoryRepository } from '@ports';
 import type { AccountsCommands } from '@services';
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IWriteRepository,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import type { Category } from '@zero/domain';
 
-export class DeleteCategoryCommandHandler extends AbstractCommandHandler<
+export class DeleteCategoryCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
   'DeleteCategoryCommand'
 > {
@@ -32,12 +32,13 @@ export class DeleteCategoryCommandHandler extends AbstractCommandHandler<
 
   protected override async handle({
     authContext,
-    command: { id },
-  }: ICommandContext<{
+    params: { id },
+  }: IRequestContext<{
     id: string;
     key: 'DeleteCategoryCommand';
     params: { id: string };
-  }>): Promise<void> {
+    response: undefined;
+  }>): Promise<undefined> {
     this.grants.assertLogin(authContext);
     this.grants.requires({
       capability: 'category:delete',

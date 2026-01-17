@@ -10,11 +10,9 @@ const getLabel = (
   event: IEventPacket<IKnownEvents, keyof IKnownEvents> & { index: number }
 ) => {
   switch (event.key) {
-    case 'QueryHandleCompleteEvent':
-    case 'QueryHandleStartEvent':
-    case 'QueryResponseEvent':
-    case 'CommandHandleCompleteEvent':
-    case 'CommandHandleStartEvent':
+    case 'RequestResponseEvent':
+    case 'RequestHandleCompleteEvent':
+    case 'RequestHandleStartEvent':
       return <Pill>{event.data.key}</Pill>;
     default:
       return null;

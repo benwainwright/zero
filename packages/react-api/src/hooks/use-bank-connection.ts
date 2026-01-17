@@ -1,4 +1,4 @@
-import { useCommand, useData, useQuery } from '@hooks';
+import { useData, useDataRequest, useRequest } from '@hooks';
 import type { BankConnection } from '@zero/domain';
 import { useEffect } from 'react';
 
@@ -29,13 +29,13 @@ export const useBankConnection = ():
   | BankConnectionLoading
   | BankConnectionConnected
   | BankConnectionNotConnected => {
-  const { execute: deleteAuthLink } = useCommand('DeleteAuthLinkCommand');
+  const { execute: deleteAuthLink } = useRequest('DeleteAuthLinkCommand');
 
   const {
     data: authLink,
     refresh: refreshAuthLink,
     isPending,
-  } = useQuery('GetBankAuthLinkQuery');
+  } = useDataRequest('GetBankAuthLinkQuery');
 
   useEffect(() => {
     (async () => {
@@ -60,23 +60,19 @@ export const useBankConnection = ():
     ],
   });
 
-  const { execute: fetchInstitutions } = useCommand(
-    'FetchOpenBankingInstitutionListCommand',
-    {
-      wait: true,
-    }
+  const { execute: fetchInstitutions } = useRequest(
+    'FetchOpenBankingInstitutionListCommand'
   );
 
   const isConnected = data?.status === 'connected';
 
-  const { refresh, data: institutionList } = useQuery(
+  const { refresh, data: institutionList } = useDataRequest(
     'GetOpenBankingInstitutionList',
     !isConnected
   );
 
-  const { execute: createBankConnection } = useCommand(
-    'CreateBankConnectionCommand',
-    { wait: true }
+  const { execute: createBankConnection } = useRequest(
+    'CreateBankConnectionCommand'
   );
 
   useEffect(() => {

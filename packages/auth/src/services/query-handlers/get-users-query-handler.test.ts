@@ -2,16 +2,16 @@ import { GetUsersQueryHandler } from './get-users-query-handler.ts';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
 import type { User } from '@zero/domain';
-import { buildInstance, getQueryContextBuilder } from '@zero/test-helpers';
+import { buildInstance, getRequestContextBuilder } from '@zero/test-helpers';
 import type { AuthQueries } from '@services';
 
-const getMockQueryContext = getQueryContextBuilder<AuthQueries>();
+const getMockRequestContext = getRequestContextBuilder<AuthQueries>();
 
 describe('get users query handler', () => {
   it('gets the users from the repo', async () => {
     const [handler, userRepo] = await buildInstance(GetUsersQueryHandler);
 
-    const context = getMockQueryContext(
+    const context = getMockRequestContext(
       'GetUsers',
       { offset: 0, limit: 30 },
       'ben'

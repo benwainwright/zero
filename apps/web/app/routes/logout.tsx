@@ -3,7 +3,7 @@ import {
   useEvent,
   CurrentUserContext,
   ApiContext,
-  useCommand,
+  useRequest,
 } from '@zero/react-api';
 import { useContext, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router';
 export const Logout = (): ReactNode => {
   const navigate = useNavigate();
   const { user, reload } = useContext(CurrentUserContext);
-  const { execute: logout } = useCommand('LogoutCommand');
+  const { execute: logout } = useRequest('LogoutCommand');
   const { api } = useContext(ApiContext);
 
   useEffect(() => {

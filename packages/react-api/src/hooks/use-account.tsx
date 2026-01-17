@@ -9,7 +9,13 @@ export const useAccount = (id?: string) => {
   } = useData(
     {
       query: 'GetAccountQuery',
-      command: 'UpdateAccountCommand',
+      updaterKey: 'UpdateAccountCommand',
+      mapToLocalData: (account) => ({
+        id: account.id,
+        name: account.name,
+        description: account.description ?? '',
+        linkedOpenBankingAccount: account.linkedOpenBankingAccount,
+      }),
       refreshOn: ['AccountUpdated', 'AccountLinked', 'AccountLinkRemoved'],
       load: Boolean(id),
     },

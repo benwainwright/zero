@@ -1,7 +1,7 @@
 import {
-  AbstractQueryHandler,
-  type IPickQuery,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IPickRequest,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { AuthQueries } from '../auth-queries.ts';
 import { User } from '@zero/domain';
@@ -9,7 +9,7 @@ import type { IGrantManager } from '@ports';
 import { inject } from '@core';
 import type { ILogger } from '@zero/bootstrap';
 
-export class GetCurrentUserQueryHandler extends AbstractQueryHandler<
+export class GetCurrentUserQueryHandler extends AbstractRequestHandler<
   AuthQueries,
   'GetCurrentUser'
 > {
@@ -27,7 +27,7 @@ export class GetCurrentUserQueryHandler extends AbstractQueryHandler<
 
   protected override async handle({
     authContext,
-  }: IQueryContext<IPickQuery<AuthQueries, 'GetCurrentUser'>>): Promise<
+  }: IRequestContext<IPickRequest<AuthQueries, 'GetCurrentUser'>>): Promise<
     User | undefined
   > {
     this.grant.requiresNoPermissions();

@@ -1,4 +1,4 @@
-export type IExtractParams<TCommand> = TCommand extends {
+export type IExtractParams<TRequest> = TRequest extends {
   params: infer TParams;
 }
   ? TParams

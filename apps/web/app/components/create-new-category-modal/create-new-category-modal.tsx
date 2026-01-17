@@ -1,7 +1,6 @@
 import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { ApiContext } from '@zero/react-api';
-import { useContext } from 'react';
+import { useRequest } from '@zero/react-api';
 
 interface ICreateNewCategoryModal {
   opened: boolean;
@@ -17,10 +16,10 @@ export const CreateNewCategoryModal = ({
   close,
   opened,
 }: ICreateNewCategoryModal) => {
-  const { api } = useContext(ApiContext);
+  const { execute: createCategory } = useRequest('CreateCategoryCommand');
 
   const create = async () => {
-    await api?.executeCommand('CreateCategoryCommand', form.values);
+    await createCategory(form.values);
     close();
   };
 

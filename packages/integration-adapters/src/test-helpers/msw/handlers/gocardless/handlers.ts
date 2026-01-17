@@ -1,7 +1,7 @@
-import { http, HttpResponse } from "msw";
-import { GOCARDLESS_API } from "./gocardless-api.ts";
-import { invalidRequestResponse } from "./invalid-request-response.ts";
-import { mockGocardlessData } from "./mock-gocardless-data.ts";
+import { http, HttpResponse } from 'msw';
+import { GOCARDLESS_API } from './gocardless-api.ts';
+import { invalidRequestResponse } from './invalid-request-response.ts';
+import { mockGocardlessData } from './mock-gocardless-data.ts';
 
 export const handlers = [
   http.get<{ accountId: string }>(
@@ -18,25 +18,29 @@ export const handlers = [
       if (!accountId) {
         return HttpResponse.json(
           {
-            summary: "Invalid Account ID",
-            detail: "$ACCOUNT_ID is not a valid Account UUID. ",
-            status_code: 400
+            summary: 'Invalid Account ID',
+            detail: '$ACCOUNT_ID is not a valid Account UUID. ',
+            status_code: 400,
           },
           { status: 400 }
         );
       }
 
-      if (accountId === "foo") {
-        return HttpResponse.json(mockGocardlessData.mockAccountDetailsResponses.foo);
+      if (accountId === 'foo') {
+        return HttpResponse.json(
+          mockGocardlessData.mockAccountDetailsResponses.foo
+        );
       }
-      if (accountId === "bar") {
-        return HttpResponse.json(mockGocardlessData.mockAccountDetailsResponses.bar);
+      if (accountId === 'bar') {
+        return HttpResponse.json(
+          mockGocardlessData.mockAccountDetailsResponses.bar
+        );
       }
       return HttpResponse.json(
         {
-          summary: "Invalid Account ID",
-          detail: "$ACCOUNT_ID is not a valid Account UUID. ",
-          status_code: 400
+          summary: 'Invalid Account ID',
+          detail: '$ACCOUNT_ID is not a valid Account UUID. ',
+          status_code: 400,
         },
         { status: 400 }
       );
@@ -57,9 +61,9 @@ export const handlers = [
       if (!accountId || accountId !== mockGocardlessData.mockAccountId) {
         return HttpResponse.json(
           {
-            summary: "Invalid Account ID",
-            detail: "$ACCOUNT_ID is not a valid Account UUID. ",
-            status_code: 400
+            summary: 'Invalid Account ID',
+            detail: '$ACCOUNT_ID is not a valid Account UUID. ',
+            status_code: 400,
           },
           { status: 400 }
         );
@@ -75,18 +79,51 @@ export const handlers = [
       return invalidResponse;
     }
 
-    const country = new URL(request.url).searchParams.get("country");
+    const country = new URL(request.url).searchParams.get('country');
 
     if (!country) {
       return HttpResponse.json(
         {
-          error: "please supply country param"
+          error: 'please supply country param',
         },
         { status: 400 }
       );
     }
     return HttpResponse.json(mockGocardlessData.mockInstititionsList);
   }),
+
+  http.get<
+    { requisitionId: string },
+    { institution_id: string; redirect: string }
+  >(
+    `${GOCARDLESS_API}/api/v2/requisition/:requisitionId/`,
+    async ({ request, params }) => {
+      const invalidResponse = invalidRequestResponse(request);
+
+      if (invalidResponse) {
+        return invalidResponse;
+      }
+
+      const { requisitionId } = params;
+
+      if (
+        requisitionId !== mockGocardlessData.mockConnectedRequisitionResponse.id
+      ) {
+        return HttpResponse.json(
+          {
+            detail: 'Not found.',
+            summary: 'Not found.',
+            status_code: 404,
+          },
+          { status: 404 }
+        );
+      }
+
+      return HttpResponse.json(
+        mockGocardlessData.mockConnectedRequisitionResponse
+      );
+    }
+  ),
 
   http.post<object, { institution_id: string; redirect: string }>(
     `${GOCARDLESS_API}/api/v2/requisitions/`,
@@ -102,10 +139,11 @@ export const handlers = [
       const { institution_id, redirect } = data;
 
       if (
-        institution_id !== mockGocardlessData.mockRequisitionResponse.institution_id ||
+        institution_id !==
+          mockGocardlessData.mockRequisitionResponse.institution_id ||
         !redirect
       ) {
-        return HttpResponse.json({ error: "not found" }, { status: 404 });
+        return HttpResponse.json({ error: 'not found' }, { status: 404 });
       }
 
       return HttpResponse.json(mockGocardlessData.mockRequisitionResponse);
@@ -127,14 +165,14 @@ export const handlers = [
 
       if (refresh !== mockGocardlessData.mockRefreshToken) {
         return HttpResponse.json({
-          summary: "Authentication failed",
-          detail: "No active account found with the given credentials!",
-          status_code: 401
+          summary: 'Authentication failed',
+          detail: 'No active account found with the given credentials!',
+          status_code: 401,
         });
       }
       return HttpResponse.json({
         access: mockGocardlessData.mockRefreshedToken,
-        access_expires: 86400
+        access_expires: 86400,
       });
     }
   ),
@@ -157,17 +195,17 @@ export const handlers = [
         secret_key !== mockGocardlessData.secretKey
       ) {
         return HttpResponse.json({
-          summary: "Authentication failed",
-          detail: "No active account found with the given credentials!",
-          status_code: 401
+          summary: 'Authentication failed',
+          detail: 'No active account found with the given credentials!',
+          status_code: 401,
         });
       }
       return HttpResponse.json({
         access: mockGocardlessData.mockToken,
         access_expires: 86400,
         refresh: mockGocardlessData.mockRefreshToken,
-        refresh_expires: 2592000
+        refresh_expires: 2592000,
       });
     }
-  )
+  ),
 ];

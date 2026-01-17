@@ -1,7 +1,5 @@
 export {
   buildInstance,
-  getCommandContextBuilder,
-  getQueryContextBuilder,
-  buildCommandHandler,
-  buildQueryHandler,
+  getRequestContextBuilder,
+  buildRequestHandler,
 } from '@lib';

@@ -9,12 +9,8 @@ export const useUser = (username: string) => {
   } = useData(
     {
       query: 'GetUser',
-      command: 'UpdateUserCommand',
+      updaterKey: 'UpdateUserCommand',
       mapToLocalData: (user) => {
-        if (!user) {
-          return undefined;
-        }
-
         return {
           username: user.id,
           email: user.email,

@@ -1,11 +1,11 @@
-import { buildInstance, getQueryContextBuilder } from '@zero/test-helpers';
+import { buildInstance, getRequestContextBuilder } from '@zero/test-helpers';
 import { ListUserAccountsQueryHandler } from './list-user-accounts-query-handler.ts';
 import type { AccountsQueries } from '../accounts-queries.ts';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
 import { Account } from '@zero/domain';
 
-const getContext = getQueryContextBuilder<AccountsQueries>();
+const getContext = getRequestContextBuilder<AccountsQueries>();
 
 describe('list accounts query handler', () => {
   it('returns the accounts provided by the repo', async () => {

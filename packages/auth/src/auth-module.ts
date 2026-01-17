@@ -1,8 +1,7 @@
 import { type IBootstrapTypes, type IModule } from '@zero/bootstrap';
 import type { IApplicationTypes } from '@zero/application-core';
 import {
-  AuthorisingCommandBus,
-  AuthorisingQueryBus,
+  AuthorisingServiceBus,
   GrantService,
   SessionStorage,
   type IAuthExports,
@@ -59,6 +58,5 @@ export const authModule: IModule<
     container.bind('GrantService').to(GrantService).inRequestScope();
   });
 
-  decorate('QueryBus', AuthorisingQueryBus);
-  decorate('CommandBus', AuthorisingCommandBus);
+  decorate('ServiceBus', AuthorisingServiceBus);
 };

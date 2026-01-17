@@ -1,22 +1,25 @@
 import { TypedContainer } from '@inversifyjs/strongly-typed';
-import type { IApiSurface } from '@zero/application-core';
+import type { IEventListener, IServiceClient } from '@zero/application-core';
 
 import {
   type IClientTypes,
-  type IKnownCommands,
   type IKnownEvents,
-  type IKnownQueries,
+  type IKnownRequests,
   websocketClientModule,
 } from '@zero/websocket-adapter/client';
 
 import { useEffect, useState } from 'react';
 import { useOpenSocket } from './use-open-socket.ts';
 
+interface IApi {
+  services: IServiceClient<IKnownRequests>;
+  eventBus: IEventListener<IKnownEvents>;
+}
+
 export const useApi = (url: string) => {
   const { socket } = useOpenSocket(url);
 
-  const [api, setApi] =
-    useState<IApiSurface<IKnownCommands, IKnownQueries, IKnownEvents>>();
+  const [api, setApi] = useState<IApi>();
 
   useEffect(() => {
     (async () => {
@@ -24,7 +27,12 @@ export const useApi = (url: string) => {
         const container = new TypedContainer<IClientTypes>();
         await container.load(websocketClientModule);
         container.bind('Websocket').toConstantValue(socket);
-        setApi(await container.getAsync('ApiSurface'));
+        const services = await container.getAsync('ServiceClient');
+        const eventBus = await container.getAsync('EventListener');
+        setApi({
+          services,
+          eventBus,
+        });
       }
     })();
   }, [socket]);

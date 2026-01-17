@@ -1,4 +1,4 @@
-import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
+import { buildInstance, getRequestContextBuilder } from '@zero/test-helpers';
 import { UpdateTransactionCommandHandler } from './update-transaction-command-handler.ts';
 import type { AccountsCommands } from '../accounts-commands.ts';
 import type { Transaction } from '@zero/domain';
@@ -11,7 +11,7 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-const getContext = getCommandContextBuilder<AccountsCommands>();
+const getContext = getRequestContextBuilder<AccountsCommands>();
 
 describe('update tx command handler', () => {
   it('updates the tx and saves it back in the repo', async () => {

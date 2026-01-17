@@ -2,14 +2,14 @@ import { inject } from '@core';
 import type { ICategoryRepository } from '@ports';
 import type { AccountsQueries } from '@services';
 import {
-  AbstractQueryHandler,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import type { Category } from '@zero/domain';
 
-export class GetCategoryQueryHandler extends AbstractQueryHandler<
+export class GetCategoryQueryHandler extends AbstractRequestHandler<
   AccountsQueries,
   'GetCategoryQuery'
 > {
@@ -27,14 +27,14 @@ export class GetCategoryQueryHandler extends AbstractQueryHandler<
   }
 
   protected override async handle({
-    query: { category },
-  }: IQueryContext<{
+    params: { category },
+  }: IRequestContext<{
     id: string;
     key: 'GetCategoryQuery';
     params: { category: string };
-    response: Category | undefined;
-  }>): Promise<Category | undefined> {
-    const theCat = this.categories.get(category);
+    response: Category;
+  }>): Promise<Category> {
+    const theCat = this.categories.require(category);
 
     this.grants.requires({
       capability: 'category:read',

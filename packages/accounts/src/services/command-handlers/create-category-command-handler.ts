@@ -1,8 +1,8 @@
 import { inject } from '@core';
 import type { AccountsCommands } from '@services';
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IUUIDGenerator,
   type IWriteRepository,
 } from '@zero/application-core';
@@ -14,7 +14,7 @@ import { Category } from '@zero/domain';
 import { injectable } from 'inversify';
 
 @injectable()
-export class CreateCategoryCommandHandler extends AbstractCommandHandler<
+export class CreateCategoryCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
   'CreateCategoryCommand'
 > {
@@ -36,12 +36,13 @@ export class CreateCategoryCommandHandler extends AbstractCommandHandler<
 
   protected override async handle({
     authContext,
-    command: { name, description },
-  }: ICommandContext<{
+    params: { name, description },
+  }: IRequestContext<{
     id: string;
     key: 'CreateCategoryCommand';
     params: { name: string; description: string };
-  }>): Promise<void> {
+    response: undefined;
+  }>): Promise<undefined> {
     this.grants.assertLogin(authContext);
     this.grants.requires({ capability: 'category:create' });
 

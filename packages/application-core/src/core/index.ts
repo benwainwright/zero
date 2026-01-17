@@ -1,12 +1,8 @@
-export { AbstractCommand } from './abstract-command.ts';
-export { AbstractQuery } from './abstract-query.ts';
+export { AbstractRequest } from './abstract-request.ts';
 export { type IAllEvents } from './all-events.ts';
-export { AbstractCommandHandler } from './abstract-command-handler.ts';
 export { DomainEventStore } from './domain-event-buffer.ts';
-export { CommandBus } from './command-bus.ts';
-export { TransactionalCommandBus } from './transactional-command-bus.ts';
-export { TransactionalQueryBus } from './transactional-query-bus.ts';
-export { AbstractQueryHandler } from './abstract-query-handler.ts';
+export { TransactionalServiceBus } from './transactional-service-bus.ts';
+export { AbstractRequestHandler } from './abstract-request-handler.ts';
 export { eventStager } from './repo-event-stager.ts';
-export { QueryBus } from './query-bus.ts';
+export { ServiceBus } from './service-bus.ts';
 export { ErrorHandler } from './error-handler.ts';

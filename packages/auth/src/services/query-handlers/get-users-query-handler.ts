@@ -1,7 +1,7 @@
 import {
-  AbstractQueryHandler,
-  type IPickQuery,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IPickRequest,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { AuthQueries } from '../auth-queries.ts';
 import type { User } from '@zero/domain';
@@ -9,7 +9,7 @@ import type { ILogger } from '@zero/bootstrap';
 import { GrantService, inject } from '@core';
 import type { IUserRepository } from '@ports';
 
-export class GetUsersQueryHandler extends AbstractQueryHandler<
+export class GetUsersQueryHandler extends AbstractRequestHandler<
   AuthQueries,
   'GetUsers'
 > {
@@ -27,8 +27,8 @@ export class GetUsersQueryHandler extends AbstractQueryHandler<
   }
 
   protected override async handle({
-    query: { offset, limit },
-  }: IQueryContext<IPickQuery<AuthQueries, 'GetUsers'>>): Promise<User[]> {
+    params: { offset, limit },
+  }: IRequestContext<IPickRequest<AuthQueries, 'GetUsers'>>): Promise<User[]> {
     this.grants.requires({
       capability: 'user:list',
     });

@@ -1,16 +1,13 @@
 export {
-  AbstractCommandHandler,
-  AbstractCommand,
   ErrorHandler,
-  AbstractQuery,
-  AbstractQueryHandler,
+  AbstractRequest,
+  AbstractRequestHandler,
   eventStager,
   type IAllEvents,
 } from '@core';
 
 export {
   type IEventBus,
-  type ICommandBus,
   type ISingleItemStore,
   type IEventEmitter,
   type IUnitOfWork,
@@ -22,10 +19,8 @@ export {
   type IListener,
   type IReadRepository,
   type IScopedService,
-  type IQueryBus,
-  type IQueryClient,
-  type IApiSurface,
-  type ICommandClient,
+  type IServiceBus,
+  type IServiceClient,
   type IDomainEventBuffer,
   type ICurrentUserCache,
   type ISessionIdRequester,
@@ -38,18 +33,15 @@ export {
 export { AppError } from '@errors';
 
 export {
-  type IQueryContext,
-  type ICommandContext,
+  type IRequestContext,
   type IExtractParams,
   type IApplicationTypes,
-  type ICommand,
   type IQueryParamsOrUndefined,
-  type IQuery,
-  type IPickCommand,
-  type IPickQuery,
-  type ICommandParams,
+  type IRequest,
+  type IPickRequest,
   type IEventPacket,
-  type IQueryParams,
+  type IRequestParams,
+  type ExecuteParams,
 } from '@types';
 
 export { applicationCoreModule } from './application-core-module.ts';

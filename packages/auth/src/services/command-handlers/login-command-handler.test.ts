@@ -2,17 +2,15 @@ import { LoginCommandHandler } from './login-command-handler.ts';
 import { mock } from 'vitest-mock-extended';
 import { when } from 'vitest-when';
 import type { User } from '@zero/domain';
-import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
-import type { AuthCommands } from '@services';
-
-const getMockCommandContext = getCommandContextBuilder<AuthCommands>();
+import { buildRequestHandler } from '@zero/test-helpers';
 
 describe('login command handler', async () => {
   it('checks the password and sets the current user if it is successful', async () => {
-    const [handler, userRepo, passwordVerifier, currentUserSetter, eventBus] =
-      await buildInstance(LoginCommandHandler);
-
-    const context = getMockCommandContext('LoginCommand', {
+    const {
+      handler,
+      context,
+      dependencies: [userRepo, passwordVerifier, currentUserSetter, eventBus],
+    } = await buildRequestHandler(LoginCommandHandler, 'LoginCommand', {
       username: 'ben',
       password: 'foo',
     });
@@ -37,10 +35,11 @@ describe('login command handler', async () => {
   });
 
   it('checks does not set the current user if it fails, also emits loginfailedevent', async () => {
-    const [handler, userRepo, passwordVerifier, currentUserSetter, eventBus] =
-      await buildInstance(LoginCommandHandler);
-
-    const context = getMockCommandContext('LoginCommand', {
+    const {
+      handler,
+      context,
+      dependencies: [userRepo, passwordVerifier, currentUserSetter, eventBus],
+    } = await buildRequestHandler(LoginCommandHandler, 'LoginCommand', {
       username: 'ben',
       password: 'foo',
     });
@@ -62,10 +61,11 @@ describe('login command handler', async () => {
   });
 
   it('check does not set the current user if it doesnt exist and emits loginfailedevent', async () => {
-    const [handler, userRepo, , currentUserSetter, eventBus] =
-      await buildInstance(LoginCommandHandler);
-
-    const context = getMockCommandContext('LoginCommand', {
+    const {
+      handler,
+      context,
+      dependencies: [userRepo, , currentUserSetter, eventBus],
+    } = await buildRequestHandler(LoginCommandHandler, 'LoginCommand', {
       username: 'ben',
       password: 'foo',
     });

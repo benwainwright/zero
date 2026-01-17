@@ -2,15 +2,15 @@ import { inject } from '@core';
 import type { IAccountRepository } from '@ports';
 import type { AccountsCommands } from '@services';
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IWriteRepository,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import type { Account } from '@zero/domain';
 
-export class LinkAccountCommandHandler extends AbstractCommandHandler<
+export class LinkAccountCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
   'LinkAccountCommand'
 > {
@@ -31,12 +31,13 @@ export class LinkAccountCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle({
-    command: { localId, obAccountId },
-  }: ICommandContext<{
+    params: { localId, obAccountId },
+  }: IRequestContext<{
     id: string;
     key: 'LinkAccountCommand';
     params: { localId: string; obAccountId: string };
-  }>): Promise<void> {
+    response: undefined;
+  }>): Promise<undefined> {
     this.grants.requiresNoPermissions();
     const account = await this.accounts.require(localId);
     account.linkAccount(obAccountId);

@@ -1,4 +1,4 @@
-import { buildQueryHandler } from '@zero/test-helpers';
+import { buildRequestHandler } from '@zero/test-helpers';
 import { GetCategoryQueryHandler } from './get-category-query-handler.ts';
 import { when } from 'vitest-when';
 import { Category } from '@zero/domain';
@@ -10,7 +10,7 @@ describe('get category query handler', () => {
       handler,
       context,
       dependencies: [repo],
-    } = await buildQueryHandler(GetCategoryQueryHandler, 'GetCategoryQuery', {
+    } = await buildRequestHandler(GetCategoryQueryHandler, 'GetCategoryQuery', {
       category: 'foo',
     });
 

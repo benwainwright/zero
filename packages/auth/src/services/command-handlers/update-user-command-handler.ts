@@ -1,7 +1,7 @@
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
-  type IPickCommand,
+  AbstractRequestHandler,
+  type IPickRequest,
+  type IRequestContext,
   type IWriteRepository,
 } from '@zero/application-core';
 import type { AuthCommands } from '../auth-commands.ts';
@@ -17,7 +17,7 @@ import type { ILogger } from '@zero/bootstrap';
 import type { User } from '@zero/domain';
 
 @injectable()
-export class UpdateUserCommandHandler extends AbstractCommandHandler<
+export class UpdateUserCommandHandler extends AbstractRequestHandler<
   AuthCommands,
   'UpdateUserCommand'
 > {
@@ -46,10 +46,10 @@ export class UpdateUserCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle({
-    command: { username, email, password, roles },
-  }: ICommandContext<
-    IPickCommand<AuthCommands, 'UpdateUserCommand'>
-  >): Promise<void> {
+    params: { username, email, password, roles },
+  }: IRequestContext<
+    IPickRequest<AuthCommands, 'UpdateUserCommand'>
+  >): Promise<undefined> {
     const user = await this.userRepo.get(username);
 
     const allRoles = await Promise.all(

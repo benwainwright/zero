@@ -1,53 +1,103 @@
+import type { IPickRequest, IRequestParams } from '@zero/application-core';
 import type {
-  IExtractParams,
-  IPickCommand,
-  IPickQuery,
-  IQueryParams,
-} from '@zero/application-core';
-import type {
-  IKnownCommands,
+  IKnownRequests,
   IKnownEvents,
-  IKnownQueries,
 } from '@zero/websocket-adapter/client';
-import { useQuery } from './use-query.ts';
-import { useCommand } from './use-command.ts';
+import { useDataRequest } from './use-data-request.ts';
 import { useEvents } from './use-events.ts';
 import { useCallback, useEffect, useState } from 'react';
+import { useRequest } from './use-request.ts';
 
-export const useData = <
-  TQuery extends IKnownQueries,
-  TCommand extends IKnownCommands,
-  TQueryKey extends TQuery['key'],
-  TCommandKey extends TCommand['key'],
-  TLocalData extends IPickCommand<TCommand, TCommandKey>['params'],
-  TDataMapper extends (
-    queryData: IPickQuery<TQuery, TQueryKey>['response'] | undefined
-  ) => TLocalData | undefined
+export interface UseDataType {
+  <
+    TQueryDataKey extends IKnownRequests['key'],
+    TUpdaterKey extends IKnownRequests['key'],
+    TDataMapper extends (
+      queryData: IPickRequest<IKnownRequests, TQueryDataKey>['response']
+    ) => IPickRequest<IKnownRequests, TUpdaterKey>['params']
+  >(
+    config: {
+      query: TQueryDataKey;
+      refreshOn?: (keyof IKnownEvents)[];
+      mapToLocalData: TDataMapper;
+      updaterKey: TUpdaterKey;
+      load?: boolean;
+    },
+    ...params: IRequestParams<IPickRequest<IKnownRequests, TQueryDataKey>>
+  ): {
+    data: ReturnType<TDataMapper>;
+    isPending: boolean;
+    update: (data: ReturnType<TDataMapper>) => void;
+    save: () => Promise<void>;
+  };
+  <
+    TQueryDataKey extends IKnownRequests['key'],
+    TDataMapper extends (
+      queryData: IPickRequest<IKnownRequests, TQueryDataKey>['response']
+    ) => unknown
+  >(
+    config: {
+      query: TQueryDataKey;
+      refreshOn?: (keyof IKnownEvents)[];
+      mapToLocalData: TDataMapper;
+      load?: boolean;
+    },
+    ...params: IRequestParams<IPickRequest<IKnownRequests, TQueryDataKey>>
+  ): {
+    data: ReturnType<TDataMapper>;
+    isPending: boolean;
+  };
+
+  <TQueryDataKey extends IKnownRequests['key']>(
+    config: {
+      query: TQueryDataKey;
+      refreshOn?: (keyof IKnownEvents)[];
+      load?: boolean;
+    },
+    ...params: IRequestParams<IPickRequest<IKnownRequests, TQueryDataKey>>
+  ): {
+    data: IPickRequest<IKnownRequests, TQueryDataKey>['response'];
+    isPending: boolean;
+  };
+}
+
+export const useData: UseDataType = <
+  TData extends IKnownRequests,
+  TUpdater extends IKnownRequests,
+  TQueryDataKey extends TData['key'],
+  TUpdaterKey extends TUpdater['key'],
+  TLocalData extends IPickRequest<TUpdater, TUpdaterKey>['params'],
+  TDataMapper extends
+    | ((
+        queryData: IPickRequest<TData, TQueryDataKey>['response'] | undefined
+      ) => TLocalData)
+    | undefined
 >(
   {
     query,
-    command,
+    updaterKey,
     refreshOn,
     mapToLocalData,
     load = true,
   }: {
-    query: TQueryKey;
-    command?: TCommandKey;
+    query: TQueryDataKey;
+    updaterKey?: TUpdaterKey;
     refreshOn?: (keyof IKnownEvents)[];
-    mapToLocalData?: TDataMapper;
+    mapToLocalData?: TDataMapper | undefined;
     load?: boolean;
   },
-  ...params: IQueryParams<IPickQuery<TQuery, TQueryKey>>
+  ...params: IRequestParams<IPickRequest<TData, TQueryDataKey>>
 ) => {
-  const { execute } = useCommand<TCommand, TCommandKey>(command);
-  const { data, refresh, isPending } = useQuery<TQuery, TQueryKey>(
+  const { execute } = useRequest<TUpdater, TUpdaterKey>(updaterKey);
+
+  const { data, refresh, isPending } = useDataRequest<TData, TQueryDataKey>(
     query,
     load,
     ...params
   );
   const [localData, setLocalData] = useState<{
-    mapped?: IPickCommand<TCommand, TCommandKey>['params'] | undefined;
-    unmapped?: IPickQuery<TQuery, TQueryKey>['response'] | undefined;
+    mapped?: IPickRequest<TUpdater, TUpdaterKey>['params'] | undefined;
+    unmapped?: IPickRequest<TData, TQueryDataKey>['response'] | undefined;
   }>();
 
   useEffect(() => {
@@ -67,7 +117,7 @@ export const useData = <
   const hasMap = Boolean(mapToLocalData);
 
   const update = useCallback(
-    (localData: IPickCommand<TCommand, TCommandKey>['params'] | undefined) => {
+    (localData: IPickRequest<TUpdater, TUpdaterKey>['params'] | undefined) => {
       if (!mapToLocalData) {
         throw new Error('Need to supply a mapping function');
       }
@@ -85,15 +135,7 @@ export const useData = <
     }
   }, [mapToLocalData, localData, execute]);
 
-  const finalData = (
-    mapToLocalData ? localData?.mapped : localData?.unmapped
-  ) as TCommand extends unknown
-    ? IPickQuery<TQuery, TQueryKey>['response']
-    :
-        | (IExtractParams<IKnownCommands> extends TLocalData
-            ? IPickCommand<TCommand, TCommandKey>['params']
-            : IPickQuery<TQuery, TQueryKey>['response'])
-        | undefined;
+  const finalData = mapToLocalData ? localData?.mapped : localData?.unmapped;
 
   return {
     save,

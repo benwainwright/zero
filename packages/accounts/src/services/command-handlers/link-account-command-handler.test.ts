@@ -1,4 +1,4 @@
-import { buildCommandHandler } from '@zero/test-helpers';
+import { buildRequestHandler } from '@zero/test-helpers';
 import { LinkAccountCommandHandler } from './link-account-command-handler.ts';
 import { when } from 'vitest-when';
 import { Account } from '@zero/domain';
@@ -9,7 +9,7 @@ describe('link account command handler', () => {
       handler,
       context,
       dependencies: [accountRepo, writer],
-    } = await buildCommandHandler(
+    } = await buildRequestHandler(
       LinkAccountCommandHandler,
       'LinkAccountCommand',
       { obAccountId: 'foo', localId: 'bar' },

@@ -1,6 +1,6 @@
 import {
-  AbstractQueryHandler,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { AuthQueries } from '../auth-queries.ts';
 import type { User } from '@zero/domain';
@@ -8,7 +8,7 @@ import type { ILogger } from '@zero/bootstrap';
 import { inject } from '@core';
 import type { IGrantManager, IUserRepository } from '@ports';
 
-export class GetUserQueryHandler extends AbstractQueryHandler<
+export class GetUserQueryHandler extends AbstractRequestHandler<
   AuthQueries,
   'GetUser'
 > {
@@ -26,8 +26,8 @@ export class GetUserQueryHandler extends AbstractQueryHandler<
   }
 
   protected override async handle({
-    query: { username },
-  }: IQueryContext<{
+    params: { username },
+  }: IRequestContext<{
     id: string;
     key: 'GetUser';
     params: { username: string };

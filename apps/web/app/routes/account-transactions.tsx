@@ -8,7 +8,7 @@ import { Button, Text } from '@mantine/core';
 import {
   useAccount,
   useBankConnection,
-  useCommand,
+  useRequest,
   useTransactions,
 } from '@zero/react-api';
 import { useState } from 'react';
@@ -18,10 +18,10 @@ import { modals } from '@mantine/modals';
 const AccountTransactions = () => {
   const { accountId } = useParams<{ accountId: string }>();
   const { account } = useAccount(accountId);
-  const { execute: linkAccount } = useCommand('LinkAccountCommand');
+  const { execute: linkAccount } = useRequest('LinkAccountCommand');
   const maybeResponse = useTransactions(accountId, 0, 30);
   const connection = useBankConnection();
-  const { execute: deleteAccount } = useCommand('DeleteAccountCommand');
+  const { execute: deleteAccount } = useRequest('DeleteAccountCommand');
   const [creatingNewTx, setCreatingNewTx] = useState(false);
   const navigate = useNavigate();
   const confirmDeleteAccount = () =>

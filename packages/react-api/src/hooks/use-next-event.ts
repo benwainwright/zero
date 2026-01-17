@@ -14,9 +14,9 @@ export const useNextEvent = <TKey extends keyof IKnownEvents>(key: TKey) => {
     ): Promise<IEventPacket<IKnownEvents, TKey>['data'] | undefined> => {
       if (api) {
         return new Promise((accept) => {
-          const handle = api.on(key, async (data) => {
+          const handle = api.eventBus.on(key, async (data) => {
             if (!filter || (await filter(data))) {
-              api.off(handle);
+              api.eventBus.off(handle);
               accept(data);
             }
           });

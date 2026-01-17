@@ -2,14 +2,14 @@ import { inject } from '@core';
 import type { ICategoryRepository } from '@ports';
 import type { AccountsQueries } from '@services';
 import {
-  AbstractQueryHandler,
-  type IQueryContext,
+  AbstractRequestHandler,
+  type IRequestContext,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import type { Category } from '@zero/domain';
 
-export class ListCategoriesUnpagedQueryHandler extends AbstractQueryHandler<
+export class ListCategoriesUnpagedQueryHandler extends AbstractRequestHandler<
   AccountsQueries,
   'ListCategoriesQueryUnpaged'
 > {
@@ -28,7 +28,7 @@ export class ListCategoriesUnpagedQueryHandler extends AbstractQueryHandler<
 
   protected override async handle({
     authContext,
-  }: IQueryContext<{
+  }: IRequestContext<{
     id: string;
     key: 'ListCategoriesQueryUnpaged';
     response: { categories: Category[] };

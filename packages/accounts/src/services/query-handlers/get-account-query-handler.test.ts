@@ -1,11 +1,11 @@
-import { buildInstance, getQueryContextBuilder } from '@zero/test-helpers';
+import { buildInstance, getRequestContextBuilder } from '@zero/test-helpers';
 import { GetAccountQueryHandler } from './get-account-query-handler.ts';
 import type { AccountsQueries } from '../accounts-queries.ts';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
 import { Account } from '@zero/domain';
 
-const getContext = getQueryContextBuilder<AccountsQueries>();
+const getContext = getRequestContextBuilder<AccountsQueries>();
 
 describe('get account query handler', () => {
   it('returns the correct account', async () => {

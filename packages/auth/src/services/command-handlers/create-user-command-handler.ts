@@ -1,8 +1,8 @@
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
-  type IPickCommand,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IWriteRepository,
+  type IPickRequest,
 } from '@zero/application-core';
 import type { IGrantManager, IPasswordHasher, IRoleRepository } from '@ports';
 import { injectable } from 'inversify';
@@ -13,7 +13,7 @@ import { User } from '@zero/domain';
 import { USER_ROLE_ID } from '@constants';
 
 @injectable()
-export class CreateUserCommandHandler extends AbstractCommandHandler<
+export class CreateUserCommandHandler extends AbstractRequestHandler<
   AuthCommands,
   'CreateUserCommand'
 > {
@@ -39,8 +39,10 @@ export class CreateUserCommandHandler extends AbstractCommandHandler<
   }
 
   public override async handle({
-    command: { password, username, email },
-  }: ICommandContext<IPickCommand<AuthCommands, 'CreateUserCommand'>>) {
+    params: { password, username, email },
+  }: IRequestContext<
+    IPickRequest<AuthCommands, 'CreateUserCommand'>
+  >): Promise<undefined> {
     const passwordHash = await this.passwordHasher.hashPassword(password);
 
     const role = await this.roleRepo.require(USER_ROLE_ID);

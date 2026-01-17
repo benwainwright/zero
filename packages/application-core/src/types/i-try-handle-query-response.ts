@@ -1,4 +1,4 @@
-export type ITryHandleQueryResponse<TResponse> =
+export type ITryHandleRequestResponse<TResponse> =
   | {
       handled: true;
       response: TResponse;

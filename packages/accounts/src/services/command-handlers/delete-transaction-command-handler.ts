@@ -2,15 +2,15 @@ import { inject } from '@core';
 import type { ITransactionRepository } from '@ports';
 import type { AccountsCommands } from '@services';
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IWriteRepository,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import type { Transaction } from '@zero/domain';
 
-export class DeleteTransactionCommandHandler extends AbstractCommandHandler<
+export class DeleteTransactionCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
   'DeleteTransactionCommand'
 > {
@@ -30,12 +30,13 @@ export class DeleteTransactionCommandHandler extends AbstractCommandHandler<
     super(logger);
   }
   protected override async handle({
-    command: { transaction },
-  }: ICommandContext<{
+    params: { transaction },
+  }: IRequestContext<{
     id: string;
     key: 'DeleteTransactionCommand';
     params: { transaction: string };
-  }>): Promise<void> {
+    response: undefined;
+  }>): Promise<undefined> {
     this.grants.requires({
       capability: 'account:delete-transaction',
     });

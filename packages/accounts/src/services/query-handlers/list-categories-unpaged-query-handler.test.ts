@@ -1,4 +1,4 @@
-import { buildQueryHandler } from '@zero/test-helpers';
+import { buildRequestHandler } from '@zero/test-helpers';
 import { ListCategoriesUnpagedQueryHandler } from './list-categories-unpaged-query-handler.ts';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
@@ -9,7 +9,7 @@ describe('list categories query handler', () => {
       handler,
       context,
       dependencies: [repo],
-    } = await buildQueryHandler(
+    } = await buildRequestHandler(
       ListCategoriesUnpagedQueryHandler,
       'ListCategoriesQueryUnpaged',
       undefined,

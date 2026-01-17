@@ -1,5 +1,5 @@
-export interface IQueryResponseEvent {
-  QueryResponseEvent: {
+export interface IRequestResponseEvent {
+  RequestResponseEvent: {
     key: string;
     id: string;
     data: unknown;

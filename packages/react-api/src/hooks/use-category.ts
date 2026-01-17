@@ -9,8 +9,13 @@ export const useCategory = (id: string) => {
   } = useData(
     {
       query: 'GetCategoryQuery',
-      command: 'UpdateCategoryCommand',
+      updaterKey: 'UpdateCategoryCommand',
       refreshOn: ['CategoryUpdatedEvent'],
+      mapToLocalData: (category) => ({
+        id: category.id,
+        name: category.name,
+        description: category.description ?? '',
+      }),
     },
     {
       category: id,

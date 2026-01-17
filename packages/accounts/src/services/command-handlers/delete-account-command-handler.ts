@@ -1,6 +1,6 @@
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IWriteRepository,
 } from '@zero/application-core';
 import type { AccountsCommands } from '../accounts-commands.ts';
@@ -12,7 +12,7 @@ import type { IGrantManager } from '@zero/auth';
 import type { Account } from '@zero/domain';
 
 @injectable()
-export class DeleteAccountCommandHandler extends AbstractCommandHandler<
+export class DeleteAccountCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
   'DeleteAccountCommand'
 > {
@@ -35,12 +35,13 @@ export class DeleteAccountCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle({
-    command: { account },
-  }: ICommandContext<{
+    params: { account },
+  }: IRequestContext<{
     id: string;
     key: 'DeleteAccountCommand';
     params: { account: string };
-  }>): Promise<void> {
+    response: undefined;
+  }>): Promise<undefined> {
     const theAccount = await this.accounts.require(account);
 
     this.grants.requires({

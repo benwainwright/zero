@@ -38,8 +38,7 @@ export const getClientWithDepsMocked = async (port: number) => {
 
   await container.load(overrideModule);
 
-  const commandClient = container.get('CommandClient');
-  const queryClient = container.get('QueryClient');
+  const serviceClient = container.get('ServiceClient');
 
-  return { commandClient, logger, uuidGenerator, socket, queryClient };
+  return { serviceClient, logger, uuidGenerator, socket };
 };

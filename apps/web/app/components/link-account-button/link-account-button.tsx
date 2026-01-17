@@ -1,5 +1,5 @@
 import { Button, Combobox, Input, InputBase, useCombobox } from '@mantine/core';
-import { useCommand, useQuery } from '@zero/react-api';
+import { useRequest, useDataRequest } from '@zero/react-api';
 import { useEffect, useState, type ReactNode } from 'react';
 
 interface LinkAccountButtonProps {
@@ -16,11 +16,10 @@ export const LinkAccountButton = ({
   onPick,
 }: LinkAccountButtonProps): ReactNode => {
   const [isLinking, setIsLinking] = useState(false);
-  const { execute: fetchDetails } = useCommand(
-    'FetchLinkedAccountsDetailsCommand',
-    { wait: true }
+  const { execute: fetchDetails } = useRequest(
+    'FetchLinkedAccountsDetailsCommand'
   );
-  const { data: linkedAccountDetails, refresh } = useQuery(
+  const { data: linkedAccountDetails, refresh } = useDataRequest(
     'GetLinkedAccountsDetailsQuery',
     isLinking
   );

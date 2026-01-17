@@ -1,4 +1,4 @@
-import { buildInstance, getCommandContextBuilder } from '@zero/test-helpers';
+import { buildInstance, getRequestContextBuilder } from '@zero/test-helpers';
 import { CreateTransactionCommandHandler } from './create-transaction-command-handler.ts';
 import { Transaction } from '@zero/domain';
 import type { AccountsCommands } from '../accounts-commands.ts';
@@ -11,7 +11,7 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-const getContext = getCommandContextBuilder<AccountsCommands>();
+const getContext = getRequestContextBuilder<AccountsCommands>();
 
 describe('create transaction handler', () => {
   it('creates the transaction on the transaction command handler', async () => {

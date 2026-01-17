@@ -1,7 +1,7 @@
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
-  type IPickCommand,
+  AbstractRequestHandler,
+  type IPickRequest,
+  type IRequestContext,
   type IWriteRepository,
 } from '@zero/application-core';
 import type { IGrantManager, IUserRepository } from '@ports';
@@ -12,7 +12,7 @@ import type { ILogger } from '@zero/bootstrap';
 import type { User } from '@zero/domain';
 
 @injectable()
-export class DeleteUserCommandHandler extends AbstractCommandHandler<
+export class DeleteUserCommandHandler extends AbstractRequestHandler<
   AuthCommands,
   'DeleteUserCommand'
 > {
@@ -35,10 +35,10 @@ export class DeleteUserCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle({
-    command: { username },
-  }: ICommandContext<
-    IPickCommand<AuthCommands, 'DeleteUserCommand'>
-  >): Promise<void> {
+    params: { username },
+  }: IRequestContext<
+    IPickRequest<AuthCommands, 'DeleteUserCommand'>
+  >): Promise<undefined> {
     const user = await this.userRepo.require(username);
 
     this.grants.requires({

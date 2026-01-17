@@ -1,6 +1,6 @@
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IUUIDGenerator,
   type IWriteRepository,
 } from '@zero/application-core';
@@ -12,7 +12,7 @@ import { Account } from '@zero/domain';
 import type { IGrantManager } from '@zero/auth';
 
 @injectable()
-export class CreateAccountCommandHandler extends AbstractCommandHandler<
+export class CreateAccountCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
   'CreateAccountCommand'
 > {
@@ -33,13 +33,14 @@ export class CreateAccountCommandHandler extends AbstractCommandHandler<
   }
 
   protected override async handle({
-    command: { name, description },
+    params: { name, description },
     authContext,
-  }: ICommandContext<{
+  }: IRequestContext<{
     id: string;
     key: 'CreateAccountCommand';
     params: { name: string; description: string };
-  }>): Promise<void> {
+    response: undefined;
+  }>): Promise<undefined> {
     this.grants.requires({
       capability: 'account:list',
     });

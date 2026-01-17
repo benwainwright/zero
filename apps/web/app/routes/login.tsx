@@ -1,5 +1,5 @@
 import { Page } from '@components';
-import { CurrentUserContext, useCommand, useEvent } from '@zero/react-api';
+import { CurrentUserContext, useRequest, useEvent } from '@zero/react-api';
 import logo from './b6d650e8-988f-42a8-a8dd-4fdc4152a562.png';
 import {
   Button,
@@ -23,7 +23,7 @@ interface FormValues {
 
 export const Login = (): ReactNode => {
   const { user, reload } = useContext(CurrentUserContext);
-  const { execute: login } = useCommand('LoginCommand');
+  const { execute: login } = useRequest('LoginCommand');
 
   const navigate = useNavigate();
 

@@ -1,39 +1,60 @@
 import { inject, wait } from '@core';
 import { HttpClient, type IResponseCache } from '@http-client';
-import {
-  type IInstitutionListFetcher,
-  type IInstitutionAuthPageLinkFetcher,
-  type IOpenBankingAccountBalanceFetcher,
-  type IOpenBankingAccountDetailsFetcher,
-  type IOpenBankingTokenFetcher,
-  type IOpenBankingTokenRefresher,
-  type IRequesitionAccountFetcher,
-} from '@zero/accounts';
+
 import {
   AppError,
   type IEventBus,
+  type IObjectStorage,
   type IStringHasher,
   type IUUIDGenerator,
 } from '@zero/application-core';
 
 import { type ConfigValue, type ILogger } from '@zero/bootstrap';
-import { BankConnection, OauthToken } from '@zero/domain';
+import { OauthToken } from '@zero/domain';
 import { injectable } from 'inversify';
 import z from 'zod';
 import type { IntegrationEvents } from '../adapter-events.ts';
 import { HttpError } from '@errors';
+import { REQUISITION_ID_KEY } from './constants.ts';
+
+interface IPossbileInstitution {
+  bankName: string;
+  id: string;
+  logo: string;
+}
+
+interface IOpenBankingAccountDetails {
+  id: string;
+  name: string | undefined;
+  details: string | undefined;
+}
+
+type OpenBankingConnectionStatus =
+  | {
+      status: 'not_connected';
+    }
+  | {
+      status: 'connected';
+    }
+  | {
+      status: 'authorizing';
+    }
+  | {
+      status: 'rejected';
+    }
+  | {
+      status: 'expired';
+    };
+
+interface IOpenBankingClient {
+  getConnectionStatus(token: OauthToken): Promise<OpenBankingConnectionStatus>;
+  getInstitutionList(token: OauthToken): Promise<IPossbileInstitution[]>;
+  getAuthorisationUrl(token: OauthToken, bankId: string): Promise<string>;
+  getAccounts(token: OauthToken): Promise<IOpenBankingAccountDetails[]>;
+}
 
 @injectable()
-export class GocardlessClient
-  implements
-    IInstitutionListFetcher,
-    IInstitutionAuthPageLinkFetcher,
-    IOpenBankingTokenFetcher,
-    IOpenBankingAccountBalanceFetcher,
-    IOpenBankingTokenRefresher,
-    IRequesitionAccountFetcher,
-    IOpenBankingAccountDetailsFetcher
-{
+export class GocardlessClient implements IOpenBankingClient {
   private client: HttpClient;
 
   public constructor(
@@ -54,6 +75,9 @@ export class GocardlessClient
 
     @inject('UUIDGenerator')
     uuidGenerator: IUUIDGenerator,
+
+    @inject('ObjectStore')
+    private readonly objectStore: IObjectStorage,
 
     @inject('EventBus')
     eventBus: IEventBus<IntegrationEvents>,
@@ -76,6 +100,149 @@ export class GocardlessClient
     });
   }
 
+  public async getConnectionStatus(
+    token: OauthToken
+  ): Promise<OpenBankingConnectionStatus> {
+    const requisitionId = await this.objectStore.get(
+      REQUISITION_ID_KEY,
+      token.id
+    );
+
+    if (!requisitionId) {
+      return { status: 'not_connected' };
+    }
+
+    const requisition = await this.getRequisitionDetails(requisitionId, token);
+
+    switch (requisition.status) {
+      case 'CR':
+      case 'GC':
+      case 'UA':
+      case 'SA':
+      case 'GA':
+        return { status: 'authorizing' };
+
+      case 'RJ':
+        return { status: 'rejected' };
+
+      case 'LN':
+        return { status: 'connected' };
+
+      default:
+        return { status: 'expired' };
+    }
+  }
+
+  public async getInstitutionList(
+    token: OauthToken
+  ): Promise<IPossbileInstitution[]> {
+    return await this.client.get({
+      path: 'institutions',
+      queryString: {
+        country: 'GB',
+      },
+      headers: {
+        Authorization: `Bearer ${token.use()}`,
+      },
+      responseSchema: z
+        .array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            bic: z.string(),
+            transaction_total_days: z.string(),
+            countries: z.array(z.string()),
+            logo: z.string(),
+            max_access_valid_for_days: z.string(),
+          })
+        )
+        .transform((data) =>
+          data.map((item) => ({
+            id: item.id,
+            bankName: item.name,
+            logo: item.logo,
+          }))
+        ),
+    });
+  }
+
+  public async getAuthorisationUrl(
+    token: OauthToken,
+    bankId: string
+  ): Promise<string> {
+    const result = await this.client.post({
+      path: 'requisitions/',
+      body: {
+        institution_id: bankId,
+        redirect: await this.redirectUrl.value,
+      },
+      headers: {
+        Authorization: `Bearer ${token.use()}`,
+      },
+      responseSchema: z.object({
+        id: z.string(),
+        created: z.string(),
+        redirect: z.string(),
+        status: z.string(),
+        institution_id: z.string(),
+        agreement: z.string(),
+        reference: z.string(),
+        link: z.string(),
+      }),
+    });
+
+    this.objectStore.set(REQUISITION_ID_KEY, token.id, result.id);
+
+    return result.link;
+  }
+
+  public async getAccounts(token: OauthToken) {
+    const requisitionId = await this.objectStore.get(
+      REQUISITION_ID_KEY,
+      token.id
+    );
+
+    if (!requisitionId) {
+      throw new AppError(
+        `Authorisation has not been started - call 'getAuthoriseUrl' first and redirect the user to authorise with their bank`
+      );
+    }
+
+    const requisition = await this.getRequisitionDetails(requisitionId, token);
+
+    return await this.getAllAccountDetails(requisition.accounts, token);
+  }
+
+  private async getRequisitionDetails(id: string, token: OauthToken) {
+    return await this.client.get({
+      path: `requisitions/${id}/`,
+      ttl: 0,
+      headers: {
+        Authorization: `Bearer ${token.use()}`,
+      },
+      responseSchema: z.object({
+        id: z.string(),
+        name: z.string(),
+        status: z.union([
+          z.literal('CR'),
+          z.literal('GC'),
+          z.literal('UA'),
+          z.literal('RJ'),
+          z.literal('SA'),
+          z.literal('GA'),
+          z.literal('LN'),
+          z.literal('EX'),
+        ]),
+        accounts: z.array(z.string()),
+        bic: z.string(),
+        transaction_total_days: z.string(),
+        countries: z.array(z.string()),
+        logo: z.string(),
+        max_access_valid_for_days: z.string(),
+      }),
+    });
+  }
+
   private async getAccountStatus(
     id: string,
     token: OauthToken
@@ -92,7 +259,7 @@ export class GocardlessClient
     return status;
   }
 
-  public async pollAccountStatusUntilReady(
+  private async pollAccountStatusUntilReady(
     id: string,
     timesToTry: number,
     token: OauthToken
@@ -109,7 +276,7 @@ export class GocardlessClient
     throw new AppError(`Account is not ready`);
   }
 
-  private async getSingleAccountDetails(id: string, token: OauthToken) {
+  private async getAccountDetails(id: string, token: OauthToken) {
     return await this.client.get({
       ttl: 1000 * 60 * 60 * 6,
       path: `accounts/${id}/details/`,
@@ -132,7 +299,7 @@ export class GocardlessClient
     });
   }
 
-  public async getAccountDetails(
+  private async getAllAccountDetails(
     ids: string[],
     token: OauthToken
   ): Promise<
@@ -141,11 +308,11 @@ export class GocardlessClient
     return await Promise.all(
       ids.map(async (id) => {
         try {
-          return await this.getSingleAccountDetails(id, token);
+          return await this.getAccountDetails(id, token);
         } catch (error) {
           if (error instanceof HttpError && error.statusCode === 409) {
             await this.pollAccountStatusUntilReady(id, 10, token);
-            return await this.getSingleAccountDetails(id, token);
+            return await this.getAccountDetails(id, token);
           }
           throw error;
         }
@@ -189,57 +356,6 @@ export class GocardlessClient
     return first.balanceAmount.amount;
   }
 
-  public async getAccountIds(
-    bankConnection: BankConnection,
-    token: OauthToken
-  ): Promise<string[]> {
-    const { accounts } = await this.client.get({
-      path: `requisitions/${String(bankConnection.requisitionId)}/`,
-      headers: {
-        Authorization: `Bearer ${token.use()}`,
-      },
-      responseSchema: z.object({
-        id: z.string(),
-        status: z.string(),
-        agreements: z.string().optional(),
-        accounts: z.array(z.string()),
-        reference: z.string(),
-      }),
-    });
-    return accounts;
-  }
-
-  public async getLink(
-    connection: BankConnection,
-    token: OauthToken
-  ): Promise<{ requsitionId: string; url: string }> {
-    const result = await this.client.post({
-      path: 'requisitions/',
-      body: {
-        institution_id: connection.id,
-        redirect: await this.redirectUrl.value,
-      },
-      headers: {
-        Authorization: `Bearer ${token.use()}`,
-      },
-      responseSchema: z.object({
-        id: z.string(),
-        created: z.string(),
-        redirect: z.string(),
-        status: z.string(),
-        institution_id: z.string(),
-        agreement: z.string(),
-        reference: z.string(),
-        link: z.string(),
-      }),
-    });
-
-    return {
-      url: result.link,
-      requsitionId: result.id,
-    };
-  }
-
   public async refreshToken(token: OauthToken): Promise<{
     token: string;
     tokenExpiresIn: number;
@@ -278,43 +394,6 @@ export class GocardlessClient
           tokenExpiresIn: data.access_expires,
           refreshTokenExpiresIn: data.refresh_expires,
         })),
-    });
-  }
-
-  public async getConnections(
-    ownerId: string,
-    token: OauthToken
-  ): Promise<BankConnection[]> {
-    return await this.client.get({
-      path: 'institutions',
-      queryString: {
-        country: 'GB',
-      },
-      headers: {
-        Authorization: `Bearer ${token.use()}`,
-      },
-      responseSchema: z
-        .array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            bic: z.string(),
-            transaction_total_days: z.string(),
-            countries: z.array(z.string()),
-            logo: z.string(),
-            max_access_valid_for_days: z.string(),
-          })
-        )
-        .transform((data) =>
-          data.map((item) =>
-            BankConnection.create({
-              id: item.id,
-              ownerId,
-              bankName: item.name,
-              logo: item.logo,
-            })
-          )
-        ),
     });
   }
 }

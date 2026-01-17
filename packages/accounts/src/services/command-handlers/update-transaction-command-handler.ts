@@ -2,15 +2,15 @@ import { inject } from '@core';
 import type { ITransactionRepository } from '@ports';
 import type { AccountsCommands } from '@services';
 import {
-  AbstractCommandHandler,
-  type ICommandContext,
+  AbstractRequestHandler,
+  type IRequestContext,
   type IWriteRepository,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
 import type { ITransaction, Transaction } from '@zero/domain';
 
-export class UpdateTransactionCommandHandler extends AbstractCommandHandler<
+export class UpdateTransactionCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
   'UpdateTransactionCommand'
 > {
@@ -30,17 +30,18 @@ export class UpdateTransactionCommandHandler extends AbstractCommandHandler<
     super(logger);
   }
   protected override async handle({
-    command,
-  }: ICommandContext<{
+    params,
+  }: IRequestContext<{
     id: string;
     key: 'UpdateTransactionCommand';
     params: Omit<ITransaction, 'ownerId'>;
-  }>): Promise<void> {
+    response: undefined;
+  }>): Promise<undefined> {
     this.grants.requires({
       capability: 'account:create-transaction',
     });
 
-    const { id, ...data } = command;
+    const { id, ...data } = params;
     const tx = await this.txRepo.require(id);
 
     tx.update(data);
