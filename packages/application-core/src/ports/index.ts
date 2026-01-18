@@ -1,5 +1,6 @@
 export { type ISingleItemStore } from './i-single-item-store.ts';
 export { type ISessionIdRequester } from './i-session-id-requester.ts';
+export { type IPresenceRepository } from './i-presence-repository.ts';
 export { type IDomainEventStore } from './i-domain-event-store.ts';
 export { type ISyncDetailsRepository } from './i-sync-details-repository.ts';
 export { type IDomainEventBuffer } from './i-domain-event-buffer.ts';
@@ -19,3 +20,4 @@ export { type IWriteRepository } from './i-write-repository.ts';
 export { type ICountableRepository } from './i-countable-repository.ts';
 export { type IUnpagedListRepository } from './i-list-unlimited-repository.ts';
 export { type IListRepository } from './i-list-repository.ts';
+export { type IBulkGetRepository } from './i-bulk-get-repository.ts';

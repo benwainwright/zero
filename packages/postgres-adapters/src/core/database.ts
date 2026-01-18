@@ -83,11 +83,13 @@ export interface Transactions {
   accountId: string;
   amount: number;
   categoryId: string | null;
-  currency: string | null;
+  currency: string;
   date: Timestamp;
   id: string;
   ownerId: string;
   payee: string;
+  pending: boolean;
+  valueDate: Timestamp | null;
 }
 
 export interface UserRoles {

@@ -45,6 +45,7 @@ export {
   openBankingCreditTransactionSchema,
   openBankingTransactionSchema,
   openBankingDebitTransactionSchema,
+  currencySchema,
   type IOpenBankingTransaction,
 } from '@transaction';
 

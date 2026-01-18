@@ -19,7 +19,7 @@ const AccountTransactions = () => {
   const { accountId } = useParams<{ accountId: string }>();
   const { account } = useAccount(accountId);
   const { execute: linkAccount } = useRequest('LinkAccountCommand');
-  const maybeResponse = useTransactions(accountId, 0, 30);
+  const { transactions, syncAccount } = useTransactions(accountId, 0, 30);
   const connection = useBankConnection();
   const { execute: deleteAccount } = useRequest('DeleteAccountCommand');
   const [creatingNewTx, setCreatingNewTx] = useState(false);
@@ -52,7 +52,17 @@ const AccountTransactions = () => {
         <>
           {connection.connectionStatus?.status === 'connected' &&
           account.linkedOpenBankingAccount ? (
-            <Button variant="subtle">Unlink</Button>
+            <>
+              <Button variant="subtle">Unlink</Button>
+              <Button
+                variant="subtle"
+                onClick={async () => {
+                  await syncAccount();
+                }}
+              >
+                Sync
+              </Button>
+            </>
           ) : (
             <LinkAccountButton
               onPick={async (obAccount) => {
@@ -76,7 +86,7 @@ const AccountTransactions = () => {
         </>
       }
     >
-      <Loader data={maybeResponse}>
+      <Loader data={transactions}>
         {(response) => {
           return response.transactions.length > 0 || creatingNewTx ? (
             <TransactionsTable

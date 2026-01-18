@@ -12,7 +12,7 @@ export const testTransactionRepository = (
     accountRepo: IWriteRepository<Account>;
   }>
 ) => {
-  it('allows you to save and retrieve individual transactions', async () => {
+  it('allows you to check the existence of keys', async () => {
     const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
 
     const ben = User.reconstitute({
@@ -55,10 +55,239 @@ export const testTransactionRepository = (
       amount: 1000,
       date: new Date(),
       payee: 'foo',
+      pending: true,
+      valueDate: undefined,
+      currency: 'GBP',
     });
 
     const transaction2 = Transaction.reconstitute({
+      pending: true,
+      valueDate: undefined,
+      currency: 'GBP',
       ownerId: 'ben',
+      id: 'biz',
+      accountId: 'bop',
+      amount: 100,
+      date: new Date(),
+      payee: 'foo',
+    });
+
+    await unitOfWork.atomically(async () => {
+      await writer.save(transaction1);
+      await writer.save(transaction2);
+    });
+
+    const first = await unitOfWork.atomically(async () => {
+      return await repo.exists('foo');
+    });
+
+    expect(first).toEqual(true);
+    const second = await unitOfWork.atomically(async () => {
+      return await repo.exists('superman');
+    });
+
+    expect(second).toEqual(true);
+  });
+  it('allows you to bulk fetch items by id', async () => {
+    const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
+
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+    const barAccount = Account.reconstitute({
+      id: 'bar',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    const bopAccount = Account.reconstitute({
+      id: 'bop',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+      await accountRepo.save(barAccount);
+      await accountRepo.save(bopAccount);
+    });
+
+    const transaction1 = Transaction.reconstitute({
+      valueDate: undefined,
+      ownerId: 'ben',
+      id: 'foo',
+      accountId: 'bar',
+      amount: 1000,
+      date: new Date(),
+      payee: 'foo',
+      pending: true,
+      currency: 'GBP',
+    });
+
+    const transaction2 = Transaction.reconstitute({
+      valueDate: undefined,
+      pending: true,
+      currency: 'GBP',
+      ownerId: 'ben',
+      id: 'biz',
+      accountId: 'bop',
+      amount: 100,
+      date: new Date(),
+      payee: 'foo',
+    });
+
+    await unitOfWork.atomically(async () => {
+      await writer.save(transaction1);
+      await writer.save(transaction2);
+    });
+
+    const result = await unitOfWork.atomically(async () => {
+      return await repo.getMany(['foo', 'biz', 'superman']);
+    });
+
+    expect(result).toEqual([transaction1, transaction2]);
+  });
+
+  it('allows you to bulk check the existence of keys', async () => {
+    const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
+
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+    const barAccount = Account.reconstitute({
+      id: 'bar',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    const bopAccount = Account.reconstitute({
+      id: 'bop',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+      await accountRepo.save(barAccount);
+      await accountRepo.save(bopAccount);
+    });
+
+    const transaction1 = Transaction.reconstitute({
+      valueDate: undefined,
+      ownerId: 'ben',
+      id: 'foo',
+      accountId: 'bar',
+      amount: 1000,
+      date: new Date(),
+      payee: 'foo',
+      pending: true,
+      currency: 'GBP',
+    });
+
+    const transaction2 = Transaction.reconstitute({
+      valueDate: undefined,
+      pending: true,
+      currency: 'GBP',
+      ownerId: 'ben',
+      id: 'biz',
+      accountId: 'bop',
+      amount: 100,
+      date: new Date(),
+      payee: 'foo',
+    });
+
+    await unitOfWork.atomically(async () => {
+      await writer.save(transaction1);
+      await writer.save(transaction2);
+    });
+
+    const result = await unitOfWork.atomically(async () => {
+      return await repo.existsAll(['superman', 'foo']);
+    });
+
+    expect(result).toEqual([
+      { id: 'superman', exists: false },
+      { id: 'foo', exists: true },
+    ]);
+  });
+
+  it('allows you to save and retrieve individual transactions', async () => {
+    const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
+
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+    const barAccount = Account.reconstitute({
+      id: 'bar',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    const bopAccount = Account.reconstitute({
+      id: 'bop',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+      await accountRepo.save(barAccount);
+      await accountRepo.save(bopAccount);
+    });
+
+    const transaction1 = Transaction.reconstitute({
+      valueDate: undefined,
+      ownerId: 'ben',
+      id: 'foo',
+      accountId: 'bar',
+      amount: 1000,
+      date: new Date(),
+      payee: 'foo',
+      pending: true,
+      currency: 'GBP',
+    });
+
+    const transaction2 = Transaction.reconstitute({
+      pending: true,
+      currency: 'GBP',
+      ownerId: 'ben',
+      valueDate: new Date(),
       id: 'biz',
       accountId: 'bop',
       amount: 100,
@@ -131,6 +360,9 @@ export const testTransactionRepository = (
     });
 
     const transaction1 = Transaction.reconstitute({
+      valueDate: undefined,
+      pending: true,
+      currency: 'GBP',
       ownerId: 'ben',
       id: 'foo',
       accountId: 'bar',
@@ -142,6 +374,9 @@ export const testTransactionRepository = (
 
     const transaction2 = Transaction.reconstitute({
       ownerId: 'ben',
+      pending: true,
+      currency: 'GBP',
+      valueDate: undefined,
       id: 'biz',
       accountId: 'bop',
       amount: 100,
@@ -217,7 +452,10 @@ export const testTransactionRepository = (
     });
 
     const fredTransaction = Transaction.reconstitute({
+      valueDate: undefined,
       id: 'blop',
+      pending: true,
+      currency: 'GBP',
       accountId: 'bip',
       payee: 'foo',
       amount: 100,
@@ -227,6 +465,9 @@ export const testTransactionRepository = (
 
     const accountTransactions = [
       Transaction.reconstitute({
+        valueDate: undefined,
+        pending: true,
+        currency: 'GBP',
         id: 'foo',
         payee: 'foo',
         accountId: 'bar',
@@ -237,6 +478,9 @@ export const testTransactionRepository = (
 
       Transaction.reconstitute({
         id: 'biz',
+        pending: false,
+        currency: 'GBP',
+        valueDate: undefined,
         payee: 'foo',
         accountId: 'bar',
         amount: 100,
@@ -245,10 +489,13 @@ export const testTransactionRepository = (
       }),
 
       Transaction.reconstitute({
+        valueDate: undefined,
         id: 'bing',
         accountId: 'bar',
         payee: 'foo',
         amount: 100,
+        pending: false,
+        currency: 'GBP',
         ownerId: 'ben',
         date: new Date(),
       }),
@@ -257,6 +504,9 @@ export const testTransactionRepository = (
     const separateAccountTransaction = Transaction.reconstitute({
       id: 'barp2',
       accountId: 'bar',
+      pending: false,
+      valueDate: undefined,
+      currency: 'GBP',
       payee: 'foo',
       ownerId: 'ben',
       amount: 100,
@@ -270,7 +520,10 @@ export const testTransactionRepository = (
 
       await writer.saveAll([
         Transaction.reconstitute({
+          valueDate: undefined,
           ownerId: 'ben',
+          currency: 'GBP',
+          pending: true,
           id: 'barp',
           accountId: 'bof',
           amount: 100,
@@ -279,9 +532,12 @@ export const testTransactionRepository = (
         }),
 
         Transaction.reconstitute({
+          valueDate: undefined,
           ownerId: 'ben',
           id: 'burpie',
           accountId: 'bof',
+          currency: 'GBP',
+          pending: true,
           amount: 100,
           payee: 'foo',
           date: new Date(),
@@ -368,23 +624,32 @@ export const testTransactionRepository = (
     const accountTransactions = [
       Transaction.reconstitute({
         ownerId: 'fred',
+        currency: 'GBP',
+        pending: true,
         id: 'burpie',
         accountId: 'bip',
         amount: 100,
+        valueDate: undefined,
         payee: 'foo',
         date: new Date(),
       }),
       Transaction.reconstitute({
         id: 'foo',
+        currency: 'GBP',
+        pending: true,
         payee: 'foo',
         accountId: 'bar',
         amount: 1000,
+        valueDate: undefined,
         ownerId: 'ben',
         date: new Date(),
       }),
       Transaction.reconstitute({
         id: 'biz',
         payee: 'foo',
+        currency: 'GBP',
+        valueDate: undefined,
+        pending: true,
         accountId: 'bar',
         amount: 100,
         date: new Date(),
@@ -394,8 +659,11 @@ export const testTransactionRepository = (
         id: 'bing',
         accountId: 'bar',
         payee: 'foo',
+        currency: 'GBP',
+        pending: true,
         amount: 100,
         date: new Date(),
+        valueDate: undefined,
         ownerId: 'ben',
       }),
     ];
@@ -405,9 +673,12 @@ export const testTransactionRepository = (
 
       const separateAccountTransaction = Transaction.reconstitute({
         id: 'barp2',
+        currency: 'GBP',
+        pending: true,
         accountId: 'bar',
         payee: 'foo',
         amount: 100,
+        valueDate: undefined,
         date: new Date(),
         ownerId: 'ben',
       });
@@ -416,18 +687,24 @@ export const testTransactionRepository = (
 
       await writer.saveAll([
         Transaction.reconstitute({
+          currency: 'GBP',
+          pending: true,
           ownerId: 'ben',
           id: 'barp',
           accountId: 'bof',
           amount: 100,
+          valueDate: undefined,
           payee: 'foo',
           date: new Date(),
         }),
 
         Transaction.reconstitute({
+          currency: 'GBP',
+          pending: true,
           ownerId: 'ben',
           id: 'burpie-2',
           accountId: 'bof',
+          valueDate: undefined,
           amount: 100,
           payee: 'foo',
           date: new Date(),

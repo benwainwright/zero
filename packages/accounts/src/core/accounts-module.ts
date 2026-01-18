@@ -22,6 +22,7 @@ import {
   CheckBankConnectionStatusCommandHandler,
   AuthoriseBankCommandHandler,
   GetOpenBankingAccountDetailsCommandHandler,
+  SyncTransactionsCommandHandler,
 } from '@services';
 
 export const accountsModule: IModule<
@@ -36,6 +37,7 @@ export const accountsModule: IModule<
   bind('RequestHandler').to(CreateTransactionCommandHandler);
   bind('RequestHandler').to(UpdateTransactionCommandHandler);
   bind('RequestHandler').to(DeleteTransactionCommandHandler);
+  bind('RequestHandler').to(SyncTransactionsCommandHandler);
   bind('RequestHandler').to(GetOpenBankingAccountDetailsCommandHandler);
   bind('RequestHandler').to(UpdateCategoryCommandHandler);
   bind('RequestHandler').to(LinkAccountCommandHandler);

@@ -1,12 +1,16 @@
-import { inject } from '@core';
-import type { IOpenBankingClient } from '@ports';
+import { inject, type AccountsEvents } from '@core';
+import type { IOpenBankingClient, ITransactionRepository } from '@ports';
 import type { AccountsCommands, OpenBankingTokenManager } from '@services';
 import {
   AbstractRequestHandler,
+  type IAllEvents,
+  type IEventBus,
   type IRequestContext,
+  type IWriteRepository,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
 import type { ILogger } from '@zero/bootstrap';
+import { Transaction, type IOpenBankingTransaction } from '@zero/domain';
 
 export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
   AccountsCommands,
@@ -19,8 +23,17 @@ export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
     @inject('OpenBankingTokenManager')
     private readonly tokens: OpenBankingTokenManager,
 
+    @inject('TransactionRepository')
+    private readonly tansactions: ITransactionRepository,
+
+    @inject('TransactionWriter')
+    private readonly transactionWriter: IWriteRepository<Transaction>,
+
     @inject('GrantService')
     private readonly grants: IGrantManager,
+
+    @inject('EventBus')
+    private readonly events: IEventBus<IAllEvents & AccountsEvents>,
 
     @inject('Logger')
     logger: ILogger
@@ -37,13 +50,74 @@ export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
     params: { accountId: string };
     response: undefined;
   }>): Promise<undefined> {
-    this.grants.assertLogin(authContext);
-    this.grants.requiresNoPermissions();
-    const token = await this.tokens.getToken(authContext.id);
-    const transactions = await this.bank.getAccountTransactions(
-      token,
-      accountId
-    );
+    this.events.emit('SyncAccountStarted', { accountId });
+    try {
+      this.grants.assertLogin(authContext);
+      this.grants.requiresNoPermissions();
+      const token = await this.tokens.getToken(authContext.id);
+
+      const { booked, pending } = await this.bank.getAccountTransactions(
+        token,
+        accountId
+      );
+
+      const allFetchedBankTransactions = [
+        ...booked.map((transaction) => ({ ...transaction, pending: false })),
+        ...pending.map((transaction) => ({ ...transaction, pending: true })),
+      ];
+
+      const existingTransactions = await this.tansactions.getMany(
+        allFetchedBankTransactions
+          .map((transaction) => transaction.transactionId)
+          .flatMap((id) => (id ? [id] : []))
+      );
+
+      const allBankTransactionEntries = allFetchedBankTransactions.map(
+        (transaction) => [transaction.transactionId ?? '', transaction] as const
+      );
+
+      const fetchedTransactionsMap = new Map<
+        string,
+        IOpenBankingTransaction & { pending: boolean }
+      >(allBankTransactionEntries);
+
+      const existingTransactionMap = new Map<string, Transaction>(
+        existingTransactions.map((transaction) => [transaction.id, transaction])
+      );
+
+      const newTransactions = allFetchedBankTransactions
+        .filter(
+          (transaction) =>
+            transaction.transactionId &&
+            !existingTransactionMap.has(transaction.transactionId)
+        )
+        .map((newTransaction) => {
+          const { pending, ...fetchedTx } = newTransaction;
+          return Transaction.createFromObTransaction(
+            fetchedTx,
+            pending,
+            accountId,
+            authContext.id
+          );
+        });
+
+      existingTransactionMap.values().forEach((transaction) => {
+        const found = fetchedTransactionsMap.get(transaction.id);
+        if (!found) {
+          return undefined;
+        }
+        const { pending, ...fetchedTx } = found;
+        return transaction.updateFromObTransaction(fetchedTx, pending);
+      });
+
+      await this.transactionWriter.updateAll(
+        Array.from(existingTransactionMap.values())
+      );
+
+      await this.transactionWriter.saveAll(newTransactions);
+    } finally {
+      this.events.emit('SyncAccountFinished', { accountId });
+    }
   }
 
   public override readonly name = 'SyncTransactionsCommandHandler';

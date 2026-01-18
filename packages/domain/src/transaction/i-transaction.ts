@@ -1,4 +1,5 @@
 import { Category, categorySchema } from '@category';
+import { currencySchema } from './currency-schema.ts';
 import z from 'zod';
 
 export type ITransaction = z.output<typeof transactionSchema>;
@@ -8,13 +9,14 @@ export const transactionSchema = z.object({
   accountId: z.string(),
   ownerId: z.string(),
   pending: z.boolean(),
+
   date: z
     .union([z.date(), z.string()])
     .transform((date) => (typeof date === 'string' ? new Date(date) : date)),
 
   payee: z.string(),
   amount: z.number(),
-  currency: z.union([z.literal('GBP')]),
+  currency: currencySchema,
   category: categorySchema
     .transform((item) => Category.reconstitute(item))
     .optional(),

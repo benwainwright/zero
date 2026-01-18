@@ -7,3 +7,4 @@ export {
   openBankingTransactionSchema,
   type IOpenBankingTransaction,
 } from './open-banking-transaction-schema.ts';
+export { currencySchema } from './currency-schema.ts';

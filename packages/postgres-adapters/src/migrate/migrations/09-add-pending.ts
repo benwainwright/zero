@@ -3,10 +3,10 @@ import type { Kysely } from 'kysely';
 export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .alterTable('transactions')
-    .addColumn('currency', 'text', (ob) => ob.notNull())
+    .addColumn('pending', 'boolean', (oc) => oc.notNull())
     .execute();
 };
 
 export const down = async (db: Kysely<unknown>) => {
-  await db.schema.alterTable('transactions').dropColumn('currency').execute();
+  await db.schema.alterTable('transactions').dropColumn('pending').execute();
 };

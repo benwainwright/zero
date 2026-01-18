@@ -1,7 +1,7 @@
 import z from 'zod';
 
 const sharedTransactionItems = {
-  transactionId: z.string().optional,
+  transactionId: z.string().optional(),
 
   bookingDate: z
     .string()
@@ -10,7 +10,7 @@ const sharedTransactionItems = {
 
   transactionAmount: z.object({
     currency: z.string(),
-    amount: z.number(),
+    amount: z.string(),
   }),
 
   valueDate: z

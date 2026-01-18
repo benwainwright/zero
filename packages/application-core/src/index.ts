@@ -11,6 +11,7 @@ export {
   type ISingleItemStore,
   type IEventEmitter,
   type IUnitOfWork,
+  type IPresenceRepository,
   type IStringHasher,
   type IUUIDGenerator,
   type IEventListener,
@@ -27,6 +28,7 @@ export {
   type IObjectStorage,
   type IListRepository,
   type ICountableRepository,
+  type IBulkGetRepository,
   type ISyncDetailsRepository,
 } from '@ports';
 

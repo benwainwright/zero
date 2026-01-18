@@ -1,6 +1,8 @@
-import { DomainModel, type IOwnedBy } from '@core';
+import { DomainError, DomainModel, type IOwnedBy } from '@core';
 import { transactionSchema, type ITransaction } from './i-transaction.ts';
 import type { Category } from '@category';
+import { currencySchema, type ICurrency } from './currency-schema.ts';
+import type { IOpenBankingTransaction } from '@transaction';
 
 export class Transaction
   extends DomainModel<ITransaction>
@@ -40,7 +42,7 @@ export class Transaction
     return this._date;
   }
 
-  private _currency: 'GBP';
+  private _currency: ICurrency;
   public get currency() {
     return this._currency;
   }
@@ -91,6 +93,73 @@ export class Transaction
       event: 'TransactionUpdated',
       data: { old, new: Transaction.reconstitute(this) },
     });
+  }
+
+  private static getConfigFromObTransaction(
+    transaction: IOpenBankingTransaction,
+    pending: boolean,
+    accountId: string,
+    ownerId: string
+  ) {
+    const date = transaction.bookingDate ?? transaction.valueDate;
+
+    if (!date) {
+      throw new DomainError(`Tried to create a transaction without a date`);
+    }
+
+    const id = transaction.transactionId;
+    const amount = Number.parseFloat(transaction.transactionAmount.amount);
+
+    const creditorName =
+      'creditorName' in transaction ? transaction.creditorName : undefined;
+    const debtorName =
+      'debtorName' in transaction ? transaction.debtorName : undefined;
+
+    const payee =
+      amount < 0 ? creditorName ?? debtorName : debtorName ?? creditorName;
+
+    return {
+      pending,
+      date: new Date(date),
+      id: id ?? '',
+      amount,
+      currency: currencySchema.parse(
+        transaction.transactionAmount.currency ?? 'GBP'
+      ),
+      payee: payee ?? '',
+      accountId,
+      ownerId,
+    };
+  }
+
+  public updateFromObTransaction(
+    transaction: IOpenBankingTransaction,
+    pending: boolean
+  ) {
+    this.update(
+      Transaction.getConfigFromObTransaction(
+        transaction,
+        pending,
+        this.accountId,
+        this.ownerId
+      )
+    );
+  }
+
+  public static createFromObTransaction(
+    transaction: IOpenBankingTransaction,
+    pending: boolean,
+    accountId: string,
+    ownerId: string
+  ): Transaction {
+    return Transaction.create(
+      Transaction.getConfigFromObTransaction(
+        transaction,
+        pending,
+        accountId,
+        ownerId
+      )
+    );
   }
 
   public static create(config: ITransaction) {

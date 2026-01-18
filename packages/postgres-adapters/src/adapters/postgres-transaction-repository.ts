@@ -1,7 +1,7 @@
 import { inject, type Transactions } from '@core';
-import { Category, Transaction } from '@zero/domain';
+import { Category, currencySchema, Transaction } from '@zero/domain';
 import type { IKyselyTransactionManager } from '@zero/kysely-shared';
-import type { Selectable } from 'kysely';
+import { type Selectable } from 'kysely';
 import type { DB } from '../core/database.ts';
 import type { IWriteRepository } from '@zero/application-core';
 import { BaseRepo } from './base-repo.ts';
@@ -16,6 +16,52 @@ export class PostgresTransactionRepository
     private readonly database: IKyselyTransactionManager<DB>
   ) {
     super();
+  }
+  public async getMany(ids: string[]): Promise<Transaction[]> {
+    const tx = this.database.transaction();
+
+    const result = await tx
+      .selectFrom('transactions')
+      .selectAll()
+      .select(['transactions.id as id', 'transactions.ownerId as ownerId'])
+      .where((eb) => eb.or(ids.map((id) => eb('transactions.id', '=', id))))
+      .leftJoin('categories', 'categories.id', 'transactions.categoryId')
+      .select([
+        'name as categoryName',
+        'description as categoryDescription',
+        'categories.id as categoryId',
+        'categories.ownerId as categoryOwnerId',
+      ])
+      .execute();
+
+    return result.map((row) => this.mapRaw(row));
+  }
+
+  public async exists(id: string): Promise<boolean> {
+    const tx = this.database.transaction();
+
+    const result = tx
+      .selectFrom('transactions')
+      .select('id')
+      .where('id', '=', id)
+      .executeTakeFirst();
+
+    return Boolean(result);
+  }
+
+  public async existsAll(
+    ids: string[]
+  ): Promise<{ id: string; exists: boolean }[]> {
+    const tx = this.database.transaction();
+    const existingRows = await tx
+      .selectFrom('transactions')
+      .select('id')
+      .where((eb) => eb.or(ids.map((id) => eb('id', '=', id))))
+      .execute();
+
+    const rowMap = new Set<string>(existingRows.map((row) => row.id));
+
+    return ids.map((id) => ({ id, exists: rowMap.has(id) }));
   }
 
   public async update(transaction: Transaction): Promise<Transaction> {
@@ -59,6 +105,9 @@ export class PostgresTransactionRepository
     return Transaction.reconstitute({
       ...raw,
       date: new Date(raw.date),
+      valueDate: raw.valueDate ? new Date(raw.valueDate) : undefined,
+      pending: raw.pending ?? undefined,
+      currency: currencySchema.parse(raw.currency),
       category,
     });
   }

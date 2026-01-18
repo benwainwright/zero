@@ -2,6 +2,7 @@ export {
   CreateAccountCommandHandler,
   LinkAccountCommandHandler,
   DeleteAccountCommandHandler,
+  SyncTransactionsCommandHandler,
   DeleteCategoryCommandHandler,
   CheckBankConnectionStatusCommandHandler,
   UpdateCategoryCommandHandler,
