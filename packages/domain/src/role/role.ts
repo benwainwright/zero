@@ -35,6 +35,17 @@ export class Role extends DomainModel<IRole> {
     return this._name;
   }
 
+  public update(config: IRole) {
+    const old = Role.reconstitute(this);
+    this._name = config.name ?? this._name;
+    this._permissions = config.permissions ?? this._permissions;
+    this._routes = config.routes ?? this._routes;
+    this.raiseEvent({
+      event: 'RoleUpdated',
+      data: { old, new: Role.reconstitute(this) },
+    });
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public override toObject(_config?: { secure: boolean }): {
     id: string;
