@@ -35,7 +35,7 @@ export class Role extends DomainModel<IRole> {
     return this._name;
   }
 
-  public update(config: IRole) {
+  public update(config: Partial<IRole>) {
     const old = Role.reconstitute(this);
     this._name = config.name ?? this._name;
     this._permissions = config.permissions ?? this._permissions;
