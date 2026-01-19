@@ -1,38 +1,19 @@
 import z from 'zod';
 
-const sharedTransactionItems = {
+export const openBankingTransactionSchema = z.object({
   transactionId: z.string().optional(),
 
-  bookingDate: z
-    .string()
-    .optional()
-    .transform((item) => (item ? new Date(item) : item)),
+  bookingDate: z.string().optional(),
 
   transactionAmount: z.object({
     currency: z.string(),
     amount: z.string(),
   }),
 
-  valueDate: z
-    .string()
-    .optional()
-    .transform((item) => (item ? new Date(item) : item)),
-};
-
-export const openBankingCreditTransactionSchema = z.object({
+  valueDate: z.string().optional(),
   creditorName: z.string().optional(),
-  ...sharedTransactionItems,
-});
-
-export const openBankingDebitTransactionSchema = z.object({
   debtorName: z.string().optional(),
-  ...sharedTransactionItems,
 });
-
-export const openBankingTransactionSchema = z.union([
-  openBankingCreditTransactionSchema,
-  openBankingDebitTransactionSchema,
-]);
 
 export type IOpenBankingTransaction = z.output<
   typeof openBankingTransactionSchema

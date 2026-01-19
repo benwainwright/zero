@@ -1,34 +1,30 @@
-// Project tasks configuration. See https://zed.dev/docs/tasks for documentation.
-//
-// Example:
 [
   {
-    "label": "vitest4 file test",
-    "command": "$ZED_CUSTOM_TYPESCRIPT_RUNNER",
+    "label": "test $NX_SYMBOL",
+    "command": "NX_TUI=false pnpm exec nx run $(node ./get-file-package-name.js $ZED_FILE):test",
+    "reveal": "no_focus",
     "args": [
-      "exec",
-      "--",
-      "vitest",
-      "run",
-      "--no-file-parallelism",
-      "$ZED_FILE"
-    ],
-    "cwd": "$ZED_CUSTOM_TYPESCRIPT_VITEST_PACKAGE_PATH"
-  },
-  {
-    "label": "vitest4 test $ZED_SYMBOL",
-    "command": "$ZED_CUSTOM_TYPESCRIPT_RUNNER",
-    "args": [
-      "exec",
-      "--",
-      "vitest",
-      "run",
-      "--no-file-parallelism",
+      "$ZED_FILENAME",
+      "--coverage",
+      "false",
+      "--hideSkippedTests",
+      "true",
       "--testNamePattern",
-      "\"$ZED_CUSTOM_TYPESCRIPT_VITEST_TEST_NAME\"",
-      "$ZED_FILE"
+      "\"$ZED_SYMBOL\"",
     ],
     "tags": ["ts-test", "js-test", "tsx-test"],
-    "cwd": "$ZED_CUSTOM_TYPESCRIPT_VITEST_PACKAGE_PATH"
-  }
+    "show_command": false,
+    "show_summary": false
+  },
+  {
+    "label": "Run tests in current package",
+    "command": "NX_TUI=false pnpm exec nx run $(node ./get-file-package-name.js $ZED_FILE):test",
+    "show_command": false,
+    "show_summary": false,
+    "reveal": "no_focus",
+    "args": [
+      "--coverage",
+      "false",
+    ],
+  },
 ]

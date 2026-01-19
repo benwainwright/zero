@@ -1,0 +1,26 @@
+[
+  {
+    "request": "launch",
+    "label": "Debug $ZED_SYMBOL",
+    "adapter": "JavaScript",
+    "program": "pnpm",
+    "env": {
+      "NX_TUI": "false"
+    },
+    "args": [
+      "exec",
+      "nx",
+      "run",
+      "$(node",
+      "./get-file-package-name.js",
+      "$ZED_FILE):test",
+      "$ZED_FILENAME",
+      "--coverage",
+      "false",
+      "--hideSkippedTests",
+      "true",
+      "--testNamePattern",
+      "\"$ZED_SYMBOL\"",
+    ]
+  }
+]
