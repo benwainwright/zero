@@ -37,7 +37,8 @@ export class SessionIdHandler {
     } else {
       const newId = this.uuidGenerator.v7();
       headers.push(
-        `Set-Cookie: ${this.key}=${newId}; HttpOnly; Secure; ${this.cookieDomain.value}`
+        `Set-Cookie: ${this.key}=${newId}; HttpOnly; Secure; domain=${await this
+          .cookieDomain.value}`
       );
       this.sessionIds.set(request, newId);
     }

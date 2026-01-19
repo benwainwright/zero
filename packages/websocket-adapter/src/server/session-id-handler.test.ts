@@ -1,4 +1,4 @@
-import { type ILogger } from '@zero/bootstrap';
+import { ConfigValue, type ILogger } from '@zero/bootstrap';
 import { mock } from 'vitest-mock-extended';
 import { SessionIdHandler } from './session-id-handler.ts';
 import { IncomingMessage } from 'node:http';
@@ -7,7 +7,7 @@ import { type IUUIDGenerator } from '@types';
 
 describe('session id handler', () => {
   describe('set session id', () => {
-    it('does nothing to the headers array if the cookie is already there', () => {
+    it('does nothing to the headers array if the cookie is already there', async () => {
       const logger = mock<ILogger>();
       const uuidGenerator = mock<IUUIDGenerator>();
 
@@ -15,7 +15,7 @@ describe('session id handler', () => {
         logger,
         'key-session',
         uuidGenerator,
-        mock()
+        new ConfigValue(Promise.resolve('localhost'))
       );
 
       const headers: string[] = [];
@@ -26,19 +26,19 @@ describe('session id handler', () => {
         },
       });
 
-      handler.setSesionId(headers, request);
+      await handler.setSesionId(headers, request);
 
       expect(headers).toEqual([]);
     });
 
-    it('adds the set cookie header if it is not already present or a different cookies is present', () => {
+    it('adds the set cookie header if it is not already present or a different cookies is present', async () => {
       const logger = mock<ILogger>();
       const uuidGenerator = mock<IUUIDGenerator>();
       const handler = new SessionIdHandler(
         logger,
         'key-session',
         uuidGenerator,
-        mock()
+        new ConfigValue(Promise.resolve('localhost'))
       );
 
       const headers: string[] = [];
@@ -51,14 +51,16 @@ describe('session id handler', () => {
 
       when(uuidGenerator.v7).calledWith().thenReturn('foo-id');
 
-      handler.setSesionId(headers, request);
+      await handler.setSesionId(headers, request);
 
-      expect(headers).toEqual(['Set-Cookie: key-session=foo-id; HttpOnly;']);
+      expect(headers).toEqual([
+        'Set-Cookie: key-session=foo-id; HttpOnly; Secure; domain=localhost',
+      ]);
     });
   });
 
   describe('get session id', () => {
-    it('restores previously saved session id', () => {
+    it('restores previously saved session id', async () => {
       const logger = mock<ILogger>();
       const uuidGenerator = mock<IUUIDGenerator>();
 
@@ -66,7 +68,7 @@ describe('session id handler', () => {
         logger,
         'key-session',
         uuidGenerator,
-        mock()
+        new ConfigValue(Promise.resolve('localhost'))
       );
 
       const headers: string[] = [];
@@ -77,7 +79,7 @@ describe('session id handler', () => {
         },
       });
 
-      handler.setSesionId(headers, request);
+      await handler.setSesionId(headers, request);
       const id = handler.getSessionId(request);
       expect(id).toEqual('foo');
     });
@@ -90,7 +92,7 @@ describe('session id handler', () => {
         logger,
         'key-session',
         uuidGenerator,
-        mock()
+        new ConfigValue(Promise.resolve('localhost'))
       );
 
       const request = mock<IncomingMessage>({
