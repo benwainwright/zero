@@ -138,6 +138,8 @@ export class GocardlessClient
       }),
     });
 
+    console.log({ response });
+
     return response.transactions;
   }
 
@@ -162,7 +164,7 @@ export class GocardlessClient
     token: OauthToken
   ): Promise<IPossbileInstitution[]> {
     return await this.client.get({
-      path: 'institutions',
+      path: 'institutions/',
       queryString: {
         country: 'GB',
       },

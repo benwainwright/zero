@@ -237,6 +237,7 @@ export class HttpClient {
 
     this.logger.silly(JSON.stringify(data, null, 2), LOG_CONTEXT);
 
-    return responseSchema.parse(data);
+    const result = responseSchema.parse(data);
+    return result;
   }
 }

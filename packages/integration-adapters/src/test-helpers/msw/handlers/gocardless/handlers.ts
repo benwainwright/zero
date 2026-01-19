@@ -9,10 +9,11 @@ export const handlers = [
     ({ params, request }) => {
       console.log('HERE');
       const invalidResponse = invalidRequestResponse(request);
-
+      console.log('TEST');
       if (invalidResponse) {
         return invalidResponse;
       }
+      console.log('TEST-1');
 
       const { accountId } = params;
 
@@ -23,6 +24,7 @@ export const handlers = [
           status_code: 404,
         });
       }
+      console.log('TEST-2');
 
       if (!accountId) {
         return HttpResponse.json(

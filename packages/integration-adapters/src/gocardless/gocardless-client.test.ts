@@ -101,7 +101,7 @@ describe('the gocardless client', () => {
       expect(result).toEqual({
         status: 'connected',
         logo: mockGocardlessData.mockInstututionResponse.logo,
-        bankname: mockGocardlessData.mockInstututionResponse.name,
+        name: mockGocardlessData.mockInstututionResponse.name,
       });
     });
   });
@@ -137,6 +137,8 @@ describe('the gocardless client', () => {
         newToken,
         mockGocardlessData.mockAccountId
       );
+
+      console.log(JSON.stringify({ txes }, null, 2));
 
       expect(txes).toEqual(mockGocardlessData.mockTransactions.transactions);
     });
@@ -179,7 +181,7 @@ describe('the gocardless client', () => {
   });
 
   describe('getAccounts', () => {
-    it.only('gets the details of the requisition accounts', async () => {
+    it('gets the details of the requisition accounts', async () => {
       const storage = mock<IObjectStorage>();
 
       const client = new GocardlessClient(
