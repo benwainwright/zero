@@ -3,11 +3,10 @@ import { Role, permissionSchema, routesSchema } from '@zero/domain';
 
 import { inject, type DB } from '@core';
 import z from 'zod';
-import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { BaseRepo, type IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import type { Roles } from '../core/database.ts';
 import type { IWriteRepository } from '@zero/application-core';
-import { BaseRepo } from './base-repo.ts';
 
 export class SqliteRoleRepository
   extends BaseRepo<Role, [string]>

@@ -7,7 +7,7 @@ import type { IRoute } from './i-route.ts';
 export class Role extends DomainModel<IRole> {
   public static key = 'role';
   public override readonly id: string;
-  private readonly _name: string;
+  private _name: string;
   private _permissions: IPermission[];
   private _routes: IRoute[];
 

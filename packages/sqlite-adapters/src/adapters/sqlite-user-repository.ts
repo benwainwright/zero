@@ -1,10 +1,9 @@
 import { Role, User, permissionSchema, routesSchema } from '@zero/domain';
 import { inject, type DB } from '@core';
 import z from 'zod';
-import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { BaseRepo, type IKyselyTransactionManager } from '@zero/kysely-shared';
 import { sql, type Selectable } from 'kysely';
 import type { Roles, Users } from '../core/database.ts';
-import { BaseRepo } from './base-repo.ts';
 import type { IWriteRepository } from '@zero/application-core';
 import type { IUserRepository } from '@zero/auth';
 

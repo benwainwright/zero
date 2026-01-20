@@ -63,6 +63,109 @@ export const testUserAndRoleRepository = (
     expect(roles).toEqual(expect.arrayContaining([userRole, adminRole]));
   });
 
+  it('allows you to bulk update roles', async () => {
+    const { unitOfWork, roleRepo, roleWriter } = await create();
+
+    const adminRole = Role.reconstitute({
+      id: 'admin',
+      name: 'Administrator',
+      routes: ['all'],
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['all'],
+        },
+      ],
+    });
+
+    const userRole = Role.reconstitute({
+      id: 'user',
+      name: 'User',
+      routes: ['home'],
+      permissions: [
+        {
+          resource: '*',
+          action: 'ALLOW',
+          capabilities: ['self:update', 'self:read'],
+        },
+      ],
+    });
+
+    await unitOfWork.atomically(async () => {
+      await roleWriter.save(userRole);
+      await roleWriter.save(adminRole);
+    });
+
+    userRole.update({
+      name: 'bar',
+    });
+
+    adminRole.update({
+      name: 'baz',
+    });
+
+    await unitOfWork.atomically(async () => {
+      await roleWriter.updateAll([userRole, adminRole]);
+    });
+
+    const returnedUser = await unitOfWork.atomically(async () =>
+      roleRepo.get(userRole.id)
+    );
+    expect(returnedUser?.name).toEqual('bar');
+
+    const returnedAdmin = await unitOfWork.atomically(async () =>
+      roleRepo.get(adminRole.id)
+    );
+    expect(returnedAdmin?.name).toEqual('baz');
+  });
+
+  it('allows you to bulk update users', async () => {
+    const { unitOfWork, userRepo, userWriter } = await create();
+
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash: '',
+      roles: [],
+    });
+
+    const fred = User.reconstitute({
+      email: 'a@b.c',
+      id: 'fred',
+      passwordHash: '',
+      roles: [],
+    });
+
+    await unitOfWork.atomically(async () => {
+      await userWriter.save(ben);
+      await userWriter.save(fred);
+    });
+
+    ben.update({
+      email: 'z@b.c',
+    });
+
+    fred.update({
+      email: 'h@j.c',
+    });
+
+    await unitOfWork.atomically(async () => {
+      await userWriter.updateAll([ben, fred]);
+    });
+
+    const returnedBen = await unitOfWork.atomically(async () =>
+      userRepo.get(ben.id)
+    );
+    expect(returnedBen?.email).toEqual('z@b.c');
+
+    const returnedFred = await unitOfWork.atomically(async () =>
+      userRepo.get(fred.id)
+    );
+    expect(returnedFred).toBeDefined();
+    expect(returnedFred?.email).toEqual('h@j.c');
+  });
+
   it('can independently save and retreive roles', async () => {
     const { unitOfWork, roleRepo, roleWriter } = await create();
 

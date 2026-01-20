@@ -5,11 +5,9 @@ import * as z from 'zod';
 import { eventStager, type IApplicationTypes } from '@zero/application-core';
 import {
   SqliteAccountsRepository,
-  SqliteBankConnectionRepository,
   SqliteCategoryRepository,
   SqliteOauthTokenRepository,
   SqliteRoleRepository,
-  SqliteSyncDetailsRepository,
   SqliteTransactionRepository,
   SqliteUserRepository,
 } from '@adapters';
@@ -57,10 +55,6 @@ export const sqliteAdaptersModule: IModule<
   bind('AccountWriter').to(SqliteAccountsRepository);
   decorate('AccountWriter', stager('AccountWriter'));
 
-  bind('BankConnectionRepository').to(SqliteBankConnectionRepository);
-  bind('BankConnectionWriter').to(SqliteBankConnectionRepository);
-  decorate('BankConnectionWriter', stager('BankConnectionWriter'));
-
   bind('TransactionRepository').to(SqliteTransactionRepository);
   bind('TransactionWriter').to(SqliteTransactionRepository);
   decorate('TransactionWriter', stager('TransactionWriter'));
@@ -68,10 +62,6 @@ export const sqliteAdaptersModule: IModule<
   bind('OauthTokenRepository').to(SqliteOauthTokenRepository);
   bind('OauthTokenWriter').to(SqliteOauthTokenRepository);
   decorate('OauthTokenWriter', stager('OauthTokenWriter'));
-
-  bind('SyncDetailsRepository').to(SqliteSyncDetailsRepository);
-  bind('SyncDetailsWriter').to(SqliteSyncDetailsRepository);
-  decorate('SyncDetailsWriter', stager('SyncDetailsWriter'));
 
   bind('CategoryRepository').to(SqliteCategoryRepository);
   bind('CategoryWriter').to(SqliteCategoryRepository);

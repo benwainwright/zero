@@ -28,6 +28,11 @@ export const eventStager =
         public readonly eventBuffer: IDomainEventBuffer
       ) {}
 
+      public async updateAll(entities: TEntity[]): Promise<TEntity[]> {
+        entities.forEach((entity) => this.eventBuffer.stageEvents(entity));
+        return await this.root.updateAll(entities);
+      }
+
       public async update(entity: TEntity): Promise<TEntity> {
         this.eventBuffer.stageEvents(entity);
         return await this.root.update(entity);

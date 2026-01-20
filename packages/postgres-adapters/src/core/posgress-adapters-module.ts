@@ -1,10 +1,8 @@
 import {
   PostgresAccountRepository,
-  PostgresBankConnectionRepository,
   PostgresOauthTokenRepository,
   PostgresRoleRepository,
   PostgressCategoryRepository,
-  PostgresSyncDetailsRepository,
   PostgresTransactionRepository,
   PostgresUserRepository,
 } from '@adapters';
@@ -74,21 +72,6 @@ export const postgresAdaptersModule: IModule<
   bind('AccountRepository').to(PostgresAccountRepository).inRequestScope();
   bind('AccountWriter').to(PostgresAccountRepository).inRequestScope();
   decorate('AccountWriter', stager('AccountWriter'));
-
-  bind('BankConnectionRepository')
-    .to(PostgresBankConnectionRepository)
-    .inRequestScope();
-  bind('BankConnectionWriter')
-    .to(PostgresBankConnectionRepository)
-    .inRequestScope();
-  decorate('BankConnectionWriter', stager('BankConnectionWriter'));
-
-  bind('SyncDetailsRepository')
-    .to(PostgresSyncDetailsRepository)
-    .inRequestScope();
-
-  bind('SyncDetailsWriter').to(PostgresSyncDetailsRepository).inRequestScope();
-  decorate('SyncDetailsWriter', stager('SyncDetailsWriter'));
 
   bind('OauthTokenRepository')
     .to(PostgresOauthTokenRepository)

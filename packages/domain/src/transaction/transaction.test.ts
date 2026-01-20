@@ -9,8 +9,8 @@ describe('the transaction model', () => {
   ): IOpenBankingTransaction => ({
     creditorName: 'Creditor Ltd',
     transactionId: 'ob_tx_1',
-    bookingDate: new Date('2026-01-10'),
-    valueDate: new Date('2026-01-11'),
+    bookingDate: '2026-01-10',
+    valueDate: '2026-01-11',
     transactionAmount: { currency: 'GBP', amount: '-10.50' },
     ...overrides,
   });
@@ -20,8 +20,8 @@ describe('the transaction model', () => {
   ): IOpenBankingTransaction => ({
     debtorName: 'Debtor Ltd',
     transactionId: 'ob_tx_1',
-    bookingDate: new Date('2026-01-10'),
-    valueDate: new Date('2026-01-11'),
+    bookingDate: '2026-01-10',
+    valueDate: '2026-01-11',
     transactionAmount: { currency: 'EUR', amount: '2500.00' },
     ...overrides,
   });
@@ -45,7 +45,7 @@ describe('the transaction model', () => {
         transactionId: 'ob_tx_different',
         creditorName: 'Netflix',
         transactionAmount: { currency: 'USD', amount: '-12.34' },
-        bookingDate: new Date('2026-01-05'),
+        bookingDate: '2026-01-05',
       });
 
       tx.updateFromObTransaction(ob, true);
@@ -69,8 +69,8 @@ describe('the transaction model', () => {
     it('uses bookingDate when present (even if valueDate is also present)', () => {
       const tx = makeExistingTx();
       const ob = makeCreditTx({
-        bookingDate: new Date('2026-01-05'),
-        valueDate: new Date('2026-01-20'),
+        bookingDate: '2026-01-05',
+        valueDate: '2026-01-20',
       });
 
       tx.updateFromObTransaction(ob, false);
@@ -82,7 +82,7 @@ describe('the transaction model', () => {
       const tx = makeExistingTx();
       const ob = makeCreditTx({
         bookingDate: undefined,
-        valueDate: new Date('2026-01-20'),
+        valueDate: '2026-01-20',
       });
 
       tx.updateFromObTransaction(ob, false);
@@ -182,8 +182,8 @@ describe('the transaction model', () => {
   describe('Transaction.createFromObTransaction', () => {
     it('uses bookingDate when present (even if valueDate is also present)', () => {
       const ob = makeCreditTx({
-        bookingDate: new Date('2026-01-05'),
-        valueDate: new Date('2026-01-20'),
+        bookingDate: '2026-01-05',
+        valueDate: '2026-01-20',
       });
 
       const tx = Transaction.createFromObTransaction(ob, false, 'foo', 'bar');
@@ -194,7 +194,7 @@ describe('the transaction model', () => {
     it('uses valueDate when bookingDate is missing', () => {
       const ob = makeCreditTx({
         bookingDate: undefined,
-        valueDate: new Date('2026-01-20'),
+        valueDate: '2026-01-20',
       });
 
       const tx = Transaction.createFromObTransaction(ob, true, 'foo', 'bar');

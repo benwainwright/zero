@@ -1,11 +1,10 @@
 import { Role, permissionSchema, routesSchema } from '@zero/domain';
 import { inject, json } from '@core';
 import z from 'zod';
-import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { BaseRepo, type IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { DB, Roles } from '../core/database.ts';
 import type { Selectable } from 'kysely';
 import type { IWriteRepository } from '@zero/application-core';
-import { BaseRepo } from './base-repo.ts';
 import type { IRoleRepository } from '@zero/auth';
 
 export interface RawRole {
@@ -40,7 +39,7 @@ export class PostgresRoleRepository
     const tx = this.database.transaction();
     await tx
       .updateTable('roles')
-      .set(role.toObject())
+      .set(this.mapValues(role))
       .where('id', '=', role.id)
       .execute();
     return role;

@@ -48,6 +48,74 @@ export const testCategoryRepository = (
     expect(result).toEqual(second);
   });
 
+  it('allows you to bulk update categories', async () => {
+    const { unitOfWork, userRepo, repo, writer } = await create();
+
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash: '',
+      roles: [],
+    });
+
+    const fred = User.reconstitute({
+      email: 'a@b.c',
+      id: 'fred',
+      passwordHash: '',
+      roles: [],
+    });
+
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+      await userRepo.save(fred);
+    });
+
+    ben.update({
+      email: 'z@b.c',
+    });
+
+    fred.update({
+      email: 'h@j.c',
+    });
+
+    const first = Category.reconstitute({
+      id: 'baz',
+      name: 'foo',
+      description: 'foo',
+      ownerId: 'ben',
+    });
+    const second = Category.reconstitute({
+      id: 'bip',
+      name: 'foo',
+      description: 'foo',
+      ownerId: 'ben',
+    });
+
+    await unitOfWork.atomically(async () => {
+      await writer.save(second);
+      await writer.save(first);
+    });
+
+    first.update({
+      name: 'baz',
+    });
+    second.update({ name: 'bap' });
+
+    await unitOfWork.atomically(async () => {
+      await writer.updateAll([first, second]);
+    });
+
+    const returnedFirst = await unitOfWork.atomically(async () =>
+      repo.get(first.id)
+    );
+    expect(returnedFirst?.name).toEqual('baz');
+
+    const returnedSecond = await unitOfWork.atomically(async () =>
+      repo.get(second.id)
+    );
+    expect(returnedSecond?.name).toEqual('bap');
+  });
+
   it('can save and get categories by id', async () => {
     const { repo, unitOfWork, userRepo, writer } = await create();
 

@@ -69,10 +69,12 @@ export interface Transactions {
   accountId: string;
   amount: number;
   categoryId: string | null;
+  currency: string;
   date: string;
   id: string;
   ownerId: string;
   payee: string;
+  pending: string;
 }
 
 export interface UserRoles {

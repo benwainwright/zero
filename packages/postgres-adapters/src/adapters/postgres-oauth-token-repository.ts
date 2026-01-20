@@ -1,10 +1,9 @@
 import { inject, type OauthTokens } from '@core';
 import { OauthToken } from '@zero/domain';
-import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { BaseRepo, type IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
 import type { DB } from '../core/database.ts';
 import type { IWriteRepository } from '@zero/application-core';
-import { BaseRepo } from './base-repo.ts';
 import type { IOauthTokenRepository } from '@zero/accounts';
 
 export class PostgresOauthTokenRepository

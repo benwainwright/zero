@@ -1,11 +1,10 @@
 import { inject } from '@core';
 import type { IAccountRepository } from '@zero/accounts';
 import { Account } from '@zero/domain';
-import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { BaseRepo, type IKyselyTransactionManager } from '@zero/kysely-shared';
 import { injectable } from 'inversify';
 import type { Selectable } from 'kysely';
 import type { Accounts, DB } from '../core/database.ts';
-import { BaseRepo } from './base-repo.ts';
 import type { IWriteRepository } from '@zero/application-core';
 
 @injectable()

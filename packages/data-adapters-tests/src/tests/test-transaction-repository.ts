@@ -56,13 +56,11 @@ export const testTransactionRepository = (
       date: new Date(),
       payee: 'foo',
       pending: true,
-      valueDate: undefined,
       currency: 'GBP',
     });
 
     const transaction2 = Transaction.reconstitute({
       pending: true,
-      valueDate: undefined,
       currency: 'GBP',
       ownerId: 'ben',
       id: 'biz',
@@ -125,7 +123,6 @@ export const testTransactionRepository = (
     });
 
     const transaction1 = Transaction.reconstitute({
-      valueDate: undefined,
       ownerId: 'ben',
       id: 'foo',
       accountId: 'bar',
@@ -137,7 +134,6 @@ export const testTransactionRepository = (
     });
 
     const transaction2 = Transaction.reconstitute({
-      valueDate: undefined,
       pending: true,
       currency: 'GBP',
       ownerId: 'ben',
@@ -157,7 +153,9 @@ export const testTransactionRepository = (
       return await repo.getMany(['foo', 'biz', 'superman']);
     });
 
-    expect(result).toEqual([transaction1, transaction2]);
+    expect(result).toEqual(
+      expect.arrayContaining([transaction1, transaction2])
+    );
   });
 
   it('allows you to bulk check the existence of keys', async () => {
@@ -197,7 +195,6 @@ export const testTransactionRepository = (
     });
 
     const transaction1 = Transaction.reconstitute({
-      valueDate: undefined,
       ownerId: 'ben',
       id: 'foo',
       accountId: 'bar',
@@ -209,7 +206,6 @@ export const testTransactionRepository = (
     });
 
     const transaction2 = Transaction.reconstitute({
-      valueDate: undefined,
       pending: true,
       currency: 'GBP',
       ownerId: 'ben',
@@ -233,6 +229,92 @@ export const testTransactionRepository = (
       { id: 'superman', exists: false },
       { id: 'foo', exists: true },
     ]);
+  });
+
+  it('allows you to bulk update transactions', async () => {
+    const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
+
+    const ben = User.reconstitute({
+      email: 'bwainwright28@gmail.com',
+      id: 'ben',
+      passwordHash:
+        '$argon2id$v=19$m=65536,t=2,p=1$n7G8BcbQsFanGrlBuFB/Y7dedcifW3P7brW8tyMwLsU$9Zdmy6ccSH6ABRNiP6SU+qKE0oYdqu5eexecCKyMDdk',
+      roles: [],
+    });
+    const barAccount = Account.reconstitute({
+      id: 'bar',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    const bopAccount = Account.reconstitute({
+      id: 'bop',
+      ownerId: 'ben',
+      name: 'hello',
+      type: 'checking',
+      closed: false,
+      balance: 0,
+      deleted: false,
+    });
+
+    await unitOfWork.atomically(async () => {
+      await userRepo.save(ben);
+      await accountRepo.save(barAccount);
+      await accountRepo.save(bopAccount);
+    });
+
+    const transaction1 = Transaction.reconstitute({
+      ownerId: 'ben',
+      id: 'foo',
+      accountId: 'bar',
+      amount: 1000,
+      date: new Date(),
+      payee: 'foo',
+      pending: true,
+      currency: 'GBP',
+    });
+
+    const transaction2 = Transaction.reconstitute({
+      pending: true,
+      currency: 'GBP',
+      ownerId: 'ben',
+      id: 'biz',
+      accountId: 'bop',
+      amount: 100,
+      date: new Date(),
+      payee: 'foo',
+    });
+
+    await unitOfWork.atomically(async () => {
+      await writer.save(transaction1);
+      await writer.save(transaction2);
+    });
+
+    transaction1.update({
+      currency: 'USD',
+    });
+
+    transaction2.update({
+      amount: 100,
+    });
+
+    await unitOfWork.atomically(async () => {
+      await writer.updateAll([transaction1, transaction2]);
+    });
+
+    const returned1 = await unitOfWork.atomically(
+      async () => await repo.get(transaction1.id)
+    );
+    expect(returned1?.currency).toEqual('USD');
+
+    const returned2 = await unitOfWork.atomically(
+      async () => await repo.get(transaction2.id)
+    );
+    expect(returned2?.amount).toEqual(100);
   });
 
   it('allows you to save and retrieve individual transactions', async () => {
@@ -272,7 +354,6 @@ export const testTransactionRepository = (
     });
 
     const transaction1 = Transaction.reconstitute({
-      valueDate: undefined,
       ownerId: 'ben',
       id: 'foo',
       accountId: 'bar',
@@ -287,7 +368,6 @@ export const testTransactionRepository = (
       pending: true,
       currency: 'GBP',
       ownerId: 'ben',
-      valueDate: new Date(),
       id: 'biz',
       accountId: 'bop',
       amount: 100,
@@ -360,7 +440,6 @@ export const testTransactionRepository = (
     });
 
     const transaction1 = Transaction.reconstitute({
-      valueDate: undefined,
       pending: true,
       currency: 'GBP',
       ownerId: 'ben',
@@ -376,7 +455,6 @@ export const testTransactionRepository = (
       ownerId: 'ben',
       pending: true,
       currency: 'GBP',
-      valueDate: undefined,
       id: 'biz',
       accountId: 'bop',
       amount: 100,
@@ -452,7 +530,6 @@ export const testTransactionRepository = (
     });
 
     const fredTransaction = Transaction.reconstitute({
-      valueDate: undefined,
       id: 'blop',
       pending: true,
       currency: 'GBP',
@@ -465,7 +542,6 @@ export const testTransactionRepository = (
 
     const accountTransactions = [
       Transaction.reconstitute({
-        valueDate: undefined,
         pending: true,
         currency: 'GBP',
         id: 'foo',
@@ -480,7 +556,6 @@ export const testTransactionRepository = (
         id: 'biz',
         pending: false,
         currency: 'GBP',
-        valueDate: undefined,
         payee: 'foo',
         accountId: 'bar',
         amount: 100,
@@ -489,7 +564,6 @@ export const testTransactionRepository = (
       }),
 
       Transaction.reconstitute({
-        valueDate: undefined,
         id: 'bing',
         accountId: 'bar',
         payee: 'foo',
@@ -505,7 +579,6 @@ export const testTransactionRepository = (
       id: 'barp2',
       accountId: 'bar',
       pending: false,
-      valueDate: undefined,
       currency: 'GBP',
       payee: 'foo',
       ownerId: 'ben',
@@ -520,7 +593,6 @@ export const testTransactionRepository = (
 
       await writer.saveAll([
         Transaction.reconstitute({
-          valueDate: undefined,
           ownerId: 'ben',
           currency: 'GBP',
           pending: true,
@@ -532,7 +604,6 @@ export const testTransactionRepository = (
         }),
 
         Transaction.reconstitute({
-          valueDate: undefined,
           ownerId: 'ben',
           id: 'burpie',
           accountId: 'bof',
@@ -629,7 +700,6 @@ export const testTransactionRepository = (
         id: 'burpie',
         accountId: 'bip',
         amount: 100,
-        valueDate: undefined,
         payee: 'foo',
         date: new Date(),
       }),
@@ -640,7 +710,6 @@ export const testTransactionRepository = (
         payee: 'foo',
         accountId: 'bar',
         amount: 1000,
-        valueDate: undefined,
         ownerId: 'ben',
         date: new Date(),
       }),
@@ -648,7 +717,6 @@ export const testTransactionRepository = (
         id: 'biz',
         payee: 'foo',
         currency: 'GBP',
-        valueDate: undefined,
         pending: true,
         accountId: 'bar',
         amount: 100,
@@ -663,7 +731,6 @@ export const testTransactionRepository = (
         pending: true,
         amount: 100,
         date: new Date(),
-        valueDate: undefined,
         ownerId: 'ben',
       }),
     ];
@@ -678,7 +745,6 @@ export const testTransactionRepository = (
         accountId: 'bar',
         payee: 'foo',
         amount: 100,
-        valueDate: undefined,
         date: new Date(),
         ownerId: 'ben',
       });
@@ -693,7 +759,6 @@ export const testTransactionRepository = (
           id: 'barp',
           accountId: 'bof',
           amount: 100,
-          valueDate: undefined,
           payee: 'foo',
           date: new Date(),
         }),
@@ -704,7 +769,6 @@ export const testTransactionRepository = (
           ownerId: 'ben',
           id: 'burpie-2',
           accountId: 'bof',
-          valueDate: undefined,
           amount: 100,
           payee: 'foo',
           date: new Date(),

@@ -1,10 +1,9 @@
 import { inject, type Transactions } from '@core';
 import { Category, currencySchema, Transaction } from '@zero/domain';
-import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { BaseRepo, type IKyselyTransactionManager } from '@zero/kysely-shared';
 import { type Selectable } from 'kysely';
 import type { DB } from '../core/database.ts';
 import type { IWriteRepository } from '@zero/application-core';
-import { BaseRepo } from './base-repo.ts';
 import type { ITransactionRepository } from '@zero/accounts';
 
 export class PostgresTransactionRepository
@@ -17,6 +16,7 @@ export class PostgresTransactionRepository
   ) {
     super();
   }
+
   public async getMany(ids: string[]): Promise<Transaction[]> {
     const tx = this.database.transaction();
 
@@ -105,7 +105,6 @@ export class PostgresTransactionRepository
     return Transaction.reconstitute({
       ...raw,
       date: new Date(raw.date),
-      valueDate: raw.valueDate ? new Date(raw.valueDate) : undefined,
       pending: raw.pending ?? undefined,
       currency: currencySchema.parse(raw.currency),
       category,

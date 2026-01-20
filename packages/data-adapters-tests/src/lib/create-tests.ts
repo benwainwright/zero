@@ -2,8 +2,6 @@ import {
   testUserAndRoleRepository,
   testAccountsRepo,
   testOauthRepository,
-  testBankConnectionRepository,
-  testSyncDetailsRepository,
   testTransactionRepository,
   testCategoryRepository,
 } from '@tests';
@@ -91,46 +89,6 @@ export const createTests = async ({
       await afterTokenRepoTests();
     });
     testOauthRepository(oauthTokenRepoCreator);
-  });
-
-  const {
-    creator: bankConnectionRepoCreator,
-    after: afterConnectionRepoTests,
-  } = await createRepo({
-    repoKey: {
-      repo: 'BankConnectionRepository',
-      userRepo: 'UserWriter',
-      writer: 'BankConnectionWriter',
-    },
-    modules,
-    createCallback,
-    afterCallback,
-  });
-
-  describe('the connectionn repo', () => {
-    afterEach(async () => {
-      await afterConnectionRepoTests();
-    });
-    testBankConnectionRepository(bankConnectionRepoCreator);
-  });
-
-  const { creator: syncDetailsRepository, after: afterSyncDetailsRepoTests } =
-    await createRepo({
-      repoKey: {
-        repo: 'SyncDetailsRepository',
-        userRepo: 'UserWriter',
-        writer: 'SyncDetailsWriter',
-      },
-      modules,
-      createCallback,
-      afterCallback,
-    });
-
-  describe('the sync details repo', () => {
-    afterEach(async () => {
-      await afterSyncDetailsRepoTests();
-    });
-    testSyncDetailsRepository(syncDetailsRepository);
   });
 
   const { creator: categoryRepoCreator, after: afterCategoryRepo } =

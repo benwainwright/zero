@@ -1,11 +1,10 @@
 import { inject, type DB } from '@core';
 import type { ITransactionRepository } from '@zero/accounts';
-import { Category, Transaction } from '@zero/domain';
-import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { Category, Transaction, type ICurrency } from '@zero/domain';
+import { BaseRepo, type IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Selectable } from 'kysely';
-import type { Categories, Transactions } from '../core/database.ts';
+import type { Transactions } from '../core/database.ts';
 import type { IWriteRepository } from '@zero/application-core';
-import { BaseRepo } from './base-repo.ts';
 
 export class SqliteTransactionRepository
   extends BaseRepo<Transaction, [txId: string]>
@@ -16,6 +15,53 @@ export class SqliteTransactionRepository
     private readonly database: IKyselyTransactionManager<DB>
   ) {
     super();
+  }
+
+  public async getMany(ids: string[]): Promise<Transaction[]> {
+    const tx = this.database.transaction();
+
+    const result = await tx
+      .selectFrom('transactions')
+      .selectAll()
+      .select(['transactions.id as id', 'transactions.ownerId as ownerId'])
+      .where((eb) => eb.or(ids.map((id) => eb('transactions.id', '=', id))))
+      .leftJoin('categories', 'categories.id', 'transactions.categoryId')
+      .select([
+        'name as categoryName',
+        'description as categoryDescription',
+        'categories.id as categoryId',
+        'categories.ownerId as categoryOwnerId',
+      ])
+      .execute();
+
+    return result.map((row) => this.mapRaw(row));
+  }
+
+  public async exists(id: string): Promise<boolean> {
+    const tx = this.database.transaction();
+
+    const result = tx
+      .selectFrom('transactions')
+      .select('id')
+      .where('id', '=', id)
+      .executeTakeFirst();
+
+    return Boolean(result);
+  }
+
+  public async existsAll(
+    ids: string[]
+  ): Promise<{ id: string; exists: boolean }[]> {
+    const tx = this.database.transaction();
+    const existingRows = await tx
+      .selectFrom('transactions')
+      .select('id')
+      .where((eb) => eb.or(ids.map((id) => eb('id', '=', id))))
+      .execute();
+
+    const rowMap = new Set<string>(existingRows.map((row) => row.id));
+
+    return ids.map((id) => ({ id, exists: rowMap.has(id) }));
   }
 
   public async update(transaction: Transaction): Promise<Transaction> {
@@ -60,6 +106,8 @@ export class SqliteTransactionRepository
       ...raw,
       date: new Date(raw.date),
       category,
+      pending: raw.pending === 'true',
+      currency: raw.currency as ICurrency,
     });
   }
 
@@ -93,6 +141,7 @@ export class SqliteTransactionRepository
       ...values,
       date: values.date.toISOString(),
       categoryId: category?.id ?? null,
+      pending: String(values.pending),
     };
   }
 

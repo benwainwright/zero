@@ -1,9 +1,8 @@
 import { Category } from '@zero/domain';
-import { BaseRepo } from './base-repo.ts';
 import type { IWriteRepository } from '@zero/application-core';
 import type { ICategoryRepository } from '@zero/accounts';
 import { inject } from '@core';
-import type { IKyselyTransactionManager } from '@zero/kysely-shared';
+import { BaseRepo, type IKyselyTransactionManager } from '@zero/kysely-shared';
 import type { Categories, DB } from '../core/database.ts';
 import type { Selectable } from 'kysely';
 
