@@ -8,9 +8,9 @@ export abstract class BaseRepo<TEntity, TKey extends readonly unknown[]> {
   public abstract update(entity: TEntity): Promise<TEntity>;
 
   public async updateAll(entities: TEntity[]): Promise<TEntity[]> {
-    await Promise.all(
-      entities.map(async (entity) => await this.update(entity))
-    );
+    for (const entity of entities) {
+      await this.update(entity);
+    }
     return entities;
   }
 
@@ -23,7 +23,9 @@ export abstract class BaseRepo<TEntity, TKey extends readonly unknown[]> {
   }
 
   public async saveAll(entities: TEntity[]): Promise<TEntity[]> {
-    await Promise.all(entities.map(async (entity) => await this.save(entity)));
+    for (const entity of entities) {
+      await this.save(entity);
+    }
     return entities;
   }
 }

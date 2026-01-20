@@ -54,3 +54,4 @@ test-output
 .nx
 **/.zero
 **/*.sqlite
+apps/backend/pglogs

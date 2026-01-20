@@ -9,9 +9,26 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: zero
       POSTGRES_USER: postgres
+    volumes:
+      - ./pglogs:/var/log/postgresql
+    command:
+      - postgres
+      - -c
+      - logging_collector=on
+      - -c
+      - log_destination=stderr
+      - -c
+      - log_directory=/var/log/postgresql
+      - -c
+      - log_filename=postgresql-%Y-%m-%d.log
+      - -c
+      - log_statement=all
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+
+volumes:
+  pglogs:
