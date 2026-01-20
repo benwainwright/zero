@@ -86,8 +86,8 @@ export const postgresAdaptersModule: IModule<
   bind('TransactionWriter').to(PostgresTransactionRepository).inRequestScope();
   decorate('TransactionWriter', stager('TransactionWriter'));
 
-  bind('CategoryRepository').to(PostgressCategoryRepository);
-  bind('CategoryWriter').to(PostgressCategoryRepository);
+  bind('CategoryRepository').to(PostgressCategoryRepository).inRequestScope();
+  bind('CategoryWriter').to(PostgressCategoryRepository).inRequestScope();
   decorate('CategoryWriter', stager('CategoryWriter'));
 
   bind('PostgressUsername').toConstantValue(databaseUser);

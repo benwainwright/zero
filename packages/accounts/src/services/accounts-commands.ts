@@ -13,6 +13,12 @@ interface IPossbileInstitution {
 export type AccountsCommands =
   | {
       id: string;
+      key: 'DisconnectBankConnectionCommand';
+      params: undefined;
+      response: undefined;
+    }
+  | {
+      id: string;
       key: 'SyncTransactionsCommandHandler';
       params: { accountId: string };
       response: undefined;

@@ -14,7 +14,7 @@ const LOG_CONTEXT = { context: 'http-client' };
 interface IRequestConfig<TResponse extends z4.ZodType> {
   ttl?: number | undefined;
   path: string;
-  method: 'get' | 'post';
+  method: 'get' | 'post' | 'delete';
   body?: Record<string, string>;
   queryString: Record<string, string> | undefined;
   headers: Record<string, string> | undefined;
@@ -51,6 +51,29 @@ export class HttpClient {
     this.stringHasher = config.stringHasher;
     this.eventBus = config.eventBus;
     this.uuidGenerator = config.uuidGenerator;
+  }
+
+  public async delete<TResponse extends z4.ZodType>({
+    path,
+    responseSchema,
+    headers,
+    queryString,
+    ttl,
+  }: {
+    path: string;
+    responseSchema: TResponse;
+    headers?: Record<string, string>;
+    queryString?: Record<string, string>;
+    ttl?: number | undefined;
+  }): Promise<z4.output<TResponse>> {
+    return await this.request({
+      path,
+      ttl,
+      responseSchema,
+      headers,
+      method: 'delete',
+      queryString,
+    });
   }
 
   public async get<TResponse extends z4.ZodType>({

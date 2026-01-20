@@ -19,12 +19,7 @@ export const Notifications = () => {
             />
           );
         }
-        return (
-          <ErrorNotification
-            message={notification.message}
-            stack={notification.stack}
-          />
-        );
+        return <ErrorNotification error={notification.error} />;
       })}
     </Affix>
   );

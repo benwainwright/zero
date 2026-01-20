@@ -12,3 +12,4 @@ export { CheckBankConnectionStatusCommandHandler } from './check-bank-connection
 export { AuthoriseBankCommandHandler } from './authorise-bank-command-handler.ts';
 export { GetOpenBankingAccountDetailsCommandHandler } from './get-open-banking-account-details-command-handler.ts';
 export { SyncTransactionsCommandHandler } from './sync-transactions-command-handler.ts';
+export { DisconnectBankConnectionHandler } from './disconnect-bank-connection-handler.ts';

@@ -8,12 +8,25 @@ interface InstitutionSelectorProps {
   onSelectInstitution: (connection: IPossbileInstitution) => void;
 }
 
+const sandbox =
+  process.env['NODE_ENV'] !== 'production'
+    ? [
+        {
+          bankName: 'Gocardless Sandbox Institution',
+          id: 'SANDBOXFINANCE_SFIN0000',
+          logo: 'https://cdn-logos.gocardless.com/ais/SANDBOXFINANCE_SFIN0000.png',
+        },
+      ]
+    : [];
+
 export const InstitutionSelector = ({
   institutions,
   onSelectInstitution,
 }: InstitutionSelectorProps) => {
-  const { filteredInstitutions, setFilter } =
-    useFilteredInstitutions(institutions);
+  const { filteredInstitutions, setFilter } = useFilteredInstitutions([
+    ...institutions,
+    ...sandbox,
+  ]);
 
   return (
     <Stack>

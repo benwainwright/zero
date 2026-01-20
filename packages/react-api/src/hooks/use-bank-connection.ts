@@ -1,4 +1,4 @@
-import { useDataRequest, useRequest } from '@hooks';
+import { useData, useRequest } from '@hooks';
 import type { IPossbileInstitution, AccountsCommands } from '@zero/accounts';
 import type { IPickRequest } from '@zero/application-core';
 import { useCallback } from 'react';
@@ -11,12 +11,15 @@ export const useBankConnection = (): {
       >['response']
     | undefined;
   authorise: (institution: IPossbileInstitution) => Promise<void>;
+  disconnect: () => Promise<void>;
 } => {
-  const { data: connectionStatus } = useDataRequest(
-    'CheckBankConnectionStatusCommand'
-  );
+  const { data: connectionStatus } = useData({
+    query: 'CheckBankConnectionStatusCommand',
+    refreshOn: ['BankIntegrationDisconnected'],
+  });
 
   const { execute: authoriseCommand } = useRequest('AuthoriseBankCommand');
+  const { execute: disconnect } = useRequest('DisconnectBankConnectionCommand');
 
   const authorise = useCallback(
     async (institution: IPossbileInstitution) => {
@@ -29,5 +32,5 @@ export const useBankConnection = (): {
     [authoriseCommand]
   );
 
-  return { connectionStatus, authorise };
+  return { connectionStatus, authorise, disconnect };
 };

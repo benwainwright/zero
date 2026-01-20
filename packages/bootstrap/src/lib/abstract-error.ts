@@ -16,9 +16,30 @@ interface IEventEmitter {
 export abstract class AbstractError extends Error {
   public parsedStack: StackFrame[];
 
-  public constructor(message: string) {
-    super(message);
+  public parsedCause:
+    | {
+        message: string;
+        stack: StackFrame[];
+      }
+    | undefined;
+
+  public constructor(message: string, cause?: unknown) {
+    super(message, { cause });
     this.parsedStack = stackTraceParser.parse(this.stack ?? '');
+    if (
+      cause &&
+      typeof cause === 'object' &&
+      'stack' in cause &&
+      typeof cause.stack === 'string'
+    ) {
+      this.parsedCause = {
+        message:
+          'message' in cause && typeof cause.message === 'string'
+            ? cause.message
+            : '',
+        stack: stackTraceParser.parse(cause.stack ?? ''),
+      };
+    }
   }
 
   public abstract handle(events: IEventEmitter): void;

@@ -32,6 +32,7 @@ export interface IOpenBankingAccountDetails {
 }
 
 export interface IOpenBankingClient {
+  disconnect(token: OauthToken): Promise<void>;
   getConnectionStatus(token: OauthToken): Promise<OpenBankingConnectionStatus>;
   getInstitutionList(token: OauthToken): Promise<IPossbileInstitution[]>;
   getAuthorisationUrl(token: OauthToken, bankId: string): Promise<string>;

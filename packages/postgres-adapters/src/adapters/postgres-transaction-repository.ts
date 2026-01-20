@@ -40,7 +40,7 @@ export class PostgresTransactionRepository
   public async exists(id: string): Promise<boolean> {
     const tx = this.database.transaction();
 
-    const result = tx
+    const result = await tx
       .selectFrom('transactions')
       .select('id')
       .where('id', '=', id)
@@ -107,6 +107,7 @@ export class PostgresTransactionRepository
       date: new Date(raw.date),
       pending: raw.pending ?? undefined,
       currency: currencySchema.parse(raw.currency),
+      amount: raw.amount / 100,
       category,
     });
   }
@@ -140,6 +141,7 @@ export class PostgresTransactionRepository
     return {
       ...values,
       categoryId: category?.id ?? null,
+      amount: Math.floor(transaction.amount * 100),
     };
   }
 

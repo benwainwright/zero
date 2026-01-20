@@ -9,10 +9,12 @@ interface ConnectionStatusOptionsProps {
     'CheckBankConnectionStatusCommand'
   >['response'];
   onSelectBank: (possibleInstitution: IPossbileInstitution) => void;
+  onDisconnect: () => void;
 }
 
 export const ConnectionStatusOptions = ({
   onSelectBank,
+  onDisconnect,
   status,
 }: ConnectionStatusOptionsProps) => {
   switch (status.status) {
@@ -28,7 +30,7 @@ export const ConnectionStatusOptions = ({
       return <Text>Redirecting you to your bank...</Text>;
 
     case 'connected':
-      return <BankConnectedCard {...status} />;
+      return <BankConnectedCard {...status} onDisconnect={onDisconnect} />;
 
     case 'expired':
       return <Text>Your connection has expired</Text>;

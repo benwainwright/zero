@@ -150,6 +150,37 @@ export const handlers = [
     return HttpResponse.json(mockGocardlessData.mockInstititionsList);
   }),
 
+  http.delete<{ requisitionId: string }>(
+    `${GOCARDLESS_API}/api/v2/requisition/:requisitionId/`,
+    async ({ request, params }) => {
+      const invalidResponse = invalidRequestResponse(request);
+
+      if (invalidResponse) {
+        return invalidResponse;
+      }
+
+      const { requisitionId } = params;
+
+      if (
+        requisitionId !== mockGocardlessData.mockConnectedRequisitionResponse.id
+      ) {
+        return HttpResponse.json(
+          {
+            detail: 'Not found.',
+            summary: 'Not found.',
+            status_code: 404,
+          },
+          { status: 404 }
+        );
+      }
+
+      return HttpResponse.json({
+        summary: 'Requisition deleted',
+        detail: `Requisition ${mockGocardlessData.mockConnectedRequisitionResponse} deleted with all its End User Agreements`,
+      });
+    }
+  ),
+
   http.get<
     { requisitionId: string },
     { institution_id: string; redirect: string }

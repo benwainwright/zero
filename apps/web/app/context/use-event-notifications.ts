@@ -8,8 +8,11 @@ export const useEventNotifications = () => {
       case 'ApplicationError':
         showNotification({
           type: 'error',
-          message: event.data.message ?? '',
-          stack: event.data.parsedStack,
+          error: {
+            message: event.data.message ?? '',
+            stack: event.data.parsedStack,
+            cause: event.data.cause,
+          },
         });
         break;
 
@@ -23,8 +26,10 @@ export const useEventNotifications = () => {
       case 'HttpError':
         showNotification({
           type: 'error',
-          message: `There was an error making an HTTP request: [${event.data.statusCode}] - ${event.data.body}`,
-          stack: event.data.parsedStack,
+          error: {
+            message: `There was an error making an HTTP request: [${event.data.statusCode}] - ${event.data.body}`,
+            stack: event.data.parsedStack,
+          },
         });
         break;
 

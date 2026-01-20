@@ -11,6 +11,7 @@ export {
   CreateTransactionCommandHandler,
   DeleteTransactionCommandHandler,
   UpdateTransactionCommandHandler,
+  DisconnectBankConnectionHandler,
   AuthoriseBankCommandHandler,
   GetOpenBankingAccountDetailsCommandHandler,
 } from './command-handlers/index.ts';

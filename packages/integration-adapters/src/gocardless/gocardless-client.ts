@@ -29,6 +29,10 @@ interface IPossbileInstitution {
   logo: string;
 }
 
+/**
+ * Integration with the Gocardless Bank account data API.
+ * For details @see {@link https://developer.gocardless.com/bank-account-data/endpoints/}
+ */
 @injectable()
 export class GocardlessClient
   implements
@@ -84,10 +88,7 @@ export class GocardlessClient
   public async getConnectionStatus(
     token: OauthToken
   ): Promise<OpenBankingConnectionStatus> {
-    const requisitionId = await this.objectStore.get(
-      REQUISITION_ID_KEY,
-      token.id
-    );
+    const requisitionId = await this.getRequisitionId(token);
 
     if (!requisitionId) {
       return { status: 'not_connected' };
@@ -144,6 +145,24 @@ export class GocardlessClient
     );
 
     return response.transactions;
+  }
+
+  private async deleteRequisition(token: OauthToken, requisitionId: string) {
+    await this.client.delete({
+      path: `requisitions/${requisitionId}/`,
+      headers: {
+        Authorization: `Bearer ${token.use()}`,
+      },
+      responseSchema: z.object({}),
+    });
+  }
+
+  public async disconnect(token: OauthToken): Promise<void> {
+    const id = await this.getRequisitionId(token);
+    if (id) {
+      await this.deleteRequisition(token, id);
+    }
+    await this.objectStore.set(REQUISITION_ID_KEY, token.id, undefined);
   }
 
   private async getInstitutionDetails(
@@ -226,11 +245,12 @@ export class GocardlessClient
     return result.link;
   }
 
+  private async getRequisitionId(token: OauthToken) {
+    return await this.objectStore.get(REQUISITION_ID_KEY, token.id);
+  }
+
   public async getAccounts(token: OauthToken) {
-    const requisitionId = await this.objectStore.get(
-      REQUISITION_ID_KEY,
-      token.id
-    );
+    const requisitionId = await this.getRequisitionId(token);
 
     if (!requisitionId) {
       throw new AppError(

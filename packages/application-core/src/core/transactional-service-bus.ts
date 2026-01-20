@@ -2,6 +2,7 @@ import type { IDomainEventStore, IServiceBus, IUnitOfWork } from '@ports';
 import type { IRequest } from '@types';
 import { priority, type ILogger } from '@zero/bootstrap';
 import { inject } from './typed-inject.ts';
+import { TransactionFailedError } from '@errors';
 
 const LOG_CONTEXT = { context: 'transactional-query-bus' };
 
@@ -48,7 +49,7 @@ export class TransactionalServiceBus implements IServiceBus {
       );
       await this.unitOfWork.rollback();
       this.domainEvents.purge();
-      throw error;
+      throw new TransactionFailedError(`Transaction failed`, error);
     }
   }
 }

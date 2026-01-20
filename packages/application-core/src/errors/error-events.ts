@@ -12,5 +12,11 @@ export interface IErrorEvents {
   ApplicationError: {
     parsedStack: StackFrame[];
     message: string | undefined;
+    cause?:
+      | {
+          message: string | undefined;
+          stack: StackFrame[];
+        }
+      | undefined;
   };
 }

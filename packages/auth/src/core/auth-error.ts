@@ -6,6 +6,7 @@ export class AuthError extends AbstractError {
     events.emit('ApplicationError', {
       parsedStack: this.parsedStack,
       message: this.message,
+      cause: this.parsedCause,
     });
   }
 

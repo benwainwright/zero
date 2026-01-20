@@ -7,8 +7,16 @@ interface NormalNotificaion {
 
 interface ErrorNotification {
   type: 'error';
-  message: string;
-  stack: StackFrame[];
+  error: {
+    message: string;
+    stack: StackFrame[];
+    cause?:
+      | {
+          message: string | undefined;
+          stack: StackFrame[];
+        }
+      | undefined;
+  };
 }
 
 export type NotificationData = ErrorNotification | NormalNotificaion;

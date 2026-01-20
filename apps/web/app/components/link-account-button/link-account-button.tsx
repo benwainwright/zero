@@ -65,7 +65,7 @@ export const LinkAccountButton = ({
               combobox.toggleDropdown();
             }}
           >
-            {value ? (
+            {typeof accounts === 'undefined' ? (
               <div aria-busy></div>
             ) : (
               <Input.Placeholder>Choose Account</Input.Placeholder>

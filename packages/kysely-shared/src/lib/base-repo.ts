@@ -23,7 +23,7 @@ export abstract class BaseRepo<TEntity, TKey extends readonly unknown[]> {
   }
 
   public async saveAll(entities: TEntity[]): Promise<TEntity[]> {
-    await Promise.all(entities.map(async (entity) => this.save(entity)));
+    await Promise.all(entities.map(async (entity) => await this.save(entity)));
     return entities;
   }
 }
