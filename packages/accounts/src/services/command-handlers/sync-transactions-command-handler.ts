@@ -1,8 +1,13 @@
 import { inject, type AccountsEvents } from '@core';
-import type { IOpenBankingClient, ITransactionRepository } from '@ports';
+import type {
+  IAccountRepository,
+  IOpenBankingClient,
+  ITransactionRepository,
+} from '@ports';
 import type { AccountsCommands, OpenBankingTokenManager } from '@services';
 import {
   AbstractRequestHandler,
+  AppError,
   type IAllEvents,
   type IEventBus,
   type IRequestContext,
@@ -22,6 +27,9 @@ export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
 
     @inject('OpenBankingTokenManager')
     private readonly tokens: OpenBankingTokenManager,
+
+    @inject('AccountRepository')
+    private readonly accounts: IAccountRepository,
 
     @inject('TransactionRepository')
     private readonly tansactions: ITransactionRepository,
@@ -54,11 +62,16 @@ export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
     try {
       this.grants.assertLogin(authContext);
       this.grants.requiresNoPermissions();
-      const token = await this.tokens.getToken(authContext.id);
+      const tokenPromise = this.tokens.getToken(authContext.id);
+      const account = await this.accounts.require(accountId);
+
+      if (!account.linkedOpenBankingAccount) {
+        throw new AppError(`Account is not linked!`);
+      }
 
       const { booked, pending } = await this.bank.getAccountTransactions(
-        token,
-        accountId
+        await tokenPromise,
+        account.linkedOpenBankingAccount
       );
 
       const allFetchedBankTransactions = [

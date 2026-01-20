@@ -2,7 +2,7 @@ import { buildRequestHandler } from '@zero/test-helpers';
 import { SyncTransactionsCommandHandler } from './sync-transactions-command-handler.ts';
 import { when } from 'vitest-when';
 import { mock } from 'vitest-mock-extended';
-import { Transaction, type OauthToken } from '@zero/domain';
+import { Account, Transaction, type OauthToken } from '@zero/domain';
 
 vi.mock('@zero/domain');
 
@@ -15,7 +15,7 @@ describe('sync transactions command handler', () => {
     const {
       handler,
       context,
-      dependencies: [bank, tokens, transactionRepo, writer],
+      dependencies: [bank, tokens, accounts, transactionRepo, writer],
     } = await buildRequestHandler(
       SyncTransactionsCommandHandler,
       'SyncTransactionsCommandHandler',
@@ -67,6 +67,12 @@ describe('sync transactions command handler', () => {
       pending: [pendingTx],
     };
 
+    const account = mock<Account>({
+      linkedOpenBankingAccount: 'foo-linked-account',
+    });
+
+    when(accounts.require).calledWith('foo-account').thenResolve(account);
+
     const first = mock<Transaction>({ id: 'foo' });
     const second = mock<Transaction>({ id: 'bar' });
     const third = mock<Transaction>({ id: 'foo-bar' });
@@ -82,7 +88,7 @@ describe('sync transactions command handler', () => {
       .thenReturn(third);
 
     when(bank.getAccountTransactions)
-      .calledWith(mockToken, 'foo-account')
+      .calledWith(mockToken, 'foo-linked-account')
       .thenResolve(transactions);
 
     await handler.tryHandle(context);
@@ -96,5 +102,34 @@ describe('sync transactions command handler', () => {
 
     expect(writer.saveAll).toHaveBeenCalledWith([third]);
     expect(writer.updateAll).toHaveBeenCalledWith([first, second]);
+  });
+
+  it('throws an error if the account is not linked', async () => {
+    const {
+      handler,
+      context,
+      dependencies: [, tokens, accounts],
+    } = await buildRequestHandler(
+      SyncTransactionsCommandHandler,
+      'SyncTransactionsCommandHandler',
+      { accountId: 'foo-account' },
+      'ben'
+    );
+
+    const mockToken = mock<
+      OauthToken & {
+        [Symbol.asyncDispose]: () => Promise<void>;
+      }
+    >();
+
+    const account = mock<Account>({
+      linkedOpenBankingAccount: undefined,
+    });
+
+    when(tokens.getToken).calledWith('ben').thenResolve(mockToken);
+
+    when(accounts.require).calledWith('foo-account').thenResolve(account);
+
+    await expect(handler.tryHandle(context)).rejects.toThrow();
   });
 });

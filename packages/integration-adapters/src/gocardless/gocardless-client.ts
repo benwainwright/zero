@@ -124,21 +124,24 @@ export class GocardlessClient
   }
 
   public async getAccountTransactions(token: OauthToken, account: string) {
-    const response = await this.client.get({
-      path: `accounts/${account}/transactions/`,
-      ttl: 1000 * 60 * 60 * 24,
-      headers: {
-        Authorization: `Bearer ${token.use()}`,
-      },
-      responseSchema: z.object({
-        transactions: z.object({
-          booked: z.array(openBankingTransactionSchema),
-          pending: z.array(openBankingTransactionSchema),
-        }),
-      }),
-    });
-
-    console.log({ response });
+    const response = await this.withAccountStatusPolling(
+      account,
+      token,
+      async () =>
+        this.client.get({
+          path: `accounts/${account}/transactions/`,
+          ttl: 1000 * 60 * 60 * 24,
+          headers: {
+            Authorization: `Bearer ${token.use()}`,
+          },
+          responseSchema: z.object({
+            transactions: z.object({
+              booked: z.array(openBankingTransactionSchema),
+              pending: z.array(openBankingTransactionSchema),
+            }),
+          }),
+        })
+    );
 
     return response.transactions;
   }
@@ -321,6 +324,22 @@ export class GocardlessClient
     });
   }
 
+  private async withAccountStatusPolling<T>(
+    accountId: string,
+    token: OauthToken,
+    callback: () => Promise<T>
+  ) {
+    try {
+      return await callback();
+    } catch (error) {
+      if (error instanceof HttpError && error.statusCode === 409) {
+        await this.pollAccountStatusUntilReady(accountId, 10, token);
+        return await callback();
+      }
+      throw error;
+    }
+  }
+
   private async getAllAccountDetails(
     ids: string[],
     token: OauthToken
@@ -328,17 +347,14 @@ export class GocardlessClient
     { id: string; name: string | undefined; details: string | undefined }[]
   > {
     return await Promise.all(
-      ids.map(async (id) => {
-        try {
-          return await this.getAccountDetails(id, token);
-        } catch (error) {
-          if (error instanceof HttpError && error.statusCode === 409) {
-            await this.pollAccountStatusUntilReady(id, 10, token);
-            return await this.getAccountDetails(id, token);
-          }
-          throw error;
-        }
-      })
+      ids.map(
+        async (id) =>
+          await this.withAccountStatusPolling(
+            id,
+            token,
+            async () => await this.getAccountDetails(id, token)
+          )
+      )
     );
   }
 
@@ -346,26 +362,31 @@ export class GocardlessClient
     id: string,
     token: OauthToken
   ): Promise<number> {
-    const { balances } = await this.client.get({
-      path: `accounts/${id}/balances/`,
-      ttl: 1000 * 60 * 60 * 6,
-      headers: {
-        Authorization: `Bearer ${token.use()}`,
-      },
-      responseSchema: z.object({
-        balances: z.array(
-          z.object({
-            referenceDate: z.string(),
-            balanceAmount: z.object({
-              amount: z
-                .string()
-                .transform((amount) => Number.parseFloat(amount) * 100),
-              currency: z.string(),
-            }),
-          })
-        ),
-      }),
-    });
+    const { balances } = await this.withAccountStatusPolling(
+      id,
+      token,
+      async () =>
+        this.client.get({
+          path: `accounts/${id}/balances/`,
+          ttl: 1000 * 60 * 60 * 6,
+          headers: {
+            Authorization: `Bearer ${token.use()}`,
+          },
+          responseSchema: z.object({
+            balances: z.array(
+              z.object({
+                referenceDate: z.string(),
+                balanceAmount: z.object({
+                  amount: z
+                    .string()
+                    .transform((amount) => Number.parseFloat(amount) * 100),
+                  currency: z.string(),
+                }),
+              })
+            ),
+          }),
+        })
+    );
 
     const [first] = balances.toSorted((a, b) =>
       new Date(a.referenceDate) > new Date(b.referenceDate) ? -1 : 1
