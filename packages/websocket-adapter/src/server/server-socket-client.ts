@@ -68,12 +68,20 @@ export class ServerSocketClient {
       switch (parsed.type) {
         case 'request':
           {
-            const response = await queryBus.execute(parsed.packet);
-            this.eventBus.emit('RequestResponseEvent', {
-              id: parsed.packet.id,
-              data: response,
-              key: parsed.packet.key,
-            });
+            try {
+              const response = await queryBus.execute(parsed.packet);
+              this.eventBus.emit('RequestResponseEvent', {
+                id: parsed.packet.id,
+                data: response,
+                key: parsed.packet.key,
+              });
+            } catch (error) {
+              this.eventBus.emit('RequestFailedEvent', {
+                id: parsed.packet.id,
+                key: parsed.packet.key,
+              });
+              throw error;
+            }
           }
           break;
       }

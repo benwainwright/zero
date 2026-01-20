@@ -2,6 +2,7 @@ import type { IKnownRequests, IUUIDGenerator } from '@types';
 import type {
   ExecuteParams,
   IEventListener,
+  IEventPacket,
   IPickRequest,
   IServiceClient,
 } from '@zero/application-core';
@@ -44,15 +45,18 @@ export class WebsocketServiceClient implements IServiceClient<IKnownRequests> {
 
     this.socket.send(serialiser.serialise(packet));
 
-    return await new Promise((accept) => {
-      const listener = this.eventBus.on('RequestResponseEvent', (data) => {
-        if (data.id === id) {
-          const newData = data.data as Promise<
+    return await new Promise((accept, reject) => {
+      const listenerId = this.eventBus.onAll((event) => {
+        if (event.key === 'RequestResponseEvent' && event.data.id === id) {
+          const newData = event.data.data as Promise<
             IPickRequest<TRequest, TKey>['response']
           >;
 
           accept(newData);
-          this.eventBus.off(listener);
+          this.eventBus.off(listenerId);
+        } else if (event.key === 'RequestFailedEvent' && event.data.id === id) {
+          reject();
+          this.eventBus.off(listenerId);
         }
       });
     });

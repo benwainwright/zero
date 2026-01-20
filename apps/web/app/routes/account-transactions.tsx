@@ -1,4 +1,5 @@
 import {
+  ButtonWithLoader,
   LinkAccountButton,
   Loader,
   Page,
@@ -54,14 +55,14 @@ const AccountTransactions = () => {
           account.linkedOpenBankingAccount ? (
             <>
               <Button variant="subtle">Unlink</Button>
-              <Button
+              <ButtonWithLoader
                 variant="subtle"
                 onClick={async () => {
                   await syncAccount();
                 }}
               >
                 Sync
-              </Button>
+              </ButtonWithLoader>
             </>
           ) : (
             <LinkAccountButton

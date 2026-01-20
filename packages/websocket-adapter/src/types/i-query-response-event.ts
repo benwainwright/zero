@@ -4,5 +4,8 @@ export interface IRequestResponseEvent {
     id: string;
     data: unknown;
   };
-  AnotherEvent: number;
+  RequestFailedEvent: {
+    key: string;
+    id: string;
+  };
 }

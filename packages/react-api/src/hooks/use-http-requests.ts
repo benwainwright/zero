@@ -15,7 +15,6 @@ export const useHttpRequests = () => {
 
   useEvents((data) => {
     if (data.key === 'HttpGetRequest' || data.key === 'HttpPostRequest') {
-      console.log('FOUND REQ');
       setRequests((oldRequests) => [...oldRequests, { request: data.data }]);
     }
     if (
@@ -23,7 +22,6 @@ export const useHttpRequests = () => {
       data.key === 'HttpCachedResponse' ||
       data.key === 'HttpResponse'
     ) {
-      console.log('FOUND RES');
       setRequests((oldRequests) => {
         const newRequests = [...oldRequests];
         const theRequest = newRequests.find(
@@ -38,8 +36,6 @@ export const useHttpRequests = () => {
       });
     }
   });
-
-  console.log({ requests });
 
   return requests;
 };

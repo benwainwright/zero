@@ -1,13 +1,22 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
+import { Flex, Loader as MantineLoader } from '@mantine/core';
 
 interface LoaderProps<TData> {
   data: TData | undefined;
   children: (data: TData) => ReactNode;
 }
 
-export const Loader = <TData,>({ data, children }: LoaderProps<TData>): ReactNode => {
+export const Loader = <TData,>({
+  data,
+  children,
+}: LoaderProps<TData>): ReactNode => {
+  console.log({ data });
   if (data === undefined) {
-    return <div aria-busy />;
+    return (
+      <Flex justify={'center'} align={'center'}>
+        <MantineLoader />
+      </Flex>
+    );
   }
 
   return children(data);

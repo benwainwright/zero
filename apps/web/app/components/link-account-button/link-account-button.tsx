@@ -1,3 +1,4 @@
+import { ButtonWithLoader } from '@components';
 import { Button, Combobox, Input, InputBase, useCombobox } from '@mantine/core';
 import { useRequest } from '@zero/react-api';
 import { useEffect, useState, type ReactNode } from 'react';
@@ -15,7 +16,6 @@ interface AccountDetails {
 export const LinkAccountButton = ({
   onPick,
 }: LinkAccountButtonProps): ReactNode => {
-  const [isLinking, setIsLinking] = useState(false);
   const { execute: getAccounts } = useRequest('GetOpenBankingAccountsCommand');
 
   const [accounts, setAccounts] = useState<AccountDetails[]>();
@@ -26,17 +26,7 @@ export const LinkAccountButton = ({
     },
   });
 
-  const [value, setValue] = useState<string | null>(null);
-
-  useEffect(() => {
-    void (async () => {
-      if (isLinking) {
-        setAccounts(await getAccounts());
-      }
-    })();
-  }, [isLinking, getAccounts]);
-
-  if (isLinking && accounts) {
+  if (accounts) {
     const options = accounts.map((item) => (
       <Combobox.Option value={item.id} key={item.id}>
         {item.name ?? item.details}
@@ -49,7 +39,6 @@ export const LinkAccountButton = ({
         // oxlint-disable eslint/no-misused-promises
         onOptionSubmit={async (val) => {
           await onPick(val);
-          setValue(val);
           combobox.closeDropdown();
         }}
       >
@@ -80,14 +69,14 @@ export const LinkAccountButton = ({
   }
 
   return (
-    <Button
+    <ButtonWithLoader
       variant="subtle"
-      onClick={() => {
-        setIsLinking(true);
+      onClick={async () => {
+        setAccounts(await getAccounts());
         combobox.openDropdown();
       }}
     >
       Link Account
-    </Button>
+    </ButtonWithLoader>
   );
 };
