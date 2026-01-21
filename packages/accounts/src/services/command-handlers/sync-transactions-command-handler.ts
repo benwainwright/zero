@@ -11,6 +11,7 @@ import {
   type IAllEvents,
   type IEventBus,
   type IRequestContext,
+  type IStringHasher,
   type IWriteRepository,
 } from '@zero/application-core';
 import type { IGrantManager } from '@zero/auth';
@@ -37,6 +38,9 @@ export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
     @inject('TransactionWriter')
     private readonly transactionWriter: IWriteRepository<Transaction>,
 
+    @inject('StringHasher')
+    private readonly stringHasher: IStringHasher,
+
     @inject('GrantService')
     private readonly grants: IGrantManager,
 
@@ -47,6 +51,21 @@ export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
     logger: ILogger
   ) {
     super(logger);
+  }
+
+  private getAccountId(openBankingTransaction: IOpenBankingTransaction) {
+    const payee = String(
+      openBankingTransaction.creditorName
+        ? openBankingTransaction.creditorName
+        : openBankingTransaction.debtorName
+    );
+    const theKey = `${openBankingTransaction.transactionId}-${payee}-${String(
+      openBankingTransaction.transactionAmount.amount
+    )}`;
+
+    const result = this.stringHasher.md5(theKey);
+
+    return result;
   }
 
   protected override async handle({
@@ -80,13 +99,13 @@ export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
       ];
 
       const existingTransactions = await this.tansactions.getMany(
-        allFetchedBankTransactions
-          .map((transaction) => transaction.transactionId)
-          .flatMap((id) => (id ? [id] : []))
+        allFetchedBankTransactions.map((transaction) =>
+          this.getAccountId(transaction)
+        )
       );
 
       const allBankTransactionEntries = allFetchedBankTransactions.map(
-        (transaction) => [transaction.transactionId ?? '', transaction] as const
+        (transaction) => [this.getAccountId(transaction), transaction] as const
       );
 
       const fetchedTransactionsMap = new Map<
@@ -101,13 +120,13 @@ export class SyncTransactionsCommandHandler extends AbstractRequestHandler<
       const newTransactions = allFetchedBankTransactions
         .filter(
           (transaction) =>
-            transaction.transactionId &&
-            !existingTransactionMap.has(transaction.transactionId)
+            !existingTransactionMap.has(this.getAccountId(transaction))
         )
         .map((newTransaction) => {
           const { pending, ...fetchedTx } = newTransaction;
           return Transaction.createFromObTransaction(
             fetchedTx,
+            this.getAccountId(fetchedTx),
             pending,
             accountId,
             authContext.id

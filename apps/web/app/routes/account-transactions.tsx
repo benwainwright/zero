@@ -13,14 +13,19 @@ import {
   useTransactions,
 } from '@zero/react-api';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { modals } from '@mantine/modals';
 
 const AccountTransactions = () => {
   const { accountId } = useParams<{ accountId: string }>();
+  const [searchParams] = useSearchParams();
+  const pageQueryParam = Number(searchParams.get('page') ?? '1');
   const { account } = useAccount(accountId);
   const { execute: linkAccount } = useRequest('LinkAccountCommand');
-  const { transactions, syncAccount } = useTransactions(accountId, 0, 30);
+  const { transactions, syncAccount, setPage, page } = useTransactions(
+    accountId,
+    pageQueryParam
+  );
   const connection = useBankConnection();
   const { execute: deleteAccount } = useRequest('DeleteAccountCommand');
   const [creatingNewTx, setCreatingNewTx] = useState(false);
@@ -92,6 +97,9 @@ const AccountTransactions = () => {
           return response.transactions.length > 0 || creatingNewTx ? (
             <TransactionsTable
               onTransactionCreated={() => setCreatingNewTx(false)}
+              totalPages={transactions.total}
+              setPage={setPage}
+              page={page}
               creatingNewTransaction={creatingNewTx}
               transactions={response.transactions}
               accountId={accountId}

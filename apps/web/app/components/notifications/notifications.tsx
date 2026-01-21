@@ -19,7 +19,12 @@ export const Notifications = () => {
             />
           );
         }
-        return <ErrorNotification error={notification.error} />;
+        return (
+          <ErrorNotification
+            error={notification.error}
+            onClose={() => closeNotification(notification)}
+          />
+        );
       })}
     </Affix>
   );

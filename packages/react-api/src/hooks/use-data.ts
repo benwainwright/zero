@@ -29,6 +29,7 @@ export interface UseDataType {
     isPending: boolean;
     update: (data: ReturnType<TDataMapper>) => void;
     save: () => Promise<void>;
+    refresh: () => void;
   };
   <
     TQueryDataKey extends IKnownRequests['key'],
@@ -46,6 +47,7 @@ export interface UseDataType {
   ): {
     data: ReturnType<TDataMapper>;
     isPending: boolean;
+    refresh: () => void;
   };
 
   <TQueryDataKey extends IKnownRequests['key']>(
@@ -58,6 +60,7 @@ export interface UseDataType {
   ): {
     data: IPickRequest<IKnownRequests, TQueryDataKey>['response'];
     isPending: boolean;
+    refresh: () => void;
   };
 }
 
@@ -141,6 +144,7 @@ export const useData: UseDataType = <
     save,
     update,
     data: finalData,
+    refresh,
     isPending,
   };
 };

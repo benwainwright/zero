@@ -186,9 +186,32 @@ describe('the transaction model', () => {
         valueDate: '2026-01-20',
       });
 
-      const tx = Transaction.createFromObTransaction(ob, false, 'foo', 'bar');
+      const tx = Transaction.createFromObTransaction(
+        ob,
+        'foo',
+        false,
+        'foo',
+        'bar'
+      );
 
       expect(isoDate(tx.date)).toBe('2026-01-05');
+    });
+
+    it('sets the id directly', () => {
+      const ob = makeCreditTx({
+        bookingDate: '2026-01-05',
+        valueDate: '2026-01-20',
+      });
+
+      const tx = Transaction.createFromObTransaction(
+        ob,
+        'foo',
+        false,
+        'foo',
+        'bar'
+      );
+
+      expect(tx.id).toEqual('foo');
     });
 
     it('uses valueDate when bookingDate is missing', () => {
@@ -197,7 +220,13 @@ describe('the transaction model', () => {
         valueDate: '2026-01-20',
       });
 
-      const tx = Transaction.createFromObTransaction(ob, true, 'foo', 'bar');
+      const tx = Transaction.createFromObTransaction(
+        ob,
+        'foo',
+        true,
+        'foo',
+        'bar'
+      );
 
       expect(isoDate(tx.date)).toBe('2026-01-20');
     });
@@ -206,7 +235,7 @@ describe('the transaction model', () => {
       const ob = makeCreditTx({ bookingDate: undefined, valueDate: undefined });
 
       expect(() =>
-        Transaction.createFromObTransaction(ob, false, 'foo', 'bar')
+        Transaction.createFromObTransaction(ob, 'foo', false, 'foo', 'bar')
       ).toThrow(/date|bookingDate|valueDate/i);
     });
 
@@ -214,10 +243,12 @@ describe('the transaction model', () => {
       const ob = makeCreditTx();
 
       expect(
-        Transaction.createFromObTransaction(ob, true, 'foo', 'bar').pending
+        Transaction.createFromObTransaction(ob, 'foo', true, 'foo', 'bar')
+          .pending
       ).toBe(true);
       expect(
-        Transaction.createFromObTransaction(ob, false, 'foo', 'bar').pending
+        Transaction.createFromObTransaction(ob, 'foo', false, 'foo', 'bar')
+          .pending
       ).toBe(false);
     });
 
@@ -226,6 +257,7 @@ describe('the transaction model', () => {
 
       const result = Transaction.createFromObTransaction(
         ob,
+        'foo',
         true,
         'foo',
         'bar'
@@ -238,7 +270,13 @@ describe('the transaction model', () => {
         transactionAmount: { currency: 'USD', amount: '-123.45' },
       });
 
-      const tx = Transaction.createFromObTransaction(ob, false, 'foo', 'bar');
+      const tx = Transaction.createFromObTransaction(
+        ob,
+        'foo',
+        false,
+        'foo',
+        'bar'
+      );
 
       expect(tx.amount).toBe(-123.45);
       expect(tx.currency).toBe('USD');
@@ -251,7 +289,8 @@ describe('the transaction model', () => {
           creditorName: 'Netflix',
         });
         expect(
-          Transaction.createFromObTransaction(ob1, false, 'foo', 'bar').payee
+          Transaction.createFromObTransaction(ob1, 'foo', false, 'foo', 'bar')
+            .payee
         ).toBe('Netflix');
 
         const ob2 = makeDebitTx({
@@ -259,7 +298,8 @@ describe('the transaction model', () => {
           debtorName: 'Example Bank PLC',
         });
         expect(
-          Transaction.createFromObTransaction(ob2, false, 'foo', 'bar').payee
+          Transaction.createFromObTransaction(ob2, 'foo', false, 'foo', 'bar')
+            .payee
         ).toBe('Example Bank PLC');
       });
 
@@ -271,7 +311,8 @@ describe('the transaction model', () => {
         });
 
         expect(
-          Transaction.createFromObTransaction(ob, false, 'foo', 'bar').payee
+          Transaction.createFromObTransaction(ob, 'foo', false, 'foo', 'bar')
+            .payee
         ).toBe('British Gas');
       });
 
@@ -281,7 +322,8 @@ describe('the transaction model', () => {
           debtorName: 'ACME Corp Ltd',
         });
         expect(
-          Transaction.createFromObTransaction(ob1, false, 'foo', 'bar').payee
+          Transaction.createFromObTransaction(ob1, 'foo', false, 'foo', 'bar')
+            .payee
         ).toBe('ACME Corp Ltd');
 
         const ob2 = makeCreditTx({
@@ -289,7 +331,8 @@ describe('the transaction model', () => {
           creditorName: 'Amazon EU SARL',
         });
         expect(
-          Transaction.createFromObTransaction(ob2, false, 'foo', 'bar').payee
+          Transaction.createFromObTransaction(ob2, 'foo', false, 'foo', 'bar')
+            .payee
         ).toBe('Amazon EU SARL');
       });
 
@@ -301,7 +344,8 @@ describe('the transaction model', () => {
         });
 
         expect(
-          Transaction.createFromObTransaction(ob, false, 'foo', 'bar').payee
+          Transaction.createFromObTransaction(ob, 'foo', false, 'foo', 'bar')
+            .payee
         ).toBe('Employer Ltd');
       });
     });

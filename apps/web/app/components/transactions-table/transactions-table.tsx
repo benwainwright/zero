@@ -1,5 +1,5 @@
 import { EditTransactionRow, TransactionRow } from '@components';
-import { Table } from '@mantine/core';
+import { Pagination, Table } from '@mantine/core';
 import { Transaction, type ITransaction } from '@zero/domain';
 import { useRequest } from '@zero/react-api';
 import { useEffect, useState } from 'react';
@@ -8,6 +8,9 @@ interface TransactionsTableProps {
   transactions: Transaction[];
   accountId: string;
   creatingNewTransaction: boolean;
+  page: number;
+  setPage: (page: number) => void;
+  totalPages: number;
   onTransactionCreated: () => void;
 }
 
@@ -16,9 +19,14 @@ const getDefaultTransaction = (accountId: string) => ({
   accountId,
   payee: '',
   amount: 0,
+  currency: 'GBP' as const,
+  pending: false,
 });
 
 export const TransactionsTable = ({
+  page,
+  totalPages,
+  setPage,
   transactions,
   creatingNewTransaction,
   onTransactionCreated,
@@ -36,46 +44,54 @@ export const TransactionsTable = ({
   }, [creatingNewTransaction, accountId]);
 
   return (
-    <Table
-      onKeyDown={async (event) => {
-        if (event.key === 'Enter') {
-          await createTransaction(newTransaction);
-          onTransactionCreated();
-        }
-      }}
-      layout="fixed"
-      highlightOnHover
-      tabularNums
-      verticalSpacing={'sm'}
-      withColumnBorders
-    >
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>Date</Table.Th>
-          <Table.Th>Payee</Table.Th>
-          <Table.Th>Category</Table.Th>
-          <Table.Th>Amount</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {creatingNewTransaction && (
-          <EditTransactionRow
-            currentValue={newTransaction}
-            onChange={(newValue) => {
-              console.log({ newValue });
-              setNewTransaction(newValue);
-            }}
-          />
-        )}
-        {transactions.map((tx) => {
-          return (
-            <TransactionRow
-              transaction={tx.toObject()}
-              key={`${tx.id}-tx-row`}
+    <>
+      <Table
+        onKeyDown={async (event) => {
+          if (event.key === 'Enter') {
+            await createTransaction(newTransaction);
+            onTransactionCreated();
+          }
+        }}
+        layout="fixed"
+        highlightOnHover
+        tabularNums
+        verticalSpacing={'sm'}
+        withColumnBorders
+      >
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Date</Table.Th>
+            <Table.Th>Payee</Table.Th>
+            <Table.Th>Category</Table.Th>
+            <Table.Th>Amount</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {creatingNewTransaction && (
+            <EditTransactionRow
+              currentValue={newTransaction}
+              onChange={(newValue) => {
+                console.log({ newValue });
+                setNewTransaction(newValue);
+              }}
             />
-          );
-        })}
-      </Table.Tbody>
-    </Table>
+          )}
+          {transactions.map((tx) => {
+            return (
+              <TransactionRow
+                transaction={tx.toObject()}
+                key={`${tx.id}-tx-row`}
+              />
+            );
+          })}
+        </Table.Tbody>
+      </Table>
+      <Pagination
+        mt={'lg'}
+        value={page}
+        onChange={setPage}
+        total={totalPages}
+      />
+    </>
   );
 };

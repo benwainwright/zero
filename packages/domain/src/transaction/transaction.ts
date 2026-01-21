@@ -97,6 +97,7 @@ export class Transaction
 
   private static getConfigFromObTransaction(
     transaction: IOpenBankingTransaction,
+    newTxId: string,
     pending: boolean,
     accountId: string,
     ownerId: string
@@ -107,7 +108,7 @@ export class Transaction
       throw new DomainError(`Tried to create a transaction without a date`);
     }
 
-    const id = transaction.transactionId;
+    const id = newTxId;
     const amount = Number.parseFloat(transaction.transactionAmount.amount);
 
     const creditorName =
@@ -139,6 +140,7 @@ export class Transaction
     this.update(
       Transaction.getConfigFromObTransaction(
         transaction,
+        this.id,
         pending,
         this.accountId,
         this.ownerId
@@ -148,6 +150,7 @@ export class Transaction
 
   public static createFromObTransaction(
     transaction: IOpenBankingTransaction,
+    newTxId: string,
     pending: boolean,
     accountId: string,
     ownerId: string
@@ -155,6 +158,7 @@ export class Transaction
     return Transaction.create(
       Transaction.getConfigFromObTransaction(
         transaction,
+        newTxId,
         pending,
         accountId,
         ownerId

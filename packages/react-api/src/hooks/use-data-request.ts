@@ -31,7 +31,7 @@ export const useDataRequest = <
         })();
       });
     }
-  }, [api, dirty, load]);
+  }, [api, dirty, load, key, JSON.stringify(params)]);
 
   const refresh = () => {
     setDirty(true);

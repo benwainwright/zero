@@ -3,6 +3,7 @@ import { Notification } from '@mantine/core';
 import { StackTrace } from '@components';
 interface NotificationProps {
   error: ErrorDetails;
+  onClose: () => void;
 }
 
 interface ErrorDetails {
@@ -17,9 +18,9 @@ interface ErrorDetails {
   cause?: ErrorDetails | undefined;
 }
 
-export const ErrorNotification = ({ error }: NotificationProps) => {
+export const ErrorNotification = ({ error, onClose }: NotificationProps) => {
   return (
-    <Notification title="Error" color="red">
+    <Notification title="Error" color="red" onClose={onClose}>
       {error.message}
       <StackTrace trace={error.stack} />
       {error.cause ? (

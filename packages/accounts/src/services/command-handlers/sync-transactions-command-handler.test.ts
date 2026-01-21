@@ -15,7 +15,14 @@ describe('sync transactions command handler', () => {
     const {
       handler,
       context,
-      dependencies: [bank, tokens, accounts, transactionRepo, writer],
+      dependencies: [
+        bank,
+        tokens,
+        accounts,
+        transactionRepo,
+        writer,
+        stringHasher,
+      ],
     } = await buildRequestHandler(
       SyncTransactionsCommandHandler,
       'SyncTransactionsCommandHandler',
@@ -32,6 +39,9 @@ describe('sync transactions command handler', () => {
     const firstBookedTx = {
       transactionId: 'foo',
       debtorName: 'bar',
+      debtorAccount: {
+        iban: '1234',
+      },
       transactionAmount: {
         currency: 'GBP',
         amount: '328.18',
@@ -40,6 +50,8 @@ describe('sync transactions command handler', () => {
       valueDate: '2020-12-31',
     };
 
+    when(stringHasher.md5).calledWith(`foo-bar-328.18`).thenReturn('first-id');
+
     const secondBookedTx = {
       transactionId: 'bar',
       creditorName: 'creditor',
@@ -47,9 +59,16 @@ describe('sync transactions command handler', () => {
         currency: 'GBP',
         amount: '947.26',
       },
+      creditorAccount: {
+        iban: '2354',
+      },
       bookingDate: '2025-12-01',
       valueDate: undefined,
     };
+
+    when(stringHasher.md5)
+      .calledWith(`bar-creditor-947.26`)
+      .thenReturn('second-id');
 
     const pendingTx = {
       transactionId: 'foo-bar',
@@ -59,8 +78,15 @@ describe('sync transactions command handler', () => {
         currency: 'GBP',
         amount: '99.20',
       },
+      debtorAccount: {
+        iban: '51243',
+      },
       valueDate: '2023-12-01',
     };
+
+    when(stringHasher.md5)
+      .calledWith(`foo-bar-debt-99.20`)
+      .thenReturn('third-id');
 
     const transactions = {
       booked: [firstBookedTx, secondBookedTx],
@@ -73,18 +99,18 @@ describe('sync transactions command handler', () => {
 
     when(accounts.require).calledWith('foo-account').thenResolve(account);
 
-    const first = mock<Transaction>({ id: 'foo' });
-    const second = mock<Transaction>({ id: 'bar' });
-    const third = mock<Transaction>({ id: 'foo-bar' });
+    const first = mock<Transaction>({ id: 'first-id' });
+    const second = mock<Transaction>({ id: 'second-id' });
+    const third = mock<Transaction>({ id: 'third-id' });
 
     when(tokens.getToken).calledWith('ben').thenResolve(mockToken);
 
     when(transactionRepo.getMany)
-      .calledWith(['foo', 'bar', 'foo-bar'])
+      .calledWith(['first-id', 'second-id', 'third-id'])
       .thenResolve([first, second]);
 
     when(Transaction.createFromObTransaction)
-      .calledWith(pendingTx, true, 'foo-account', 'ben')
+      .calledWith(pendingTx, 'third-id', true, 'foo-account', 'ben')
       .thenReturn(third);
 
     when(bank.getAccountTransactions)
