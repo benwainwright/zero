@@ -15,6 +15,46 @@ permissions:
   contents: read
 
 jobs:
+  local-e2es:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js 24
+
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install railway CLI
+        run: bash <(curl -fsSL cli.new)
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Download service environment variables
+        env:
+          RAILWAY_TOKEN: ${{ secrets.STAGING_RAILWAY_TOKEN }}
+        run: railway variable --kv --service @zero/backend > .env
+
+      - name: Run E2Es
+        run: CI=true pnpm exec nx e2e @zero/web-e2e
+
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
   static-checks:
     runs-on: ubuntu-latest
     strategy:
@@ -127,7 +167,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-    needs: [staging-e2es, static-checks]
+    needs: [staging-e2es, static-checks, local-e2es]
 
     steps:
       - uses: actions/checkout@v4
