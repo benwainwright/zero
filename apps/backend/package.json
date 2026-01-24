@@ -60,12 +60,11 @@
           ]
         }
       },
-      "deploy:prod": {
+      "deploy": {
         "executor": "nx:run-commands",
         "options": {
-          "commands": [
-            "railway up --service @zero/backend --environment production"
-          ]
+          "command": "railway up",
+          "cwd": "apps/backend"
         }
       },
       "start:database": {

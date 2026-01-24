@@ -45,6 +45,13 @@
   },
   "nx": {
     "targets": {
+      "deploy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "railway up",
+          "cwd": "apps/web"
+        }
+      },
       "dev": {
         "dependsOn": [
           {

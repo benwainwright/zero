@@ -1,7 +1,7 @@
 [
   {
     "label": "test $NX_SYMBOL",
-    "command": "NX_TUI=false pnpm exec nx run $(node ./get-file-package-name.js $ZED_FILE):test",
+    "command": "NX_TUI=false pnpm exec nx run $(node ./scripts/get-file-package-name.js $ZED_FILE):test",
     "reveal": "no_focus",
     "args": [
       "$ZED_FILENAME",
@@ -18,7 +18,7 @@
   },
   {
     "label": "Run tests in current package",
-    "command": "NX_TUI=false pnpm exec nx run $(node ./get-file-package-name.js $ZED_FILE):test",
+    "command": "NX_TUI=false pnpm exec nx run $(node ./scripts/get-file-package-name.js $ZED_FILE):test",
     "show_command": false,
     "show_summary": false,
     "reveal": "no_focus",

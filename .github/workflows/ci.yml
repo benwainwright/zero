@@ -29,3 +29,26 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec nx run-many -t test build typecheck
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js 24
+
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: Echo affected
+
+      - name: Install railway CLI
+        run: bash <(curl -fsSL cli.new)
+
+      - run: pnpm install --frozen-lockfile
