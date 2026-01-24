@@ -33,6 +33,10 @@ export class SessionIdHandler {
     const existingId = this.parseSessionIdFromRequest(request);
 
     if (existingId) {
+      this.logger.debug(
+        `There was an existing session id when setSessionId was called`,
+        LOG_CONTEXT
+      );
       this.sessionIds.set(request, existingId);
     } else {
       const newId = this.uuidGenerator.v7();
@@ -40,7 +44,7 @@ export class SessionIdHandler {
         this.key
       }=${newId}; HttpOnly; Secure; SameSite=None; domain=${await this
         .cookieDomain.value};`;
-      this.logger.debug(cookieValue);
+      this.logger.debug(cookieValue, LOG_CONTEXT);
       headers.push(cookieValue);
       this.sessionIds.set(request, newId);
     }
@@ -52,10 +56,10 @@ export class SessionIdHandler {
     const cookies = cookie.parse(request.headers.cookie ?? '');
     const key = cookies[this.key];
     if (key) {
-      this.logger.silly(`Found session id in cookies: ${key}`, LOG_CONTEXT);
+      this.logger.debug(`Found session id in cookies: ${key}`, LOG_CONTEXT);
       return key;
     } else {
-      this.logger.silly(`No session id found in cookies`, LOG_CONTEXT);
+      this.logger.debug(`No session id found in cookies`, LOG_CONTEXT);
     }
     return undefined;
   }
