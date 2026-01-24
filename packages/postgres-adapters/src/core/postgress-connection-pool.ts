@@ -84,7 +84,6 @@ export class PostgresConnectionPool implements IKyselyDataSource<DB> {
       if (this.pool) {
         this.logger.info(`Creating database if it doesnt already exist`);
         this.connection = new Kysely<DB>({
-          log: ['error', 'query'],
           dialect: new PostgresDialect({
             pool: this.pool,
           }),

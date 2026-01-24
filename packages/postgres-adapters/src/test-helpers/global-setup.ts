@@ -1,5 +1,4 @@
 import { upAll, downAll, type IDockerComposeResult } from 'docker-compose';
-import waitPort from 'wait-port';
 
 import path from 'path';
 import { runMigrations } from '@migrate';
