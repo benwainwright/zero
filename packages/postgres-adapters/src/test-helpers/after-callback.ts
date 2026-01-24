@@ -10,13 +10,9 @@ export const afterCallback = async (
     IInternalTypes & IApplicationTypes & IKyselySharedTypes<DB>
   >
 ) => {
-  await dropAllMigrations({
-    host: 'localhost',
-    port: 5432,
-    database: 'zero',
-    password: 'password',
-    user: 'postgres',
-  });
+  const pool = await container.getAsync('PostgresConnectionPool');
+  await dropAllMigrations(pool);
+  await pool.close();
   await container.unbind('KyselyTransactionManager');
   await container.unbind('UnitOfWork');
   container

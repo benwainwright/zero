@@ -10,17 +10,10 @@ export const createCallback = async (
     IInternalTypes & IApplicationTypes & IKyselySharedTypes<DB>
   >
 ) => {
-  await runMigrations({
-    host: 'localhost',
-    port: 5432,
-    database: 'zero',
-    password: 'password',
-    user: 'postgres',
-  });
-
-  const db = await container.getAsync('KyselyTransactionManager');
   const pool = await container.getAsync('PostgresConnectionPool');
   await pool.initialise();
+  await runMigrations(pool);
+  const db = await container.getAsync('KyselyTransactionManager');
   await container.unbind('KyselyTransactionManager');
   await container.unbind('UnitOfWork');
   container.bind('KyselyTransactionManager').toConstantValue(db);

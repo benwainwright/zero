@@ -53,26 +53,28 @@ export class PostgresConnectionPool implements IKyselyDataSource<DB> {
   }
 
   public async doConnect() {
-    this.logger.info(`Connection to database!`);
+    this.logger.info(`Connecting to database!`);
     const db = await this.databaseName.value;
 
-    this.pool = new Pool({
-      database: db,
-      host: await this.databaseHost.value,
-      port: await this.databasePort.value,
-      password: await this.databasePassword.value,
-      user: await this.databaseUsername.value,
-      connectionTimeoutMillis: 5_000,
-      idleTimeoutMillis: 10_000,
-      keepAlive: true,
-      keepAliveInitialDelayMillis: 10_000,
-    });
+    if (!this.pool) {
+      this.pool = new Pool({
+        database: db,
+        host: await this.databaseHost.value,
+        port: await this.databasePort.value,
+        password: await this.databasePassword.value,
+        user: await this.databaseUsername.value,
+        connectionTimeoutMillis: 5_000,
+        idleTimeoutMillis: 10_000,
+        keepAlive: true,
+        keepAliveInitialDelayMillis: 10_000,
+      });
 
-    this.logger.info(`Connection initialised`);
+      this.logger.info(`Connection initialised`);
 
-    this.pool.on('error', (error) => {
-      this.logger.error(error.message, { error });
-    });
+      this.pool.on('error', (error) => {
+        this.logger.error(error.message, { error });
+      });
+    }
   }
 
   @postConstruct()
