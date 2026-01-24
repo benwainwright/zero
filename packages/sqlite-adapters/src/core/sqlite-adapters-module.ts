@@ -14,7 +14,7 @@ import {
 import type { IAccountsTypes } from '@zero/accounts';
 import { KyselyUnitOfWork, type IKyselySharedTypes } from '@zero/kysely-shared';
 import { KyselySqliteDatabase } from './kysely-sqlite-database.ts';
-import type { DB } from '@core';
+import type { DB } from './database.ts';
 
 export const CONFIG_NAMESPACE = 'sqlite';
 
