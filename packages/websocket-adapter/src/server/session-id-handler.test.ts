@@ -54,7 +54,7 @@ describe('session id handler', () => {
       await handler.setSesionId(headers, request);
 
       expect(headers).toEqual([
-        'Set-Cookie: key-session=foo-id; HttpOnly; Secure; domain=localhost',
+        'Set-Cookie: key-session=foo-id; HttpOnly; Secure; SameSite=None; domain=localhost;',
       ]);
     });
   });
