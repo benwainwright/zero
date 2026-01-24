@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "types": ["node"],
+    "inlineSourceMap": true,
     "rootDir": "src",
     "esModuleInterop": true,
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"

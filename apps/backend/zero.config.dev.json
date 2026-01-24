@@ -1,8 +1,5 @@
 {
   "storage": {
     "location": ".zero"
-  },
-  "websocketServer": {
-    "cookieDomain": "localhost"
   }
 }
