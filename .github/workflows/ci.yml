@@ -54,6 +54,10 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
 
+      - name: Fetch base SHA for Nx affected
+        run: |
+          git fetch --no-tags --depth=1 origin $NX_BASE
+
       - name: Install railway CLI
         run: bash <(curl -fsSL cli.new)
 
