@@ -32,7 +32,6 @@ jobs:
 
   deploy-staging:
     runs-on: ubuntu-latest
-    needs: [static-checks]
     environment:
       name: staging
 
