@@ -63,8 +63,7 @@
       "deploy": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "railway up --service \"@zero/backend\"",
-          "cwd": "apps/backend"
+          "command": "railway up --service \"@zero/backend\""
         }
       },
       "start:database": {
