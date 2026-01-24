@@ -3,7 +3,7 @@ import type { Kysely } from 'kysely';
 export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .alterTable('transactions')
-    .addColumn('currency', 'text', (ob) => ob.notNull())
+    .addColumn('currency', 'text', (ob) => ob.notNull().defaultTo('GBP'))
     .execute();
 };
 

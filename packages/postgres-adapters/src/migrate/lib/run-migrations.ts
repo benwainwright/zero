@@ -15,4 +15,8 @@ export const runMigrations = async (
   }
 
   logResults(result);
+
+  if (result.error) {
+    throw new Error(`Migration failed`);
+  }
 };

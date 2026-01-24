@@ -3,7 +3,7 @@ import type { Kysely } from 'kysely';
 export const up = async (db: Kysely<unknown>) => {
   await db.schema
     .alterTable('transactions')
-    .addColumn('pending', 'boolean', (oc) => oc.notNull())
+    .addColumn('pending', 'boolean', (oc) => oc.notNull().defaultTo(false))
     .execute();
 };
 
