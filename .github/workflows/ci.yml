@@ -69,8 +69,6 @@ jobs:
 
   staging-e2es:
     runs-on: ubuntu-latest
-    environment:
-      name: staging
 
     steps:
       - uses: actions/checkout@v4
@@ -93,3 +91,5 @@ jobs:
 
       - name: Run E2Es
         run: BASE_URL=https://$(railway variable --json | jq -r .RAILWAY_SERVICE__ZERO_WEB_URL) CI=true pnpm exec nx e2e @zero/web-e2e
+        env:
+          RAILWAY_TOKEN: ${{ secrets.STAGING_RAILWAY_TOKEN }}
