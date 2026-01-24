@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+concurrency:
+  group: main-ci-pipeline
+  cancel-in-progress: true
+
 permissions:
   actions: read
   contents: read
