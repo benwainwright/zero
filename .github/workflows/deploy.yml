@@ -34,12 +34,12 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
 
+      - name: Install railway CLI
+        run: bash <(curl -fsSL cli.new)
+
       - name: Echo affected
         run: pnpm exec nx affected --target deploy
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      # - name: Install railway CLI
-      #   run: bash <(curl -fsSL cli.new)
 
       # - run: pnpm install --frozen-lockfile
