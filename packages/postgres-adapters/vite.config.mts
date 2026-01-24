@@ -14,10 +14,8 @@ export default defineConfig(() => ({
   cacheDir: '../../node_modules/.vite/packages/postgres-adapters',
   plugins: [
     tsconfigPaths({
-      projects: [
-        path.join(import.meta.dirname, 'tsconfig.lib.json'),
-        path.join(import.meta.dirname, 'tsconfig.spec.json'),
-      ],
+      root: path.join(import.meta.dirname, '..', '..'),
+      configNames: ['tsconfig.lib.json', 'tsconfig.spec.json'],
     }),
   ],
   build: {

@@ -18,22 +18,23 @@
   },
   "devDependencies": {
     "@types/ws": "8.18.1",
+    "@zero/test-helpers": "workspace:*",
     "get-port": "7.1.0",
     "vitest-mock-extended": "catalog:",
-    "vitest-when": "catalog:",
-    "@zero/test-helpers": "workspace:*"
+    "vitest-when": "catalog:"
   },
   "dependencies": {
     "@inversifyjs/strongly-typed": "catalog:",
     "@zero/accounts": "workspace:*",
     "@zero/application-core": "workspace:*",
-    "@zero/integration-adapters": "workspace:*",
     "@zero/auth": "workspace:*",
     "@zero/bootstrap": "workspace:*",
+    "@zero/integration-adapters": "workspace:*",
     "@zero/serialiser": "workspace:*",
     "cookie": "1.1.1",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
+    "tsconfck": "^3.1.6",
     "uuid": "13.0.0",
     "ws": "8.18.3",
     "zod": "catalog:"

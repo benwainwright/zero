@@ -18,11 +18,8 @@ export default defineConfig(() => ({
   },
   plugins: [
     tsconfigPaths({
-      projectDiscovery: 'lazy',
-      projects: [
-        path.join(import.meta.dirname, 'tsconfig.lib.json'),
-        path.join(import.meta.dirname, 'tsconfig.spec.json'),
-      ],
+      root: path.join(import.meta.dirname, '..', '..'),
+      configNames: ['tsconfig.lib.json', 'tsconfig.spec.json'],
     }),
   ],
   build: {

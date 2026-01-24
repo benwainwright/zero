@@ -869,9 +869,6 @@ importers:
       '@inversifyjs/plugin':
         specifier: 'catalog:'
         version: 0.2.0
-      '@inversifyjs/strongly-typed':
-        specifier: 'catalog:'
-        version: 2.2.0(inversify@7.10.7(reflect-metadata@0.2.2))
       '@zero/application-core':
         specifier: workspace:*
         version: link:../application-core
@@ -924,6 +921,9 @@ importers:
       reflect-metadata:
         specifier: 'catalog:'
         version: 0.2.2
+      tsconfck:
+        specifier: ^3.1.6
+        version: 3.1.6(typescript@5.9.3)
       uuid:
         specifier: 13.0.0
         version: 13.0.0

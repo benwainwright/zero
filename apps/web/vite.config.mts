@@ -29,29 +29,12 @@ export default defineConfig(() => ({
   },
   plugins: [
     !process.env['VITEST'] && reactRouter(),
-
     tsconfigPaths({
-      projectDiscovery: 'lazy',
-      projects: [
-        path.join(import.meta.dirname, 'tsconfig.app.json'),
-        path.join(
-          import.meta.dirname,
-          '..',
-          '..',
-          'packages',
-          'websocket-adapter',
-          'tsconfig.lib.json'
-        ),
-        path.join(
-          import.meta.dirname,
-          '..',
-          '..',
-          'packages',
-          'react-api',
-          'tsconfig.lib.json'
-        ),
-
-        path.join(import.meta.dirname, 'tsconfig.spec.json'),
+      root: path.join(import.meta.dirname, '..', '..'),
+      configNames: [
+        'tsconfig.lib.json',
+        'tsconfig.spec.json',
+        'tsconfig.app.json',
       ],
     }),
   ],

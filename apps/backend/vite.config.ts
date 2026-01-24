@@ -66,7 +66,12 @@ export default defineConfig(({ mode }) => {
 
     plugins: [
       tsconfigPaths({
-        projects: [path.join(import.meta.dirname, 'tsconfig.app.json')],
+        root: path.join(import.meta.dirname, '..', '..'),
+        configNames: [
+          'tsconfig.lib.json',
+          'tsconfig.spec.json',
+          'tsconfig.app.json',
+        ],
       }),
       injectFilenameForBadPkg(),
       ...(env['DATABASE'] === 'sqlite'
