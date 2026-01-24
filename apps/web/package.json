@@ -48,7 +48,7 @@
       "deploy": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "railway up --service \"@zero/web\""
+          "command": "railway up --service \"@zero/web\" --verbose"
         }
       },
       "dev": {
