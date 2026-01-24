@@ -39,6 +39,13 @@
   },
   "nx": {
     "targets": {
+      "migrate-env": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "packages/postgres-adapters",
+          "command": "RAILWAY_VARS=$(railway variable --json --service \"Zero Main DB\") && vite-node src/migrate/run-cli.ts migrate --host \"$(printf '%s' \"$RAILWAY_VARS\" | jq -r '.RAILWAY_TCP_PROXY_DOMAIN')\" --port \"$(printf '%s' \"$RAILWAY_VARS\" | jq -r '.RAILWAY_TCP_PROXY_PORT')\" --database \"$(printf '%s' \"$RAILWAY_VARS\" | jq -r '.POSTGRES_DB')\" --password \"$(printf '%s' \"$RAILWAY_VARS\" | jq -r '.PGPASSWORD')\" --user \"$(printf '%s' \"$RAILWAY_VARS\" | jq -r '.POSTGRES_USER')\""
+        }
+      },
       "drop-migrations": {
         "executor": "nx:run-commands",
         "options": {
