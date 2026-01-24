@@ -5,53 +5,9 @@
   "type": "module",
   "nx": {
     "implicitDependencies": [
-      "@zero/web"
+      "@zero/web",
+      "@zero/backend"
     ],
-    "targets": {
-      "copy-server": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "mkdir -p apps/web-e2e/dist/backend && cp -r apps/backend/dist/** apps/web-e2e/dist/backend"
-        },
-        "dependsOn": [
-          {
-            "projects": [
-              "@zero/backend"
-            ],
-            "target": "build:postgres"
-          }
-        ]
-      },
-      "copy-client": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "mkdir -p apps/web-e2e/dist/web && cp -r apps/web/build/client/** apps/web-e2e/dist/web"
-        },
-        "dependsOn": [
-          {
-            "projects": [
-              "@zero/web"
-            ],
-            "target": "build"
-          }
-        ]
-      },
-      "docker:build": {
-        "dependsOn": [
-          "copy-server",
-          "copy-client"
-        ]
-      },
-      "start": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "docker-compose up",
-          "cwd": "apps/web-e2e"
-        },
-        "dependsOn": [
-          "docker:build"
-        ]
-      }
-    }
+    "test:environment": {}
   }
 }

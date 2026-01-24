@@ -1,5 +1,8 @@
 export const getSocketUrl = () => {
-  if (import.meta.env.DEV) {
+  if (
+    process.env['NODE_ENV'] !== 'production' &&
+    process.env['NODE_ENV'] !== 'staging'
+  ) {
     return `ws://localhost:3000`;
   }
 
