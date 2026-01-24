@@ -921,9 +921,6 @@ importers:
       reflect-metadata:
         specifier: 'catalog:'
         version: 0.2.2
-      tsconfck:
-        specifier: ^3.1.6
-        version: 3.1.6(typescript@5.9.3)
       uuid:
         specifier: 13.0.0
         version: 13.0.0
