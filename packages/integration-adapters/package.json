@@ -25,6 +25,8 @@
     "@zero/bootstrap": "workspace:*",
     "@zero/domain": "workspace:*",
     "inversify": "catalog:",
-    "reflect-metadata": "catalog:"
+    "reflect-metadata": "catalog:",
+    "type-fest": "^5.4.0",
+    "zod": "catalog:"
   }
 }

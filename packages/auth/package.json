@@ -16,7 +16,8 @@
   "devDependencies": {
     "@suites/unit": "catalog:",
     "@suites/doubles.vitest": "catalog:",
-    "vitest-when": "catalog:"
+    "vitest-when": "catalog:",
+    "@zero/test-helpers": "workspace:*"
   },
   "dependencies": {
     "inversify": "catalog:",
@@ -24,7 +25,6 @@
     "@inversifyjs/strongly-typed": "catalog:",
     "zod": "catalog:",
     "@zero/application-core": "workspace:*",
-    "@zero/test-helpers": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "@zero/serialiser": "workspace:*",
     "@zero/domain": "workspace:*"

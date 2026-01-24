@@ -13,11 +13,9 @@
     },
     "./package.json": "./package.json"
   },
-  "devDependencies": {
-    "vitest-mock-extended": "catalog:",
-    "vitest-when": "catalog:"
-  },
   "dependencies": {
+    "vitest-mock-extended": "catalog:",
+    "vitest": "4.0.16",
     "@zero/application-core": "workspace:*",
     "@zero/domain": "workspace:*",
     "@zero/bootstrap": "workspace:*",

@@ -28,7 +28,7 @@ export const Page = ({
     .charAt(0)
     .toLocaleUpperCase()}${header.slice(1)}`;
 
-  if (!user || !initialLoadComplete) {
+  if (!initialLoadComplete) {
     return (
       <Flex justify={'center'} align={'center'} pt="xl">
         <Loader />

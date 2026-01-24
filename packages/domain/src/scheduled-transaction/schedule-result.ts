@@ -1,1 +1,1 @@
-export type ScheduleResult = {};
+export type ScheduleResult = object;

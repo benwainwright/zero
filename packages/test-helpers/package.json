@@ -14,14 +14,13 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
-    "vitest-mock-extended": "catalog:",
     "vitest-when": "catalog:"
   },
   "dependencies": {
     "@inversifyjs/plugin": "catalog:",
+    "vitest-mock-extended": "catalog:",
     "@zero/application-core": "workspace:*",
     "@zero/domain": "workspace:*",
-    "@inversifyjs/strongly-typed": "catalog:",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:"
   }

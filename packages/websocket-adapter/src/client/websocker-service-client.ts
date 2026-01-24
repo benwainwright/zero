@@ -2,7 +2,6 @@ import type { IKnownRequests, IUUIDGenerator } from '@types';
 import type {
   ExecuteParams,
   IEventListener,
-  IEventPacket,
   IPickRequest,
   IServiceClient,
 } from '@zero/application-core';

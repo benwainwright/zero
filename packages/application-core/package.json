@@ -23,7 +23,6 @@
     "@zero/serialiser": "workspace:*",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
-    "type-fest": "^5.4.0",
-    "zod": "catalog:"
+    "type-fest": "^5.4.0"
   }
 }

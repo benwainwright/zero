@@ -2,7 +2,6 @@
 import path from 'path';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 function injectFilenameForBadPkg() {
   const badPkgRe = /node_modules\/bindings\//;

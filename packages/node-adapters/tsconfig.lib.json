@@ -33,9 +33,6 @@
       "path": "../bootstrap/tsconfig.lib.json"
     },
     {
-      "path": "../domain/tsconfig.lib.json"
-    },
-    {
       "path": "../auth/tsconfig.lib.json"
     },
     {

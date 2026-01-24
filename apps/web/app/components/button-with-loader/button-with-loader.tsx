@@ -1,4 +1,4 @@
-import { Button, Center, Loader, type ButtonProps } from '@mantine/core';
+import { Button, Loader, type ButtonProps } from '@mantine/core';
 import { useState } from 'react';
 
 interface ButtonWithLoaderProps extends Omit<ButtonProps, 'onClick'> {

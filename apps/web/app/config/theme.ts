@@ -1,10 +1,4 @@
-import {
-  Button,
-  createTheme,
-  Input,
-  PasswordInput,
-  Stack,
-} from '@mantine/core';
+import { createTheme, Input, PasswordInput, Stack } from '@mantine/core';
 
 export const theme = createTheme({
   components: {

@@ -22,7 +22,6 @@
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
     "stacktrace-parser": "^0.1.11",
-    "stacktracey": "catalog:",
     "tslog": "^4.10.2",
     "type-fest": "^5.4.0",
     "zod": "catalog:"

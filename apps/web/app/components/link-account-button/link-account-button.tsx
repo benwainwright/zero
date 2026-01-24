@@ -1,7 +1,7 @@
 import { ButtonWithLoader } from '@components';
-import { Button, Combobox, Input, InputBase, useCombobox } from '@mantine/core';
+import { Combobox, Input, InputBase, useCombobox } from '@mantine/core';
 import { useRequest } from '@zero/react-api';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 interface LinkAccountButtonProps {
   onPick: (id: string) => void | Promise<void>;
