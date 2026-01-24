@@ -15,10 +15,10 @@ export class LoginPageObject extends BasePom {
   }
 
   public get loginButton() {
-    return this.page.getByText('Login');
+    return this.page.getByRole('button', { name: 'Login' });
   }
 
   public get registerLink() {
-    return this.page.getByText('Register');
+    return this.page.getByRole('link', { name: 'Register' });
   }
 }

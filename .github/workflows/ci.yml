@@ -35,6 +35,7 @@ jobs:
     needs: [static-checks]
     environment:
       name: staging
+
     steps:
       - uses: actions/checkout@v4
 
@@ -64,4 +65,31 @@ jobs:
       - name: Deploy affected apps
         run: pnpm exec nx affected --target deploy
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.STAGING_RAILWAY_TOKEN }}
+
+  staging-e2es:
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js 24
+
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install railway CLI
+        run: bash <(curl -fsSL cli.new)
+
+      - name: Run E2Es
+        run: BASE_URL=https://$(railway variable --json | jq -r .RAILWAY_SERVICE__ZERO_WEB_URL) CI=true pnpm exec nx e2e @zero/web-e2e
