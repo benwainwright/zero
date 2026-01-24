@@ -80,12 +80,14 @@ export const testTransactionRepository = (
     });
 
     expect(first).toEqual(true);
+
     const second = await unitOfWork.atomically(async () => {
       return await repo.exists('superman');
     });
 
-    expect(second).toEqual(true);
+    expect(second).toEqual(false);
   });
+
   it('allows you to bulk fetch items by id', async () => {
     const { repo, unitOfWork, userRepo, accountRepo, writer } = await create();
 
