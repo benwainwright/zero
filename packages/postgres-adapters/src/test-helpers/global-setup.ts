@@ -9,7 +9,11 @@ const PORT = 5432;
 export const setup = async () => {
   // oxlint-disable eslint/no-misused-promises
   await new Promise<IDockerComposeResult>((accept, reject) =>
-    upAll({ cwd: path.join(__dirname, '..'), log: true }).then(
+    upAll({
+      cwd: path.join(__dirname, '..'),
+      log: true,
+      commandOptions: ['--wait'],
+    }).then(
       async (result) => {
         accept(result);
       },
@@ -20,8 +24,6 @@ export const setup = async () => {
       }
     )
   );
-  await waitPort({ host: 'localhost', port: PORT });
-
   await runMigrations({
     host: 'localhost',
     port: PORT,
