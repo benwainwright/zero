@@ -36,10 +36,12 @@ export class SessionIdHandler {
       this.sessionIds.set(request, existingId);
     } else {
       const newId = this.uuidGenerator.v7();
-      headers.push(
-        `Set-Cookie: ${this.key}=${newId}; HttpOnly; Secure; domain=${await this
-          .cookieDomain.value}`
-      );
+      const cookieValue = `Set-Cookie: ${
+        this.key
+      }=${newId}; HttpOnly; Secure; SameSite=None; domain=${await this
+        .cookieDomain.value};`;
+      this.logger.debug(cookieValue);
+      headers.push(cookieValue);
       this.sessionIds.set(request, newId);
     }
   }
