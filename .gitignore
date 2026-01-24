@@ -55,3 +55,4 @@ test-output
 **/.zero
 **/*.sqlite
 apps/backend/pglogs
+*.tsbuildinfo

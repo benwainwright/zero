@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
     root: import.meta.dirname,
-    cacheDir: '../../node_modules/.vite/packages/bootstrap',
+    cacheDir: '../../node_modules/.vite/packages/backend',
     server: {
       port: 3000,
     },
@@ -98,7 +98,7 @@ export default defineConfig(({ mode }) => {
       },
       lib: {
         entry: 'src/cli.ts',
-        name: '@zero/bootstrap',
+        name: '@zero/backend',
         fileName: 'index',
         formats: ['es' as const],
       },
