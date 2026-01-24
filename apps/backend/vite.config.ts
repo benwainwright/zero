@@ -103,7 +103,7 @@ export default defineConfig(({ mode }) => {
         formats: ['es' as const],
       },
       rollupOptions: {
-        external: ['pg-native'],
+        external: ['pg-native', 'utf-8-validate'],
       },
       sourcemap: 'inline',
     },
