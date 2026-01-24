@@ -2,7 +2,7 @@ import { CurrentUserContext } from '@zero/react-api';
 import { type ReactNode, useContext } from 'react';
 import { Navigate } from 'react-router';
 import { routesList } from '@config';
-import { Box, Group, Paper, Title } from '@mantine/core';
+import { Box, Flex, Loader, Group, Paper, Title } from '@mantine/core';
 import { routeAvailable } from '@utils';
 
 interface PageProps {
@@ -23,18 +23,21 @@ export const Page = ({
   if (!routeConfig) {
     return null;
   }
-  const loading = <div aria-busy></div>;
   const header = routeConfig.header ?? routeName;
   const capitalisedHeader = `${header
     .charAt(0)
     .toLocaleUpperCase()}${header.slice(1)}`;
 
-  if (!routeAvailable(user, routeConfig, routeName)) {
-    return initialLoadComplete ? (
-      <Navigate to={routeConfig.authFailRedirect} />
-    ) : (
-      loading
+  if (!user || !initialLoadComplete) {
+    return (
+      <Flex justify={'center'} align={'center'} pt="xl">
+        <Loader />
+      </Flex>
     );
+  }
+
+  if (!routeAvailable(user, routeConfig, routeName)) {
+    return <Navigate to={routeConfig.authFailRedirect} />;
   }
 
   return initialLoadComplete ? (

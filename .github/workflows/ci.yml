@@ -17,6 +17,10 @@ permissions:
 jobs:
   static-checks:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        check: [test, build, lint, typecheck]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -32,7 +36,7 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec nx run-many -t test build typecheck
+      - run: pnpm exec nx run-many -t ${{ matrix.check }}
 
   deploy-staging:
     runs-on: ubuntu-latest

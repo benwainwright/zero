@@ -10,7 +10,6 @@ export const Loader = <TData,>({
   data,
   children,
 }: LoaderProps<TData>): ReactNode => {
-  console.log({ data });
   if (data === undefined) {
     return (
       <Flex justify={'center'} align={'center'}>
