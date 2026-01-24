@@ -37,9 +37,7 @@ jobs:
       - name: Install railway CLI
         run: bash <(curl -fsSL cli.new)
 
-      - name: Echo affected
+      - name: Deploy affected apps
         run: pnpm exec nx affected --target deploy
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      # - run: pnpm install --frozen-lockfile
