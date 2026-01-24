@@ -40,7 +40,7 @@ export class SqliteTransactionRepository
   public async exists(id: string): Promise<boolean> {
     const tx = this.database.transaction();
 
-    const result = tx
+    const result = await tx
       .selectFrom('transactions')
       .select('id')
       .where('id', '=', id)
