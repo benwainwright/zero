@@ -257,7 +257,7 @@ describe('the transaction model', () => {
 
       const result = Transaction.createFromObTransaction(
         ob,
-        'foo',
+        'foo-bar',
         true,
         'foo',
         'bar'

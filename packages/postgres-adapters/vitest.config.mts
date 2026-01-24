@@ -16,6 +16,8 @@ export default defineConfig(() => ({
   test: {
     name: '@zero/postgres-adapters',
     globalSetup: './src/test-helpers/global-setup.ts',
+    maxConcurrency: 1,
+    maxWorkers: 1,
     watch: false,
     globals: true,
     environment: 'node',
