@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["src/infrastructure/**/*.ts", "src/index.ts", "../deploy/src/zero-certificate-stack.ts", "../deploy/src/zero-ecr-stack.ts"],
+}

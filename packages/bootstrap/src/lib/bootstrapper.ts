@@ -138,12 +138,18 @@ export class Bootstrapper implements IBootstrapper {
     key,
     schema,
     description,
+    optional = false,
   }: {
     namespace: string;
     key: string;
     schema: TConfigValue;
     description: string;
-  }): ConfigValue<core.output<TConfigValue>> {
+    optional?: boolean;
+  }): ConfigValue<
+    typeof optional extends true
+      ? core.output<TConfigValue> | undefined
+      : core.output<TConfigValue>
+  > {
     const namespacedConfig = this.ensureNamespacedConfig(namespace);
     const envKey = `ZERO_CONFIG_${namespace}_${key}`.toUpperCase();
     const envValue = this.coerceEnvValue(process.env[envKey]);
@@ -152,27 +158,42 @@ export class Bootstrapper implements IBootstrapper {
       namespacedConfig[key] === undefined && envValue !== undefined
         ? envValue
         : namespacedConfig[key];
-    if (namespacedConfig[key] === undefined && envValue !== undefined) {
+
+    if (
+      namespacedConfig[key] === undefined &&
+      envValue !== undefined &&
+      !optional
+    ) {
       this._config[namespace] = {
         ...namespacedConfig,
         [key]: envValue,
       };
     }
+
     this.fullSchema[namespace] ??= {};
-    this.fullSchema[namespace][key] = schema;
+    this.fullSchema[namespace][key] = optional ? schema.optional() : schema;
 
     this.configDescriptions[namespace] ??= {};
     this.configDescriptions[namespace][key] = description;
 
-    const valuePromise = new Promise<core.output<TConfigValue>>((accept) =>
-      this.emitter.on(RESOLVE_CONFIG, () => {
-        accept(schema.parse(value));
-      })
+    const valuePromise = new Promise<core.output<TConfigValue> | undefined>(
+      (accept) =>
+        this.emitter.on(RESOLVE_CONFIG, () => {
+          if (value === undefined && optional) {
+            accept(undefined);
+            return;
+          }
+
+          accept(schema.parse(value));
+        })
     );
 
-    return new ConfigValue(valuePromise);
+    return new ConfigValue(valuePromise) as ConfigValue<
+      typeof optional extends true
+        ? core.output<TConfigValue> | undefined
+        : core.output<TConfigValue>
+    >;
   }
-
   private ensureNamespacesPresent() {
     for (const namespace of Object.keys(this.fullSchema)) {
       if (this._config[namespace] === undefined) {

@@ -1,0 +1,37 @@
+{
+  "name": "@zero/deploy",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@aws-cdk/toolkit-lib": "^1.14.1",
+    "@drizzle-team/brocli": "0.11.0",
+    "@zero/backend": "workspace:*",
+    "@zero/web": "workspace:*",
+    "aws-cdk": "2.1100.1",
+    "aws-cdk-lib": "^2.236.0",
+    "constructs": "^10.4.5"
+  },
+  "nx": {
+    "targets": {
+      "synth": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "vite-node src/deploy-cli.ts synth-app --environment $ENVIRONMENT --region $REGION --appVersion $VERSION --domainName $DOMAINNAME --account $ACCOUNT",
+          "cwd": "apps/deploy"
+        },
+        "configurations": {
+          "production": {
+            "env": {
+              "ENVIRONMENT": "production"
+            }
+          },
+          "staging": {
+            "env": {
+              "ENVIRONMENT": "staging"
+            }
+          }
+        }
+      }
+    }
+  }
+}

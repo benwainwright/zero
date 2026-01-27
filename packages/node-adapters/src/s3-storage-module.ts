@@ -21,6 +21,7 @@ export const s3StorageModule: IModule<
     namespace: 's3',
     key: 'endpoint',
     schema: z.string(),
+    optional: true,
     description: 'S3 compatible object storage endpoint',
   });
 
@@ -28,6 +29,7 @@ export const s3StorageModule: IModule<
     namespace: 's3',
     key: 'region',
     schema: z.string(),
+    optional: true,
     description: 'S3 compatible object storage region',
   });
 
@@ -35,6 +37,7 @@ export const s3StorageModule: IModule<
     namespace: 's3',
     key: 'accessKeyId',
     schema: z.string(),
+    optional: true,
     description: 'S3 compatible access key ID',
   });
 
@@ -42,6 +45,7 @@ export const s3StorageModule: IModule<
     namespace: 's3',
     key: 'secretAccessKey',
     schema: z.string(),
+    optional: true,
     description: 'S3 compatible secret access key',
   });
 

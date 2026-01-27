@@ -4,7 +4,10 @@
   "include": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "../web"
+    },
+    {
+      "path": "../backend"
     },
     {
       "path": "./tsconfig.cdk.json"

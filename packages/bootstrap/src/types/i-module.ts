@@ -20,7 +20,12 @@ export interface IModuleContext<TTypeMap extends BindingMap> {
     key: string;
     schema: TConfigValue;
     description: string;
-  }): ConfigValue<core.output<TConfigValue>>;
+    optional?: boolean;
+  }): ConfigValue<
+    typeof config.optional extends true
+      ? core.output<TConfigValue> | undefined
+      : core.output<TConfigValue>
+  >;
 
   onInit(callback: () => Promise<void>): void;
 

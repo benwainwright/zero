@@ -6,25 +6,38 @@
   "scripts": {
     "dev": "vite-node src/start.ts"
   },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@drizzle-team/brocli": "0.11.0",
     "@inversifyjs/strongly-typed": "catalog:",
+    "@zero/accounts": "workspace:*",
     "@zero/application-core": "workspace:*",
     "@zero/auth": "workspace:*",
     "@zero/bootstrap": "workspace:*",
     "@zero/domain": "workspace:*",
-    "@zero/node-adapters": "workspace:*",
-    "@zero/accounts": "workspace:*",
-    "@zero/sqlite-adapters": "workspace:*",
-    "@zero/postgres-adapters": "workspace:*",
     "@zero/integration-adapters": "workspace:*",
     "@zero/kysely-shared": "workspace:*",
-    "@zero/websocket-adapter": "workspace:*"
+    "@zero/node-adapters": "workspace:*",
+    "@zero/postgres-adapters": "workspace:*",
+    "@zero/sqlite-adapters": "workspace:*",
+    "@zero/websocket-adapter": "workspace:*",
+    "aws-cdk": "2.1100.1",
+    "aws-cdk-lib": "^2.236.0",
+    "constructs": "^10.4.5"
   },
   "devDependencies": {
+    "vite-node": "5.2.0",
     "vite-plugin-node-polyfills": "0.24.0",
-    "vite-plugin-static-copy": "3.1.4",
-    "vite-node": "5.2.0"
+    "vite-plugin-static-copy": "3.1.4"
   },
   "nx": {
     "targets": {

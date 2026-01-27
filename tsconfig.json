@@ -13,6 +13,9 @@
       "path": "./packages/auth"
     },
     {
+      "path": "./apps/deploy"
+    },
+    {
       "path": "./packages/bootstrap"
     },
     {

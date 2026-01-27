@@ -8,8 +8,8 @@
     "esModuleInterop": true,
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": [],
+  "include": ["src/**/*.ts", "../deploy/src/zero-certificate-stack.ts", "../deploy/src/zero-ecr-stack.ts"],
+  "exclude": ["src/infrastructure/**/*.ts", "src/index.ts"],
   "references": [
     {
       "path": "../../packages/websocket-adapter/tsconfig.lib.json"

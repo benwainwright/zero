@@ -6,10 +6,10 @@ export interface IInternalTypes {
   EventBusListener: EventEmitter;
   BusNamespace: string;
   StoragePath: ConfigValue<string>;
-  StorageBucketRegion: ConfigValue<string>;
-  StorageBucketEndpoint: ConfigValue<string>;
+  StorageBucketRegion: ConfigValue<string | undefined>;
+  StorageBucketEndpoint: ConfigValue<string | undefined>;
   StorageBucketName: ConfigValue<string>;
-  StorageBucketAccessKeyId: ConfigValue<string>;
-  StorageBucketSecretAccessKey: ConfigValue<string>;
+  StorageBucketAccessKeyId: ConfigValue<string | undefined>;
+  StorageBucketSecretAccessKey: ConfigValue<string | undefined>;
   S3Client: S3CompatibleClient;
 }

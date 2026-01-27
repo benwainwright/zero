@@ -56,3 +56,4 @@ test-output
 **/*.sqlite
 apps/backend/pglogs
 *.tsbuildinfo
+**/cdk.out
