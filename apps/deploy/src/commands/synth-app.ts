@@ -1,6 +1,7 @@
 import { command, string } from '@drizzle-team/brocli';
-import { Toolkit, ToolkitError } from '@aws-cdk/toolkit-lib';
+import { ToolkitError } from '@aws-cdk/toolkit-lib';
 import { getZeroAppCloudAssembly } from '../zero-app-cloud-assembly';
+import { getToolkit } from '../toolkit';
 
 export const synthApp = command({
   name: 'synth-app',
@@ -13,7 +14,7 @@ export const synthApp = command({
   },
   handler: async ({ region, account, environment, appVersion, domainName }) => {
     try {
-      const toolkit = new Toolkit();
+      const toolkit = getToolkit(environment);
       const assembly = await getZeroAppCloudAssembly({
         region,
         account,
