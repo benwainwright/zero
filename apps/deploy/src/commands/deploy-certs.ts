@@ -1,6 +1,6 @@
 import { StackSelectionStrategy, Toolkit } from '@aws-cdk/toolkit-lib';
 import { command, string } from '@drizzle-team/brocli';
-import { CERT_STACK_NAME } from '../constants';
+import { CERT_STACK_NAME } from '../constants.ts';
 
 export const deployCerts = command({
   name: 'deploy-certs',

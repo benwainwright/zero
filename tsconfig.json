@@ -62,6 +62,9 @@
     },
     {
       "path": "./packages/kysely-shared"
+    },
+    {
+      "path": "./packages/cdk-ux"
     }
   ]
 }

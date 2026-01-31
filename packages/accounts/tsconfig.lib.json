@@ -18,7 +18,7 @@
   },
   "include": ["src/**/*.ts", "../auth/src/constants.ts"],
   "exclude": [
-    "vite.config.mts",
+    "../../apps/deploy/vite.config.mts",
     "vitest.config.mts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",

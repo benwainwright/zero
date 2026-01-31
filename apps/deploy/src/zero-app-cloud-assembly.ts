@@ -1,11 +1,10 @@
-import { ZeroBackendStack } from '@zero/backend';
+import { ZeroBackendStack, ZeroBuildStack } from '@zero/backend';
 import { Toolkit } from '@aws-cdk/toolkit-lib';
 import { ZeroFrontendStack } from '@zero/web';
-import { ZeroEcrStack } from './shared-stacks/zero-ecr-stack';
 import { App } from 'aws-cdk-lib';
-import { ZeroCertificateStack } from './shared-stacks/zero-certificate-stack';
-import { frontendStackName } from './frontend-stack-name';
-import { backendStackName } from './backend-stack-name';
+import { ZeroCertificateStack } from './shared-stacks/zero-certificate-stack.ts';
+import { frontendStackName } from './frontend-stack-name.ts';
+import { backendStackName } from './backend-stack-name.ts';
 import { join } from 'path';
 
 interface IAppConfig {
@@ -28,21 +27,18 @@ export const getZeroAppCloudAssembly = async ({
     async () => {
       const app = new App();
 
-      const ecrStack = new ZeroEcrStack(app, {
-        awsEnv: {
-          account,
-          region,
-        },
-      });
-
       const certificateStack = new ZeroCertificateStack(app, {
         domainName,
         awsEnv: { account },
       });
 
+      const buildStack = new ZeroBuildStack(app, {
+        awsEnv: { account, region },
+      });
+
       const { frontendConfig } = new ZeroBackendStack(app, {
         stackName: backendStackName(environment),
-        repository: ecrStack.repository,
+        image: buildStack.image,
         environment,
         domainName,
         certificate: certificateStack.certificate,
@@ -52,6 +48,8 @@ export const getZeroAppCloudAssembly = async ({
           region,
         },
       });
+
+      //Aspects.of(app).add(new AwsSolutionsChecks());
 
       new ZeroFrontendStack(app, {
         stackName: frontendStackName(environment),
@@ -64,7 +62,6 @@ export const getZeroAppCloudAssembly = async ({
           account,
         },
       });
-
       return app.synth();
     },
     { outdir: join(__dirname, '..', 'cdk.out') }

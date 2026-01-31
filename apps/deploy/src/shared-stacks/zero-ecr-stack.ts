@@ -1,7 +1,7 @@
 import { Stack } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import type { Construct } from 'constructs';
-import { ECR_STACK_NAME } from '../constants';
+import { ECR_STACK_NAME } from '../constants.ts';
 
 interface ZeroEcrStackProps {
   awsEnv: {

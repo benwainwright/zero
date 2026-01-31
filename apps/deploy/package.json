@@ -9,6 +9,8 @@
     "@zero/web": "workspace:*",
     "aws-cdk": "2.1100.1",
     "aws-cdk-lib": "^2.236.0",
+    "cdk-nag": "^2.37.55",
+    "cdk-secure-string-parameter": "^0.0.22",
     "constructs": "^10.4.5"
   },
   "nx": {
@@ -31,7 +33,43 @@
             }
           }
         }
+      },
+      "deploy": {
+        "dependsOn": [
+          "^build",
+          {
+            "projects": [
+              "@zero/backend"
+            ],
+            "target": "build"
+          }
+        ],
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "vite-node src/deploy-cli.ts deploy-app --environment $ENVIRONMENT --assemblyDir ./cdk.out",
+          "cwd": "apps/deploy"
+        },
+        "configurations": {
+          "production": {
+            "env": {
+              "ENVIRONMENT": "production"
+            }
+          },
+          "staging": {
+            "env": {
+              "ENVIRONMENT": "staging"
+            }
+          }
+        }
       }
     }
+  },
+  "dependencies": {
+    "@aws-cdk/toolkit-lib": "^1.14.1",
+    "@zero/cdk-ux": "workspace:*",
+    "ink": "^6.6.0",
+    "ink-spinner": "^5.0.0",
+    "react": "catalog:",
+    "ts-pattern": "^5.9.0"
   }
 }

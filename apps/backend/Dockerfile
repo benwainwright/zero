@@ -9,11 +9,9 @@ ARG CONFIG=zero.config.dev.json
 # Copy the chosen config into a stable path
 COPY ${CONFIG} /app/config.json
 
-# Copy the prebuilt CLI
-COPY dist/cli.js /app/cli.js
+COPY dist/* /app
 
 COPY railway.json /railway.json
 
-
 # Run the CLI with the baked config
-CMD ["node", "cli.js", "start", "--config", "/app/config.json"]
+CMD ["node", "cli.js", "start", "--config", "config.json"]

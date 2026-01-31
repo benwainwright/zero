@@ -4,13 +4,7 @@
   "include": [],
   "references": [
     {
-      "path": "../web"
-    },
-    {
-      "path": "../backend"
-    },
-    {
-      "path": "./tsconfig.cdk.json"
+      "path": "./tsconfig.lib.json"
     }
   ]
 }

@@ -19,7 +19,7 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "vite.config.mts",
+    "../../apps/deploy/vite.config.mts",
     "vitest.config.mts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",

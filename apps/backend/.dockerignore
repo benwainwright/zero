@@ -1,0 +1,11 @@
+# never send deps in the build context
+node_modules
+**/node_modules
+
+# common junk
+.git
+.cdk.out
+build
+coverage
+tmp
+.DS_Store

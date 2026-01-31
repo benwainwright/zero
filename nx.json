@@ -10,7 +10,6 @@
     ],
     "sharedGlobals": []
   },
-
   "release": {
     "releaseTag": {
       "pattern": "release/{projectName}/{version}"
@@ -62,7 +61,8 @@
         "packages/http-client/*",
         "packages/integration-adapters/*",
         "packages/test-helpers/*",
-        "packages/data-adapter-shared/*"
+        "packages/data-adapter-shared/*",
+        "packages/cdk-ux/*"
       ]
     },
     {

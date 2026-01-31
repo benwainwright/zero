@@ -1,6 +1,6 @@
 import { StackSelectionStrategy, Toolkit } from '@aws-cdk/toolkit-lib';
 import { command, string } from '@drizzle-team/brocli';
-import { ECR_STACK_NAME } from '../constants';
+import { ECR_STACK_NAME } from '../constants.ts';
 
 export const deployEcr = command({
   name: 'deploy-ecr',

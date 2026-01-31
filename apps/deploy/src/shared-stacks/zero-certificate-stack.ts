@@ -5,7 +5,7 @@ import {
 } from 'aws-cdk-lib/aws-certificatemanager';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import type { Construct } from 'constructs';
-import { CERT_STACK_NAME } from '../constants';
+import { CERT_STACK_NAME } from '../constants.ts';
 
 interface ZeroCertificateStackProps {
   awsEnv: {

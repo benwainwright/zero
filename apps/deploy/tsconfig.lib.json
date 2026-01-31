@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "nodenext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "lib": ["es2022"],
+    "jsx": "react-jsx",
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "nodeNext",
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "references": [
+    {
+      "path": "../../packages/cdk-ux/tsconfig.lib.json"
+    },
+    {
+      "path": "../web/tsconfig.app.json"
+    },
+    {
+      "path": "../backend/tsconfig.app.json"
+    }
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+  ]
+}
