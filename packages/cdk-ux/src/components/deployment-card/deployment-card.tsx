@@ -57,15 +57,22 @@ export const DeploymentCard = ({ deployment }: DeploymentCardProps) => {
       spinner={spinners.dots}
       isExpanded={resources.length > 0}
     >
-      {resources.map(([id, resource]) => (
-        <Task
-          spinner={spinners.dots}
-          key={`resource-${id}-task`}
-          label={`${id} (${resource.type})`}
-          status={resource.status}
-          state={mapResourceStatus[resource.status]}
-        />
-      ))}
+      {resources.map(([id, resource]) => {
+        const withOutput =
+          resource.reason && mapResourceStatus[resource.status] === 'error'
+            ? { output: resource.reason }
+            : {};
+        return (
+          <Task
+            spinner={spinners.dots}
+            key={`resource-${id}-task`}
+            label={`${id} (${resource.type})`}
+            status={resource.status}
+            state={mapResourceStatus[resource.status]}
+            {...withOutput}
+          />
+        );
+      })}
     </Task>
   );
 };

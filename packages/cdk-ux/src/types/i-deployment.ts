@@ -9,6 +9,7 @@ export interface IDeployment {
     {
       type: string;
       status: ResourceStatus;
+      reason: string | undefined;
     }
   >;
 

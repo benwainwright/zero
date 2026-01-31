@@ -14,6 +14,7 @@ export const onStackActivity = (
             [event.LogicalResourceId]: {
               type: event.ResourceType,
               status: event.ResourceStatus,
+              reason: event.ResourceStatusReason,
             },
           }
         : {};
