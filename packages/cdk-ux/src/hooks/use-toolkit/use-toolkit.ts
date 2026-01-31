@@ -27,9 +27,9 @@ export const useToolkit = (config?: {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [errors, setErrors] = useState<IErrorMessage[]>([]);
 
-  const errorCallbacks: IErrorCallback[] = [];
+  const errorCallbacks = useRef<IErrorCallback[]>([]).current;
 
-  const host = new Host();
+  const host = useRef(new Host()).current;
 
   const withErrorHandling = async (callback: () => Promise<void> | void) => {
     try {
@@ -148,6 +148,29 @@ export const useToolkit = (config?: {
     onStackActivity(host, setDeployments);
     onStackDeployComplete(host, setDeployments);
 
+    const handler:
+      | Console['log']
+      | Console['error']
+      | Console['warn']
+      | Console['info']
+      | Console['debug'] = (...args) => {
+      setMessages((current) => [
+        ...current,
+        {
+          message: args.join(', '),
+          timestamp: new Date(),
+          level: 'info',
+          code: undefined,
+        },
+      ]);
+    };
+
+    console.log = handler;
+    console.info = handler;
+    console.warn = handler;
+    console.debug = handler;
+    console.error = handler;
+
     host.onRest((message) => {
       if (
         config?.includeMessageLevels &&
@@ -159,7 +182,7 @@ export const useToolkit = (config?: {
         ...oldMessages,
         {
           message: message.message,
-          code: message.code,
+          code: 'code' in message ? message.code : undefined,
           level: message.level,
           timestamp: new Date(),
         },

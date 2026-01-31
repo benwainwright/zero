@@ -6,7 +6,7 @@ interface MessageProps {
   message: {
     level: IoMessageLevel;
     message: string;
-    code?: IoMessageCode;
+    code?: IoMessageCode | undefined;
   };
 }
 

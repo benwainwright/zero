@@ -1,19 +1,24 @@
-import type { Toolkit } from '@aws-cdk/toolkit-lib';
+import type { IoMessageLevel, Toolkit } from '@aws-cdk/toolkit-lib';
 import { useToolkit } from '@hooks';
 import { useEffect } from 'react';
 import { useApp } from 'ink';
-import { Deployments, Errors, MessageLog } from '@components';
+import { Deployments, Errors, MessageLog, Spinner } from '@components';
 
 interface CdkUxProps {
   onLoad: (toolkit: Toolkit) => Promise<void>;
   logLimit?: number;
+  includeMessageLevels?: IoMessageLevel[];
 }
 
-export const CdkUx = ({ onLoad, logLimit = 5 }: CdkUxProps) => {
+export const CdkUx = ({
+  onLoad,
+  logLimit = 10,
+  includeMessageLevels = ['result', 'error', 'info', 'warn'],
+}: CdkUxProps) => {
   const { exit } = useApp();
   const { deployments, toolkit, messages, errors, withErrorHandling } =
     useToolkit({
-      includeMessageLevels: ['error', 'info', 'result', 'warn'],
+      includeMessageLevels,
     });
 
   useEffect(() => {
@@ -30,6 +35,10 @@ export const CdkUx = ({ onLoad, logLimit = 5 }: CdkUxProps) => {
       <Errors errors={errors} />
       <Deployments deployments={deployments} />
       <MessageLog logLimit={logLimit} messages={messages} />
+      <Spinner
+        show={messages.length === 0 && deployments.length === 0}
+        text="Starting"
+      />
     </>
   );
 };

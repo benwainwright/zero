@@ -30,8 +30,8 @@
     "@zero/postgres-adapters": "workspace:*",
     "@zero/sqlite-adapters": "workspace:*",
     "@zero/websocket-adapter": "workspace:*",
-    "aws-cdk": "2.1100.1",
-    "aws-cdk-lib": "^2.236.0",
+    "aws-cdk": "catalog:",
+    "aws-cdk-lib": "catalog:",
     "constructs": "^10.4.5"
   },
   "devDependencies": {

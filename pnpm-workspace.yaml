@@ -19,6 +19,9 @@ catalog:
   zod: 4.2.1
   kysely: 0.28.10
   pg: 8.17.2
+  '@aws-cdk/toolkit-lib': 1.14.2
+  aws-cdk-lib: 2.236.0
+  aws-cdk: 2.1104.0
   react: 19.2.4
   react-dom: 19.2.4
 

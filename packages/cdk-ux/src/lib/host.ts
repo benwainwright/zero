@@ -19,7 +19,9 @@ export class Host implements IIoHost {
   // See https://docs.aws.amazon.com/cdk/api/toolkit-lib/message-registry/
 
   private readonly callbacks: ((
-    message: MessageWithCode<(typeof identifiers)[number]>
+    message:
+      | MessageWithCode<(typeof identifiers)[number]>
+      | Omit<IoMessage<unknown>, 'code'>
   ) => Promise<void> | void)[] = [];
 
   private codesWithListeners: IoMessageCode[] = [];
@@ -35,21 +37,32 @@ export class Host implements IIoHost {
     };
     const identifiedMessage = identify();
 
-    if (identifiedMessage) {
-      for (const callback of this.callbacks) {
+    for (const callback of this.callbacks) {
+      if (identifiedMessage) {
         await callback(identifiedMessage);
+      } else {
+        await callback(msg);
       }
     }
   }
 
   public onRest(
     callback: (
-      message: MessageWithCode<(typeof identifiers)[number]>
+      message:
+        | MessageWithCode<(typeof identifiers)[number]>
+        | Omit<IoMessage<unknown>, 'code'>
     ) => Promise<void> | void
   ) {
     this.callbacks.push(
-      async (message: MessageWithCode<(typeof identifiers)[number]>) => {
-        if (!this.codesWithListeners.includes(message.code)) {
+      async (
+        message:
+          | MessageWithCode<(typeof identifiers)[number]>
+          | Omit<IoMessage<unknown>, 'code'>
+      ) => {
+        if (
+          !('code' in message) ||
+          !this.codesWithListeners.includes(message.code)
+        ) {
           await callback(message);
         }
       }
@@ -70,10 +83,10 @@ export class Host implements IIoHost {
     type AnyMessage = MessageWithCode<(typeof identifiers)[number]>;
 
     function hasCode<TCode extends AnyMessage['code']>(
-      message: AnyMessage,
+      message: AnyMessage | Omit<IoMessage<unknown>, 'code'>,
       code: TCode
     ): message is Extract<AnyMessage, { code: TCode }> {
-      return message.code === code;
+      return 'code' in message && message.code === code;
     }
 
     this.codesWithListeners.push(code);

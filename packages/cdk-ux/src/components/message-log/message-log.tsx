@@ -1,4 +1,5 @@
 import { Message, Section } from '@components';
+import { Text } from 'ink';
 import type { IMessage } from '@types';
 
 interface IMessageLogProps {
@@ -8,12 +9,12 @@ interface IMessageLogProps {
 
 export const MessageLog = ({ messages, logLimit }: IMessageLogProps) => {
   return messages.length > 0 ? (
-    <Section title="Log">
-      {messages.slice(-logLimit).map((message) => (
+    <Section beforeTitle={<Text>📖</Text>} title="Log">
+      {messages.slice(-logLimit).map((message, index) => (
         <Message
           key={`${message.code}-${
             message.level
-          }-${message.timestamp.toISOString()}`}
+          }-${message.timestamp.toISOString()}-${index}`}
           message={message}
         />
       ))}

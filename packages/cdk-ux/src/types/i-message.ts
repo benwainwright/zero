@@ -4,5 +4,5 @@ export interface IMessage {
   message: string;
   timestamp: Date;
   level: IoMessageLevel;
-  code: IoMessageCode;
+  code: IoMessageCode | undefined;
 }

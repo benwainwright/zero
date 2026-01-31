@@ -5,13 +5,19 @@ import { WIDTH } from '@lib';
 interface SectionProps {
   title?: string;
   children: ReactNode;
+  beforeTitle?: ReactNode;
 }
 
-export const Section = ({ children, title }: SectionProps) => {
+export const Section = ({
+  children,
+  title,
+  beforeTitle = null,
+}: SectionProps) => {
   return (
     <Box width={WIDTH} borderStyle={'single'} flexDirection="column">
       {title && (
         <Box
+          gap={1}
           width="100%"
           borderBottom
           borderStyle={'single'}
@@ -20,6 +26,7 @@ export const Section = ({ children, title }: SectionProps) => {
           borderRight={false}
           paddingX={2}
         >
+          {beforeTitle}
           <Text bold>{title}</Text>
         </Box>
       )}

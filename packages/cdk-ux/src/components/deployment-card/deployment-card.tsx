@@ -61,7 +61,7 @@ export const DeploymentCard = ({ deployment }: DeploymentCardProps) => {
         <Task
           spinner={spinners.dots}
           key={`resource-${id}-task`}
-          label={id}
+          label={`${id} (${resource.type})`}
           status={resource.status}
           state={mapResourceStatus[resource.status]}
         />

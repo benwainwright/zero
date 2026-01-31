@@ -18,7 +18,7 @@
     "vitest-when": "catalog:"
   },
   "dependencies": {
-    "@aws-cdk/toolkit-lib": "^1.14.1",
+    "@aws-cdk/toolkit-lib": "catalog:",
     "@aws-sdk/client-cloudformation": "^3.978.0",
     "@inversifyjs/strongly-typed": "catalog:",
     "cli-spinners": "^3.4.0",
