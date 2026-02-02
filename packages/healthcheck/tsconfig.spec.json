@@ -2,11 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@ports": ["./src/ports/index.ts"],
-      "@types": ["./src/types/index.ts"],
-      "@services": ["./src/services/index.ts"],
-      "@constants": ["./src/constants.ts"],
-      "@core": ["./src/core/index.ts"]
+      "@lib": ["./src/lib/index.ts"],
+      "@types": ["./src/types/index.ts"]
     },
     "outDir": "./out-tsc/vitest",
     "types": [
@@ -19,9 +16,9 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src/**/*.test.ts",
-    "vite.config.ts",
+    "vite.config.mts",
     "vitest.config.mts",
+    "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.tsx",

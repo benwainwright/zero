@@ -8,29 +8,30 @@
     "esModuleInterop": true,
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },
-  "include": ["src/**/*.ts", "../deploy/src/zero-certificate-stack.ts", "../deploy/src/zero-ecr-stack.ts"],
+  "include": [
+    "src/**/*.ts",
+    "../deploy/src/zero-certificate-stack.ts",
+    "../deploy/src/zero-ecr-stack.ts"
+  ],
   "exclude": ["src/infrastructure/**/*.ts", "src/index.ts"],
   "references": [
     {
       "path": "../../packages/websocket-adapter/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/kysely-shared/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/integration-adapters/tsconfig.lib.json"
+      "path": "../../packages/sqlite-adapters/tsconfig.lib.json"
     },
     {
       "path": "../../packages/postgres-adapters/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/sqlite-adapters/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/accounts/tsconfig.lib.json"
-    },
-    {
       "path": "../../packages/node-adapters/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/kysely-shared/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/integration-adapters/tsconfig.lib.json"
     },
     {
       "path": "../../packages/domain/tsconfig.lib.json"
@@ -43,6 +44,12 @@
     },
     {
       "path": "../../packages/application-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/healthcheck/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/accounts/tsconfig.lib.json"
     }
   ]
 }

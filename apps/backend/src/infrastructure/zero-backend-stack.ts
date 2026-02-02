@@ -19,10 +19,13 @@ import { Bucket } from 'aws-cdk-lib/aws-s3';
 import type { Construct } from 'constructs';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { ApplicationProtocol } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import type { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import type { FrontendConfig } from './frontend-config';
 import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
 import { getParamStoreSecureStringParam } from './get-secret';
+import {
+  Certificate,
+  CertificateValidation,
+} from 'aws-cdk-lib/aws-certificatemanager';
 
 interface ZeroBackendStackProps {
   environment: `staging` | `production`;
@@ -30,7 +33,6 @@ interface ZeroBackendStackProps {
     account: string;
     region: string;
   };
-  certificate: ICertificate;
   image: DockerImageAsset;
   domainName: string;
   version: string;
@@ -68,6 +70,26 @@ export class ZeroBackendStack extends Stack {
       service: InterfaceVpcEndpointAwsService.ECR,
     });
 
+    vpc.addInterfaceEndpoint(`ssm-endpoint`, {
+      service: InterfaceVpcEndpointAwsService.SSM,
+    });
+
+    vpc.addInterfaceEndpoint('ecr-docker-endpoint', {
+      service: InterfaceVpcEndpointAwsService.ECR_DOCKER,
+    });
+
+    vpc.addInterfaceEndpoint('logs-endpoint', {
+      service: InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+    });
+
+    vpc.addInterfaceEndpoint('kms-endpoint', {
+      service: InterfaceVpcEndpointAwsService.KMS,
+    });
+
+    vpc.addInterfaceEndpoint('sts-endpoint', {
+      service: InterfaceVpcEndpointAwsService.STS,
+    });
+
     const domainName =
       props.environment === 'production'
         ? `api.${props.domainName}`
@@ -87,6 +109,8 @@ export class ZeroBackendStack extends Stack {
     const goCardlessSecretId = getParam(`gocardless-secret-id`);
     const goCardlessSecretKey = getParam(`gocardless-secret-key`);
 
+    const postgresUser = 'zero';
+
     const database = new DatabaseInstance(this, `zero-database`, {
       vpc,
       vpcSubnets: {
@@ -97,7 +121,7 @@ export class ZeroBackendStack extends Stack {
         version: PostgresEngineVersion.VER_18_1,
       }),
       credentials: {
-        username: 'admin',
+        username: postgresUser,
         password: SecretValue.ssmSecure(dbPassword.parameterName),
       },
     });
@@ -108,12 +132,29 @@ export class ZeroBackendStack extends Stack {
       domainName: props.domainName,
     });
 
+    const zeroHostedZone = HostedZone.fromLookup(this, `zero-hosted-zone`, {
+      domainName: props.domainName,
+    });
+
+    const certificate = new Certificate(this, 'zero-backend-certificate', {
+      domainName: `*.${props.domainName}`,
+      validation: CertificateValidation.fromDns(zeroHostedZone),
+    });
+
+    const healthcheckPort = 8081;
+
     const loadBalancedFargateService =
       new ApplicationLoadBalancedFargateService(this, 'zero-app-service', {
         memoryLimitMiB: 1024,
         desiredCount: 1,
         cpu: 512,
         vpc,
+        healthCheck: {
+          command: [
+            'CMD-SHELL',
+            `curl -f http://localhost/${healthcheckPort}/healthcheck || exit 1`,
+          ],
+        },
         taskImageOptions: {
           image: ContainerImage.fromDockerImageAsset(props.image),
           containerPort: 3000,
@@ -122,7 +163,8 @@ export class ZeroBackendStack extends Stack {
             ZERO_CONFIG_POSTGRES_PORT: database.dbInstanceEndpointPort,
             ZERO_CONFIG_GOCARDLESS_REDIRECTURL: `https://${props.domainName}`,
             ZERO_CONFIG_POSTGRES_DATABASENAME: `zero`,
-            ZERO_CONFIG_POSTGRES_USER: 'admin',
+            ZERO_CONFIG_HEALTHCHECK_PORT: String(healthcheckPort),
+            ZERO_CONFIG_POSTGRES_USER: postgresUser,
             ZERO_CONFIG_WEBSOCKETSERVER_HOST: props.domainName,
             ZERO_CONFIG_WEBSOCKETSERVER_PORT: String(3000),
             ZERO_CONFIG_S3_BUCKETNAME: storageBucket.bucketName,
@@ -143,7 +185,7 @@ export class ZeroBackendStack extends Stack {
         minHealthyPercent: 100,
         protocol: ApplicationProtocol.HTTPS,
         domainName,
-        certificate: props.certificate,
+        certificate,
         domainZone: zone,
       });
 

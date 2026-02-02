@@ -16,7 +16,7 @@ interface IApi {
   eventBus: IEventListener<IKnownEvents>;
 }
 
-export const useApi = (url: string) => {
+export const useApi = (url?: string) => {
   const { socket } = useOpenSocket(url);
 
   const [api, setApi] = useState<IApi>();

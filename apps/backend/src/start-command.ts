@@ -4,6 +4,7 @@ import { storageAdapterModule } from './storage.ts';
 import { command, string } from '@drizzle-team/brocli';
 import { getBootstrapper } from '@zero/bootstrap';
 import { applicationCoreModule } from '@zero/application-core';
+import { healthcheckModule } from '@zero/healthcheck';
 import { authModule } from '@zero/auth';
 import { websocketServerModule } from '@zero/websocket-adapter/server';
 import { accountsModule } from '@zero/accounts';
@@ -17,9 +18,7 @@ export const startCommand = command({
     logger: string().enum('pretty', 'json').default('pretty'),
   },
   handler: async (options) => {
-    console.log('Starting');
     const bootstrapper = await getBootstrapper(options.config, options.logger);
-    console.log('End');
     bootstrapper.addModule(databaseAdaptersModule);
     bootstrapper.addModule(storageAdapterModule);
     bootstrapper.addModule(applicationCoreModule);
@@ -28,6 +27,7 @@ export const startCommand = command({
     bootstrapper.addModule(integrationsModule);
     bootstrapper.addModule(accountsModule);
     bootstrapper.addModule(websocketServerModule);
+    bootstrapper.addModule(healthcheckModule);
 
     await bootstrapper.start();
   },

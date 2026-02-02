@@ -26,7 +26,7 @@ export class ZeroCertificateStack extends Stack {
       domainName: props.domainName,
     });
 
-    this.certificate = new Certificate(this, 'zero-certificate', {
+    this.certificate = new Certificate(this, 'zero-frontend-certificate', {
       domainName: `*.${props.domainName}`,
       validation: CertificateValidation.fromDns(zeroHostedZone),
     });

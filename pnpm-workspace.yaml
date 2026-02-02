@@ -4,12 +4,19 @@ packages:
   - tools
 
 catalog:
+  '@aws-cdk/toolkit-lib': 1.14.2
   '@inversifyjs/plugin': 0.2.0
   '@inversifyjs/strongly-typed': 2.2.0
   '@suites/doubles.vitest': 3.0.1
   '@suites/unit': 3.0.1
+  aws-cdk: 2.1104.0
+  aws-cdk-lib: 2.236.0
   inversify: 7.10.7
+  kysely: 0.28.10
   luxon: 3.7.2
+  pg: 8.17.2
+  react: 19.2.4
+  react-dom: 19.2.4
   reflect-metadata: 0.2.2
   stacktracey: 2.1.8
   typeson: 9.0.4
@@ -17,13 +24,6 @@ catalog:
   vitest-when: 0.10.0
   winston: 3.19.0
   zod: 4.2.1
-  kysely: 0.28.10
-  pg: 8.17.2
-  '@aws-cdk/toolkit-lib': 1.14.2
-  aws-cdk-lib: 2.236.0
-  aws-cdk: 2.1104.0
-  react: 19.2.4
-  react-dom: 19.2.4
 
 hoist: true
 

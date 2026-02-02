@@ -5,7 +5,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
-  cacheDir: '../../node_modules/.vite/packages/serialiser',
+  cacheDir: '../../node_modules/.vite/packages/adapter-tests',
   plugins: [
     tsconfigPaths({
       root: path.join(import.meta.dirname, '..', '..'),
@@ -22,7 +22,7 @@ export default defineConfig(() => ({
     },
     lib: {
       entry: 'src/index.ts',
-      name: '@zero/serialiser',
+      name: '@zero/accounts',
       fileName: 'index',
       formats: ['es' as const],
     },

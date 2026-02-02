@@ -23,9 +23,10 @@ import { ModalsProvider } from '@mantine/modals';
 import type { ReactNode } from 'react';
 import { ApiProvider, CurrentUserProvider } from '@zero/react-api';
 import { theme } from '@config';
-import { socketUrl } from './socket-url.ts';
+import { useSocketUrl } from './socket-url.ts';
 
 export function Layout({ children }: { children: React.ReactNode }): ReactNode {
+  const socketUrl = useSocketUrl();
   return (
     <html lang="" {...mantineHtmlProps}>
       <head>

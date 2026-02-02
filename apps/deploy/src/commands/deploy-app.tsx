@@ -12,22 +12,15 @@ export const deployApp = command({
   handler: async ({ assemblyDir }) => {
     const { waitUntilExit } = render(
       <CdkUx
-        includeMessageLevels={[
-          // 'debug',
-          'error',
-          'info',
-          'result',
-          // 'trace',
-          'warn',
-        ]}
-        // logLimit={10_000}
+        includeMessageLevels={['error', 'info', 'result', 'warn']}
         onLoad={async (toolkit) => {
           const app = await toolkit.fromAssemblyDirectory(assemblyDir);
           await toolkit.deploy(app, {
             stacks: { strategy: StackSelectionStrategy.ALL_STACKS },
           });
         }}
-      />
+      />,
+      { patchConsole: false }
     );
 
     await waitUntilExit();

@@ -31,6 +31,7 @@ export default defineConfig(() => ({
     !process.env['VITEST'] && reactRouter(),
     tsconfigPaths({
       root: path.join(import.meta.dirname, '..', '..'),
+      skip: (dir) => dir.includes('cdk.out'),
       configNames: [
         'tsconfig.lib.json',
         'tsconfig.spec.json',

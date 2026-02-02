@@ -9,16 +9,13 @@
     "importHelpers": true,
     "types": ["node"],
     "paths": {
-      "@ports": ["./src/ports/index.ts"],
-      "@types": ["./src/types/index.ts"],
-      "@services": ["./src/services/index.ts"],
-      "@constants": ["./src/constants.ts"],
-      "@core": ["./src/core/index.ts"]
+      "@lib": ["./src/lib/index.ts"],
+      "@types": ["./src/types/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "../auth/src/constants.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": [
-    "vitest.config.ts",
+    "vite.config.mts",
     "vitest.config.mts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
@@ -32,18 +29,6 @@
   "references": [
     {
       "path": "../bootstrap/tsconfig.lib.json"
-    },
-    {
-      "path": "../auth/tsconfig.lib.json"
-    },
-    {
-      "path": "../application-core/tsconfig.lib.json"
-    },
-    {
-      "path": "../domain/tsconfig.lib.json"
-    },
-    {
-      "path": "../test-helpers/tsconfig.lib.json"
     }
   ]
 }

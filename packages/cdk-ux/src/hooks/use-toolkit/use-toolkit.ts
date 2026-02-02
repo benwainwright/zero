@@ -148,28 +148,28 @@ export const useToolkit = (config?: {
     onStackActivity(host, setDeployments);
     onStackDeployComplete(host, setDeployments);
 
-    const handler:
-      | Console['log']
-      | Console['error']
-      | Console['warn']
-      | Console['info']
-      | Console['debug'] = (...args) => {
-      setMessages((current) => [
-        ...current,
-        {
-          message: args.join(', '),
-          timestamp: new Date(),
-          level: 'info',
-          code: undefined,
-        },
-      ]);
-    };
+    // const handler:
+    //   | Console['log']
+    //   | Console['error']
+    //   | Console['warn']
+    //   | Console['info']
+    //   | Console['debug'] = (...args) => {
+    //   setMessages((current) => [
+    //     ...current,
+    //     {
+    //       message: args.join(', '),
+    //       timestamp: new Date(),
+    //       level: 'info',
+    //       code: undefined,
+    //     },
+    //   ]);
+    // };
 
-    console.log = handler;
-    console.info = handler;
-    console.warn = handler;
-    console.debug = handler;
-    console.error = handler;
+    // console.log = handler;
+    // console.info = handler;
+    // console.warn = handler;
+    // console.debug = handler;
+    // console.error = handler;
 
     host.onRest((message) => {
       if (

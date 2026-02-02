@@ -20,6 +20,7 @@ export default defineConfig(() => ({
     tsconfigPaths({
       root: path.join(import.meta.dirname, '..', '..'),
       configNames: ['tsconfig.lib.json', 'tsconfig.spec.json'],
+      skip: (dir) => dir.includes('cdk.out'),
     }),
   ],
   build: {

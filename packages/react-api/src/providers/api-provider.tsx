@@ -18,7 +18,7 @@ interface IApiContextType {
 export const ApiContext = createContext<IApiContextType>({});
 
 interface IApiProviderProps {
-  url: string;
+  url: string | undefined;
   children: ReactNode;
 }
 

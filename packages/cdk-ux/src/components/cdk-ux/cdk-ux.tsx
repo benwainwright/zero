@@ -1,7 +1,7 @@
 import type { IoMessageLevel, Toolkit } from '@aws-cdk/toolkit-lib';
 import { useToolkit } from '@hooks';
 import { useEffect } from 'react';
-import { useApp } from 'ink';
+import { useApp, Box } from 'ink';
 import { Deployments, Errors, MessageLog, Spinner } from '@components';
 
 interface CdkUxProps {
@@ -31,7 +31,7 @@ export const CdkUx = ({
   }, []);
 
   return (
-    <>
+    <Box paddingX={1} flexDirection="column">
       <Errors errors={errors} />
       <Deployments deployments={deployments} />
       <MessageLog logLimit={logLimit} messages={messages} />
@@ -39,6 +39,6 @@ export const CdkUx = ({
         show={messages.length === 0 && deployments.length === 0}
         text="Starting"
       />
-    </>
+    </Box>
   );
 };

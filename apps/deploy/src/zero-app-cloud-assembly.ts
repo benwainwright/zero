@@ -41,7 +41,6 @@ export const getZeroAppCloudAssembly = async ({
         image: buildStack.image,
         environment,
         domainName,
-        certificate: certificateStack.certificate,
         version,
         awsEnv: {
           account,
