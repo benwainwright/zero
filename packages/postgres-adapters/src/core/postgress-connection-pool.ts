@@ -7,6 +7,7 @@ import { inject } from './typed-inject.ts';
 import { sql, Kysely, PostgresDialect } from 'kysely';
 import type { DB } from './database.ts';
 import { wait } from './wait.ts';
+import { readFile } from 'fs/promises';
 
 @injectable()
 export class PostgresConnectionPool implements IKyselyDataSource<DB> {
@@ -25,6 +26,12 @@ export class PostgresConnectionPool implements IKyselyDataSource<DB> {
 
     @inject('PostgresDatabasePort')
     private readonly databasePort: ConfigValue<number>,
+
+    @inject('PostgresCaBundlePath')
+    private readonly caBundlePath: ConfigValue<string | undefined>,
+
+    @inject('PostgresRejectUnauthorised')
+    private readonly rejectUnauthorised: ConfigValue<boolean | undefined>,
 
     @inject('Logger')
     private readonly logger: ILogger
@@ -56,6 +63,17 @@ export class PostgresConnectionPool implements IKyselyDataSource<DB> {
     this.logger.info(`Connecting to database!`);
     const db = await this.databaseName.value;
 
+    const caBundlePath = await this.caBundlePath.value;
+
+    const withTls = caBundlePath
+      ? {
+          ssl: {
+            rejectUnauthorised: Boolean(this.rejectUnauthorised),
+            ca: (await readFile(caBundlePath, 'utf8')).toString(),
+          },
+        }
+      : {};
+
     if (!this.pool) {
       this.pool = new Pool({
         database: db,
@@ -67,6 +85,7 @@ export class PostgresConnectionPool implements IKyselyDataSource<DB> {
         idleTimeoutMillis: 10_000,
         keepAlive: true,
         keepAliveInitialDelayMillis: 10_000,
+        ...withTls,
       });
 
       this.logger.info(`Connection initialised`);

@@ -1,6 +1,6 @@
 import type { ConfigValue, ILogger } from '@zero/bootstrap';
 import cookie from 'cookie';
-import { IncomingMessage } from 'http';
+import { type IncomingMessage } from 'http';
 
 import { WebsocketServerError } from './websocket-server-error.ts';
 import { injectable } from 'inversify';

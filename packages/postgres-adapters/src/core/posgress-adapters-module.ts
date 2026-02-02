@@ -38,6 +38,23 @@ export const postgresAdaptersModule: IModule<
     schema: z.string(),
   });
 
+  const sslBundlePath = configValue({
+    namespace: 'postgres',
+    key: 'sslBundlePath',
+    description: 'Path the certificate bundle',
+    schema: z.string(),
+    optional: true,
+  });
+
+  const rejectUnauthorised = configValue({
+    namespace: 'postgres',
+    key: 'sslRejectUnauthorised',
+    description:
+      'Whether connections to the database that cannot be verified against the CA chain',
+    schema: z.boolean(),
+    optional: true,
+  });
+
   const port = configValue({
     namespace: 'postgres',
     key: 'port',
@@ -61,6 +78,8 @@ export const postgresAdaptersModule: IModule<
 
   const stager = eventStager<IAuthTypes & IAccountsTypes & IApplicationTypes>();
 
+  bind('PostgresCaBundlePath').toConstantValue(sslBundlePath);
+  bind('PostgresRejectUnauthorised').toConstantValue(rejectUnauthorised);
   bind('UserRepository').to(PostgresUserRepository).inRequestScope();
   bind('UserWriter').to(PostgresUserRepository).inRequestScope();
   decorate('UserWriter', stager('UserWriter'));

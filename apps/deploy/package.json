@@ -32,9 +32,7 @@
               "ENVIRONMENT": "staging"
             }
           }
-        }
-      },
-      "deploy": {
+        },
         "dependsOn": [
           "^build",
           {
@@ -42,8 +40,16 @@
               "@zero/backend"
             ],
             "target": "build"
+          },
+          {
+            "projects": [
+              "@zero/web"
+            ],
+            "target": "build"
           }
-        ],
+        ]
+      },
+      "deploy": {
         "executor": "nx:run-commands",
         "options": {
           "command": "vite-node src/deploy-cli.ts deploy-app --environment $ENVIRONMENT --assemblyDir ./cdk.out",

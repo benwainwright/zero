@@ -159,8 +159,11 @@ export class ZeroBackendStack extends Stack {
           image: ContainerImage.fromDockerImageAsset(props.image),
           containerPort: 3000,
           environment: {
+            NODE_ENV: props.environment,
             ZERO_CONFIG_POSTGRES_HOST: database.dbInstanceEndpointAddress,
             ZERO_CONFIG_POSTGRES_PORT: database.dbInstanceEndpointPort,
+            ZERO_CONFIG_POSTGRES_SSLBUNDLEPATH: 'certs/global-bundle.pem',
+            ZERO_CONFIG_POSTGRES_SSLREJECTUNAUTHORISED: 'true',
             ZERO_CONFIG_GOCARDLESS_REDIRECTURL: `https://${props.domainName}`,
             ZERO_CONFIG_POSTGRES_DATABASENAME: `zero`,
             ZERO_CONFIG_HEALTHCHECK_PORT: String(healthcheckPort),

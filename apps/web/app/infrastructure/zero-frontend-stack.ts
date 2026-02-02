@@ -33,8 +33,6 @@ export class ZeroFrontendStack extends Stack {
 
     const bucket = new Bucket(this, 'zero-frontend-assets-bucket', {
       publicReadAccess: true,
-      websiteIndexDocument: INDEX_DOT_HTML,
-      websiteErrorDocument: INDEX_DOT_HTML,
       blockPublicAccess: BlockPublicAccess.BLOCK_ACLS_ONLY,
     });
 
@@ -49,10 +47,23 @@ export class ZeroFrontendStack extends Stack {
       {
         certificate: props.certificate,
         domainNames: [domainName],
+        defaultRootObject: INDEX_DOT_HTML,
         defaultBehavior: {
           origin: S3BucketOrigin.withBucketDefaults(bucket),
           viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         },
+        errorResponses: [
+          {
+            httpStatus: 403,
+            responseHttpStatus: 200,
+            responsePagePath: `/${INDEX_DOT_HTML}`,
+          },
+          {
+            httpStatus: 404,
+            responseHttpStatus: 200,
+            responsePagePath: `/${INDEX_DOT_HTML}`,
+          },
+        ],
       }
     );
 
